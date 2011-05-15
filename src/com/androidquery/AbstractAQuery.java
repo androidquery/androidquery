@@ -60,8 +60,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
 	
 	
 	public T text(CharSequence text){
-		
-		
+				
 		if(view != null){			
 			TextView tv = (TextView) view;
 			tv.setText(text);
