@@ -188,6 +188,22 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
 		}
     }
 	
+	public boolean exist(){
+		return view != null;
+	}
+	
+	public Object tag(){
+		Object result = null;
+		if(view != null){
+			view.getTag();
+		}
+		return result;
+	}
+	
+	public ImageView imageView(){
+		return (ImageView) view;
+	}
+	
 	public T bind(Object obj, String method){
 		
 		final Object o = obj;
