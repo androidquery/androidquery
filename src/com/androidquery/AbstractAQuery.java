@@ -2,13 +2,13 @@ package com.androidquery;
 
 import java.lang.reflect.Method;
 
-
 import android.app.Activity;
 import android.text.Spanned;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.*;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 
 public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
@@ -251,6 +251,50 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
 		return t();
 		
 	}
+	
+	protected void debug(Object msg){
+		System.err.println(msg);
+	}
+	
+	private static Class<?>[] ON_SCROLLED_STATE_SIG = {AbsListView.class, int.class};
+	public T scrolledBottom(Object obj, String method){
+		
+		if(view != null && view instanceof AbsListView){
+		
+			final Object o = obj;
+			final String callback = method;
+			
+			AbsListView lv = (AbsListView) view;
+			
+	        lv.setOnScrollListener(new OnScrollListener() {
+				
+				@Override
+				public void onScrollStateChanged(AbsListView view, int scrollState) {
+					
+					
+					int cc = view.getCount();
+					int last = view.getLastVisiblePosition();
+					
+					if(scrollState == OnScrollListener.SCROLL_STATE_IDLE && cc == last + 1){
+						
+						invokeHandler(o, callback, ON_SCROLLED_STATE_SIG, view, scrollState);
+						
+						
+					}
+					
+				}
+				
+				@Override
+				public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+					
+				}
+			});
+			
+		}
+		
+		return t();
+	}
+	
 	
 	public T clear(){
 		
