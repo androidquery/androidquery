@@ -2,12 +2,14 @@ package com.androidquery;
 
 import java.lang.reflect.Method;
 
+
 import android.app.Activity;
 import android.text.Spanned;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.*;
+import android.widget.AdapterView.OnItemClickListener;
 
 public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
 
@@ -176,17 +178,17 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
 		return t();
 	}
 	
-	private void invokeHandler(View view, Object handler, String callback){
+	private void invokeHandler(Object handler, String callback, Class<?>[] cls, Object... params){
     	try{   
-			Method method = handler.getClass().getMethod(callback, View.class);
+			Method method = handler.getClass().getMethod(callback, cls);
 			if(method != null){
-				method.invoke(handler, view);
+				method.invoke(handler, params);			
 			}
 		}catch(Exception e){
-			//Utility.report(e);
 			e.printStackTrace();
 		}
     }
+	
 	
 	public boolean exist(){
 		return view != null;
@@ -204,22 +206,50 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
 		return (ImageView) view;
 	}
 	
-	public T bind(Object obj, String method){
-		
-		final Object o = obj;
-		final String callback = method;
+	private static Class<?>[] ON_CLICK_SIG = {View.class};
+	public T clicked(Object obj, String method){
 		
 		if(view != null){			
+			
+			final Object o = obj;
+			final String callback = method;
+			
 			view.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
-					invokeHandler(v, o, callback);
+					invokeHandler(o, callback, ON_CLICK_SIG, v);
 				}
 			});
 		}
 		
 		return t();
+	}
+	
+	private static Class<?>[] ON_ITEM_CLICK_SIG = {AdapterView.class, View.class, int.class, long.class};
+	public T itemClicked(Object obj, String method){
+		
+		if(view != null && view instanceof AbsListView){
+		
+			final Object o = obj;
+			final String callback = method;
+			
+			
+			AbsListView alv = (AbsListView) view;
+			alv.setOnItemClickListener(new OnItemClickListener() {
+	
+				@Override
+				public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+						
+					invokeHandler(o, callback, ON_ITEM_CLICK_SIG, parent, v, pos, id);
+					
+				}
+			});
+		
+		}
+		
+		return t();
+		
 	}
 	
 	public T clear(){
