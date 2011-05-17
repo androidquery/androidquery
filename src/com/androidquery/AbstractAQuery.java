@@ -190,11 +190,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
     }
 	
 	
-	public boolean exist(){
+	public boolean isExist(){
 		return view != null;
 	}
 	
-	public Object tag(){
+	public Object getTag(){
 		Object result = null;
 		if(view != null){
 			view.getTag();
@@ -202,7 +202,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
 		return result;
 	}
 	
-	public ImageView imageView(){
+	public ImageView getImageView(){
 		return (ImageView) view;
 	}
 	
