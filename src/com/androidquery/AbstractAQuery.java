@@ -3,6 +3,8 @@ package com.androidquery;
 import java.lang.reflect.Method;
 
 import android.app.Activity;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.text.Spanned;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,7 +13,7 @@ import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 
-public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
+public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Constants {
 
 	private View root;
 	private Activity act;
@@ -89,6 +91,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
 			}else{				
 				iv.setImageResource(id);
 			}
+		}
+		
+		return t();
+	}
+	
+	public T image(Drawable drawable){
+		
+		if(view != null){
+			ImageView iv = (ImageView) view;
+			iv.setImageDrawable(drawable);
 		}
 		
 		return t();
@@ -290,6 +302,26 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> {
 				}
 			});
 			
+		}
+		
+		return t();
+	}
+	
+	private static Class<?>[] PENDING_TRANSITION_SIG = {int.class, int.class};
+	public T overridePendingTransition(int enterAnim, int exitAnim){
+		
+		if(act != null){
+			invokeHandler(act, "overridePendingTransition", PENDING_TRANSITION_SIG, enterAnim, exitAnim);
+		}
+		
+		return t();
+	}
+	
+	private static Class<?>[] LAYER_TYPE_SIG = {int.class, Paint.class};
+	public T layerType(int type, Paint paint){
+		
+		if(view != null){
+			invokeHandler(view, "setLayerType", LAYER_TYPE_SIG, type, paint);
 		}
 		
 		return t();
