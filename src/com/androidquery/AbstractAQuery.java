@@ -6,8 +6,11 @@ import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.Spanned;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.webkit.WebView;
 import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
@@ -348,5 +351,33 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		return t();
 	}
+	
+	private int dip2pixel(float n){
+		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, n, view.getResources().getDisplayMetrics());
+		return value;
+	}
+	
+	public T margin(float leftDip, float topDip, float rightDip, float bottomDip){
+		
+		if(view != null){
+		
+			LayoutParams lp = view.getLayoutParams();
+			
+			if(lp instanceof MarginLayoutParams){
+				
+				int left = dip2pixel(leftDip);
+				int top = dip2pixel(topDip);
+				int right = dip2pixel(rightDip);
+				int bottom = dip2pixel(bottomDip);
+				
+				((MarginLayoutParams) lp).setMargins(left, top, right, bottom);
+				view.setLayoutParams(lp);
+			}
+		
+		}
+		
+		return t();
+	}
+	
 	
 }
