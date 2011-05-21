@@ -3,6 +3,7 @@ package com.androidquery;
 import java.lang.reflect.Method;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.Spanned;
@@ -104,6 +105,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		if(view != null){
 			ImageView iv = (ImageView) view;
 			iv.setImageDrawable(drawable);
+		}
+		
+		return t();
+	}
+	
+	public T image(Bitmap bm){
+		
+		if(view != null){
+			ImageView iv = (ImageView) view;
+			iv.setImageBitmap(bm);
 		}
 		
 		return t();
