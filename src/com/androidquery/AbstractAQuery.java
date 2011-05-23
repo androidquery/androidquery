@@ -148,7 +148,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return t();
 	}
 	
-	public T hide(){
+	public T invisible(){
 		
 		if(view != null){
 			view.setVisibility(View.INVISIBLE);
@@ -157,7 +157,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return t();
 	}
 	
-	public T show(){
+	public T visible(){
 		
 		if(view != null){
 			view.setVisibility(View.VISIBLE);
