@@ -53,7 +53,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	@SuppressWarnings("unchecked")
-	private T t(){
+	private T self(){
 		return (T) this;
 	}
 
@@ -63,7 +63,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public T id(int id){
 		view = findView(id);
-		return t();
+		return self();
 	}
 	
 	
@@ -73,7 +73,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			TextView tv = (TextView) view;
 			tv.setText(text);
 		}
-		return t();
+		return self();
 	}
 	
 	public T text(Spanned text){
@@ -83,7 +83,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			TextView tv = (TextView) view;
 			tv.setText(text);
 		}
-		return t();
+		return self();
 	}
 	
 	public T image(int id){
@@ -97,7 +97,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			}
 		}
 		
-		return t();
+		return self();
 	}
 	
 	public T image(Drawable drawable){
@@ -107,7 +107,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			iv.setImageDrawable(drawable);
 		}
 		
-		return t();
+		return self();
 	}
 	
 	public T image(Bitmap bm){
@@ -117,7 +117,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			iv.setImageBitmap(bm);
 		}
 		
-		return t();
+		return self();
 	}
 	
 	public T transparent(boolean transparent){
@@ -126,7 +126,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			UIUtility.transparent(view, transparent);
 		}
 		
-		return t();
+		return self();
 	}
 	
 	public T enabled(boolean enable){
@@ -135,7 +135,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			view.setEnabled(enable);
 		}
 		
-		return t();
+		return self();
 	}
 	
 	
@@ -145,7 +145,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			view.setVisibility(View.GONE);
 		}
 		
-		return t();
+		return self();
 	}
 	
 	public T invisible(){
@@ -154,7 +154,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			view.setVisibility(View.INVISIBLE);
 		}
 		
-		return t();
+		return self();
 	}
 	
 	public T visible(){
@@ -163,7 +163,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			view.setVisibility(View.VISIBLE);
 		}
 		
-		return t();
+		return self();
 	}
 	
 
@@ -179,7 +179,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		}
 		
-		return t();
+		return self();
 	}
 	
 	public T dataChanged(){
@@ -201,7 +201,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		
 		
-		return t();
+		return self();
 	}
 	
 	private void invokeHandler(Object handler, String callback, Class<?>[] cls, Object... params){
@@ -249,7 +249,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			});
 		}
 		
-		return t();
+		return self();
 	}
 	
 	private static Class<?>[] ON_ITEM_CLICK_SIG = {AdapterView.class, View.class, int.class, long.class};
@@ -274,7 +274,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		}
 		
-		return t();
+		return self();
 		
 	}
 	
@@ -318,7 +318,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			
 		}
 		
-		return t();
+		return self();
 	}
 	
 	private static Class<?>[] PENDING_TRANSITION_SIG = {int.class, int.class};
@@ -328,7 +328,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			invokeHandler(act, "overridePendingTransition", PENDING_TRANSITION_SIG, enterAnim, exitAnim);
 		}
 		
-		return t();
+		return self();
 	}
 	
 	private static Class<?>[] LAYER_TYPE_SIG = {int.class, Paint.class};
@@ -338,7 +338,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			invokeHandler(view, "setLayerType", LAYER_TYPE_SIG, type, paint);
 		}
 		
-		return t();
+		return self();
 	}
 	
 	
@@ -360,7 +360,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			
 		}
 		
-		return t();
+		return self();
 	}
 	
 	private int dip2pixel(float n){
@@ -387,7 +387,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		}
 		
-		return t();
+		return self();
 	}
 	
 	
