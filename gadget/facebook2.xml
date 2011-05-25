@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+  <ModulePrefs title="NightLight2DFaceBookGadget" height="500" width="500" scaling="false"/> 
+  <Content type="html">
+     <![CDATA[ 
+     <div>
+
+<iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FAndroid-Query%2F205050232863343&amp;width=500&amp;colorscheme=light&amp;show_faces=true&amp;stream=false&amp;header=true&amp;height=62" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:500px; height:62px;" allowTransparency="true"></iframe>
+</div>
+     ]]>
+  </Content> 
+</Module>
