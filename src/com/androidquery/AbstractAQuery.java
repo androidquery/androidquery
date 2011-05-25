@@ -1,3 +1,19 @@
+/*
+ * Copyright 2011 - Peter Liu (tinyeeliu@gmail.com)
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package com.androidquery;
 
 import java.lang.reflect.Method;
@@ -6,6 +22,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.text.Editable;
 import android.text.Spanned;
 import android.util.TypedValue;
 import android.view.View;
@@ -66,6 +83,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	public T text(int resid){
+		
+		if(view != null){			
+			TextView tv = (TextView) view;
+			tv.setText(resid);
+		}
+		return self();
+	}
 	
 	public T text(CharSequence text){
 				
@@ -231,6 +256,28 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public ImageView getImageView(){
 		return (ImageView) view;
 	}
+	
+	public TextView getTextView(){
+		return (TextView) view;
+	}
+	
+	public EditText getEditText(){
+		return (EditText) view;
+	}
+	
+	public Editable getEditable(){
+		
+		Editable result = null;
+		
+		if(view instanceof EditText){
+			result = ((EditText) view).getEditableText();
+		}
+		
+		return result;
+	}
+	
+	
+	
 	
 	private static Class<?>[] ON_CLICK_SIG = {View.class};
 	public T clicked(Object obj, String method){
