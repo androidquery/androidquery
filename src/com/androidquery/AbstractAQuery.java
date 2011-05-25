@@ -16,6 +16,7 @@
 
 package com.androidquery;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import android.app.Activity;
@@ -34,6 +35,11 @@ import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 
+/**
+ * The core class of AQuery. Contains all the methods available from an AQuery object.
+ *
+ * @param <T> the generic type
+ */
 public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Constants {
 
 	private View root;
@@ -41,16 +47,58 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	protected View view;
 	
-	protected abstract T create(View view);
+
+	private T create(View view){
+		
+		T result = null;
+		
+		try{
+			Constructor<T> c = getConstructor();
+			result = (T) c.newInstance(view);
+		}catch(Exception e){
+			//should never happen
+			e.printStackTrace();
+		}
+		return result;
+		
+	}
 	
+	private Constructor<T> constructor;
+	@SuppressWarnings("unchecked")
+	private Constructor<T> getConstructor(){
+		
+		if(constructor == null){
+		
+			try{
+				constructor = (Constructor<T>) getClass().getConstructor(View.class);
+			}catch(Exception e){
+				//should never happen
+				e.printStackTrace();
+			}
+		}
+		
+		return constructor;
+	}
+	
+	/**
+	 * Instantiates a new AQuery object.
+	 *
+	 * @param act Activity that's the parent of the to-be-operated views
+	 */
 	public AbstractAQuery(Activity act){
 		this.act = act;
 		this.view = root;
 	}
 	
+	/**
+	 * Instantiates a new AQuery object.
+	 *
+	 * @param root The view container that's the parent of the to-be-operated views. 
+	 */
 	public AbstractAQuery(View root){
 		this.root = root;
 		this.view = root;
+		
 	}
 	
 	private View findView(int id){
@@ -64,8 +112,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	
+	/**
+	 * Return a new AQuery object that uses the found view as a root.
+	 *
+	 * @param id the id
+	 * @return self
+	 */
 	public T find(int id){
 		View view = findView(id);
+		
 		return create(view);
 	}
 	
@@ -74,15 +129,32 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return (T) this;
 	}
 
+	/**
+	 * Return the current operating view.
+	 *
+	 * @return the view
+	 */
 	public View getView(){
 		return view;
 	}
 	
+	/**
+	 * Points the current operating view to the first view found with the id under the root.
+	 *
+	 * @param id the id
+	 * @return self
+	 */
 	public T id(int id){
 		view = findView(id);
 		return self();
 	}
 	
+	/**
+	 * Set the text of a TextView.
+	 *
+	 * @param resid the resid
+	 * @return self
+	 */
 	public T text(int resid){
 		
 		if(view != null){			
@@ -92,6 +164,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Set the text of a TextView.
+	 *
+	 * @param text the text
+	 * @return self
+	 */
 	public T text(CharSequence text){
 				
 		if(view != null){			
@@ -101,6 +179,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Set the text of a TextView.
+	 *
+	 * @param text the text
+	 * @return self
+	 */
 	public T text(Spanned text){
 		
 		
@@ -111,20 +195,47 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	public T image(int id){
+	/**
+	 * Set the text color of a TextView.
+	 *
+	 * @param color the color
+	 * @return self
+	 */
+	public T textColor(int color){
+		
+		if(view != null){			
+			TextView tv = (TextView) view;
+			tv.setTextColor(color);
+		}
+		return self();
+	}
+	
+	/**
+	 * Set the image of an ImageView.
+	 *
+	 * @param id the id
+	 * @return self
+	 */
+	public T image(int resid){
 		
 		if(view != null){
 			ImageView iv = (ImageView) view;
-			if(id == 0){
+			if(resid == 0){
 				iv.setImageBitmap(null);
 			}else{				
-				iv.setImageResource(id);
+				iv.setImageResource(resid);
 			}
 		}
 		
 		return self();
 	}
 	
+	/**
+	 * Set the image of an ImageView.
+	 *
+	 * @param drawable the drawable
+	 * @return self
+	 */
 	public T image(Drawable drawable){
 		
 		if(view != null){
@@ -135,6 +246,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Set the image of an ImageView.
+	 *
+	 * @param bm the bm
+	 * @return self
+	 */
 	public T image(Bitmap bm){
 		
 		if(view != null){
@@ -145,6 +262,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Set a view to be transparent.
+	 *
+	 * @param transparent the transparent
+	 * @return self
+	 */
 	public T transparent(boolean transparent){
 		
 		if(view != null){
@@ -154,6 +277,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Enable a view.
+	 *
+	 * @param enable the enable
+	 * @return self
+	 */
 	public T enabled(boolean enable){
 		
 		if(view != null){
@@ -164,6 +293,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	
+	/**
+	 * Set view visibility to View.GONE.
+	 *
+	 * @return self
+	 */
 	public T gone(){
 		
 		if(view != null){
@@ -173,6 +307,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Set view visibility to View.INVISIBLE.
+	 *
+	 * @return self
+	 */
 	public T invisible(){
 		
 		if(view != null){
@@ -182,6 +321,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Set view visibility to View.VISIBLE.
+	 *
+	 * @return self
+	 */
 	public T visible(){
 		
 		if(view != null){
@@ -192,6 +336,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 
+	/**
+	 * Set view background.
+	 *
+	 * @param id the id
+	 * @return self
+	 */
 	public T background(int id){
 		
 		if(view != null){
@@ -207,6 +357,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Notify a ListView that the data of it's adapter is changed.
+	 *
+	 * @return self
+	 */
 	public T dataChanged(){
 		
 		if(view != null){
@@ -241,10 +396,20 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
     }
 	
 	
+	/**
+	 * Checks if the current view exist.
+	 *
+	 * @return true, if is exist
+	 */
 	public boolean isExist(){
 		return view != null;
 	}
 	
+	/**
+	 * Gets the tag of the view.
+	 *
+	 * @return tag
+	 */
 	public Object getTag(){
 		Object result = null;
 		if(view != null){
@@ -253,18 +418,38 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return result;
 	}
 	
+	/**
+	 * Gets the current view as an image view.
+	 *
+	 * @return the image view
+	 */
 	public ImageView getImageView(){
 		return (ImageView) view;
 	}
 	
+	/**
+	 * Gets the current view as a text view.
+	 *
+	 * @return selfext view
+	 */
 	public TextView getTextView(){
 		return (TextView) view;
 	}
 	
+	/**
+	 * Gets the current view as an edit text.
+	 *
+	 * @return the edits the text
+	 */
 	public EditText getEditText(){
 		return (EditText) view;
 	}
 	
+	/**
+	 * Gets the editable.
+	 *
+	 * @return the editable
+	 */
 	public Editable getEditable(){
 		
 		Editable result = null;
@@ -280,6 +465,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	
 	private static Class<?>[] ON_CLICK_SIG = {View.class};
+	
+	/**
+	 * Register a callback method for when the view is clicked. Method must have signature of method(View view).
+	 *
+	 * @param obj The handler that has the public callback method.
+	 * @param method The method name of the callback.
+	 * @return self
+	 */
 	public T clicked(Object obj, String method){
 		
 		if(view != null){			
@@ -300,6 +493,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	private static Class<?>[] ON_ITEM_CLICK_SIG = {AdapterView.class, View.class, int.class, long.class};
+	
+	/**
+	 * Register a callback method for when an item is clicked in the ListView. Method must have signature of method(AdapterView<?> parent, View v, int pos, long id).
+	 *
+	 * @param obj The handler that has the public callback method.
+	 * @param method The method name of the callback.
+	 * @return self
+	 */
 	public T itemClicked(Object obj, String method){
 		
 		if(view != null && view instanceof AbsListView){
@@ -330,6 +531,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	private static Class<?>[] ON_SCROLLED_STATE_SIG = {AbsListView.class, int.class};
+	
+	/**
+	 * Register a callback method for when a list is scrolled to bottom. Method must have signature of method(Object obj, String method).
+	 *
+	 * @param obj The handler that has the public callback method.
+	 * @param method The method name of the callback.
+	 * @return self
+	 */
 	public T scrolledBottom(Object obj, String method){
 		
 		if(view != null && view instanceof AbsListView){
@@ -369,7 +578,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	private static Class<?>[] PENDING_TRANSITION_SIG = {int.class, int.class};
-	public T overridePendingTransition(int enterAnim, int exitAnim){
+	
+	/**
+	 * Call the overridePendingTransition of the activity. Only applies when device API is 5+.
+	 *
+	 * @param enterAnim the enter animation
+	 * @param exitAnim the exit animation
+	 * @return self
+	 */
+	public T overridePendingTransition5(int enterAnim, int exitAnim){
 		
 		if(act != null){
 			invokeHandler(act, "overridePendingTransition", PENDING_TRANSITION_SIG, enterAnim, exitAnim);
@@ -379,7 +596,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	private static Class<?>[] LAYER_TYPE_SIG = {int.class, Paint.class};
-	public T layerType(int type, Paint paint){
+	
+	/**
+	 * Call the setLayerType of the view. Only applies when device API is 11+.
+	 *
+	 * @param type the type
+	 * @param paint the paint
+	 * @return self
+	 */
+	public T setLayerType11(int type, Paint paint){
 		
 		if(view != null){
 			invokeHandler(view, "setLayerType", LAYER_TYPE_SIG, type, paint);
@@ -389,6 +614,28 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	
+	/**
+	 * Set the activity to be hardware accelerated. Only applies when device API is 11+.
+	 *
+	 * @return self
+	 */
+	public T hardwareAccelerated11(){
+		
+		if(act != null){
+			act.getWindow().setFlags(AQuery.FLAG_HARDWARE_ACCELERATED, AQuery.FLAG_HARDWARE_ACCELERATED);
+		}
+		
+		return self();
+	}
+	
+	
+	
+	
+	/**
+	 * Clear a view. Applies to ImageView, WebView, and TextView.
+	 *
+	 * @return self
+	 */
 	public T clear(){
 		
 		if(view != null){
@@ -402,6 +649,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 				wv.stopLoading();
 				wv.clearView();
 				wv.setTag(null);
+			}else if(view instanceof TextView){
+				TextView tv = ((TextView) view);
+				tv.setText("");
 			}
 			
 			
@@ -415,6 +665,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return value;
 	}
 	
+	/**
+	 * Set the margin of a view. Notes all parameters are in DIP, not in pixel.
+	 *
+	 * @param leftDip the left dip
+	 * @param topDip the top dip
+	 * @param rightDip the right dip
+	 * @param bottomDip the bottom dip
+	 * @return self
+	 */
 	public T margin(float leftDip, float topDip, float rightDip, float bottomDip){
 		
 		if(view != null){

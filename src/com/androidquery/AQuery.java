@@ -29,7 +29,10 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
+/**
+ * The main class of AQuery. All methods are actually inherited from AbstractAQuery.
+ *
+ */
 public class AQuery extends AbstractAQuery<AQuery>{
 
 	public AQuery(Activity act) {
@@ -40,9 +43,5 @@ public class AQuery extends AbstractAQuery<AQuery>{
 		super(view);
 	}
 
-	@Override
-	protected AQuery create(View view) {
-		return new AQuery(view);
-	}
 
 }
