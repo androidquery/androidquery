@@ -390,7 +390,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			if(method != null){
 				method.invoke(handler, params);			
 			}
-		}catch(Exception e){
+		}catch(NoSuchMethodException e){
+			//no such method, do nothing
+		}catch(Exception e){		
 			e.printStackTrace();
 		}
     }
@@ -607,6 +609,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T setLayerType11(int type, Paint paint){
 		
 		if(view != null){
+			
 			invokeHandler(view, "setLayerType", LAYER_TYPE_SIG, type, paint);
 		}
 		
@@ -622,6 +625,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T hardwareAccelerated11(){
 		
 		if(act != null){
+			
 			act.getWindow().setFlags(AQuery.FLAG_HARDWARE_ACCELERATED, AQuery.FLAG_HARDWARE_ACCELERATED);
 		}
 		
