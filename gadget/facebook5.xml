@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <Module>
-  <ModulePrefs title="NightLight2DFaceBookGadget" height="700" width="500" scaling="false"/> 
+  <ModulePrefs title="NightLight2DFaceBookGadget" height="250" width="500" scaling="false"/> 
   <Content type="html">
      <![CDATA[ 
      <div>
+     
+     <script>
+     var addthis_share =
+{
+   url:"http://code.google.com/p/android-query/"
+}
+     </script>     
+     
 <!-- AddThis Button BEGIN -->
 <div addthis:url="http://code.google.com/p/android-query/" class="addthis_toolbox addthis_default_style " style="margin-bottom:10px;">
 <a class="addthis_button_preferred_1"></a>
