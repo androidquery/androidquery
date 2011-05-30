@@ -83,7 +83,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Instantiates a new AQuery object.
 	 *
-	 * @param act Activity that's the parent of the to-be-operated views
+	 * @param act Activity that's the parent of the to-be-operated views.
 	 */
 	public AbstractAQuery(Activity act){
 		this.act = act;
@@ -93,7 +93,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Instantiates a new AQuery object.
 	 *
-	 * @param root The view container that's the parent of the to-be-operated views. 
+	 * @param root The view container that's the parent of the to-be-operated views..
 	 */
 	public AbstractAQuery(View root){
 		this.root = root;
@@ -423,7 +423,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Gets the current view as an image view.
 	 *
-	 * @return the image view
+	 * @return ImageView
 	 */
 	public ImageView getImageView(){
 		return (ImageView) view;
@@ -432,7 +432,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Gets the current view as a text view.
 	 *
-	 * @return selfext view
+	 * @return TextView
 	 */
 	public TextView getTextView(){
 		return (TextView) view;
@@ -441,11 +441,66 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Gets the current view as an edit text.
 	 *
-	 * @return the edits the text
+	 * @return EditText
 	 */
 	public EditText getEditText(){
 		return (EditText) view;
 	}
+	
+	/**
+	 * Gets the current view as an progress bar.
+	 *
+	 * @return ProgressBar
+	 */
+	public ProgressBar getProgressBar(){
+		return (ProgressBar) view;
+	}
+	
+	/**
+	 * Gets the current view as a button.
+	 *
+	 * @return Button
+	 */
+	public Button getButton(){
+		return (Button) view;
+	}
+	
+	/**
+	 * Gets the current view as a checkbox.
+	 *
+	 * @return CheckBox
+	 */
+	public CheckBox getCheckBox(){
+		return (CheckBox) view;
+	}
+	
+	/**
+	 * Gets the current view as a listview.
+	 *
+	 * @return ListView
+	 */
+	public ListView getListView(){
+		return (ListView) view;
+	}
+	
+	/**
+	 * Gets the current view as a gridview.
+	 *
+	 * @return GridView
+	 */
+	public GridView getGridView(){
+		return (GridView) view;
+	}
+	
+	/**
+	 * Gets the current view as a webview.
+	 *
+	 * @return WebView
+	 */
+	public WebView getWebView(){
+		return (WebView) view;
+	}
+	
 	
 	/**
 	 * Gets the editable.
@@ -494,6 +549,22 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	
+	/**
+	 * Register a callback method for when the view is clicked. 
+	 *
+	 * @param listener The callback method.
+	 * @return self
+	 */
+	public T clicked(OnClickListener listener){
+		
+		if(view != null){						
+			view.setOnClickListener(listener);
+		}
+		
+		return self();
+	}
+	
 	private static Class<?>[] ON_ITEM_CLICK_SIG = {AdapterView.class, View.class, int.class, long.class};
 	
 	/**
@@ -527,6 +598,25 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 		
 	}
+	
+	/**
+	 * Register a callback method for when an item is clicked in the ListView.
+	 *
+	 * @param listener The callback method.
+	 * @return self
+	 */
+	public T itemClicked(OnItemClickListener listener){
+		
+		if(view != null && view instanceof AbsListView){
+		
+			AbsListView alv = (AbsListView) view;
+			alv.setOnItemClickListener(listener);
+		
+		}
+		
+		return self();
+		
+	}	
 	
 	protected void debug(Object msg){
 		System.err.println(msg);

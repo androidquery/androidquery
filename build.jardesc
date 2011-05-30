@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
-    <jar path="AndroidQuery/dist/android-query-0.0.2.jar"/>
+    <jar path="AndroidQuery/dist/android-query-0.1.0.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/AndroidQuery/build.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
@@ -11,6 +11,6 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=AndroidQuery/src"/>
+        <javaElement handleIdentifier="=AndroidQuery/src&lt;com.androidquery"/>
     </selectedElements>
 </jardesc>
