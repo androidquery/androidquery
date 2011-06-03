@@ -2,24 +2,20 @@ package com.androidquerytest;
 
 import org.json.JSONObject;
 
-import com.androidquery.AQuery;
-import com.androidquery.AbstractAQuery;
-import com.androidquery.R;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.BitmapAjaxCallback;
-import com.androidquery.callback.BytesAjaxCallback;
-import com.androidquery.callback.HTMLAjaxCallback;
-import com.androidquery.callback.JSONAjaxCallback;
-import com.androidquery.util.AsyncUtility;
-import com.androidquery.util.FileCacheUtility;
-import com.androidquery.util.ImageUtility;
-import com.androidquery.util.Utility;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+
+import com.androidquery.AQuery;
+import com.androidquery.R;
+import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.callback.BytesAjaxCallback;
+import com.androidquery.callback.HTMLAjaxCallback;
+import com.androidquery.callback.JSONAjaxCallback;
+import com.androidquery.util.AsyncUtility;
+import com.androidquery.util.Utility;
 
 public class ListenerTestActivity extends Activity {
 
@@ -143,7 +139,7 @@ public class ListenerTestActivity extends Activity {
 	}
 	
 	public void clearDisk(View view){
-		FileCacheUtility.cleanCacheAsync(this, 0, 0);
+		Utility.cleanCacheAsync(this, 0, 0);
 	}
 	
 	public void clearMem(View view){

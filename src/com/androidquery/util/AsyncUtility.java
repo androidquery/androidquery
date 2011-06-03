@@ -1,16 +1,12 @@
 package com.androidquery.util;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.widget.ImageView;
+
+import com.androidquery.callback.AjaxCallback;
 
 public class AsyncUtility {
 
@@ -18,7 +14,7 @@ public class AsyncUtility {
 	
 	public static <T> void async(Context context, String url, boolean memCache, boolean fileCache, boolean network, AjaxCallback<T> callback){
 		
-		UIUtility.getHandler();
+		Utility.getHandler();
 		
 		T object = callback.memGet(url);
 		
@@ -30,7 +26,7 @@ public class AsyncUtility {
 			ExecutorService exe = getExecutor();
 			
 			File cacheDir = null;
-			if(fileCache) cacheDir = FileCacheUtility.getCacheDir(context);
+			if(fileCache) cacheDir = Utility.getCacheDir(context);
 			
 			FetcherTask<T> ft = new FetcherTask<T>(url, callback, memCache, cacheDir, network);
 			
@@ -104,7 +100,7 @@ public class AsyncUtility {
 						
 						if(network){
 						
-							HttpResult hr = IOUtility.openBytes(url, true);
+							HttpResult hr = Utility.openBytes(url, true);
 							byte[] data = hr.getData();
 							
 							if(data != null){
@@ -130,7 +126,7 @@ public class AsyncUtility {
 					
 					if(result != null){
 						
-						UIUtility.post(this);
+						Utility.post(this);
 						
 					}else{
 						clear();

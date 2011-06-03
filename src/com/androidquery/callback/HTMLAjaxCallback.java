@@ -1,8 +1,5 @@
 package com.androidquery.callback;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import com.androidquery.util.Utility;
 
 public abstract class HTMLAjaxCallback extends AjaxCallback<String>{

@@ -1,14 +1,12 @@
 package com.androidquery.callback;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
-
-import com.androidquery.util.Cache;
-import com.androidquery.util.Utility;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import com.androidquery.util.Cache;
 
 public abstract class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 

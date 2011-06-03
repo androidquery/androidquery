@@ -17,15 +17,6 @@
 package com.androidquery;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.util.AsyncUtility;
-import com.androidquery.util.Constants;
-import com.androidquery.util.ImageUtility;
-import com.androidquery.util.UIUtility;
-import com.androidquery.util.Utility;
 
 import android.app.Activity;
 import android.content.Context;
@@ -40,9 +31,26 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.webkit.WebView;
-import android.widget.*;
-import android.widget.AbsListView.OnScrollListener;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.util.AsyncUtility;
+import com.androidquery.util.Common;
+import com.androidquery.util.Constants;
+import com.androidquery.util.Utility;
+
 
 /**
  * The core class of AQuery. Contains all the methods available from an AQuery object.
@@ -294,7 +302,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view != null){
 			ImageView iv = (ImageView) view;
-			ImageUtility.openAsyncImage(iv, url, memCache, fileCache);
+			Utility.openAsyncImage(iv, url, memCache, fileCache);
 		}
 		
 		return self();
@@ -311,7 +319,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T transparent(boolean transparent){
 		
 		if(view != null){
-			UIUtility.transparent(view, transparent);
+			Utility.transparent(view, transparent);
 		}
 		
 		return self();
@@ -424,42 +432,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	private void invokeHandler(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params){
-    	
-		
-		try{   
-			invokeMethod(handler, callback, fallback, cls, params);
-		}catch(Exception e){		
-			Utility.report(e);
-		}
-		
-		
-		
-    }
-	
-	private void invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params) throws Exception{
-		
-		try{   
-			Method method = handler.getClass().getMethod(callback, cls);
-			method.invoke(handler, params);
-			return;
-		}catch(NoSuchMethodException e){
-		}
-		
-		
-		try{
-			if(fallback){
-				Method method = handler.getClass().getMethod(callback);
-				
-				method.invoke(handler);
-				return;
-			}
-		}catch(NoSuchMethodException e){
-		}
-		
-		return;
-		
-	}
+
 	
 	
 	/**
@@ -585,29 +558,22 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	
 	
-	private static Class<?>[] ON_CLICK_SIG = {View.class};
+	private static final Class<?>[] ON_CLICK_SIG = {View.class};
 	
 	/**
 	 * Register a callback method for when the view is clicked. Method must have signature of method(View view).
 	 *
-	 * @param obj The handler that has the public callback method.
+	 * @param handler The handler that has the public callback method.
 	 * @param method The method name of the callback.
 	 * @return self
 	 */
-	public T clicked(Object obj, String method){
+	public T clicked(Object handler, String method){
 		
 		if(view != null){			
 			
-			final Object o = obj;
-			final String callback = method;
+			Common common = new Common().forward(handler, method, true, ON_CLICK_SIG);
+			view.setOnClickListener(common);
 			
-			view.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					invokeHandler(o, callback, true, ON_CLICK_SIG, v);
-				}
-			});
 		}
 		
 		return self();
@@ -634,29 +600,19 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Register a callback method for when an item is clicked in the ListView. Method must have signature of method(AdapterView<?> parent, View v, int pos, long id).
 	 *
-	 * @param obj The handler that has the public callback method.
+	 * @param handler The handler that has the public callback method.
 	 * @param method The method name of the callback.
 	 * @return self
 	 */
-	public T itemClicked(Object obj, String method){
+	public T itemClicked(Object handler, String method){
 		
 		if(view != null && view instanceof AbsListView){
 		
-			final Object o = obj;
-			final String callback = method;
-			
-			
 			AbsListView alv = (AbsListView) view;
-			alv.setOnItemClickListener(new OnItemClickListener() {
-	
-				@Override
-				public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
-						
-					invokeHandler(o, callback, false, ON_ITEM_CLICK_SIG, parent, v, pos, id);
-					
-				}
-			});
-		
+			
+			Common common = new Common().forward(handler, method, true, ON_ITEM_CLICK_SIG);
+			alv.setOnItemClickListener(common);
+			
 		}
 		
 		return self();
@@ -691,42 +647,17 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Register a callback method for when a list is scrolled to bottom. Method must have signature of method(Object obj, String method).
 	 *
-	 * @param obj The handler that has the public callback method.
+	 * @param handler The handler that has the public callback method.
 	 * @param method The method name of the callback.
 	 * @return self
 	 */
-	public T scrolledBottom(Object obj, String method){
+	public T scrolledBottom(Object handler, String method){
 		
 		if(view != null && view instanceof AbsListView){
 		
-			final Object o = obj;
-			final String callback = method;
-			
 			AbsListView lv = (AbsListView) view;
-			
-	        lv.setOnScrollListener(new OnScrollListener() {
-				
-				@Override
-				public void onScrollStateChanged(AbsListView view, int scrollState) {
-					
-					
-					int cc = view.getCount();
-					int last = view.getLastVisiblePosition();
-					
-					if(scrollState == OnScrollListener.SCROLL_STATE_IDLE && cc == last + 1){
-						
-						invokeHandler(o, callback, true, ON_SCROLLED_STATE_SIG, view, scrollState);
-						
-						
-					}
-					
-				}
-				
-				@Override
-				public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-					
-				}
-			});
+			Common common = new Common().forward(handler, method, true, ON_SCROLLED_STATE_SIG);
+			lv.setOnScrollListener(common);
 			
 		}
 		
@@ -745,7 +676,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T overridePendingTransition5(int enterAnim, int exitAnim){
 		
 		if(act != null){
-			invokeHandler(act, "overridePendingTransition", false, PENDING_TRANSITION_SIG, enterAnim, exitAnim);
+			Utility.invokeHandler(act, "overridePendingTransition", false, PENDING_TRANSITION_SIG, enterAnim, exitAnim);
 		}
 		
 		return self();
@@ -764,7 +695,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view != null){
 			
-			invokeHandler(view, "setLayerType", false, LAYER_TYPE_SIG, type, paint);
+			Utility.invokeHandler(view, "setLayerType", false, LAYER_TYPE_SIG, type, paint);
 		}
 		
 		return self();

@@ -3,12 +3,7 @@ package com.androidquery.callback;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 
-import org.json.JSONStringer;
-
-import com.androidquery.util.DataUtility;
-import com.androidquery.util.FileCacheUtility;
 import com.androidquery.util.Utility;
 
 public abstract class AjaxCallback<T> {
@@ -17,7 +12,7 @@ public abstract class AjaxCallback<T> {
 	
 	public T transform(File file){
 		try {
-			return transform(DataUtility.toBytes(new FileInputStream(file)));
+			return transform(Utility.toBytes(new FileInputStream(file)));
 		} catch (FileNotFoundException e) {
 			Utility.report(e);
 			return null;
@@ -34,11 +29,11 @@ public abstract class AjaxCallback<T> {
 	}
 	
 	public File fileGet(String url, File cacheDir){
-		return FileCacheUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
+		return Utility.getExistedCacheByUrlSetAccess(cacheDir, url);
 	}
 	
 	public void filePut(String url, File cacheDir, byte[] data){
-		FileCacheUtility.storeAsync(cacheDir, url, data, 1000);
+		Utility.storeAsync(cacheDir, url, data, 1000);
 	}
 	
 }

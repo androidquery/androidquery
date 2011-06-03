@@ -16,18 +16,8 @@
 
 package com.androidquery;
 
-import java.lang.reflect.Method;
-
 import android.app.Activity;
-import android.text.Spanned;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.webkit.WebView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 /**
  * The main class of AQuery. All methods are actually inherited from AbstractAQuery.
