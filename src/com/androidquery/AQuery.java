@@ -16,6 +16,8 @@
 
 package com.androidquery;
 
+import com.androidquery.callback.AjaxCallback;
+
 import android.app.Activity;
 import android.view.View;
 
@@ -33,7 +35,6 @@ public class AQuery extends AbstractAQuery<AQuery>{
 	public AQuery(View view) {
 		super(view);
 	}
-
 	
 	
 

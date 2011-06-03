@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -59,9 +60,9 @@ public class Utility {
     	
 		
 		try{   
-			Method method = findMethod(handler, callback, fallback, cls);
-			//invokeMethod(handler, callback, fallback, cls, params);
-			method.invoke(handler, params);
+			//Method method = findMethod(handler, callback, fallback, cls);
+			invokeMethod(handler, callback, fallback, cls, params);
+			//method.invoke(handler, params);
 		}catch(Exception e){		
 			Utility.report(e);
 		}
@@ -70,12 +71,12 @@ public class Utility {
 		
     }
 	
-	public static Method findMethod(Object handler, String callback, boolean fallback, Class<?>[] cls){
+	private static void invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params) throws Exception{
 		
 		try{   
 			Method method = handler.getClass().getMethod(callback, cls);
-			//method.invoke(handler, params);
-			return method;
+			method.invoke(handler, params);			
+			return;// method;
 		}catch(NoSuchMethodException e){
 		}
 		
@@ -83,13 +84,12 @@ public class Utility {
 		try{
 			if(fallback){
 				Method method = handler.getClass().getMethod(callback);				
-				//method.invoke(handler);
-				return method;
+				method.invoke(handler);
+				return;// method;
 			}
 		}catch(NoSuchMethodException e){
 		}
 		
-		return null;
 		
 	}
 	
@@ -262,6 +262,7 @@ public class Utility {
 		iw.setTag(url);
 	}
 	
+	/*
 	private static void setBitmapIfValid(ImageView iw, String url, Bitmap bm){
 		
 		if(url.equals(iw.getTag())){
@@ -274,7 +275,7 @@ public class Utility {
 		
 		
 	}
-
+	*/
 	
 	public static void openAsyncImage(ImageView view, String url, boolean memCache, boolean fileCache){
 		
@@ -286,6 +287,7 @@ public class Utility {
 			return;
 		}
 		
+		/*
 		final ImageView iw = view;
 		BitmapAjaxCallback cb = new BitmapAjaxCallback() {
 			
@@ -293,7 +295,10 @@ public class Utility {
 			public void callback(String url, Bitmap object, int statusCode, String statusMessage) {
 				setBitmapIfValid(iw, url, object);
 			}
-		};
+		};*/
+		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback(view);
+		
 		
 		boolean network = !checkInProgress(view, url);
 		

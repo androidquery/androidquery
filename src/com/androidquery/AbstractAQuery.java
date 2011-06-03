@@ -802,8 +802,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback handler
 	 * @return self
 	 */
-	public T ajax(String url, AjaxCallback<?> callback){
+	
+	public <K> T ajax(String url, Class<K> type, AjaxCallback<K> callback){
 		
+		callback.setType(type);
 		AsyncUtility.async(getContext(), url, false, false, true, callback);
 		
 		return self();

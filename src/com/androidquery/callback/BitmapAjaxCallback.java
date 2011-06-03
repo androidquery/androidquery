@@ -5,16 +5,24 @@ import java.util.Map;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.androidquery.util.Cache;
 
-public abstract class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
+public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 
-	private static int SMALL_MAX = 40;
-	private static int BIG_MAX = 40;
+	private static int SMALL_MAX = 20;
+	private static int BIG_MAX = 20;
 	
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
+	
+	private ImageView iv;
+	
+	public BitmapAjaxCallback(ImageView iv){
+		this.iv = iv;
+	}
 	
 	@Override
 	public Bitmap transform(File file) {
@@ -25,7 +33,25 @@ public abstract class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	public Bitmap transform(byte[] data) {
 		return BitmapFactory.decodeByteArray(data, 0, data.length);
 	}
+	
+	@Override
+	public void callback(String url, Bitmap bm, int statusCode, String statusMessage) {
+		//setBitmapIfValid(iv, url, object);
+		if(url.equals(iv.getTag())){
+			iv.setVisibility(View.VISIBLE);
+			iv.setImageBitmap(bm);
+		}
+	}
 
+	public static void setIconCacheLimit(int limit){
+		SMALL_MAX = limit;
+		clearCache();
+	}
+	
+	public static void setCacheLimit(int limit){
+		BIG_MAX = limit;
+		clearCache();
+	}
 	
 	public static void clearCache(){
 		bigCache = null;

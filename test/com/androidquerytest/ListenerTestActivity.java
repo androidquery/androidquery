@@ -10,10 +10,8 @@ import android.view.View.OnClickListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
+import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
-import com.androidquery.callback.BytesAjaxCallback;
-import com.androidquery.callback.HTMLAjaxCallback;
-import com.androidquery.callback.JSONAjaxCallback;
 import com.androidquery.util.AsyncUtility;
 import com.androidquery.util.Utility;
 
@@ -66,6 +64,14 @@ public class ListenerTestActivity extends Activity {
 		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		
+		aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
+
+			@Override
+			public void callback(String url, byte[] object, int statusCode, String statusMessage) {
+				TestUtility.showToast(ListenerTestActivity.this, "length:" + object.length);
+			}
+		});
+		/*
 		AsyncUtility.async(this, url, false, false, true, new BytesAjaxCallback() {
 
 			@Override
@@ -73,7 +79,7 @@ public class ListenerTestActivity extends Activity {
 				TestUtility.showToast(ListenerTestActivity.this, "length:" + object.length);
 			}
 		});
-		
+		*/
 		
 	}
 	
@@ -81,6 +87,14 @@ public class ListenerTestActivity extends Activity {
 		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		
+		aq.ajax(url, Bitmap.class, new AjaxCallback<Bitmap>() {
+
+			@Override
+			public void callback(String url, Bitmap object, int statusCode, String statusMessage) {
+				TestUtility.showToast(ListenerTestActivity.this, "bm:" + object);
+			}
+		});
+		/*
 		AsyncUtility.async(this, url, true, true, true, new BitmapAjaxCallback() {
 
 			@Override
@@ -89,14 +103,14 @@ public class ListenerTestActivity extends Activity {
 			}
 		});
 		
-		
+		*/
 	}
 	
 	public void asyncHtml(){
 		
 		String url = "http://www.google.com";
 		
-		aq.ajax(url, new HTMLAjaxCallback() {
+		aq.ajax(url, String.class, new AjaxCallback<String>() {
 
 			@Override
 			public void callback(String url, String object, int statusCode, String statusMessage) {
@@ -120,6 +134,14 @@ public class ListenerTestActivity extends Activity {
 		
 		String url = "http://www.vikispot.com/api/children?spotId=1";
 		
+		aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+			@Override
+			public void callback(String url, JSONObject object, int statusCode, String statusMessage) {
+				TestUtility.showToast(ListenerTestActivity.this, "json:" + object);
+			}
+		});
+		/*
 		AsyncUtility.async(this, url, false, false, true, new JSONAjaxCallback() {
 
 			@Override
@@ -127,7 +149,7 @@ public class ListenerTestActivity extends Activity {
 				TestUtility.showToast(ListenerTestActivity.this, "json:" + object);
 			}
 		});
-		
+		*/
 	}
 	
 	
