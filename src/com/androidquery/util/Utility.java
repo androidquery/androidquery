@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -14,6 +13,8 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
+import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
 
 public class Utility {
@@ -158,7 +160,7 @@ public class Utility {
 	}
 	
 	
-	public static byte[] getMD5(byte[] data){
+	private static byte[] getMD5(byte[] data){
 
 		MessageDigest digest;
 		try {
@@ -234,80 +236,7 @@ public class Utility {
     	}
     }
     
-	private static boolean checkInProgress(ImageView view, String url){
-		
-		if(url.equals(view.getTag())){
-			return true;
-		}else{
-			return false;
-		}
-		
-	}
-	
-	private static void setBitmap(ImageView iw, String url, Bitmap bm){
-		
-		iw.setTag(url);
-		
-		if(bm != null){			
-			iw.setVisibility(View.VISIBLE);
-			iw.setImageBitmap(bm);
-		}else{
-			iw.setImageBitmap(null);	
-		}
-		
-	}
-	
-	private static void presetBitmap(ImageView iw, String url){
-		iw.setImageBitmap(null);
-		iw.setTag(url);
-	}
-	
-	/*
-	private static void setBitmapIfValid(ImageView iw, String url, Bitmap bm){
-		
-		if(url.equals(iw.getTag())){
-			iw.setVisibility(View.VISIBLE);
-			iw.setImageBitmap(bm);
-		}else{
-			//Utility.debug("url mismatch", url);
-			//do nothing, not the right iw anymore
-		}
-		
-		
-	}
-	*/
-	
-	public static void openAsyncImage(ImageView view, String url, boolean memCache, boolean fileCache){
-		
-		if(view == null) return;
-		
-		//invalid url
-		if(url == null || url.length() < 4){
-			setBitmap(view, null, null);
-			return;
-		}
-		
-		/*
-		final ImageView iw = view;
-		BitmapAjaxCallback cb = new BitmapAjaxCallback() {
-			
-			@Override
-			public void callback(String url, Bitmap object, int statusCode, String statusMessage) {
-				setBitmapIfValid(iw, url, object);
-			}
-		};*/
-		
-		BitmapAjaxCallback cb = new BitmapAjaxCallback(view);
-		
-		
-		boolean network = !checkInProgress(view, url);
-		
-		presetBitmap(view, url);		
-		
-		AsyncUtility.async(view.getContext(), url, memCache, fileCache, network, cb);
-		
-		
-	}
+
 	
 	private static ScheduledExecutorService storeExe;
 	private static ScheduledExecutorService getFileStoreExecutor(){
@@ -324,7 +253,6 @@ public class Utility {
 				
 		ScheduledExecutorService exe = getFileStoreExecutor();
 		
-		//Common task = new Common().method("storeFile").put("data", data).put("file", getFile(dir, url));
 		Common task = new Common().method("storeFile", STORE_FILE_SIG, getFile(dir, url), data);
 		exe.schedule(task, delay, TimeUnit.MILLISECONDS);
 	
@@ -352,7 +280,7 @@ public class Utility {
 		return result;
 	}
 	
-	public static String toFileName(String url){
+	private static String toFileName(String url){
 		
 		String hash = Utility.getMD5Hex(url);
 		return hash;
@@ -381,7 +309,7 @@ public class Utility {
 		return file;
 	}
 	
-	public static void lastAccess(File file){
+	private static void lastAccess(File file){
 		long now = System.currentTimeMillis();		
 		file.setLastModified(now);
 	}
@@ -426,7 +354,6 @@ public class Utility {
 			File[] files = cacheDir.listFiles();
 			if(files == null) return;
 			
-			//Arrays.sort(files, new FileAccessComparator());
 			Arrays.sort(files, new Common());
 			
 			if(testCleanNeeded(files, triggerSize)){
@@ -480,44 +407,6 @@ public class Utility {
 		Utility.debug("deleted files" , deletes);
 	}
 	
-	private static int NET_TIMEOUT = 30000;
-	
-	public static HttpResult openBytes(String urlPath, boolean retry) throws IOException{
-				
-		URL url = new URL(urlPath);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-           
-        connection.setUseCaches(false);
-        connection.setInstanceFollowRedirects(true);     
-        connection.setConnectTimeout(NET_TIMEOUT);
-        
-        int code = connection.getResponseCode();
-       
-        if(code == -1 && retry){
-        	Utility.debug("code -1", urlPath);
-        	return openBytes(urlPath, false);
-        }
-        
-        byte[] data = null;
-        String redirect = urlPath;
-        if(code == -1 || code < 200 || code >= 300){        	
-        	//throw new IOException();
-        }else{
-        	data = Utility.toBytes(connection.getInputStream());
-        	redirect = connection.getURL().toExternalForm();
-        }
-        
-        
-        
-        
-        HttpResult result = new HttpResult();
-        result.setData(data);
-        result.setCode(code);
-        result.setMessage(connection.getResponseMessage());
-        result.setRedirect(redirect);
-        
-        return result;
-        
-	}
+
 	
 }

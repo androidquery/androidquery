@@ -3,6 +3,7 @@ package com.androidquery.callback;
 import java.io.File;
 import java.util.Map;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
@@ -25,18 +26,18 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	public Bitmap transform(File file) {
+	protected Bitmap transform(File file) {
 		return BitmapFactory.decodeFile(file.getAbsolutePath());
 	}
 	
 	@Override
-	public Bitmap transform(byte[] data) {
+	protected Bitmap transform(byte[] data) {
 		return BitmapFactory.decodeByteArray(data, 0, data.length);
 	}
 	
 	@Override
-	public void callback(String url, Bitmap bm, int statusCode, String statusMessage) {
-		//setBitmapIfValid(iv, url, object);
+	protected void callback(String url, Bitmap bm, int statusCode, String statusMessage) {
+		
 		if(url.equals(iv.getTag())){
 			iv.setVisibility(View.VISIBLE);
 			iv.setImageBitmap(bm);
@@ -75,7 +76,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	public Bitmap memGet(String url){
+	protected Bitmap memGet(String url){
 		
 		Map<String, Bitmap> cache = getBImgCache();
 		Bitmap result = cache.get(url);
@@ -89,7 +90,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	public void memPut(String url, Bitmap bm){
+	protected void memPut(String url, Bitmap bm){
 		
 		if(bm == null) return;
 		
@@ -106,5 +107,53 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		cache.put(url, bm);
 		
 	}
+	
+	private static boolean checkInProgress(ImageView view, String url){
+		
+		if(url.equals(view.getTag())){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	
+	private static void setBitmap(ImageView iw, String url, Bitmap bm){
+		
+		iw.setTag(url);
+		
+		if(bm != null){			
+			iw.setVisibility(View.VISIBLE);
+			iw.setImageBitmap(bm);
+		}else{
+			iw.setImageBitmap(null);	
+		}
+		
+	}
+	
+	private static void presetBitmap(ImageView iw, String url){
+		iw.setImageBitmap(null);
+		iw.setTag(url);
+	}
+	
+	@Override
+	public void async(Context context, String url, boolean memCache, boolean fileCache, boolean network){
+		
+		if(iv == null) return;
+		
+		//invalid url
+		if(url == null || url.length() < 4){
+			setBitmap(iv, null, null);
+			return;
+		}
+		
+		
+		network = !checkInProgress(iv, url);
+		
+		presetBitmap(iv, url);		
+		
+		super.async(context, url, memCache, fileCache, network);
+	}
+	
 	
 }

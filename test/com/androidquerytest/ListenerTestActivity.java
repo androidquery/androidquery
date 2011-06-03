@@ -12,7 +12,6 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
-import com.androidquery.util.AsyncUtility;
 import com.androidquery.util.Utility;
 
 public class ListenerTestActivity extends Activity {

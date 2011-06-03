@@ -46,7 +46,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.androidquery.callback.AjaxCallback;
-import com.androidquery.util.AsyncUtility;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
 import com.androidquery.util.Utility;
@@ -302,7 +302,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view != null){
 			ImageView iv = (ImageView) view;
-			Utility.openAsyncImage(iv, url, memCache, fileCache);
+			BitmapAjaxCallback cb = new BitmapAjaxCallback(iv);
+			cb.async(getContext(), url, memCache, fileCache, true);
 		}
 		
 		return self();
@@ -806,7 +807,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public <K> T ajax(String url, Class<K> type, AjaxCallback<K> callback){
 		
 		callback.setType(type);
-		AsyncUtility.async(getContext(), url, false, false, true, callback);
+		callback.async(getContext(), url, false, false, true);
 		
 		return self();
 	}
@@ -819,7 +820,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T ajaxCancel(){
 		
-		AsyncUtility.cancel();
+		AjaxCallback.cancel();
 		
 		return self();
 	}
