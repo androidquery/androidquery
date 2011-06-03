@@ -222,16 +222,13 @@ public abstract class AjaxCallback<T> {
 					File file = null;
 					
 					if(cacheDir != null){
-						file = callback.fileGet(url, cacheDir);//FileCacheUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
+						file = callback.fileGet(url, cacheDir);
 					}
 					
 					if(file == null){
-						Utility.debug("file miss", url);
 						
 						if(network){
 						
-							//HttpResult hr = Utility.openBytes(url, true);
-							//byte[] data = hr.getData();
 							byte[] data = null;
 							
 							try{
@@ -259,7 +256,6 @@ public abstract class AjaxCallback<T> {
 						
 						result = callback.transform(file);
 						
-						Utility.debug("file hit", url);
 					}
 					
 					if(result != null){
@@ -277,10 +273,7 @@ public abstract class AjaxCallback<T> {
 						callback.memPut(url, result);
 					}
 					
-					//setBitmapIfValid(iw, url, bm);
 					callback.callback(url, result, code, message);
-					
-					
 					clear();
 				}
 				
