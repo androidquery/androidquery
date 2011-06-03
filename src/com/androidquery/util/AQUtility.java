@@ -258,7 +258,7 @@ public class AQUtility {
 				
 		ScheduledExecutorService exe = getFileStoreExecutor();
 		
-		Common task = new Common().method("storeFile", STORE_FILE_SIG, getFile(dir, url), data);
+		Common task = new Common().method("storeFile", STORE_FILE_SIG, getCacheFile(dir, url), data);
 		exe.schedule(task, delay, TimeUnit.MILLISECONDS);
 	
 	}
@@ -279,27 +279,27 @@ public class AQUtility {
 	}
 	
 	
-	private static File getCacheFile(File dir, String name){
+	private static File makeCacheFile(File dir, String name){
 				
 		File result = new File(dir, name);		
 		return result;
 	}
 	
-	private static String toFileName(String url){
+	private static String getCacheFileName(String url){
 		
-		String hash = AQUtility.getMD5Hex(url);
+		String hash = getMD5Hex(url);
 		return hash;
 	}
 	
-	private static File getFile(File dir, String url){
-		String name = toFileName(url);
-		File file = getCacheFile(dir, name);
+	public static File getCacheFile(File dir, String url){
+		String name = getCacheFileName(url);
+		File file = makeCacheFile(dir, name);
 		return file;
 	}
 	
 	public static File getExistedCacheByUrl(File dir, String url){
 		
-		File file = getFile(dir, url);
+		File file = getCacheFile(dir, url);
 		if(file == null || !file.exists()){
 			return null;
 		}
