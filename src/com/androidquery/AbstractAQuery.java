@@ -17,9 +17,18 @@
 package com.androidquery;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.util.AsyncUtility;
+import com.androidquery.util.Constants;
+import com.androidquery.util.ImageUtility;
+import com.androidquery.util.UIUtility;
+import com.androidquery.util.Utility;
+
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
@@ -87,7 +96,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public AbstractAQuery(Activity act){
 		this.act = act;
-		this.view = root;
 	}
 	
 	/**
@@ -263,6 +271,38 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * Set the image of an ImageView.
+	 *
+	 * @param url The image url.
+	 * @return self
+	 */
+	public T image(String url){
+		return image(url, true, true);
+	}
+	
+	
+	/**
+	 * Set the image of an ImageView.
+	 *
+	 * @param url The image url.
+	 * @param memCache Use memory cache.
+	 * @param fileCache Use file cache.
+	 * @return self
+	 */
+	public T image(String url, boolean memCache, boolean fileCache){
+		
+		
+		if(view != null){
+			ImageView iv = (ImageView) view;
+			ImageUtility.openAsyncImage(iv, url, memCache, fileCache);
+		}
+		
+		return self();
+	}
+	
+	
+	
+	/**
 	 * Set a view to be transparent.
 	 *
 	 * @param transparent the transparent
@@ -384,18 +424,42 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	private void invokeHandler(Object handler, String callback, Class<?>[] cls, Object... params){
-    	try{   
+	private void invokeHandler(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params){
+    	
+		
+		try{   
+			invokeMethod(handler, callback, fallback, cls, params);
+		}catch(Exception e){		
+			Utility.report(e);
+		}
+		
+		
+		
+    }
+	
+	private void invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params) throws Exception{
+		
+		try{   
 			Method method = handler.getClass().getMethod(callback, cls);
-			if(method != null){
-				method.invoke(handler, params);			
+			method.invoke(handler, params);
+			return;
+		}catch(NoSuchMethodException e){
+		}
+		
+		
+		try{
+			if(fallback){
+				Method method = handler.getClass().getMethod(callback);
+				
+				method.invoke(handler);
+				return;
 			}
 		}catch(NoSuchMethodException e){
-			//no such method, do nothing
-		}catch(Exception e){		
-			e.printStackTrace();
 		}
-    }
+		
+		return;
+		
+	}
 	
 	
 	/**
@@ -541,7 +605,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 				
 				@Override
 				public void onClick(View v) {
-					invokeHandler(o, callback, ON_CLICK_SIG, v);
+					invokeHandler(o, callback, true, ON_CLICK_SIG, v);
 				}
 			});
 		}
@@ -588,7 +652,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 				@Override
 				public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
 						
-					invokeHandler(o, callback, ON_ITEM_CLICK_SIG, parent, v, pos, id);
+					invokeHandler(o, callback, false, ON_ITEM_CLICK_SIG, parent, v, pos, id);
 					
 				}
 			});
@@ -651,7 +715,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 					
 					if(scrollState == OnScrollListener.SCROLL_STATE_IDLE && cc == last + 1){
 						
-						invokeHandler(o, callback, ON_SCROLLED_STATE_SIG, view, scrollState);
+						invokeHandler(o, callback, true, ON_SCROLLED_STATE_SIG, view, scrollState);
 						
 						
 					}
@@ -681,7 +745,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T overridePendingTransition5(int enterAnim, int exitAnim){
 		
 		if(act != null){
-			invokeHandler(act, "overridePendingTransition", PENDING_TRANSITION_SIG, enterAnim, exitAnim);
+			invokeHandler(act, "overridePendingTransition", false, PENDING_TRANSITION_SIG, enterAnim, exitAnim);
 		}
 		
 		return self();
@@ -700,7 +764,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view != null){
 			
-			invokeHandler(view, "setLayerType", LAYER_TYPE_SIG, type, paint);
+			invokeHandler(view, "setLayerType", false, LAYER_TYPE_SIG, type, paint);
 		}
 		
 		return self();
@@ -786,6 +850,30 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			}
 		
 		}
+		
+		return self();
+	}
+	
+	private Context getContext(){
+		if(act != null){
+			return act;
+		}
+		if(root != null){
+			return root.getContext();
+		}
+		return null;
+	}
+	
+	/**
+	 * Ajax call with various callback data types.
+	 *
+	 * @param url url
+	 * @param callback callback handler
+	 * @return self
+	 */
+	public T ajax(String url, AjaxCallback<?> callback){
+		
+		AsyncUtility.async(getContext(), url, false, false, true, callback);
 		
 		return self();
 	}

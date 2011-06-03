@@ -35,6 +35,7 @@ import android.widget.TextView;
  */
 public class AQuery extends AbstractAQuery<AQuery>{
 
+	
 	public AQuery(Activity act) {
 		super(act);
 	}
@@ -43,5 +44,9 @@ public class AQuery extends AbstractAQuery<AQuery>{
 		super(view);
 	}
 
+	
+	
 
 }
+
+

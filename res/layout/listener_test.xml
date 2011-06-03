@@ -1,24 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"	  
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
+>
+	<LinearLayout 
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    >
+	
+		<Button
+			android:id="@+id/clicked1"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="clicked(this, \'clicked')"
+		>	
+		</Button>
+	
+		<Button
+			android:id="@+id/clicked2"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="clicked(listener)"
+		>	
+		</Button>
+		
+		<ImageView
+			android:id="@+id/image1"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+		>
+		</ImageView>
+		
+		<Button
+			android:id="@+id/image_reload"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="Reload Image"
+		>	
+		</Button>
+		
+		<Button
+			android:id="@+id/image_clear_mem"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="Clear Memory Cache"
+		>	
+		</Button>
+		
+		<Button
+			android:id="@+id/image_clear_disk"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="Clear Disk Cache"
+		>	
+		</Button>
+		
+		<Button
+			android:id="@+id/async_bytes"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="Async Bytes"
+		>	
+		</Button>
+		
+		<Button
+			android:id="@+id/async_json"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="Async JSON"
+		>	
+		</Button>
+		
+		<Button
+			android:id="@+id/async_bm"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="Async Bitmap"
+		>	
+		</Button>
+		
+		<Button
+			android:id="@+id/async_html"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="Async Html"
+		>	
+		</Button>
+		
+	
+	</LinearLayout>
 
-	<Button
-		android:id="@+id/clicked1"
-		android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-		android:text="clicked(this, \'clicked')"
-	>	
-	</Button>
-
-	<Button
-		android:id="@+id/clicked2"
-		android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-		android:text="clicked(listener)"
-	>	
-	</Button>
-
-</LinearLayout>
+</ScrollView>

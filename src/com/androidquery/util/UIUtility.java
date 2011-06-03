@@ -14,14 +14,17 @@
  * the License.
  */
 
-package com.androidquery;
+package com.androidquery.util;
 
+
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 
 public class UIUtility {
 
-	protected static void transparent(View view, boolean transparent){
+	public static void transparent(View view, boolean transparent){
 		
 		float alpha = 1;
 		if(transparent) alpha = 0.5f;
@@ -44,4 +47,35 @@ public class UIUtility {
 		
 	}
 	
+	public static void ensureUIThread(){
+    	
+    	
+    	long uiId = Looper.getMainLooper().getThread().getId();
+    	long cId = Thread.currentThread().getId();
+    	
+    	if(uiId != cId){
+    		Utility.report(new NullPointerException());
+    	}else{
+    		Utility.debug("ui ok!");
+    	}
+    	
+    }
+	
+	
+	private static Handler handler;
+	public static Handler getHandler(){
+		if(handler == null){
+			UIUtility.ensureUIThread();
+			handler = new Handler();
+		}
+		return handler;
+	}
+	
+	public static void post(Runnable run){
+		handler.post(run);
+	}
+	
+	public static void postDelayed(Runnable run, long delay){
+		handler.postDelayed(run, delay);
+	}
 }

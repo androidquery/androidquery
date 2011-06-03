@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.androidquery;
+package com.androidquery.util;
 
 public interface Constants {
 
