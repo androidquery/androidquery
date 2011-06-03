@@ -31,12 +31,12 @@ import android.widget.ImageView;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
 
-public class Utility {
+public class AQUtility {
 
 	private static boolean debug = false;
 	
 	public static void setDebug(boolean debug){
-		Utility.debug = debug;
+		AQUtility.debug = debug;
 	}
 	
 	public static void debug(Object msg){
@@ -66,7 +66,7 @@ public class Utility {
 			invokeMethod(handler, callback, fallback, cls, params);
 			//method.invoke(handler, params);
 		}catch(Exception e){		
-			Utility.report(e);
+			AQUtility.report(e);
 		}
 		
 		
@@ -125,9 +125,9 @@ public class Utility {
     	long cId = Thread.currentThread().getId();
     	
     	if(uiId != cId){
-    		Utility.report(new NullPointerException());
+    		AQUtility.report(new NullPointerException());
     	}else{
-    		Utility.debug("ui ok!");
+    		AQUtility.debug("ui ok!");
     	}
     	
     }
@@ -169,7 +169,7 @@ public class Utility {
 		    byte[] hash = digest.digest();
 		    return hash;
 		} catch (NoSuchAlgorithmException e) {
-			Utility.report(e);
+			AQUtility.report(e);
 		}
 	    
 		return null;
@@ -197,7 +197,7 @@ public class Utility {
 			close(is);
 			result = baos.toByteArray();
 		} catch (IOException e){
-			Utility.report(e);
+			AQUtility.report(e);
 		}
     	
  	
@@ -212,8 +212,8 @@ public class Utility {
 	    		try{
 	    			file.createNewFile();
 	    		}catch(Exception e){
-	    			Utility.debug("can't make:" + file.getAbsolutePath());
-	    			Utility.report(e);
+	    			AQUtility.debug("can't make:" + file.getAbsolutePath());
+	    			AQUtility.report(e);
 	    		}
 	    	}
 	    	
@@ -221,8 +221,8 @@ public class Utility {
 	    	fos.write(data);
 	    	fos.close();
     	}catch(Exception e){
-    		Utility.debug(file.getAbsolutePath());
-    		Utility.report(e);
+    		AQUtility.debug(file.getAbsolutePath());
+    		AQUtility.report(e);
     	}
     	
     }
@@ -282,7 +282,7 @@ public class Utility {
 	
 	private static String toFileName(String url){
 		
-		String hash = Utility.getMD5Hex(url);
+		String hash = AQUtility.getMD5Hex(url);
 		return hash;
 	}
 	
@@ -320,12 +320,12 @@ public class Utility {
 			
 			if(file != null){
 			
-				Utility.debug("store", file);
+				AQUtility.debug("store", file);
 				
-				Utility.write(file, data);
+				AQUtility.write(file, data);
 			}
 		}catch(Exception e){
-			Utility.report(e);
+			AQUtility.report(e);
 		}
 		
 		
@@ -343,7 +343,7 @@ public class Utility {
 			exe.schedule(task, 0, TimeUnit.MILLISECONDS);
 			
 		}catch(Exception e){
-			Utility.report(e);
+			AQUtility.report(e);
 		}
 	}
 	
@@ -359,12 +359,12 @@ public class Utility {
 			if(testCleanNeeded(files, triggerSize)){
 				cleanCache(files, targetSize);
 			}else{
-				Utility.debug("clean not required");
+				AQUtility.debug("clean not required");
 			}
 			
 		
 		}catch(Exception e){
-			Utility.report(e);
+			AQUtility.report(e);
 		}
 	}
 	
@@ -404,7 +404,7 @@ public class Utility {
 			
 		}
 		
-		Utility.debug("deleted files" , deletes);
+		AQUtility.debug("deleted files" , deletes);
 	}
 	
 

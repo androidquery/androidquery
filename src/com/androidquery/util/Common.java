@@ -50,7 +50,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 			}
 			
 			
-			Utility.invokeHandler(handler, method, fallback, sig, input);
+			AQUtility.invokeHandler(handler, method, fallback, sig, input);
 			
 		}
 		
@@ -77,12 +77,12 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 
 	public void storeFile(File file, byte[] data){
 				
-		Utility.store(file, data);
+		AQUtility.store(file, data);
 	}
 	
 	public void cleanCache(File dir, long trigger, long target) {			
 
-		Utility.cleanCache(dir, trigger, target);
+		AQUtility.cleanCache(dir, trigger, target);
 		
 	}
 	

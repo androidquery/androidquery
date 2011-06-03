@@ -49,7 +49,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
-import com.androidquery.util.Utility;
+import com.androidquery.util.AQUtility;
 
 
 /**
@@ -320,7 +320,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T transparent(boolean transparent){
 		
 		if(view != null){
-			Utility.transparent(view, transparent);
+			AQUtility.transparent(view, transparent);
 		}
 		
 		return self();
@@ -677,7 +677,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T overridePendingTransition5(int enterAnim, int exitAnim){
 		
 		if(act != null){
-			Utility.invokeHandler(act, "overridePendingTransition", false, PENDING_TRANSITION_SIG, enterAnim, exitAnim);
+			AQUtility.invokeHandler(act, "overridePendingTransition", false, PENDING_TRANSITION_SIG, enterAnim, exitAnim);
 		}
 		
 		return self();
@@ -696,7 +696,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view != null){
 			
-			Utility.invokeHandler(view, "setLayerType", false, LAYER_TYPE_SIG, type, paint);
+			AQUtility.invokeHandler(view, "setLayerType", false, LAYER_TYPE_SIG, type, paint);
 		}
 		
 		return self();

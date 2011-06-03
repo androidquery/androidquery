@@ -12,7 +12,7 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
-import com.androidquery.util.Utility;
+import com.androidquery.util.AQUtility;
 
 public class ListenerTestActivity extends Activity {
 
@@ -31,7 +31,7 @@ public class ListenerTestActivity extends Activity {
 	
 	private void setupTest(){
 		
-		Utility.setDebug(true);
+		AQUtility.setDebug(true);
 		
 		aq = new AQuery(this);
 		
@@ -160,7 +160,7 @@ public class ListenerTestActivity extends Activity {
 	}
 	
 	public void clearDisk(View view){
-		Utility.cleanCacheAsync(this, 0, 0);
+		AQUtility.cleanCacheAsync(this, 0, 0);
 	}
 	
 	public void clearMem(View view){

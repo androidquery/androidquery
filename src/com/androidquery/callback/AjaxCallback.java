@@ -17,7 +17,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.androidquery.util.Utility;
+import com.androidquery.util.AQUtility;
 
 public abstract class AjaxCallback<T> {
 	
@@ -31,9 +31,9 @@ public abstract class AjaxCallback<T> {
 	
 	protected T transform(File file){
 		try {			
-			return transform(Utility.toBytes(new FileInputStream(file)));
+			return transform(AQUtility.toBytes(new FileInputStream(file)));
 		} catch(Exception e) {
-			Utility.report(e);
+			AQUtility.report(e);
 			return null;
 		}
 	}
@@ -58,7 +58,7 @@ public abstract class AjaxCallback<T> {
 	    		String str = new String(data);
 				result = (JSONObject) new JSONTokener(str).nextValue();
 			} catch (Exception e) {	  		
-				Utility.report(e);
+				AQUtility.report(e);
 			}
 			return (T) result;
 		}
@@ -69,7 +69,7 @@ public abstract class AjaxCallback<T> {
 	    	try {    		
 	    		result = new String(data, "UTF-8");
 			} catch (Exception e) {	  		
-				Utility.report(e);
+				AQUtility.report(e);
 			}
 			return (T) result;
 		}
@@ -89,11 +89,11 @@ public abstract class AjaxCallback<T> {
 	}
 	
 	protected File fileGet(String url, File cacheDir){
-		return Utility.getExistedCacheByUrlSetAccess(cacheDir, url);
+		return AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
 	}
 	
 	protected void filePut(String url, File cacheDir, byte[] data){
-		Utility.storeAsync(cacheDir, url, data, 1000);
+		AQUtility.storeAsync(cacheDir, url, data, 1000);
 	}
 	
 	
@@ -101,7 +101,7 @@ public abstract class AjaxCallback<T> {
 	
 	public void async(Context context, String url, boolean memCache, boolean fileCache, boolean network){
 		
-		Utility.getHandler();
+		AQUtility.getHandler();
 		
 		T object = memGet(url);
 		
@@ -112,7 +112,7 @@ public abstract class AjaxCallback<T> {
 			ExecutorService exe = getExecutor();
 			
 			File cacheDir = null;
-			if(fileCache) cacheDir = Utility.getCacheDir(context);
+			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
 			
 			FetcherTask<T> ft = new FetcherTask<T>(url, this, memCache, cacheDir, network);
 			
@@ -160,7 +160,7 @@ public abstract class AjaxCallback<T> {
         int code = connection.getResponseCode();
        
         if(code == -1 && retry){
-        	Utility.debug("code -1", urlPath);
+        	AQUtility.debug("code -1", urlPath);
         	return openBytes(urlPath, false);
         }
         
@@ -169,7 +169,7 @@ public abstract class AjaxCallback<T> {
         if(code == -1 || code < 200 || code >= 300){        	
         	//throw new IOException();
         }else{
-        	data = Utility.toBytes(connection.getInputStream());
+        	data = AQUtility.toBytes(connection.getInputStream());
         	redirect = connection.getURL().toExternalForm();
         }
         
@@ -237,7 +237,7 @@ public abstract class AjaxCallback<T> {
 								code = (Integer) net.get("code");
 								message = (String) net.get("message");
 							}catch(Exception e){
-								Utility.report(e);
+								AQUtility.report(e);
 							}
 							
 							if(data != null){
@@ -260,7 +260,7 @@ public abstract class AjaxCallback<T> {
 					
 					if(result != null){
 						
-						Utility.post(this);
+						AQUtility.post(this);
 						
 					}else{
 						clear();
@@ -280,7 +280,7 @@ public abstract class AjaxCallback<T> {
 					
 			
 			}catch(Exception e){
-				Utility.report(e);
+				AQUtility.report(e);
 			}
 			
 		}
