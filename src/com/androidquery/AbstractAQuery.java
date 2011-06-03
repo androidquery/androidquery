@@ -878,5 +878,18 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Stop all ajax activities. Should be called when current activity is to be destroy.
+	 *
+	 * 
+	 * @return self
+	 */
+	public T ajaxCancel(){
+		
+		AsyncUtility.cancel();
+		
+		return self();
+	}
+	
 	
 }
