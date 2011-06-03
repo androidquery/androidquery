@@ -82,10 +82,9 @@ public class ImageUtility {
 			}
 		};
 		
-		
-		presetBitmap(view, url);
-		
 		boolean network = !checkInProgress(view, url);
+		
+		presetBitmap(view, url);		
 		
 		AsyncUtility.async(view.getContext(), url, memCache, fileCache, network, cb);
 		

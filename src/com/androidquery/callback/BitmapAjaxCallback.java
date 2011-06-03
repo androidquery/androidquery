@@ -12,7 +12,11 @@ import android.graphics.BitmapFactory;
 
 public abstract class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 
-	private static int MAX = 40;
+	private static int SMALL_MAX = 40;
+	private static int BIG_MAX = 40;
+	
+	private static Map<String, Bitmap> smallCache;
+	private static Map<String, Bitmap> bigCache;
 	
 	@Override
 	public Bitmap transform(File file) {
@@ -24,34 +28,58 @@ public abstract class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		return BitmapFactory.decodeByteArray(data, 0, data.length);
 	}
 
-	private static Map<String, Bitmap> cache;
-	private static Map<String, Bitmap> getImgCache(){
-		
-		if(cache == null){
-			cache = new Cache<String, Bitmap>(MAX);
-		}
-		
-		return cache;
-	}
 	
 	public static void clearCache(){
-		cache = null;
+		bigCache = null;
+		smallCache = null;
+	}
+	
+	
+	private static Map<String, Bitmap> getBImgCache(){
+		if(bigCache == null){
+			bigCache = new Cache<String, Bitmap>(BIG_MAX);
+		}
+		return bigCache;
+	}
+	
+	
+	private static Map<String, Bitmap> getSImgCache(){
+		if(smallCache == null){
+			smallCache = new Cache<String, Bitmap>(SMALL_MAX);
+		}
+		return smallCache;
 	}
 	
 	@Override
 	public Bitmap memGet(String url){
 		
+		Map<String, Bitmap> cache = getBImgCache();
+		Bitmap result = cache.get(url);
 		
-		Map<String, Bitmap> cache = getImgCache();		
-		return cache.get(url);
-	
+		if(result == null){
+			cache = getSImgCache();
+			result = cache.get(url);
+		}
+
+		return result;
 	}
 	
 	@Override
-	public void memPut(String url, Bitmap object){
-	
-		Map<String, Bitmap> cache = getImgCache();	
-		cache.put(url, object);
+	public void memPut(String url, Bitmap bm){
+		
+		if(bm == null) return;
+		
+		int width = bm.getWidth();
+				
+		Map<String, Bitmap> cache = null;
+		
+		if(width > 50){
+			cache = getBImgCache();
+		}else{
+			cache = getSImgCache();
+		}
+		
+		cache.put(url, bm);
 		
 	}
 	
