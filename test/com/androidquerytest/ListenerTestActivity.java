@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 
@@ -66,7 +67,7 @@ public class ListenerTestActivity extends Activity {
 		aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
 
 			@Override
-			public void callback(String url, byte[] object, int statusCode, String statusMessage) {
+			public void callback(String url, byte[] object, AjaxStatus status) {
 				TestUtility.showToast(ListenerTestActivity.this, "length:" + object.length);
 			}
 		});
@@ -89,7 +90,7 @@ public class ListenerTestActivity extends Activity {
 		aq.ajax(url, Bitmap.class, new AjaxCallback<Bitmap>() {
 
 			@Override
-			public void callback(String url, Bitmap object, int statusCode, String statusMessage) {
+			public void callback(String url, Bitmap object, AjaxStatus status) {
 				TestUtility.showToast(ListenerTestActivity.this, "bm:" + object);
 			}
 		});
@@ -112,7 +113,7 @@ public class ListenerTestActivity extends Activity {
 		aq.ajax(url, String.class, new AjaxCallback<String>() {
 
 			@Override
-			public void callback(String url, String object, int statusCode, String statusMessage) {
+			public void callback(String url, String object, AjaxStatus status) {
 				TestUtility.showToast(ListenerTestActivity.this, "html:" + object);
 			}
 			
@@ -136,7 +137,7 @@ public class ListenerTestActivity extends Activity {
 		aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
 
 			@Override
-			public void callback(String url, JSONObject object, int statusCode, String statusMessage) {
+			public void callback(String url, JSONObject object, AjaxStatus status) {
 				TestUtility.showToast(ListenerTestActivity.this, "json:" + object);
 			}
 		});

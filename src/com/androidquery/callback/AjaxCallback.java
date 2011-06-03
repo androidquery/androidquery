@@ -43,7 +43,7 @@ public abstract class AjaxCallback<T> {
 		this.type = type;
 	}
 	
-	protected abstract void callback(String url, T object, int statusCode, String statusMessage);
+	protected abstract void callback(String url, T object, AjaxStatus status);
 	
 	protected T transform(File file){
 		try {			
@@ -115,6 +115,10 @@ public abstract class AjaxCallback<T> {
 	
 	private static int NETWORK_POOL = 4;
 	
+	public void async(Context context, String url){
+		async(context, url, false, false, true);
+	}
+	
 	public void async(Context context, String url, boolean memCache, boolean fileCache, boolean network){
 		
 		AQUtility.getHandler();
@@ -122,7 +126,8 @@ public abstract class AjaxCallback<T> {
 		T object = memGet(url);
 		
 		if(object != null){					
-			callback(url, object, 200, "OK");
+			//callback(url, object, 200, "OK");
+			callback(url, object, new AjaxStatus(200, "OK", url, null));
 		}else{
 		
 			ExecutorService exe = getExecutor();
@@ -164,7 +169,7 @@ public abstract class AjaxCallback<T> {
 	
 	private static int NET_TIMEOUT = 30000;
 	
-	private static Map<String, Object> openBytes(String urlPath, boolean retry) throws IOException{
+	private static AjaxStatus openBytes(String urlPath, boolean retry) throws IOException{
 				
 		URL url = new URL(urlPath);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -189,6 +194,7 @@ public abstract class AjaxCallback<T> {
         	redirect = connection.getURL().toExternalForm();
         }
         
+        /*
         Map<String, Object> result = new HashMap<String, Object>();
         
         result.put("data", data);
@@ -197,7 +203,9 @@ public abstract class AjaxCallback<T> {
         result.put("redirect", redirect);
         
         return result;
+        */
         
+        return new AjaxStatus(code, connection.getResponseMessage(), redirect, data);
 	}
 	
 	private static class FetcherTask<T> implements Runnable {
@@ -208,6 +216,7 @@ public abstract class AjaxCallback<T> {
 		private File cacheDir;
 		private int code;
 		private String message;
+		private String redirect;
 		private boolean memCache;
 		private boolean network;
 		
@@ -248,10 +257,11 @@ public abstract class AjaxCallback<T> {
 							byte[] data = null;
 							
 							try{
-								Map<String, Object> net = openBytes(url, true);
-								data = (byte[]) net.get("data");
-								code = (Integer) net.get("code");
-								message = (String) net.get("message");
+								AjaxStatus aj = openBytes(url, true);
+								data = aj.getData();
+								code = aj.getCode();
+								message = aj.getMessage();
+								redirect = aj.getRedirect();
 							}catch(Exception e){
 								AQUtility.report(e);
 							}
@@ -289,7 +299,8 @@ public abstract class AjaxCallback<T> {
 						callback.memPut(url, result);
 					}
 					
-					callback.callback(url, result, code, message);
+					//callback.callback(url, result, code, message);
+					callback.callback(url, result, new AjaxStatus(code, message, redirect, null));
 					clear();
 				}
 				
@@ -306,4 +317,6 @@ public abstract class AjaxCallback<T> {
 	}
 	
 }
+
+
 

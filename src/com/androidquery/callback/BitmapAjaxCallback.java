@@ -52,7 +52,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	protected void callback(String url, Bitmap bm, int statusCode, String statusMessage) {
+	protected void callback(String url, Bitmap bm, AjaxStatus status) {
 		
 		if(url.equals(iv.getTag())){
 			iv.setVisibility(View.VISIBLE);
