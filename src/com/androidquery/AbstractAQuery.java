@@ -161,7 +161,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int id){
-		view = findView(id);		
+		view = findView(id);			
 		return self();
 	}
 	

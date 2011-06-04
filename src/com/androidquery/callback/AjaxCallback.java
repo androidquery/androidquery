@@ -45,9 +45,10 @@ public abstract class AjaxCallback<T> {
 	
 	protected abstract void callback(String url, T object, AjaxStatus status);
 	
-	protected T transform(File file){
+	protected T transform(String url, File file, AjaxStatus status){
 		try {			
-			return transform(AQUtility.toBytes(new FileInputStream(file)));
+			byte[] data = AQUtility.toBytes(new FileInputStream(file));			
+			return transform(url, data, status);
 		} catch(Exception e) {
 			AQUtility.report(e);
 			return null;
@@ -55,7 +56,7 @@ public abstract class AjaxCallback<T> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected T transform(byte[] data){
+	protected T transform(String url, byte[] data, AjaxStatus status){
 		
 		if(type == null){
 			return null;
@@ -108,10 +109,13 @@ public abstract class AjaxCallback<T> {
 		return AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
 	}
 	
-	protected void filePut(String url, File cacheDir, byte[] data){
+	protected void filePut(String url, T object, File cacheDir, byte[] data){
 		AQUtility.storeAsync(cacheDir, url, data, 1000);
 	}
 	
+	private static AjaxStatus makeStatus(String url){
+		return new AjaxStatus(200, "OK", url, null);
+	}
 	
 	private static int NETWORK_POOL = 4;
 	
@@ -126,8 +130,7 @@ public abstract class AjaxCallback<T> {
 		T object = memGet(url);
 		
 		if(object != null){					
-			//callback(url, object, 200, "OK");
-			callback(url, object, new AjaxStatus(200, "OK", url, null));
+			callback(url, object, makeStatus(url));
 		}else{
 		
 			ExecutorService exe = getExecutor();
@@ -168,6 +171,8 @@ public abstract class AjaxCallback<T> {
 	}
 	
 	private static int NET_TIMEOUT = 30000;
+	private static String MOBILE_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533";	
+	
 	
 	private static AjaxStatus openBytes(String urlPath, boolean retry) throws IOException{
 				
@@ -177,6 +182,7 @@ public abstract class AjaxCallback<T> {
         connection.setUseCaches(false);
         connection.setInstanceFollowRedirects(true);     
         connection.setConnectTimeout(NET_TIMEOUT);
+        connection.addRequestProperty("User-Agent", MOBILE_AGENT);
         
         int code = connection.getResponseCode();
        
@@ -194,16 +200,7 @@ public abstract class AjaxCallback<T> {
         	redirect = connection.getURL().toExternalForm();
         }
         
-        /*
-        Map<String, Object> result = new HashMap<String, Object>();
-        
-        result.put("data", data);
-        result.put("code", code);
-        result.put("message", connection.getResponseMessage());
-        result.put("redirect", redirect);
-        
-        return result;
-        */
+       
         
         return new AjaxStatus(code, connection.getResponseMessage(), redirect, data);
 	}
@@ -268,10 +265,10 @@ public abstract class AjaxCallback<T> {
 							
 							if(data != null){
 							
-								result = callback.transform(data);
+								result = callback.transform(url, data, makeStatus(redirect));
 								
 								if(cacheDir != null){
-									callback.filePut(url, cacheDir, data);
+									callback.filePut(url, result, cacheDir, data);
 								}
 							}
 			
@@ -280,7 +277,7 @@ public abstract class AjaxCallback<T> {
 						
 					}else{
 						
-						result = callback.transform(file);
+						result = callback.transform(url, file, makeStatus(url));
 						
 					}
 					
@@ -299,7 +296,6 @@ public abstract class AjaxCallback<T> {
 						callback.memPut(url, result);
 					}
 					
-					//callback.callback(url, result, code, message);
 					callback.callback(url, result, new AjaxStatus(code, message, redirect, null));
 					clear();
 				}

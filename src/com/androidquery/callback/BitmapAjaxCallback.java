@@ -42,12 +42,12 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	protected Bitmap transform(File file) {
+	protected Bitmap transform(String url, File file, AjaxStatus status) {
 		return BitmapFactory.decodeFile(file.getAbsolutePath());
 	}
 	
 	@Override
-	protected Bitmap transform(byte[] data) {
+	protected Bitmap transform(String url, byte[] data, AjaxStatus status) {
 		return BitmapFactory.decodeByteArray(data, 0, data.length);
 	}
 	

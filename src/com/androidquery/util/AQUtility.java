@@ -42,6 +42,7 @@ public class AQUtility {
 
 	private static boolean debug = false;
 	
+	
 	public static void setDebug(boolean debug){
 		AQUtility.debug = debug;
 	}
@@ -131,8 +132,6 @@ public class AQUtility {
     	
     	if(uiId != cId){
     		AQUtility.report(new NullPointerException());
-    	}else{
-    		AQUtility.debug("ui ok!");
     	}
     	
     }
