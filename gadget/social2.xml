@@ -12,7 +12,7 @@
    templates:{
      twitter: 'Checkout AndroidQuery! {{url}} @AndroidQuery'
    }
-}
+};
      </script>     
      
 <!-- AddThis Button BEGIN -->
