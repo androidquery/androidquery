@@ -8,7 +8,10 @@
      <script>
      var addthis_share =
 {
-   url:"http://code.google.com/p/android-query/"
+   url:"http://code.google.com/p/android-query/",
+   templates:{
+     twitter: 'Checkout Android Query! {{url}} @AndroidQuery'
+   }
 }
      </script>     
      
