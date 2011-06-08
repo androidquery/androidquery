@@ -10,7 +10,7 @@
 {
    url:"http://code.google.com/p/android-query/",
    templates:{
-     twitter: 'Checkout Android Query! {{url}} @AndroidQuery'
+     twitter: 'Checkout AndroidQuery! {{url}} @AndroidQuery'
    }
 }
      </script>     
