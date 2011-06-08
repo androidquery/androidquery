@@ -253,11 +253,11 @@ public class AQUtility {
 	}
 	
 	private static final Class<?>[] STORE_FILE_SIG = {File.class, byte[].class}; 
-	public static void storeAsync(File dir, String url, byte[] data, long delay){
+	public static void storeAsync(File file, byte[] data, long delay){
 				
 		ScheduledExecutorService exe = getFileStoreExecutor();
 		
-		Common task = new Common().method("storeFile", STORE_FILE_SIG, getCacheFile(dir, url), data);
+		Common task = new Common().method("storeFile", STORE_FILE_SIG, file, data);
 		exe.schedule(task, delay, TimeUnit.MILLISECONDS);
 	
 	}

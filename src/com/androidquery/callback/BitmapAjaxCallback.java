@@ -42,7 +42,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	protected Bitmap transform(String url, File file, AjaxStatus status) {
+	protected Bitmap fileGet(String url, File file, AjaxStatus status) {
 		return BitmapFactory.decodeFile(file.getAbsolutePath());
 	}
 	
@@ -152,8 +152,8 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		iw.setTag(url);
 	}
 	
-	@Override
-	public void async(Context context, String url, boolean memCache, boolean fileCache, boolean network){
+	
+	public void async(Context context, String url, boolean memCache, boolean fileCache){
 		
 		if(iv == null) return;
 		
@@ -164,7 +164,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		}
 		
 		
-		network = !checkInProgress(iv, url);
+		boolean network = !checkInProgress(iv, url);
 		
 		presetBitmap(iv, url);		
 		

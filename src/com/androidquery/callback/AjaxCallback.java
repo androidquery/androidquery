@@ -45,7 +45,7 @@ public abstract class AjaxCallback<T> {
 	
 	protected abstract void callback(String url, T object, AjaxStatus status);
 	
-	protected T transform(String url, File file, AjaxStatus status){
+	protected T fileGet(String url, File file, AjaxStatus status){
 		try {			
 			byte[] data = AQUtility.toBytes(new FileInputStream(file));			
 			return transform(url, data, status);
@@ -105,12 +105,10 @@ public abstract class AjaxCallback<T> {
 	protected void memPut(String url, T object){
 	}
 	
-	protected File fileGet(String url, File cacheDir){
-		return AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
-	}
 	
-	protected void filePut(String url, T object, File cacheDir, byte[] data){
-		AQUtility.storeAsync(cacheDir, url, data, 1000);
+	
+	protected void filePut(String url, T object, File file, byte[] data){
+		AQUtility.storeAsync(file, data, 1000);
 	}
 	
 	private static AjaxStatus makeStatus(String url){
@@ -123,7 +121,7 @@ public abstract class AjaxCallback<T> {
 		async(context, url, false, false, true);
 	}
 	
-	public void async(Context context, String url, boolean memCache, boolean fileCache, boolean network){
+	protected void async(Context context, String url, boolean memCache, boolean fileCache, boolean network){
 		
 		AQUtility.getHandler();
 		
@@ -186,6 +184,8 @@ public abstract class AjaxCallback<T> {
         
         int code = connection.getResponseCode();
        
+        //AQUtility.debug("net", code);
+        
         if(code == -1 && retry){
         	AQUtility.debug("code -1", urlPath);
         	return openBytes(urlPath, false);
@@ -217,7 +217,7 @@ public abstract class AjaxCallback<T> {
 		private boolean memCache;
 		private boolean network;
 		
-		public FetcherTask(String url, AjaxCallback<T> callback, boolean memCache, File cacheDir, boolean network){
+		private FetcherTask(String url, AjaxCallback<T> callback, boolean memCache, File cacheDir, boolean network){
 			
 			this.url = url;
 			this.callback = callback;
@@ -244,7 +244,7 @@ public abstract class AjaxCallback<T> {
 					File file = null;
 					
 					if(cacheDir != null){
-						file = callback.fileGet(url, cacheDir);
+						file = AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
 					}
 					
 					if(file == null){
@@ -268,7 +268,7 @@ public abstract class AjaxCallback<T> {
 								result = callback.transform(url, data, makeStatus(redirect));
 								
 								if(cacheDir != null){
-									callback.filePut(url, result, cacheDir, data);
+									callback.filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
 								}
 							}
 			
@@ -277,7 +277,7 @@ public abstract class AjaxCallback<T> {
 						
 					}else{
 						
-						result = callback.transform(url, file, makeStatus(url));
+						result = callback.fileGet(url, file, makeStatus(url));
 						
 					}
 					
