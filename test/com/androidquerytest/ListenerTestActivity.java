@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -47,6 +48,11 @@ public class ListenerTestActivity extends Activity {
 		});
 		
 		aq.id(R.id.image1).image("http://www.vikispot.com/z/images/vikispot/android-w.png");
+		
+		boolean memCache = false;
+		boolean fileCache = true;
+		aq.id(R.id.image1).image("http://www.vikispot.com/z/images/vikispot/android-w.png", memCache, fileCache);
+		
 		aq.id(R.id.image_reload).clicked(this, "reloadImage");
 		
 		aq.id(R.id.image_clear_mem).clicked(this, "clearMem");
@@ -62,28 +68,24 @@ public class ListenerTestActivity extends Activity {
 	
 	public void asyncBytes(){
 		
+		//fetch a remote resource in raw bytes
+		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		
 		aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
 
 			@Override
 			public void callback(String url, byte[] object, AjaxStatus status) {
-				TestUtility.showToast(ListenerTestActivity.this, "length:" + object.length);
+				Toast.makeText(aq.getContext(), "bytes array:" + object.length, Toast.LENGTH_LONG).show();
 			}
 		});
-		/*
-		AsyncUtility.async(this, url, false, false, true, new BytesAjaxCallback() {
-
-			@Override
-			public void callback(String url, byte[] object, int statusCode, String statusMessage) {
-				TestUtility.showToast(ListenerTestActivity.this, "length:" + object.length);
-			}
-		});
-		*/
+		
 		
 	}
 	
 	public void asyncBitmap(){
+		
+		//fetch a image over the network
 		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		
@@ -91,65 +93,45 @@ public class ListenerTestActivity extends Activity {
 
 			@Override
 			public void callback(String url, Bitmap object, AjaxStatus status) {
-				TestUtility.showToast(ListenerTestActivity.this, "bm:" + object);
-			}
-		});
-		/*
-		AsyncUtility.async(this, url, true, true, true, new BitmapAjaxCallback() {
-
-			@Override
-			public void callback(String url, Bitmap object, int statusCode, String statusMessage) {
-				TestUtility.showToast(ListenerTestActivity.this, "bm:" + object);
+				Toast.makeText(aq.getContext(), object.toString(), Toast.LENGTH_LONG).show();
 			}
 		});
 		
-		*/
 	}
 	
 	public void asyncHtml(){
+		
+		//fetch Google's homepage in html
 		
 		String url = "http://www.google.com";
 		
 		aq.ajax(url, String.class, new AjaxCallback<String>() {
 
 			@Override
-			public void callback(String url, String object, AjaxStatus status) {
-				TestUtility.showToast(ListenerTestActivity.this, "html:" + object);
+			public void callback(String url, String html, AjaxStatus status) {
+				
+				Toast.makeText(aq.getContext(), html, Toast.LENGTH_LONG).show();
 			}
 			
 		});
-		/*
-		AsyncUtility.async(this, url, false, false, new HTMLAjaxCallback() {
-
-			@Override
-			public void callback(String url, String object, int statusCode, String statusMessage) {
-				TestUtility.showToast(ListenerTestActivity.this, "html:" + object);
-			}
-		});
-		*/
+		
 		
 	}
 	
 	public void asyncJson(){
 		
-		String url = "http://www.vikispot.com/api/children?spotId=1";
+		//perform a Google search in just a few lines of code
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
 		
 		aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
 
 			@Override
-			public void callback(String url, JSONObject object, AjaxStatus status) {
-				TestUtility.showToast(ListenerTestActivity.this, "json:" + object);
+			public void callback(String url, JSONObject json, AjaxStatus status) {
+				Toast.makeText(aq.getContext(), json.toString(), Toast.LENGTH_LONG).show();
 			}
 		});
-		/*
-		AsyncUtility.async(this, url, false, false, true, new JSONAjaxCallback() {
-
-			@Override
-			public void callback(String url, JSONObject object, int statusCode, String statusMessage) {
-				TestUtility.showToast(ListenerTestActivity.this, "json:" + object);
-			}
-		});
-		*/
+		
 	}
 	
 	

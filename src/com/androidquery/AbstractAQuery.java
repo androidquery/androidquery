@@ -786,7 +786,13 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	private Context getContext(){
+	/**
+	 * Return the context of activity of view.
+	 *	 
+	 * @return Context
+	 */
+	
+	public Context getContext(){
 		if(act != null){
 			return act;
 		}

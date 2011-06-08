@@ -1,0 +1,132 @@
+public void asyncHtml(){
+	
+	//fetch Google's homepage in html
+	
+	String url = "http://www.google.com";
+	
+	aq.ajax(url, String.class, new AjaxCallback<String>() {
+
+		@Override
+		public void callback(String url, String html, AjaxStatus status) {
+			
+			Toast.makeText(aq.getContext(), html, Toast.LENGTH_LONG).show();
+		}
+		
+	});
+	
+	
+}
+
+public void asyncJson(){
+	
+	//perform a Google search in just a few lines of code
+	
+	String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+	
+	aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+		@Override
+		public void callback(String url, JSONObject json, AjaxStatus status) {
+			Toast.makeText(aq.getContext(), json.toString(), Toast.LENGTH_LONG).show();
+		}
+	});
+	
+}
+
+
+public void asyncBytes(){
+	
+	//fetch a remote resource in raw bytes
+	
+	String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+	
+	aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
+
+		@Override
+		public void callback(String url, byte[] object, AjaxStatus status) {
+			Toast.makeText(aq.getContext(), "bytes array:" + object.length, Toast.LENGTH_LONG).show();
+		}
+	});
+	
+	
+}
+
+public void asyncBitmap(){
+	
+	//fetch a image over the network
+	
+	String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+	
+	aq.ajax(url, Bitmap.class, new AjaxCallback<Bitmap>() {
+
+		@Override
+		public void callback(String url, Bitmap object, AjaxStatus status) {
+			Toast.makeText(aq.getContext(), object.toString(), Toast.LENGTH_LONG).show();
+		}
+	});
+	
+}
+
+public class MainApplication extends Application{
+
+	
+	@Override
+    public void onCreate() {     
+          
+        //set the max number of concurrent network connections, default is 4
+		AjaxCallback.setNetworkLimit(8);
+
+		//set the max number of icons (image width <= 50) to be cached in memory, default is 20
+		BitmapAjaxCallback.setIconCacheLimit(20);
+
+		//set the max number of images (image width > 50) to be cached in memory, default is 20
+		BitmapAjaxCallback.setCacheLimit(40);		        
+        
+        super.onCreate();
+    }
+	
+	
+}
+
+
+public void onDestroy(){
+	
+	//stop all aync calls when current activity is exiting
+	AjaxCallback.cancel();
+	
+}
+
+protected void onDestroy(){
+	
+	super.onDestroy();
+	
+	//clean the file cache when root activity exit
+	//the resulting total cache size will be less than 3M
+	AQUtility.cleanCacheAsync(this);
+	
+}
+
+protected void onDestroy(){
+	
+	super.onDestroy();
+	
+	//clean the file cache with advance option
+	long triggerSize = 3000000; //starts cleaning when cache size is larger than 3M
+	long targetSize = 2000000;	//remove the least recently used files until cache size is less than 2M
+	AQUtility.cleanCacheAsync(this, triggerSize, targetSize);
+	
+	
+}
+
+
+public class MainApplication extends Application{
+
+	@Override
+	public void onLowMemory(){	
+
+		//clear all memory cache when system is in low memory
+		//note that you can configure the max image cache count, see CONFIGURATION
+    	BitmapAjaxCallback.clearCache();
+    }
+	
+}

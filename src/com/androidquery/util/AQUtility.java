@@ -335,6 +335,12 @@ public class AQUtility {
 		
 	}
 	
+	public static void cleanCacheAsync(Context context){
+		long triggerSize = 3000000;
+		long targetSize = 2000000;	
+		cleanCacheAsync(context, triggerSize, targetSize);
+	}
+	
 	private static final Class<?>[] CLEAN_CACHE_SIG = {File.class, long.class, long.class};
 	public static void cleanCacheAsync(Context context, long triggerSize, long targetSize){
 		
