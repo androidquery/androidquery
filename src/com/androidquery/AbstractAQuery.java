@@ -229,7 +229,19 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Set the image of an ImageView.
 	 *
-	 * @param id the id
+	 * @param url Image url.
+	 * @return self
+	 */
+	
+	public T image(String url){
+		return image(url, true, true);
+	}
+	
+	
+	/**
+	 * Set the image of an ImageView.
+	 *
+	 * @param resid the resource id
 	 * @return self
 	 */
 	public T image(int resid){
@@ -265,7 +277,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Set the image of an ImageView.
 	 *
-	 * @param bm the bm
+	 * @param bm Bitmap
 	 * @return self
 	 */
 	public T image(Bitmap bm){
@@ -278,15 +290,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	/**
-	 * Set the image of an ImageView.
-	 *
-	 * @param url The image url.
-	 * @return self
-	 */
-	public T image(String url){
-		return image(url, true, true);
-	}
+	
 	
 	
 	/**
