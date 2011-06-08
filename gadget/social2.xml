@@ -18,7 +18,6 @@
 <!-- AddThis Button BEGIN -->
 <div addthis:url="http://code.google.com/p/android-query/" class="addthis_toolbox addthis_default_style " style="margin-bottom:10px;">
 <a class="addthis_button_google_plusone"></a>
-<a class="addthis_button_tweet" tw:via="@AndroidQuery" tw:data-text="Checkout AndroidQuery!  @AndroidQuery"></a>
 <a class="addthis_button_preferred_1"></a>
 <a class="addthis_button_preferred_2"></a>
 <a class="addthis_button_preferred_3"></a>
