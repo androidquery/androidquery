@@ -81,11 +81,14 @@ public class AQUtility {
 	
 	private static void invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params) throws Exception{
 		
+		//debug("method", callback);
+		
 		try{   
 			Method method = handler.getClass().getMethod(callback, cls);
 			method.invoke(handler, params);			
 			return;// method;
 		}catch(NoSuchMethodException e){
+			//debug(e);
 		}
 		
 		
@@ -96,6 +99,7 @@ public class AQUtility {
 				return;// method;
 			}
 		}catch(NoSuchMethodException e){
+			//debug(e);
 		}
 		
 		
@@ -344,12 +348,15 @@ public class AQUtility {
 	private static final Class<?>[] CLEAN_CACHE_SIG = {File.class, long.class, long.class};
 	public static void cleanCacheAsync(Context context, long triggerSize, long targetSize){
 		
+		
+		
 		try{			
 			File cacheDir = getCacheDir(context);
 			
 			Common task = new Common().method("cleanCache", CLEAN_CACHE_SIG, cacheDir, triggerSize, targetSize);
 			
-			ScheduledExecutorService exe = getFileStoreExecutor();			
+			ScheduledExecutorService exe = getFileStoreExecutor();	
+			
 			exe.schedule(task, 0, TimeUnit.MILLISECONDS);
 			
 		}catch(Exception e){
