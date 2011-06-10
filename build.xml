@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+	
+	<property name="down-version" value="0-2-1"/>
+	
+    <target name="proguard">
+    	<input addproperty="version">Enter version number</input>
+    	<java fork="true" jar="dist/proguard.jar">
+			<arg value="@dist/proguard.cfg"/>
+			<arg value="-injars"/>
+			<arg value="dist/android-query.jar"/>
+			<arg value="-outjars"/>			
+			<arg value="dist/android-query.${version}.jar"/>
+			<arg value="-keepparameternames"/>
+		</java>
+		<java fork="true" jar="dist/proguard.jar">
+			<arg value="@dist/proguard.cfg"/>
+			<arg value="-injars"/>
+			<arg value="dist/android-query.jar"/>
+			<arg value="-outjars"/>
+			<arg value="dist/android-query-optimized.jar"/>
+		</java>
+		<copy file="dist/android-query-optimized.jar" tofile="dist/android-query-optimized.${version}.jar"/>
+    </target>
+	
+
+</project>
