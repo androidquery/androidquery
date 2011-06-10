@@ -72,6 +72,7 @@ public class ListenerTestActivity extends Activity {
 		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		
+		/*
 		aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
 
 			@Override
@@ -79,8 +80,14 @@ public class ListenerTestActivity extends Activity {
 				Toast.makeText(aq.getContext(), "bytes array:" + object.length, Toast.LENGTH_LONG).show();
 			}
 		});
+		*/
 		
+		aq.ajax(url, byte[].class, this, "showBytes");
 		
+	}
+	
+	public void showBytes(String url, byte[] object, AjaxStatus status){
+		Toast.makeText(aq.getContext(), "bytes array:" + object.length, Toast.LENGTH_LONG).show();
 	}
 	
 	public void asyncBitmap(){

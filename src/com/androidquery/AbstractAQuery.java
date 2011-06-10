@@ -46,6 +46,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
@@ -643,9 +644,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 	}	
 	
-	protected void debug(Object msg){
-		System.err.println(msg);
-	}
+	
 	
 	private static Class<?>[] ON_SCROLLED_STATE_SIG = {AbsListView.class, int.class};
 	
@@ -810,6 +809,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * Ajax call with various callback data types.
 	 *
 	 * @param url url
+	 * @param type data type
 	 * @param callback callback handler
 	 * @return self
 	 */
@@ -821,6 +821,37 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		return self();
 	}
+	
+	/**
+	 * Ajax call with various callback data types.
+	 *
+	 * @param url url
+	 * @param type data type
+	 * @param callback callback method name
+	 * @return self
+	 */
+	
+	public <K> T ajax(String url, Class<K> type, final Object handler, final String callback){
+		
+		final Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
+		
+		AjaxCallback<K> cb = new AjaxCallback<K>() {
+
+			@Override
+			protected void callback(String url, K object, AjaxStatus status) {
+				
+				AQUtility.invokeHandler(handler, callback, false, AJAX_SIG, url, object, status);
+				
+			}
+		};
+		
+		
+		cb.setType(type);
+		cb.async(getContext(), url);
+		
+		return self();
+	}
+	
 	
 	/**
 	 * Stop all ajax activities. Should be called when current activity is to be destroy.
