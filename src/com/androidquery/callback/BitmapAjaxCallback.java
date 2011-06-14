@@ -17,6 +17,7 @@
 package com.androidquery.callback;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Map;
 
 import android.content.Context;
@@ -35,10 +36,10 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
 	
-	private ImageView iv;
+	private WeakReference<ImageView> r;
 	
 	public BitmapAjaxCallback(ImageView iv){
-		this.iv = iv;
+		this.r = new WeakReference<ImageView>(iv);
 	}
 	
 	@Override
@@ -54,7 +55,9 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	@Override
 	protected void callback(String url, Bitmap bm, AjaxStatus status) {
 		
-		if(url.equals(iv.getTag())){
+		ImageView iv = r.get();
+		
+		if(iv != null && url.equals(iv.getTag())){
 			iv.setVisibility(View.VISIBLE);
 			iv.setImageBitmap(bm);
 		}
@@ -154,6 +157,8 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	
 	public void async(Context context, String url, boolean memCache, boolean fileCache){
+		
+		ImageView iv = r.get();
 		
 		if(iv == null) return;
 		
