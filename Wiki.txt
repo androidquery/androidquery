@@ -27,7 +27,18 @@ public void asyncJson(){
 
 		@Override
 		public void callback(String url, JSONObject json, AjaxStatus status) {
-			Toast.makeText(aq.getContext(), json.toString(), Toast.LENGTH_LONG).show();
+			
+			
+			if(json != null){
+				
+				//successful ajax call, show status code and json content
+				Toast.makeText(aq.getContext(), status.getCode() + ":" + json.toString(), Toast.LENGTH_LONG).show();
+			
+			}else{
+				
+				//ajax error, show error code
+				Toast.makeText(aq.getContext(), "Error:" + status.getCode(), Toast.LENGTH_LONG).show();
+			}
 		}
 	});
 	
