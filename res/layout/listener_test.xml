@@ -75,6 +75,15 @@
 		</Button>
 		
 		<Button
+			android:id="@+id/async_bad_json"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="Async Bad JSON"
+		>	
+		</Button>
+		
+		
+		<Button
 			android:id="@+id/async_bm"
 			android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"

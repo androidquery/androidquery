@@ -60,6 +60,9 @@ public class ListenerTestActivity extends Activity {
 		
 		aq.id(R.id.async_bytes).clicked(this, "asyncBytes");
 		aq.id(R.id.async_json).clicked(this, "asyncJson");
+		
+		aq.id(R.id.async_bad_json).clicked(this, "asyncBadJson");
+		
 		aq.id(R.id.async_bm).clicked(this, "asyncBitmap");
 		aq.id(R.id.async_html).clicked(this, "asyncHtml");
 		
@@ -135,12 +138,55 @@ public class ListenerTestActivity extends Activity {
 
 			@Override
 			public void callback(String url, JSONObject json, AjaxStatus status) {
-				Toast.makeText(aq.getContext(), json.toString(), Toast.LENGTH_LONG).show();
+				
+				
+				if(json != null){
+					
+					//successful ajax call, show status code and json content
+					Toast.makeText(aq.getContext(), status.getCode() + ":" + json.toString(), Toast.LENGTH_LONG).show();
+				
+				}else{
+					
+					//ajax error, show error code
+					Toast.makeText(aq.getContext(), "Error:" + status.getCode(), Toast.LENGTH_LONG).show();
+				}
 			}
 		});
 		
 	}
 	
+	
+	public void asyncBadJson(){
+		
+		AQUtility.debug("bad called");
+		
+		//perform a Google search in just a few lines of code
+		
+		String url = "http://www.google.com/xxuds/GnewsSearch?q=Obama&v=1.0";
+		
+		aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+			@Override
+			public void callback(String url, JSONObject json, AjaxStatus status) {
+				
+				
+				
+				if(json != null){
+					
+					//successful ajax call
+					Toast.makeText(aq.getContext(), json.toString(), Toast.LENGTH_LONG).show();
+				
+				}else{
+					
+					
+					
+					//ajax error 
+					Toast.makeText(aq.getContext(), "Error:" + status.getCode(), Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+		
+	}	
 	
 	public void clicked1(View view){
 		

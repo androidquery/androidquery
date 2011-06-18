@@ -174,6 +174,8 @@ public abstract class AjaxCallback<T> {
 	
 	private static AjaxStatus openBytes(String urlPath, boolean retry) throws IOException{
 				
+		AQUtility.debug("net", urlPath);
+		
 		URL url = new URL(urlPath);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
            
@@ -184,8 +186,6 @@ public abstract class AjaxCallback<T> {
         
         int code = connection.getResponseCode();
        
-        //AQUtility.debug("net", code);
-        
         if(code == -1 && retry){
         	AQUtility.debug("code -1", urlPath);
         	return openBytes(urlPath, false);
@@ -211,9 +211,8 @@ public abstract class AjaxCallback<T> {
 		private AjaxCallback<T> callback;
 		private T result;
 		private File cacheDir;
-		private int code;
-		private String message;
-		private String redirect;
+		private AjaxStatus status;
+		
 		private boolean memCache;
 		private boolean network;
 		
@@ -238,7 +237,7 @@ public abstract class AjaxCallback<T> {
 			try{
 			
 			
-				if(result == null){
+				if(status == null){
 					//background thread here
 					
 					File file = null;
@@ -254,34 +253,30 @@ public abstract class AjaxCallback<T> {
 							byte[] data = null;
 							
 							try{
-								AjaxStatus aj = openBytes(url, true);
-								data = aj.getData();
-								code = aj.getCode();
-								message = aj.getMessage();
-								redirect = aj.getRedirect();
+								status = openBytes(url, true);
+								data = status.getData();
 							}catch(Exception e){
 								AQUtility.report(e);
 							}
 							
 							if(data != null){
 							
-								result = callback.transform(url, data, makeStatus(redirect));
+								result = callback.transform(url, data, status);
 								
 								if(cacheDir != null){
 									callback.filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
 								}
 							}
 			
-						
 						}
 						
 					}else{
-						
-						result = callback.fileGet(url, file, makeStatus(url));
+						status = makeStatus(url);
+						result = callback.fileGet(url, file, status);
 						
 					}
 					
-					if(result != null){
+					if(status != null){
 						
 						AQUtility.post(this);
 						
@@ -296,7 +291,7 @@ public abstract class AjaxCallback<T> {
 						callback.memPut(url, result);
 					}
 					
-					callback.callback(url, result, new AjaxStatus(code, message, redirect, null));
+					callback.callback(url, result, status);
 					clear();
 				}
 				
