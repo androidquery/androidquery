@@ -825,6 +825,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Ajax call with various callback data types.
 	 *
+	 * The handler signature must be (String url, <K> object, AjaxStatus status)
+	 *
 	 * @param url url
 	 * @param type data type
 	 * @param callback callback method name
