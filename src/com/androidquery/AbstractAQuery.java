@@ -16,6 +16,7 @@
 
 package com.androidquery;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 
 import android.app.Activity;
@@ -649,7 +650,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	private static Class<?>[] ON_SCROLLED_STATE_SIG = {AbsListView.class, int.class};
 	
 	/**
-	 * Register a callback method for when a list is scrolled to bottom. Method must have signature of method(Object obj, String method).
+	 * Register a callback method for when a list is scrolled to bottom. Method must have signature of method(AbsListView view, int scrollState).
 	 *
 	 * @param handler The handler that has the public callback method.
 	 * @param method The method name of the callback.
@@ -833,16 +834,17 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	
-	public <K> T ajax(String url, Class<K> type, final Object handler, final String callback){
+	public <K> T ajax(String url, Class<K> type, Object handler, final String callback){
 		
 		final Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
+		final WeakReference<Object> ref = new WeakReference<Object>(handler);
 		
 		AjaxCallback<K> cb = new AjaxCallback<K>() {
 
 			@Override
 			protected void callback(String url, K object, AjaxStatus status) {
 				
-				AQUtility.invokeHandler(handler, callback, false, AJAX_SIG, url, object, status);
+				AQUtility.invokeHandler(ref.get(), callback, false, AJAX_SIG, url, object, status);
 				
 			}
 		};

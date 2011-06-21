@@ -17,6 +17,7 @@
 package com.androidquery.util;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Comparator;
 
 import android.view.View;
@@ -28,11 +29,12 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class Common implements Comparator<File>, Runnable, OnClickListener, OnItemClickListener, OnScrollListener{
 
-	private Object handler = this;
+	private Object handler;
 	private String method;
 	private Object[] params;
 	private boolean fallback;
 	private Class<?>[] sig;
+	private int methodId;
 	
 	public Common forward(Object handler, String callback, boolean fallback, Class<?>[] sig){
 		
@@ -45,12 +47,10 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	}
 	
 	
-	public Common method(String callback, Class<?>[] sig, Object... params){
+	public Common method(int methodId, Object... params){
 		
-		this.handler = this;
-		this.method = callback;
+		this.methodId = methodId;
 		this.params = params;
-		this.sig = sig;
 		
 		return this;
 		
@@ -65,8 +65,25 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 				input = params;
 			}
 			
+			Object cbo = handler;
+			if(cbo == null){
+				cbo = this;
+			}
 			
-			AQUtility.invokeHandler(handler, method, fallback, sig, input);
+			AQUtility.invokeHandler(cbo, method, fallback, sig, input);
+			
+		}else if(methodId != 0){
+			
+			switch(methodId){
+			
+				case CLEAN_CACHE:
+					AQUtility.cleanCache((File) params[0], (Long) params[1], (Long) params[2]);
+					break;
+				case STORE_FILE:
+					AQUtility.store((File) params[0], (byte[]) params[1]);
+					break;
+			
+			}
 			
 		}
 		
@@ -91,17 +108,9 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		
 	}
 
-	public void storeFile(File file, byte[] data){
-				
-		AQUtility.store(file, data);
-	}
-	
-	public void cleanCache(File dir, long trigger, long target) {			
-
-		AQUtility.cleanCache(dir, trigger, target);
+	protected static final int STORE_FILE = 1;
+	protected static final int CLEAN_CACHE = 2;
 		
-	}
-	
 	
 	@Override
 	public void run() {
@@ -135,7 +144,6 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		
 		if(scrollState == OnScrollListener.SCROLL_STATE_IDLE && cc == last + 1){
 			
-			//Utility.invokeHandler(o, callback, true, ON_SCROLLED_STATE_SIG, view, scrollState);
 			invoke(view, scrollState);
 			
 		}

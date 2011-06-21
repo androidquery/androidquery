@@ -68,6 +68,7 @@ public class AQUtility {
 	
 	public static void invokeHandler(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params){
     	
+		if(handler == null) return;
 		
 		try{   
 			invokeMethod(handler, callback, fallback, cls, params);
@@ -256,12 +257,12 @@ public class AQUtility {
 		return storeExe;
 	}
 	
-	private static final Class<?>[] STORE_FILE_SIG = {File.class, byte[].class}; 
+	
 	public static void storeAsync(File file, byte[] data, long delay){
 				
 		ScheduledExecutorService exe = getFileStoreExecutor();
 		
-		Common task = new Common().method("storeFile", STORE_FILE_SIG, file, data);
+		Common task = new Common().method(Common.STORE_FILE, file, data);
 		exe.schedule(task, delay, TimeUnit.MILLISECONDS);
 	
 	}
@@ -345,7 +346,6 @@ public class AQUtility {
 		cleanCacheAsync(context, triggerSize, targetSize);
 	}
 	
-	private static final Class<?>[] CLEAN_CACHE_SIG = {File.class, long.class, long.class};
 	public static void cleanCacheAsync(Context context, long triggerSize, long targetSize){
 		
 		
@@ -353,7 +353,7 @@ public class AQUtility {
 		try{			
 			File cacheDir = getCacheDir(context);
 			
-			Common task = new Common().method("cleanCache", CLEAN_CACHE_SIG, cacheDir, triggerSize, targetSize);
+			Common task = new Common().method(Common.CLEAN_CACHE, cacheDir, triggerSize, targetSize);
 			
 			ScheduledExecutorService exe = getFileStoreExecutor();	
 			

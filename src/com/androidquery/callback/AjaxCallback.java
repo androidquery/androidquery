@@ -121,6 +121,10 @@ public abstract class AjaxCallback<T> {
 		async(context, url, false, false, true);
 	}
 	
+	public void async(Context context, String url, boolean memCache, boolean fileCache){
+		async(context, url, memCache, fileCache, true);
+	}
+	
 	protected void async(Context context, String url, boolean memCache, boolean fileCache, boolean network){
 		
 		AQUtility.getHandler();
@@ -242,11 +246,22 @@ public abstract class AjaxCallback<T> {
 					
 					File file = null;
 					
+					//if file cache enabled, check for file
 					if(cacheDir != null){
 						file = AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
 					}
 					
-					if(file == null){
+					//if file exist
+					if(file != null){
+						//convert
+						result = callback.fileGet(url, file, status);
+						//if result is ok
+						if(result != null){
+							status = makeStatus(url);
+						}
+					}
+					
+					if(result == null){
 						
 						if(network){
 						
@@ -269,10 +284,6 @@ public abstract class AjaxCallback<T> {
 							}
 			
 						}
-						
-					}else{
-						status = makeStatus(url);
-						result = callback.fileGet(url, file, status);
 						
 					}
 					
