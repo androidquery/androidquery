@@ -173,7 +173,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		presetBitmap(iv, url);		
 		
-		super.async(context, url, memCache, fileCache, network);
+		super.async(context, url, memCache, fileCache, network, false);
 	}
 	
 	

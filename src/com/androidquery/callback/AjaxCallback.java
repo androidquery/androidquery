@@ -37,6 +37,10 @@ import com.androidquery.util.AQUtility;
 
 public abstract class AjaxCallback<T> {
 	
+	public Class<T> getType() {
+		return type;
+	}
+
 	private Class<T> type;
 	
 	public void setType(Class<T> type){
@@ -105,7 +109,10 @@ public abstract class AjaxCallback<T> {
 	protected void memPut(String url, T object){
 	}
 	
-	
+	protected String getRefreshUrl(String url){
+		//url = url + "&cache=" + System.currentTimeMillis();
+		return url;
+	}
 	
 	protected void filePut(String url, T object, File file, byte[] data){
 		AQUtility.storeAsync(file, data, 1000);
@@ -118,14 +125,14 @@ public abstract class AjaxCallback<T> {
 	private static int NETWORK_POOL = 4;
 	
 	public void async(Context context, String url){
-		async(context, url, false, false, true);
+		async(context, url, false, false, true, false);
 	}
 	
-	public void async(Context context, String url, boolean memCache, boolean fileCache){
-		async(context, url, memCache, fileCache, true);
+	public void async(Context context, String url, boolean memCache, boolean fileCache, boolean refresh){
+		async(context, url, memCache, fileCache, true, refresh);
 	}
 	
-	protected void async(Context context, String url, boolean memCache, boolean fileCache, boolean network){
+	protected void async(Context context, String url, boolean memCache, boolean fileCache, boolean network, boolean refresh){
 		
 		AQUtility.getHandler();
 		
@@ -140,7 +147,10 @@ public abstract class AjaxCallback<T> {
 			File cacheDir = null;
 			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
 			
-			FetcherTask<T> ft = new FetcherTask<T>(url, this, memCache, cacheDir, network);
+			String refreshUrl = null;
+			if(refresh) refreshUrl = getRefreshUrl(url);
+			
+			FetcherTask<T> ft = new FetcherTask<T>(url, this, memCache, cacheDir, network, refreshUrl);
 			
 			exe.execute(ft);
 		}
@@ -204,7 +214,7 @@ public abstract class AjaxCallback<T> {
         	redirect = connection.getURL().toExternalForm();
         }
         
-       
+        AQUtility.debug("response", code);
         
         return new AjaxStatus(code, connection.getResponseMessage(), redirect, data);
 	}
@@ -216,17 +226,23 @@ public abstract class AjaxCallback<T> {
 		private T result;
 		private File cacheDir;
 		private AjaxStatus status;
+		private String refreshUrl;
 		
+		private boolean fileCache;
 		private boolean memCache;
 		private boolean network;
+		private boolean refresh;
 		
-		private FetcherTask(String url, AjaxCallback<T> callback, boolean memCache, File cacheDir, boolean network){
+		private FetcherTask(String url, AjaxCallback<T> callback, boolean memCache, File cacheDir, boolean network, String refreshUrl){
 			
 			this.url = url;
 			this.callback = callback;
 			this.cacheDir = cacheDir;
 			this.memCache = memCache;
 			this.network = network;
+			this.refreshUrl = refreshUrl;
+			this.fileCache = cacheDir != null;
+			this.refresh = refreshUrl != null;
 		}
 				
 		private void clear(){
@@ -247,7 +263,7 @@ public abstract class AjaxCallback<T> {
 					File file = null;
 					
 					//if file cache enabled, check for file
-					if(cacheDir != null){
+					if(fileCache && !refresh){
 						file = AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
 					}
 					
@@ -268,7 +284,9 @@ public abstract class AjaxCallback<T> {
 							byte[] data = null;
 							
 							try{
-								status = openBytes(url, true);
+								String networkUrl = url;
+								if(refresh) networkUrl = refreshUrl;
+								status = openBytes(networkUrl, true);
 								data = status.getData();
 							}catch(Exception e){
 								AQUtility.report(e);
@@ -278,7 +296,7 @@ public abstract class AjaxCallback<T> {
 							
 								result = callback.transform(url, data, status);
 								
-								if(cacheDir != null){
+								if(fileCache){
 									callback.filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
 								}
 							}
