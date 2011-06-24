@@ -1,18 +1,17 @@
 public void asyncHtml(){
 	
-	//fetch Google's homepage in html
-	
-	String url = "http://www.google.com";
-	
-	aq.ajax(url, String.class, new AjaxCallback<String>() {
+//fetch Google's homepage in html
 
-		@Override
-		public void callback(String url, String html, AjaxStatus status) {
-			
-			Toast.makeText(aq.getContext(), html, Toast.LENGTH_LONG).show();
-		}
+String url = "http://www.google.com";
+
+aq.ajax(url, String.class, new AjaxCallback<String>() {
+
+	@Override
+	public void callback(String url, String html, AjaxStatus status) {
 		
-	});
+	}
+	
+});
 	
 	
 }
@@ -47,17 +46,17 @@ public void asyncJson(){
 
 public void asyncBytes(){
 	
-	//fetch a remote resource in raw bytes
-	
-	String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
-	
-	aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
+//fetch a remote resource in raw bytes
 
-		@Override
-		public void callback(String url, byte[] object, AjaxStatus status) {
-			Toast.makeText(aq.getContext(), "bytes array:" + object.length, Toast.LENGTH_LONG).show();
-		}
-	});
+String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+
+aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
+
+	@Override
+	public void callback(String url, byte[] object, AjaxStatus status) {
+		Toast.makeText(aq.getContext(), "bytes array:" + object.length, Toast.LENGTH_LONG).show();
+	}
+});
 	
 	
 }
@@ -75,6 +74,30 @@ public void asyncBitmap(){
 			Toast.makeText(aq.getContext(), object.toString(), Toast.LENGTH_LONG).show();
 		}
 	});
+	
+}
+
+public void asyncJson(){
+	
+	//perform a Google search in just a few lines of code
+	
+	String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";		
+	aq.ajax(url, JSONObject.class, this, "jsonCallback");
+	
+}
+
+public void jsonCallback(String url, JSONObject json, AjaxStatus status){
+	
+	if(json != null){
+		
+		//successful ajax call, show status code and json content
+		Toast.makeText(aq.getContext(), status.getCode() + ":" + json.toString(), Toast.LENGTH_LONG).show();
+	
+	}else{
+		
+		//ajax error, show error code
+		Toast.makeText(aq.getContext(), "Error:" + status.getCode(), Toast.LENGTH_LONG).show();
+	}
 	
 }
 

@@ -20,6 +20,8 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Comparator;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
@@ -27,7 +29,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class Common implements Comparator<File>, Runnable, OnClickListener, OnItemClickListener, OnScrollListener{
+public class Common implements Comparator<File>, Runnable, OnClickListener, OnItemClickListener, OnScrollListener, TextWatcher{
 
 	private Object handler;
 	private String method;
@@ -147,6 +149,25 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 			invoke(view, scrollState);
 			
 		}
+	}
+
+
+	@Override
+	public void afterTextChanged(Editable s) {
+		
+	}
+
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		
+	}
+
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		
+		invoke(s, start, before, count);
 	}
 	
 }

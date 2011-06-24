@@ -128,6 +128,7 @@ public class ListenerTestActivity extends Activity {
 		
 	}
 	
+	/*
 	public void asyncJson(){
 		
 		//perform a Google search in just a few lines of code
@@ -152,6 +153,31 @@ public class ListenerTestActivity extends Activity {
 				}
 			}
 		});
+		
+	}
+	*/
+	
+	public void asyncJson(){
+		
+		//perform a Google search in just a few lines of code
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";		
+		aq.ajax(url, JSONObject.class, this, "jsonCallback");
+		
+	}
+	
+	public void jsonCallback(String url, JSONObject json, AjaxStatus status){
+		
+		if(json != null){
+			
+			//successful ajax call, show status code and json content
+			Toast.makeText(aq.getContext(), status.getCode() + ":" + json.toString(), Toast.LENGTH_LONG).show();
+		
+		}else{
+			
+			//ajax error, show error code
+			Toast.makeText(aq.getContext(), "Error:" + status.getCode(), Toast.LENGTH_LONG).show();
+		}
 		
 	}
 	

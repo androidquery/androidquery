@@ -669,6 +669,29 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	private static final Class<?>[] TEXT_CHANGE_SIG = {CharSequence.class, int.class, int.class, int.class};
+	
+	/**
+	 * Register a callback method for when a textview text is changed. Method must have signature of method(CharSequence s, int start, int before, int count)).
+	 *
+	 * @param handler The handler that has the public callback method.
+	 * @param method The method name of the callback.
+	 * @return self
+	 */
+	public T textChanged(Object handler, String method){
+		
+		if(view != null && view instanceof TextView){			
+		
+			TextView tv = (TextView) view;
+			Common common = new Common().forward(handler, method, true, TEXT_CHANGE_SIG);
+			tv.addTextChangedListener(common);
+			
+		}
+		
+		return self();
+	}	
+	
+	
 	private static Class<?>[] PENDING_TRANSITION_SIG = {int.class, int.class};
 	
 	/**
