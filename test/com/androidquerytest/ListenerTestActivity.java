@@ -231,8 +231,12 @@ public class ListenerTestActivity extends Activity {
 	
 	public void reloadImage(View view){
 		
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png"; 
+		
+		AQUtility.debug("cached image exist", aq.getCachedFile(url).exists());
+		
 		aq.id(R.id.image1).clear();
-		aq.image("http://www.vikispot.com/z/images/vikispot/android-w.png");
+		aq.image(url);
 		
 	}
 	
