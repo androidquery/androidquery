@@ -16,6 +16,7 @@
 
 package com.androidquery;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 
@@ -893,5 +894,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Return file cached by image requests. Returns null if url is not cached.
+	 *
+	 * 
+	 * @return File
+	 */
+	public File getCachedFile(String url){
+		
+		return AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(getContext()), url);
+		
+	}
 	
 }
