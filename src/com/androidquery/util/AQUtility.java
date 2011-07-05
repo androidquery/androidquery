@@ -38,6 +38,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 
+/**
+ * Utility methods. Warning: Methods might changed in future versions.
+ *
+ */
+
 public class AQUtility {
 
 	private static boolean debug = false;
