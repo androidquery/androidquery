@@ -858,8 +858,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	
-	public <K> T ajax(String url, Class<K> type, Object handler, final String callback){
+	public <K> T ajax(String url, Class<K> type, Object handler, String callback){
 		
+		/*
 		final Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
 		final WeakReference<Object> ref = new WeakReference<Object>(handler);
 		
@@ -872,8 +873,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 				
 			}
 		};
-		
-		
+		*/
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.setCallback(handler, callback);
 		cb.setType(type);
 		cb.async(getContext(), url);
 		

@@ -19,6 +19,7 @@ package com.androidquery.callback;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -35,19 +36,33 @@ import android.graphics.BitmapFactory;
 
 import com.androidquery.util.AQUtility;
 
-public abstract class AjaxCallback<T> {
+public class AjaxCallback<T> {
+	
+	private Class<T> type;
+	private WeakReference<Object> handler;
+	private String method;
 	
 	public Class<T> getType() {
 		return type;
 	}
 
-	private Class<T> type;
+	public void setCallback(Object handler, String method){
+		this.handler = new WeakReference<Object>(handler);
+		this.method = method;
+	}
 	
 	public void setType(Class<T> type){
 		this.type = type;
 	}
 	
-	protected abstract void callback(String url, T object, AjaxStatus status);
+	protected void callback(String url, T object, AjaxStatus status){
+		
+		Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
+		
+		AQUtility.invokeHandler(handler.get(), method, false, AJAX_SIG, url, object, status);
+		
+		
+	}
 	
 	protected T fileGet(String url, File file, AjaxStatus status){
 		try {			
@@ -57,6 +72,12 @@ public abstract class AjaxCallback<T> {
 			AQUtility.report(e);
 			return null;
 		}
+	}
+	
+	protected T datastoreGet(String url){
+		
+		return null;
+		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -286,25 +307,35 @@ public abstract class AjaxCallback<T> {
 					if(result == null){
 						
 						if(network){
-						
-							byte[] data = null;
+					
+							result = callback.datastoreGet(url);
 							
-							try{
-								String networkUrl = url;
-								if(refresh) networkUrl = refreshUrl;
-								status = openBytes(networkUrl, true);
-								data = status.getData();
-							}catch(Exception e){
-								AQUtility.report(e);
-							}
+							if(result != null){
 							
-							if(data != null){
+								status = makeStatus(url);
 							
-								result = callback.transform(url, data, status);
+							}else{
+							
+								byte[] data = null;
 								
-								if(fileCache){
-									callback.filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
+								try{
+									String networkUrl = url;
+									if(refresh) networkUrl = refreshUrl;
+									status = openBytes(networkUrl, true);
+									data = status.getData();
+								}catch(Exception e){
+									AQUtility.report(e);
 								}
+								
+								if(data != null){
+								
+									result = callback.transform(url, data, status);
+									
+									if(fileCache){
+										callback.filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
+									}
+								}
+								
 							}
 			
 						}
