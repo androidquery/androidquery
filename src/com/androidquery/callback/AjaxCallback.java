@@ -205,6 +205,12 @@ public abstract class AjaxCallback<T> {
         	return openBytes(urlPath, false);
         }
         
+        if(code == 307 && retry){
+        	String redirect = connection.getHeaderField("Location");
+        	AQUtility.debug("redirect", redirect);
+        	return openBytes(redirect, false);
+        }
+        
         byte[] data = null;
         String redirect = urlPath;
         if(code == -1 || code < 200 || code >= 300){        	
