@@ -53,7 +53,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	protected void callback(String url, Bitmap bm, AjaxStatus status) {
+	public void callback(String url, Bitmap bm, AjaxStatus status) {
 		
 		ImageView iv = r.get();
 		

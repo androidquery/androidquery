@@ -40,26 +40,26 @@ public class AjaxCallback<T> {
 	
 	private Class<T> type;
 	private WeakReference<Object> handler;
-	private String method;
+	private String callback;
 	
 	public Class<T> getType() {
 		return type;
 	}
 
-	public void setCallback(Object handler, String method){
+	public void setCallback(Object handler, String callback){
 		this.handler = new WeakReference<Object>(handler);
-		this.method = method;
+		this.callback = callback;
 	}
 	
 	public void setType(Class<T> type){
 		this.type = type;
 	}
 	
-	protected void callback(String url, T object, AjaxStatus status){
+	public void callback(String url, T object, AjaxStatus status){
 		
 		Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
 		
-		AQUtility.invokeHandler(handler.get(), method, false, AJAX_SIG, url, object, status);
+		AQUtility.invokeHandler(handler.get(), callback, false, AJAX_SIG, url, object, status);
 		
 		
 	}
@@ -131,7 +131,6 @@ public class AjaxCallback<T> {
 	}
 	
 	protected String getRefreshUrl(String url){
-		//url = url + "&cache=" + System.currentTimeMillis();
 		return url;
 	}
 	
@@ -371,6 +370,14 @@ public class AjaxCallback<T> {
 		
 		
 		
+	}
+
+	protected WeakReference<Object> getHandler() {
+		return handler;
+	}
+
+	protected String getCallback() {
+		return callback;
 	}
 	
 }
