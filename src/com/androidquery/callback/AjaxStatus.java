@@ -9,8 +9,9 @@ public class AjaxStatus {
 	private String redirect;
 	private byte[] data;
 	private Date time;
+	private boolean refresh;
 	
-	protected AjaxStatus(int code, String message, String redirect, byte[] data, Date time){
+	protected AjaxStatus(int code, String message, String redirect, byte[] data, Date time, boolean refresh){
 		this.code = code;
 		this.message = message;
 		this.redirect = redirect;
@@ -37,6 +38,13 @@ public class AjaxStatus {
 	public Date getTime(){
 		return time;
 	}
+
+	public boolean getRefresh() {
+		return refresh;
+	}
 	
+	protected void setRefresh(boolean refresh) {
+		this.refresh = refresh;
+	}
 	
 }

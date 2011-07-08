@@ -36,6 +36,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.androidquery.util.AQUtility;
+import com.pekca.android.utility.Utility;
 
 public class AjaxCallback<T> {
 	
@@ -139,8 +140,14 @@ public class AjaxCallback<T> {
 		AQUtility.storeAsync(file, data, 1000);
 	}
 	
-	private static AjaxStatus makeStatus(String url, Date time){
-		return new AjaxStatus(200, "OK", url, null, time);
+	public File accessFile(File cacheDir, String url){
+		
+		//return AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
+		return AQUtility.getExistedCacheByUrl(cacheDir, url);
+	}
+	
+	private static AjaxStatus makeStatus(String url, Date time, boolean refresh){
+		return new AjaxStatus(200, "OK", url, null, time, refresh);
 	}
 	
 	private static int NETWORK_POOL = 4;
@@ -160,7 +167,7 @@ public class AjaxCallback<T> {
 		T object = memGet(url);
 		
 		if(object != null){					
-			callback(url, object, makeStatus(url, null));
+			callback(url, object, makeStatus(url, null, refresh));
 		}else{
 		
 			ExecutorService exe = getExecutor();
@@ -176,6 +183,7 @@ public class AjaxCallback<T> {
 			exe.execute(ft);
 		}
 	}
+	
 	
 	
 	private static ExecutorService fetchExe;
@@ -248,7 +256,7 @@ public class AjaxCallback<T> {
         
         AQUtility.debug("response", code);
         
-        return new AjaxStatus(code, connection.getResponseMessage(), redirect, data, new Date());
+        return new AjaxStatus(code, connection.getResponseMessage(), redirect, data, new Date(), false);
 	}
 	
 	private static class FetcherTask<T> implements Runnable {
@@ -288,6 +296,7 @@ public class AjaxCallback<T> {
 			
 			try{
 			
+				
 			
 				if(status == null){
 					//background thread here
@@ -296,7 +305,8 @@ public class AjaxCallback<T> {
 					
 					//if file cache enabled, check for file
 					if(fileCache && !refresh){
-						file = AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
+						//file = AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
+						file = callback.accessFile(cacheDir, url);
 					}
 					
 					//if file exist
@@ -306,7 +316,7 @@ public class AjaxCallback<T> {
 						//if result is ok
 						if(result != null){
 							
-							status = makeStatus(url, new Date(file.lastModified()));
+							status = makeStatus(url, new Date(file.lastModified()), refresh);
 						}
 					}
 					
@@ -318,7 +328,7 @@ public class AjaxCallback<T> {
 							
 							if(result != null){
 							
-								status = makeStatus(url, null);
+								status = makeStatus(url, null, refresh);
 							
 							}else{
 							
@@ -328,6 +338,10 @@ public class AjaxCallback<T> {
 									String networkUrl = url;
 									if(refresh) networkUrl = refreshUrl;
 									status = openBytes(networkUrl, true);
+									
+									status.setRefresh(refresh);
+									
+									
 									data = status.getData();
 								}catch(Exception e){
 									AQUtility.report(e);
