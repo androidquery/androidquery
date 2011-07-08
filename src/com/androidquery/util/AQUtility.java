@@ -141,7 +141,7 @@ public class AQUtility {
     	long cId = Thread.currentThread().getId();
     	
     	if(uiId != cId){
-    		AQUtility.report(new NullPointerException());
+    		AQUtility.report(new IllegalStateException("Not UI Thread"));
     	}
     	
     }

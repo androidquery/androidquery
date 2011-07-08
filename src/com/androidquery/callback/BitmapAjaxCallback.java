@@ -43,12 +43,12 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	protected Bitmap fileGet(String url, File file, AjaxStatus status) {
+	public Bitmap fileGet(String url, File file, AjaxStatus status) {
 		return BitmapFactory.decodeFile(file.getAbsolutePath());
 	}
 	
 	@Override
-	protected Bitmap transform(String url, byte[] data, AjaxStatus status) {
+	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
 		return BitmapFactory.decodeByteArray(data, 0, data.length);
 	}
 	
@@ -95,7 +95,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	protected Bitmap memGet(String url){
+	public Bitmap memGet(String url){
 		
 		Map<String, Bitmap> cache = getBImgCache();
 		Bitmap result = cache.get(url);
@@ -109,7 +109,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	protected void memPut(String url, Bitmap bm){
+	public void memPut(String url, Bitmap bm){
 		
 		if(bm == null) return;
 		

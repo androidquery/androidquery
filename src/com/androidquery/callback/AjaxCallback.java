@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -64,7 +65,7 @@ public class AjaxCallback<T> {
 		
 	}
 	
-	protected T fileGet(String url, File file, AjaxStatus status){
+	public T fileGet(String url, File file, AjaxStatus status){
 		try {			
 			byte[] data = AQUtility.toBytes(new FileInputStream(file));			
 			return transform(url, data, status);
@@ -74,14 +75,14 @@ public class AjaxCallback<T> {
 		}
 	}
 	
-	protected T datastoreGet(String url){
+	public T datastoreGet(String url){
 		
 		return null;
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected T transform(String url, byte[] data, AjaxStatus status){
+	public T transform(String url, byte[] data, AjaxStatus status){
 		
 		if(type == null){
 			return null;
@@ -123,23 +124,23 @@ public class AjaxCallback<T> {
 		return null;
 	}
 	
-	protected T memGet(String url){
+	public T memGet(String url){
 		return null;
 	}
 	
-	protected void memPut(String url, T object){
+	public void memPut(String url, T object){
 	}
 	
-	protected String getRefreshUrl(String url){
+	public String getRefreshUrl(String url){
 		return url;
 	}
 	
-	protected void filePut(String url, T object, File file, byte[] data){
+	public void filePut(String url, T object, File file, byte[] data){
 		AQUtility.storeAsync(file, data, 1000);
 	}
 	
-	private static AjaxStatus makeStatus(String url){
-		return new AjaxStatus(200, "OK", url, null);
+	private static AjaxStatus makeStatus(String url, Date time){
+		return new AjaxStatus(200, "OK", url, null, time);
 	}
 	
 	private static int NETWORK_POOL = 4;
@@ -159,7 +160,7 @@ public class AjaxCallback<T> {
 		T object = memGet(url);
 		
 		if(object != null){					
-			callback(url, object, makeStatus(url));
+			callback(url, object, makeStatus(url, null));
 		}else{
 		
 			ExecutorService exe = getExecutor();
@@ -202,6 +203,11 @@ public class AjaxCallback<T> {
 		
 	}
 	
+	private static String patchUrl(String url){
+		url = url.replaceAll(" ", "%20");
+		return url;
+	}
+	
 	private static int NET_TIMEOUT = 30000;
 	private static String MOBILE_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533";	
 	
@@ -210,7 +216,7 @@ public class AjaxCallback<T> {
 				
 		AQUtility.debug("net", urlPath);
 		
-		URL url = new URL(urlPath);
+		URL url = new URL(patchUrl(urlPath));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
            
         connection.setUseCaches(false);
@@ -242,7 +248,7 @@ public class AjaxCallback<T> {
         
         AQUtility.debug("response", code);
         
-        return new AjaxStatus(code, connection.getResponseMessage(), redirect, data);
+        return new AjaxStatus(code, connection.getResponseMessage(), redirect, data, new Date());
 	}
 	
 	private static class FetcherTask<T> implements Runnable {
@@ -299,7 +305,8 @@ public class AjaxCallback<T> {
 						result = callback.fileGet(url, file, status);
 						//if result is ok
 						if(result != null){
-							status = makeStatus(url);
+							
+							status = makeStatus(url, new Date(file.lastModified()));
 						}
 					}
 					
@@ -311,7 +318,7 @@ public class AjaxCallback<T> {
 							
 							if(result != null){
 							
-								status = makeStatus(url);
+								status = makeStatus(url, null);
 							
 							}else{
 							
@@ -328,10 +335,18 @@ public class AjaxCallback<T> {
 								
 								if(data != null){
 								
-									result = callback.transform(url, data, status);
+									try{
+										result = callback.transform(url, data, status);
+									}catch(Exception e){
+										AQUtility.report(e);
+									}
 									
 									if(fileCache){
-										callback.filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
+										try{
+											callback.filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
+										}catch(Exception e){
+											AQUtility.report(e);
+										}
 									}
 								}
 								
