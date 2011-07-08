@@ -39,6 +39,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -336,13 +337,61 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Enable a view.
 	 *
-	 * @param enable the enable
+	 * @param enabled state
 	 * @return self
 	 */
 	public T enabled(boolean enable){
 		
 		if(view != null){
 			view.setEnabled(enable);
+		}
+		
+		return self();
+	}
+	
+	/**
+	 * Set checked state of a compound button.
+	 *
+	 * @param checked state
+	 * @return self
+	 */
+	public T checked(boolean checked){
+		
+		if(view != null && view instanceof CompoundButton){
+			CompoundButton cb = (CompoundButton) view;
+			cb.setChecked(checked);
+		}
+		
+		return self();
+	}
+	
+	/**
+	 * Get checked state of a compound button.
+	 *
+	 * @return checked
+	 */
+	public boolean isChecked(){
+		
+		boolean checked = false;
+		
+		if(view != null && view instanceof CompoundButton){
+			CompoundButton cb = (CompoundButton) view;
+			checked = cb.isChecked();
+		}
+		
+		return checked;
+	}
+	
+	/**
+	 * Set clickable for a view.
+	 *
+	 * @param clickable
+	 * @return self
+	 */
+	public T clickable(boolean clickable){
+		
+		if(view != null){
+			view.setClickable(clickable);
 		}
 		
 		return self();
