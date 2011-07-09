@@ -151,8 +151,11 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	private static void presetBitmap(ImageView iw, String url){
-		iw.setImageBitmap(null);
-		iw.setTag(url);
+		
+		if(!url.equals(iw.getTag())){
+			iw.setImageBitmap(null);
+			iw.setTag(url);
+		}
 	}
 	
 	
