@@ -18,7 +18,12 @@ package com.androidquery.callback;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -26,6 +31,9 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
+import com.androidquery.util.AQUtility;
 import com.androidquery.util.Cache;
 
 public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
@@ -36,10 +44,12 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
 	
-	private WeakReference<ImageView> r;
+	private static HashMap<String, WeakHashMap<ImageView, Void>> ivsMap = new HashMap<String, WeakHashMap<ImageView, Void>>();	
+	private WeakHashMap<ImageView, Void> ivs;
 	
-	public BitmapAjaxCallback(ImageView iv){
-		this.r = new WeakReference<ImageView>(iv);
+	
+	private BitmapAjaxCallback(){
+		ivs = new WeakHashMap<ImageView, Void>();		
 	}
 	
 	@Override
@@ -55,8 +65,22 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	@Override
 	public void callback(String url, Bitmap bm, AjaxStatus status) {
 		
-		ImageView iv = r.get();
+		ivsMap.remove(url);
 		
+		Set<ImageView> set = ivs.keySet();
+		
+		AQUtility.debug("concurrent", ivsMap.size());
+		
+		
+		for(ImageView iv: set){
+			showImage(url, bm, iv);
+		}
+		
+		
+	}
+	
+	private static void showImage(String url, Bitmap bm, ImageView iv){
+		 
 		if(iv != null && url.equals(iv.getTag())){
 			iv.setVisibility(View.VISIBLE);
 			iv.setImageBitmap(bm);
@@ -95,7 +119,11 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	public Bitmap memGet(String url){
+	public Bitmap memGet(String url){		
+		return memGet2(url);
+	}
+	
+	private static Bitmap memGet2(String url){
 		
 		Map<String, Bitmap> cache = getBImgCache();
 		Bitmap result = cache.get(url);
@@ -127,15 +155,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	private static boolean checkInProgress(ImageView view, String url){
-		
-		if(url.equals(view.getTag())){
-			return true;
-		}else{
-			return false;
-		}
-		
-	}
 	
 	private static void setBitmap(ImageView iw, String url, Bitmap bm){
 		
@@ -151,17 +170,13 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	private static void presetBitmap(ImageView iw, String url){
-		
 		if(!url.equals(iw.getTag())){
 			iw.setImageBitmap(null);
 			iw.setTag(url);
 		}
 	}
 	
-	
-	public void async(Context context, String url, boolean memCache, boolean fileCache){
-		
-		ImageView iv = r.get();
+	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache){
 		
 		if(iv == null) return;
 		
@@ -171,12 +186,31 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			return;
 		}
 		
+		presetBitmap(iv, url);
 		
-		boolean network = !checkInProgress(iv, url);
+		//check memory
+		Bitmap bm = memGet2(url);
+		if(bm != null){
+			showImage(url, bm, iv);
+			return;
+		}
 		
-		presetBitmap(iv, url);		
+		WeakHashMap<ImageView, Void> ivs = ivsMap.get(url);
 		
-		super.async(context, url, memCache, fileCache, network, false);
+		if(ivs == null){		
+			BitmapAjaxCallback cb = new BitmapAjaxCallback();
+			cb.start(context, iv, url, memCache, fileCache);
+		}else{
+			ivs.put(iv, null);
+		}
+	}
+	
+	private void start(Context context, ImageView iv, String url, boolean memCache, boolean fileCache){
+		
+		ivs.put(iv, null);
+		ivsMap.put(url, ivs);
+		
+		super.async(context, url, memCache, fileCache, true, false);
 	}
 	
 	
