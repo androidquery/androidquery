@@ -102,6 +102,9 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		smallCache = null;
 	}
 	
+	protected static void clearTasks(){
+		ivsMap.clear();
+	}
 	
 	private static Map<String, Bitmap> getBImgCache(){
 		if(bigCache == null){
@@ -210,7 +213,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		ivs.put(iv, null);
 		ivsMap.put(url, ivs);
 		
-		super.async(context, url, memCache, fileCache, true, false);
+		super.async(context, url, memCache, fileCache, false);
 	}
 	
 	

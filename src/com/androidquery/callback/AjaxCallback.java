@@ -37,11 +37,28 @@ import android.graphics.BitmapFactory;
 
 import com.androidquery.util.AQUtility;
 
-public class AjaxCallback<T> {
+public class AjaxCallback<T> implements Runnable{
 	
 	private Class<T> type;
 	private WeakReference<Object> handler;
 	private String callback;
+	
+	private String url;
+	private T result;
+	private File cacheDir;
+	private AjaxStatus status;
+	//private String refreshUrl;
+	
+	private boolean fileCache;
+	private boolean memCache;
+	private boolean refresh;
+	
+	private void clear(){		
+		handler = null;
+		result = null;
+		status = null;
+	}
+	
 	
 	public Class<T> getType() {
 		return type;
@@ -139,9 +156,7 @@ public class AjaxCallback<T> {
 		AQUtility.storeAsync(file, data, 1000);
 	}
 	
-	public File accessFile(File cacheDir, String url){
-		
-		//return AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
+	public File accessFile(File cacheDir, String url){		
 		return AQUtility.getExistedCacheByUrl(cacheDir, url);
 	}
 	
@@ -152,37 +167,243 @@ public class AjaxCallback<T> {
 	private static int NETWORK_POOL = 4;
 	
 	public void async(Context context, String url){
-		async(context, url, false, false, true, false);
+		work(true, context, url, false, false, false);
 	}
 	
 	public void async(Context context, String url, boolean memCache, boolean fileCache, boolean refresh){
-		async(context, url, memCache, fileCache, true, refresh);
+		work(true, context, url, memCache, fileCache, refresh);
 	}
 	
-	protected void async(Context context, String url, boolean memCache, boolean fileCache, boolean network, boolean refresh){
+	private void work(boolean async, Context context, String url, boolean memCache, boolean fileCache, boolean refresh){
 		
-		AQUtility.getHandler();
+		
 		
 		T object = memGet(url);
 		
-		if(object != null){					
+		if(object != null){		
+			
 			callback(url, object, makeStatus(url, null, refresh));
+		
 		}else{
 		
-			ExecutorService exe = getExecutor();
-			
-			File cacheDir = null;
 			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
 			
-			String refreshUrl = null;
-			if(refresh) refreshUrl = getRefreshUrl(url);
+			this.url = url;
+			this.memCache = memCache;
+			this.fileCache = fileCache;
+			this.refresh = refresh;
 			
-			FetcherTask<T> ft = new FetcherTask<T>(url, this, memCache, cacheDir, network, refreshUrl);
+			if(async){
 			
-			exe.execute(ft);
+				AQUtility.getHandler();				
+				ExecutorService exe = getExecutor();
+				exe.execute(this);
+			
+			}else{
+				
+				backgroundWork();
+				afterWork();
+			}
 		}
 	}
 	
+	public void sync(Context context, String url, boolean memCache, boolean fileCache, boolean refresh){
+		
+		work(false, context, url, memCache, fileCache, refresh);
+		
+	}
+	
+	@Override
+	public void run() {
+		
+		try{
+			
+			if(status == null){
+				
+				backgroundWork();
+			
+				if(status != null){
+					
+					AQUtility.post(this);
+					
+				}else{
+					clear();
+				}
+				
+			}else{
+				
+				afterWork();
+				clear();
+			}
+			
+				
+		
+		}catch(Exception e){
+			AQUtility.report(e);
+		}
+		
+		
+	}
+	
+	private void backgroundWork(){
+		
+		if(!refresh){
+			
+			if(fileCache){				
+				fileWork();			
+			}
+		
+		}
+		
+		if(result == null){
+			datastoreWork();			
+		}
+		
+		if(result == null){
+			networkWork();
+		}
+		
+		
+		
+		/*
+		File file = null;
+		
+		//if file cache enabled, check for file
+		if(fileCache && !refresh){
+			file = accessFile(cacheDir, url);
+		}
+		
+		//if file exist
+		if(file != null){
+			//convert
+			result = fileGet(url, file, status);
+			//if result is ok
+			if(result != null){
+				
+				status = makeStatus(url, new Date(file.lastModified()), refresh);
+			}
+		}
+		
+		if(result == null){
+			
+			
+			result = datastoreGet(url);
+			
+			if(result != null){
+			
+				status = makeStatus(url, null, refresh);
+			
+			}else{
+			
+				byte[] data = null;
+				
+				try{
+					String networkUrl = url;
+					if(refresh) networkUrl = getRefreshUrl(url);
+					status = openBytes(networkUrl, true);						
+					status.setRefresh(refresh);						
+					
+					data = status.getData();
+				}catch(Exception e){
+					AQUtility.report(e);
+				}
+				
+				if(data != null){
+				
+					try{
+						result = transform(url, data, status);
+					}catch(Exception e){
+						AQUtility.report(e);
+					}
+					
+					if(fileCache){
+						try{
+							filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
+						}catch(Exception e){
+							AQUtility.report(e);
+						}
+					}
+				}
+				
+			}
+
+			
+			
+		}
+		
+		*/
+	}
+	
+	private void fileWork(){
+		
+		File file = accessFile(cacheDir, url);
+				
+		//if file exist
+		if(file != null){
+			//convert
+			result = fileGet(url, file, status);
+			//if result is ok
+			if(result != null){				
+				status = makeStatus(url, new Date(file.lastModified()), refresh);
+			}
+		}
+	}
+	
+	private void datastoreWork(){
+		
+		result = datastoreGet(url);
+		
+		if(result != null){		
+			status = makeStatus(url, null, refresh);
+		}
+	}
+	
+	private void networkWork(){
+		
+		byte[] data = null;
+		
+		try{
+			
+			String networkUrl = url;
+			if(refresh) networkUrl = getRefreshUrl(url);
+			
+			status = openBytes(networkUrl, true);						
+			status.setRefresh(refresh);						
+			
+			data = status.getData();
+		}catch(Exception e){
+			AQUtility.report(e);
+		}
+		
+		if(data != null){
+		
+			try{
+				result = transform(url, data, status);
+			}catch(Exception e){
+				AQUtility.report(e);
+			}
+			
+			if(result != null && fileCache){
+				try{
+					filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
+				}catch(Exception e){
+					AQUtility.report(e);
+				}
+			}
+		}
+		
+		
+	}
+	
+	
+	private void afterWork(){
+		
+		if(memCache){
+			memPut(url, result);
+		}
+		
+		callback(url, result, status);
+	}
 	
 	
 	private static ExecutorService fetchExe;
@@ -208,6 +429,7 @@ public class AjaxCallback<T> {
 			fetchExe = null;
 		}
 		
+		BitmapAjaxCallback.clearTasks();
 	}
 	
 	private static String patchUrl(String url){
@@ -258,6 +480,7 @@ public class AjaxCallback<T> {
         return new AjaxStatus(code, connection.getResponseMessage(), redirect, data, new Date(), false);
 	}
 	
+	/*
 	private static class FetcherTask<T> implements Runnable {
 
 		private String url;
@@ -304,7 +527,6 @@ public class AjaxCallback<T> {
 					
 					//if file cache enabled, check for file
 					if(fileCache && !refresh){
-						//file = AQUtility.getExistedCacheByUrlSetAccess(cacheDir, url);
 						file = callback.accessFile(cacheDir, url);
 					}
 					
@@ -400,6 +622,8 @@ public class AjaxCallback<T> {
 		
 	}
 
+	*/
+
 	protected WeakReference<Object> getHandler() {
 		return handler;
 	}
@@ -407,6 +631,8 @@ public class AjaxCallback<T> {
 	protected String getCallback() {
 		return callback;
 	}
+
+	
 	
 }
 
