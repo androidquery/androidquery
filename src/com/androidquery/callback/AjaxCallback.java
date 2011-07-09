@@ -36,7 +36,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.androidquery.util.AQUtility;
-import com.pekca.android.utility.Utility;
 
 public class AjaxCallback<T> {
 	
