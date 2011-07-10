@@ -77,7 +77,7 @@ public class AjaxCallback<T> implements Runnable{
 		
 		Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
 		
-		AQUtility.invokeHandler(handler.get(), callback, false, AJAX_SIG, url, object, status);
+		AQUtility.invokeHandler(getHandler(), callback, false, AJAX_SIG, url, object, status);
 		
 		
 	}
@@ -624,8 +624,9 @@ public class AjaxCallback<T> implements Runnable{
 
 	*/
 
-	protected WeakReference<Object> getHandler() {
-		return handler;
+	protected Object getHandler() {
+		if(handler == null) return null;
+		return handler.get();
 	}
 
 	protected String getCallback() {
