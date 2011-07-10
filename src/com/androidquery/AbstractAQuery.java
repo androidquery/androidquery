@@ -912,20 +912,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Class<K> type, Object handler, String callback){
 		
-		/*
-		final Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
-		final WeakReference<Object> ref = new WeakReference<Object>(handler);
-		
-		AjaxCallback<K> cb = new AjaxCallback<K>() {
-
-			@Override
-			protected void callback(String url, K object, AjaxStatus status) {
-				
-				AQUtility.invokeHandler(ref.get(), callback, false, AJAX_SIG, url, object, status);
-				
-			}
-		};
-		*/
+	
 		AjaxCallback<K> cb = new AjaxCallback<K>();
 		cb.setCallback(handler, callback);
 		cb.setType(type);
