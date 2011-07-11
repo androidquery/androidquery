@@ -47,7 +47,6 @@ public class AjaxCallback<T> implements Runnable{
 	private T result;
 	private File cacheDir;
 	private AjaxStatus status;
-	//private String refreshUrl;
 	
 	private boolean fileCache;
 	private boolean memCache;
@@ -201,7 +200,7 @@ public class AjaxCallback<T> implements Runnable{
 			
 			}else{
 				
-				backgroundWork();
+				background();
 				afterWork();
 			}
 		}
@@ -220,15 +219,19 @@ public class AjaxCallback<T> implements Runnable{
 			
 			if(status == null){
 				
-				backgroundWork();
+				background();
 			
-				if(status != null){
+				if(status == null){
+					status = new AjaxStatus(-1, "OK", url, null, null, refresh);
+				}
+				
+				//if(status != null){
 					
 					AQUtility.post(this);
 					
-				}else{
-					clear();
-				}
+				//}else{
+					//clear();
+				//}
 				
 			}else{
 				
@@ -245,7 +248,7 @@ public class AjaxCallback<T> implements Runnable{
 		
 	}
 	
-	private void backgroundWork(){
+	public void background(){
 		
 		if(!refresh){
 			
@@ -262,76 +265,7 @@ public class AjaxCallback<T> implements Runnable{
 		if(result == null){
 			networkWork();
 		}
-		
-		
-		
-		/*
-		File file = null;
-		
-		//if file cache enabled, check for file
-		if(fileCache && !refresh){
-			file = accessFile(cacheDir, url);
-		}
-		
-		//if file exist
-		if(file != null){
-			//convert
-			result = fileGet(url, file, status);
-			//if result is ok
-			if(result != null){
 				
-				status = makeStatus(url, new Date(file.lastModified()), refresh);
-			}
-		}
-		
-		if(result == null){
-			
-			
-			result = datastoreGet(url);
-			
-			if(result != null){
-			
-				status = makeStatus(url, null, refresh);
-			
-			}else{
-			
-				byte[] data = null;
-				
-				try{
-					String networkUrl = url;
-					if(refresh) networkUrl = getRefreshUrl(url);
-					status = openBytes(networkUrl, true);						
-					status.setRefresh(refresh);						
-					
-					data = status.getData();
-				}catch(Exception e){
-					AQUtility.report(e);
-				}
-				
-				if(data != null){
-				
-					try{
-						result = transform(url, data, status);
-					}catch(Exception e){
-						AQUtility.report(e);
-					}
-					
-					if(fileCache){
-						try{
-							filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
-						}catch(Exception e){
-							AQUtility.report(e);
-						}
-					}
-				}
-				
-			}
-
-			
-			
-		}
-		
-		*/
 	}
 	
 	private void fileWork(){
@@ -398,7 +332,7 @@ public class AjaxCallback<T> implements Runnable{
 	
 	private void afterWork(){
 		
-		if(memCache){
+		if(url != null && memCache){
 			memPut(url, result);
 		}
 		
@@ -480,149 +414,6 @@ public class AjaxCallback<T> implements Runnable{
         return new AjaxStatus(code, connection.getResponseMessage(), redirect, data, new Date(), false);
 	}
 	
-	/*
-	private static class FetcherTask<T> implements Runnable {
-
-		private String url;
-		private AjaxCallback<T> callback;
-		private T result;
-		private File cacheDir;
-		private AjaxStatus status;
-		private String refreshUrl;
-		
-		private boolean fileCache;
-		private boolean memCache;
-		private boolean network;
-		private boolean refresh;
-		
-		private FetcherTask(String url, AjaxCallback<T> callback, boolean memCache, File cacheDir, boolean network, String refreshUrl){
-			
-			this.url = url;
-			this.callback = callback;
-			this.cacheDir = cacheDir;
-			this.memCache = memCache;
-			this.network = network;
-			this.refreshUrl = refreshUrl;
-			this.fileCache = cacheDir != null;
-			this.refresh = refreshUrl != null;
-		}
-				
-		private void clear(){
-			url = null;
-			result = null;
-			callback = null;
-		}
-		
-		@Override
-		public void run() {
-			
-			try{
-			
-				
-			
-				if(status == null){
-					//background thread here
-					
-					File file = null;
-					
-					//if file cache enabled, check for file
-					if(fileCache && !refresh){
-						file = callback.accessFile(cacheDir, url);
-					}
-					
-					//if file exist
-					if(file != null){
-						//convert
-						result = callback.fileGet(url, file, status);
-						//if result is ok
-						if(result != null){
-							
-							status = makeStatus(url, new Date(file.lastModified()), refresh);
-						}
-					}
-					
-					if(result == null){
-						
-						if(network){
-					
-							result = callback.datastoreGet(url);
-							
-							if(result != null){
-							
-								status = makeStatus(url, null, refresh);
-							
-							}else{
-							
-								byte[] data = null;
-								
-								try{
-									String networkUrl = url;
-									if(refresh) networkUrl = refreshUrl;
-									status = openBytes(networkUrl, true);
-									
-									status.setRefresh(refresh);
-									
-									
-									data = status.getData();
-								}catch(Exception e){
-									AQUtility.report(e);
-								}
-								
-								if(data != null){
-								
-									try{
-										result = callback.transform(url, data, status);
-									}catch(Exception e){
-										AQUtility.report(e);
-									}
-									
-									if(fileCache){
-										try{
-											callback.filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
-										}catch(Exception e){
-											AQUtility.report(e);
-										}
-									}
-								}
-								
-							}
-			
-						}
-						
-					}
-					
-					if(status != null){
-						
-						AQUtility.post(this);
-						
-					}else{
-						clear();
-					}
-				
-				}else{
-					//ui thread here
-					
-					if(memCache){
-						callback.memPut(url, result);
-					}
-					
-					callback.callback(url, result, status);
-					clear();
-				}
-				
-					
-			
-			}catch(Exception e){
-				AQUtility.report(e);
-			}
-			
-		}
-		
-		
-		
-	}
-
-	*/
 
 	protected Object getHandler() {
 		if(handler == null) return null;

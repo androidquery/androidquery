@@ -48,8 +48,14 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private WeakHashMap<ImageView, Void> ivs;
 	
 	
-	private BitmapAjaxCallback(){
-		ivs = new WeakHashMap<ImageView, Void>();		
+	public BitmapAjaxCallback(){
+		ivs = new WeakHashMap<ImageView, Void>();			
+	}
+	
+	public void setImageView(String url, ImageView view){
+		
+		presetBitmap(view, url);		
+		ivs.put(view, null);
 	}
 	
 	@Override
@@ -63,7 +69,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	public void callback(String url, Bitmap bm, AjaxStatus status) {
+	public final void callback(String url, Bitmap bm, AjaxStatus status) {
 		
 		ivsMap.remove(url);
 		
@@ -71,20 +77,20 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		AQUtility.debug("concurrent", ivsMap.size());
 		
-		
 		for(ImageView iv: set){
-			showImage(url, bm, iv);
+			if(iv != null && url.equals(iv.getTag())){
+				callback(url, iv, bm, status);
+			}
 		}
 		
 		
 	}
 	
-	private static void showImage(String url, Bitmap bm, ImageView iv){
-		 
-		if(iv != null && url.equals(iv.getTag())){
-			iv.setVisibility(View.VISIBLE);
-			iv.setImageBitmap(bm);
-		}
+	
+	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
+
+		iv.setImageBitmap(bm);
+		
 	}
 
 	public static void setIconCacheLimit(int limit){
@@ -194,7 +200,8 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		//check memory
 		Bitmap bm = memGet2(url);
 		if(bm != null){
-			showImage(url, bm, iv);
+			//showImage(url, bm, iv);
+			iv.setImageBitmap(bm);
 			return;
 		}
 		
@@ -202,15 +209,16 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		if(ivs == null){		
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();
-			cb.start(context, iv, url, memCache, fileCache);
+			cb.setImageView(url, iv);
+			cb.start(context, url, memCache, fileCache);
 		}else{
 			ivs.put(iv, null);
 		}
 	}
 	
-	private void start(Context context, ImageView iv, String url, boolean memCache, boolean fileCache){
+	private void start(Context context, String url, boolean memCache, boolean fileCache){
 		
-		ivs.put(iv, null);
+		
 		ivsMap.put(url, ivs);
 		
 		super.async(context, url, memCache, fileCache, false);

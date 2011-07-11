@@ -4,9 +4,11 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
@@ -47,11 +49,37 @@ public class ListenerTestActivity extends Activity {
 			}
 		});
 		
+		
+		
+		/*
 		aq.id(R.id.image1).image("http://www.vikispot.com/z/images/vikispot/android-w.png");
 		
 		boolean memCache = false;
 		boolean fileCache = true;
 		aq.id(R.id.image1).image("http://www.vikispot.com/z/images/vikispot/android-w.png", memCache, fileCache);
+		*/
+		
+		
+		
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		
+		final int tint = 0x77AA0000;
+		
+		aq.id(R.id.image1).image(imageUrl, true, true, new BitmapAjaxCallback(){
+		
+			@Override
+			public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
+						
+				iv.setImageBitmap(bm);
+				
+				//do something to the bitmap
+				iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
+				
+			}
+			
+		});
+		
+		
 		
 		aq.id(R.id.image_reload).clicked(this, "reloadImage");
 		

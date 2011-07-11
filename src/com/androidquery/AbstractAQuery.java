@@ -320,16 +320,33 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view != null){
 			ImageView iv = (ImageView) view;
-			//BitmapAjaxCallback cb = new BitmapAjaxCallback(iv);
-			//cb.async(getContext(), url, memCache, fileCache);
-			//BitmapAjaxCallback cb = new BitmapAjaxCallback();
-			//cb.async(getContext(), iv, url, memCache, fileCache);
 			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache);
 		}
 		
 		return self();
 	}
 	
+	
+	/**
+	 * Set the image of an ImageView with a custom callback.
+	 *
+	 * @param url The image url.
+	 * @param memCache Use memory cache.
+	 * @param fileCache Use file cache.
+	 * @param callback Callback handler for setting the image.
+	 * @return self
+	 */
+	public T image(String url, boolean memCache, boolean fileCache, BitmapAjaxCallback callback){
+		
+		if(view != null){
+			ImageView iv = (ImageView) view;
+			callback.setImageView(url, iv);
+			callback.async(getContext(), url, memCache, fileCache, false);
+		}
+		
+		return self();
+		
+	}
 	
 	
 	/**
