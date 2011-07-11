@@ -89,8 +89,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
 
-		iv.setImageBitmap(bm);
-		
+		showBitmap(iv, bm);
 	}
 
 	public static void setIconCacheLimit(int limit){
@@ -164,16 +163,19 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
+	private static void showBitmap(ImageView iv, Bitmap bm){
+		iv.setVisibility(View.VISIBLE);
+		iv.setImageBitmap(bm);
+	}
 	
-	private static void setBitmap(ImageView iw, String url, Bitmap bm){
+	private static void setBitmap(ImageView iv, String url, Bitmap bm){
 		
-		iw.setTag(url);
+		iv.setTag(url);
 		
 		if(bm != null){			
-			iw.setVisibility(View.VISIBLE);
-			iw.setImageBitmap(bm);
+			showBitmap(iv, bm);
 		}else{
-			iw.setImageBitmap(null);	
+			iv.setImageBitmap(null);	
 		}
 		
 	}
@@ -200,8 +202,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		//check memory
 		Bitmap bm = memGet2(url);
 		if(bm != null){
-			//showImage(url, bm, iv);
-			iv.setImageBitmap(bm);
+			showBitmap(iv, bm);
 			return;
 		}
 		
