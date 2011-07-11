@@ -65,6 +65,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 
 	private View root;
 	private Activity act;
+	private Context context;
 	
 	protected View view;
 	
@@ -113,12 +114,21 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Instantiates a new AQuery object.
 	 *
-	 * @param root The view container that's the parent of the to-be-operated views..
+	 * @param root View container that's the parent of the to-be-operated views.
 	 */
 	public AbstractAQuery(View root){
 		this.root = root;
 		this.view = root;
-		
+	}
+	
+	/**
+	 * Instantiates a new AQuery object.
+	 *
+	 * @param context Context that will be used in async operations.
+	 */
+	
+	public AbstractAQuery(Context context){
+		this.context = context;
 	}
 	
 	private View findView(int id){
@@ -879,7 +889,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		if(root != null){
 			return root.getContext();
 		}
-		return null;
+		return context;
 	}
 	
 	/**
@@ -912,7 +922,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Class<K> type, Object handler, String callback){
 		
-	
+		
 		AjaxCallback<K> cb = new AjaxCallback<K>();
 		cb.setCallback(handler, callback);
 		cb.setType(type);
