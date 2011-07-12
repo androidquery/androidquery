@@ -40,52 +40,191 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 
 	private static int SMALL_MAX = 20;
 	private static int BIG_MAX = 20;
+	private static int MAX_WIDTH = 400;
+	private static int MAX_HEIGHT = 400;
 	
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
 	
-	private static HashMap<String, WeakHashMap<ImageView, Void>> ivsMap = new HashMap<String, WeakHashMap<ImageView, Void>>();	
-	private WeakHashMap<ImageView, Void> ivs;
-	
+	private static HashMap<String, WeakHashMap<ImageView, Void>> queueMap = new HashMap<String, WeakHashMap<ImageView, Void>>();	
+	//private WeakHashMap<ImageView, Void> ivs;
+	private WeakReference<ImageView> iv;
+	private int targetWidth = 0;
 	
 	public BitmapAjaxCallback(){
-		ivs = new WeakHashMap<ImageView, Void>();			
+		//ivs = new WeakHashMap<ImageView, Void>();			
+		
 	}
 	
 	public void setImageView(String url, ImageView view){
 		
-		presetBitmap(view, url);		
-		ivs.put(view, null);
+				
+		//ivs.put(view, null);
+		presetBitmap(view, url);
+		
+		iv = new WeakReference<ImageView>(view);
 	}
+	
+	public void setTargetWidth(int targetWidth){
+		this.targetWidth = targetWidth;
+	}
+	
+	
+	
+    private static Bitmap getResizedImage(String path, int targetWidth){
+    	
+    	BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        
+        BitmapFactory.decodeFile(path, options);
+    	
+        int width = options.outWidth;
+        int height = options.outHeight;
+        
+        AQUtility.debug("width:" + width + " height:" + height);
+        
+        int ssize = sampleSize(width, targetWidth);
+       
+        AQUtility.debug("sample:" + ssize + "->" + (width / ssize));
+       
+        options = new BitmapFactory.Options();
+        options.inSampleSize = ssize;
+        
+        Bitmap bm = BitmapFactory.decodeFile(path, options);
+        
+        AQUtility.debug("resampled width:" + bm.getWidth());
+        
+        
+        return bm;
+    	
+    }
+    
+    private static Bitmap getResizedImage(byte[] data, int targetWidth){
+    	
+    	BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        
+        //BitmapFactory.decodeFile(path, options);
+    	BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        
+        
+        int width = options.outWidth;
+        int height = options.outHeight;
+        
+        AQUtility.debug("width:" + width + " height:" + height);
+        
+        int ssize = sampleSize(width, targetWidth);
+       
+        AQUtility.debug("sample:" + ssize + "->" + (width / ssize));
+       
+        options = new BitmapFactory.Options();
+        options.inSampleSize = ssize;
+        
+        //Bitmap bm = BitmapFactory.decodeFile(path, options);
+        Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        
+        AQUtility.debug("resampled width:" + bm.getWidth());
+        
+        
+        return bm;
+    	
+    }
+    
+    private static int sampleSize(int width, int target){
+    	
+    	int result = 1;
+    	
+    	for(int i = 0; i < 10; i++){
+    		
+    		if(width < target * 2){
+    			break;
+    		}
+    		
+    		width = width / 2;
+    		result = result * 2;
+    		
+    	}
+    	
+    	return result;
+    }
+	
 	
 	@Override
 	public Bitmap fileGet(String url, File file, AjaxStatus status) {
-		return BitmapFactory.decodeFile(file.getAbsolutePath());
+		
+		
+		Bitmap bm = null;
+		
+		try{
+		
+			if(targetWidth > 0){
+				bm = getResizedImage(file.getAbsolutePath(), targetWidth);
+			}else{
+				bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+			}
+		
+		}catch(OutOfMemoryError e){
+			AQUtility.report(e);
+		}
+		
+		return bm;
+		
 	}
 	
 	@Override
 	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
-		return BitmapFactory.decodeByteArray(data, 0, data.length);
+		
+		Bitmap bm = null;
+		
+		try{
+		
+			if(targetWidth > 0){
+				bm = getResizedImage(data, targetWidth);
+			}else{
+				bm = BitmapFactory.decodeByteArray(data, 0, data.length);
+			}
+		
+		}catch(OutOfMemoryError e){
+			AQUtility.report(e);
+		}
+		
+		return bm;
 	}
 	
 	@Override
 	public final void callback(String url, Bitmap bm, AjaxStatus status) {
 		
-		ivsMap.remove(url);
+		ImageView firstView = iv.get();
 		
-		Set<ImageView> set = ivs.keySet();
+		checkCb(url, firstView, bm, status);
 		
-		AQUtility.debug("concurrent", ivsMap.size());
+		WeakHashMap<ImageView, Void> ivs = queueMap.remove(url);
 		
-		for(ImageView iv: set){
-			if(iv != null && url.equals(iv.getTag())){
-				callback(url, iv, bm, status);
+		if(ivs != null){
+		
+			Set<ImageView> set = ivs.keySet();
+			
+			for(ImageView view: set){
+				checkCb(url, view, bm, status);
 			}
+		
 		}
 		
+		AQUtility.debug("concurrent", queueMap.size());
 		
 	}
 	
+	private void checkCb(String url, ImageView iv, Bitmap bm, AjaxStatus status){
+		
+		if(iv == null) return;
+		
+		if(url.equals(iv.getTag())){
+			callback(url, iv, bm, status);
+			AQUtility.debug("set img", url + ":" + bm.getWidth());
+		}else{
+			AQUtility.debug("mismatch", iv.getTag() + ":" + url);
+		}
+	}
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
 
@@ -108,7 +247,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	protected static void clearTasks(){
-		ivsMap.clear();
+		queueMap.clear();
 	}
 	
 	private static Map<String, Bitmap> getBImgCache(){
@@ -128,10 +267,12 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	@Override
 	public Bitmap memGet(String url){		
-		return memGet2(url);
+		return memGet2(url, targetWidth);
 	}
 	
-	private static Bitmap memGet2(String url){
+	private static Bitmap memGet2(String url, int targetWidth){
+		
+		url = getKey(url, targetWidth);
 		
 		Map<String, Bitmap> cache = getBImgCache();
 		Bitmap result = cache.get(url);
@@ -144,13 +285,26 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		return result;
 	}
 	
+	private static String getKey(String url, int targetWidth){
+		if(targetWidth <= 0){
+			return url;
+		}
+		return url + "#" + targetWidth;
+	}
+	
 	@Override
 	public void memPut(String url, Bitmap bm){
 		
 		if(bm == null) return;
 		
 		int width = bm.getWidth();
-				
+		int height = bm.getHeight();		
+		
+		if(width > MAX_WIDTH || height > MAX_HEIGHT){
+			AQUtility.debug("rejected memcache");
+			return;
+		}
+		
 		Map<String, Bitmap> cache = null;
 		
 		if(width > 50){
@@ -159,7 +313,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			cache = getSImgCache();
 		}
 		
-		cache.put(url, bm);
+		cache.put(getKey(url, targetWidth), bm);
 		
 	}
 	
@@ -187,7 +341,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		}
 	}
 	
-	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache){
+	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth){
 		
 		if(iv == null) return;
 		
@@ -197,15 +351,16 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			return;
 		}
 		
-		presetBitmap(iv, url);
+		//presetBitmap(iv, url);
 		
 		//check memory
-		Bitmap bm = memGet2(url);
+		Bitmap bm = memGet2(url, targetWidth);
 		if(bm != null){
 			showBitmap(iv, bm);
 			return;
 		}
 		
+		/*
 		WeakHashMap<ImageView, Void> ivs = ivsMap.get(url);
 		
 		if(ivs == null){		
@@ -214,13 +369,52 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			cb.start(context, url, memCache, fileCache);
 		}else{
 			ivs.put(iv, null);
+		}*/
+		
+		if(!queueMap.containsKey(url)){
+			BitmapAjaxCallback cb = new BitmapAjaxCallback();
+			cb.setImageView(url, iv);
+			cb.setTargetWidth(targetWidth);
+			cb.start(context, url, memCache, fileCache);
+		}else{
+			presetBitmap(iv, url);			
+			addQueue(url, iv);
 		}
+		
 	}
+	
+	private static void addQueue(String url, ImageView iv){
+		
+		
+		WeakHashMap<ImageView, Void> ivs = queueMap.get(url);
+		
+		if(ivs == null){
+			
+			if(queueMap.containsKey(url)){
+				//already a image view fetching
+				ivs = new WeakHashMap<ImageView, Void>();
+				ivs.put(iv, null);
+				queueMap.put(url, ivs);
+			}else{
+				//register a view by putting a url with no value
+				queueMap.put(url, null);
+			}
+			
+		}else{
+			//add to list of image views
+			ivs.put(iv, null);
+			
+		}
+		
+	}
+	
 	
 	private void start(Context context, String url, boolean memCache, boolean fileCache){
 		
 		
-		ivsMap.put(url, ivs);
+		//ivsMap.put(url, ivs);
+		addQueue(url, iv.get());
+		
 		
 		super.async(context, url, memCache, fileCache, false);
 	}

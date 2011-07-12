@@ -59,25 +59,29 @@ public class ListenerTestActivity extends Activity {
 		aq.id(R.id.image1).image("http://www.vikispot.com/z/images/vikispot/android-w.png", memCache, fileCache);
 		*/
 		
-		
-		
-		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
-		
-		final int tint = 0x77AA0000;
-		
-		aq.id(R.id.image1).image(imageUrl, true, true, new BitmapAjaxCallback(){
-		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback(){
+			
 			@Override
 			public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
 						
 				iv.setImageBitmap(bm);
 				
 				//do something to the bitmap
-				iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
+				//iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
 				
 			}
 			
-		});
+		};
+		
+		cb.setTargetWidth(200);
+		
+		//String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		//String imageUrl = "http://lh6.ggpht.com/hgQVg7upCNxcSqJ9T2XabDm9d6IsRjI2lXDKJ03vHSlg5nXDV-2Actla3H8kCVCKdAu5-8-xDAXpxl_9";
+		String imageUrl = "http://popartmachine.com/machine/daily/2009-06-22/grand-teton-artwork-paintings/%20Grand%20Teton%20National%20Park,%20Landscape-hasta%20la%20vista.jpg";
+		
+		//final int tint = 0x77AA0000;
+		
+		aq.id(R.id.image1).image(imageUrl, true, true, cb);
 		
 		
 		
@@ -265,6 +269,9 @@ public class ListenerTestActivity extends Activity {
 		
 		aq.id(R.id.image1).clear();
 		aq.image(url);
+		
+		
+		AQUtility.debug("ww", aq.getView().getWidth());
 		
 	}
 	
