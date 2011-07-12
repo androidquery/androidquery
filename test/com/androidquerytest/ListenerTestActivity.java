@@ -81,7 +81,7 @@ public class ListenerTestActivity extends Activity {
 		
 		//final int tint = 0x77AA0000;
 		
-		aq.id(R.id.image1).image(imageUrl, true, true, cb);
+		aq.id(R.id.image1).image(imageUrl, true, true, 200, cb);
 		
 		
 		

@@ -357,11 +357,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback Callback handler for setting the image.
 	 * @return self
 	 */
-	public T image(String url, boolean memCache, boolean fileCache, BitmapAjaxCallback callback){
+	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, BitmapAjaxCallback callback){
 		
 		if(view != null){
 			ImageView iv = (ImageView) view;
 			callback.setImageView(url, iv);
+			callback.setTargetWidth(targetWidth);
 			callback.async(getContext(), url, memCache, fileCache, false);
 		}
 		
