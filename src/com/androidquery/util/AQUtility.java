@@ -27,6 +27,8 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -69,6 +71,32 @@ public class AQUtility {
 			String trace = Log.getStackTraceString(e);
 			Log.w("AQuery", trace);
 		}
+	}
+	
+	private static Map<String, Long> times = new HashMap<String, Long>();
+	public static void time(String tag){
+		
+		times.put(tag, System.currentTimeMillis());
+		
+	}
+	
+	public static long timeEnd(String tag, long threshold){
+		
+		
+		Long old = times.get(tag);
+		if(old == null) return 0;
+		
+		long now = System.currentTimeMillis();
+		
+		long diff = now - old;
+		
+		if(threshold == 0 || diff > threshold){
+			debug(tag, diff);
+		}
+		
+		return diff;
+		
+		
 	}
 	
 	public static void invokeHandler(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params){

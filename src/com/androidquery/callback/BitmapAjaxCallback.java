@@ -34,32 +34,29 @@ import android.widget.ImageView;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
-import com.androidquery.util.Cache;
+import com.androidquery.util.BitmapCache;
 
 public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 
 	private static int SMALL_MAX = 20;
 	private static int BIG_MAX = 20;
-	private static int MAX_WIDTH = 400;
-	private static int MAX_HEIGHT = 400;
+	private static int BIG_PIXELS = 400 * 400;
+	private static int BIG_TPIXELS = 1000000;
 	
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
 	
 	private static HashMap<String, WeakHashMap<ImageView, Void>> queueMap = new HashMap<String, WeakHashMap<ImageView, Void>>();	
-	//private WeakHashMap<ImageView, Void> ivs;
+	
 	private WeakReference<ImageView> iv;
 	private int targetWidth = 0;
 	
 	public BitmapAjaxCallback(){
-		//ivs = new WeakHashMap<ImageView, Void>();			
 		
 	}
 	
 	public void setImageView(String url, ImageView view){
 		
-				
-		//ivs.put(view, null);
 		presetBitmap(view, url);
 		
 		iv = new WeakReference<ImageView>(view);
@@ -69,44 +66,25 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		this.targetWidth = targetWidth;
 	}
 	
+	private static Bitmap decode(String path, byte[] data, BitmapFactory.Options options){
+		
+		Bitmap result = null;
+		
+		if(path != null){
+			result = BitmapFactory.decodeFile(path, options);
+		}else if(data != null){
+			result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+		}
+		
+		return result;
+	}
 	
-	
-    private static Bitmap getResizedImage(String path, int targetWidth){
+	private static Bitmap getResizedImage(String path, byte[] data, int targetWidth){
     	
     	BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         
-        BitmapFactory.decodeFile(path, options);
-    	
-        int width = options.outWidth;
-        int height = options.outHeight;
-        
-        AQUtility.debug("width:" + width + " height:" + height);
-        
-        int ssize = sampleSize(width, targetWidth);
-       
-        AQUtility.debug("sample:" + ssize + "->" + (width / ssize));
-       
-        options = new BitmapFactory.Options();
-        options.inSampleSize = ssize;
-        
-        Bitmap bm = BitmapFactory.decodeFile(path, options);
-        
-        AQUtility.debug("resampled width:" + bm.getWidth());
-        
-        
-        return bm;
-    	
-    }
-    
-    private static Bitmap getResizedImage(byte[] data, int targetWidth){
-    	
-    	BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        
-        //BitmapFactory.decodeFile(path, options);
-    	BitmapFactory.decodeByteArray(data, 0, data.length, options);
-        
+    	decode(path, data, options);
         
         int width = options.outWidth;
         int height = options.outHeight;
@@ -120,15 +98,19 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
         options = new BitmapFactory.Options();
         options.inSampleSize = ssize;
         
-        //Bitmap bm = BitmapFactory.decodeFile(path, options);
-        Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length, options);
-        
+        Bitmap bm = null;
+        try{
+        	bm = decode(path, data, options);
+		}catch(OutOfMemoryError e){
+			AQUtility.report(e);
+		}
         AQUtility.debug("resampled width:" + bm.getWidth());
         
         
         return bm;
     	
     }
+	
     
     private static int sampleSize(int width, int target){
     	
@@ -148,47 +130,27 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
     	return result;
     }
 	
-	
-	@Override
-	public Bitmap fileGet(String url, File file, AjaxStatus status) {
+    private Bitmap bmGet(String path, byte[] data){
+    	
+    	Bitmap bm = null;
 		
-		
-		Bitmap bm = null;
-		
-		try{
-		
-			if(targetWidth > 0){
-				bm = getResizedImage(file.getAbsolutePath(), targetWidth);
-			}else{
-				bm = BitmapFactory.decodeFile(file.getAbsolutePath());
-			}
-		
-		}catch(OutOfMemoryError e){
-			AQUtility.report(e);
+		if(targetWidth > 0){
+			bm = getResizedImage(path, data, targetWidth);
+		}else{
+			bm = decode(path, data, null);
 		}
 		
 		return bm;
-		
+    }
+	
+	@Override
+	public Bitmap fileGet(String url, File file, AjaxStatus status) {		
+		return bmGet(file.getAbsolutePath(), null);
 	}
 	
 	@Override
 	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
-		
-		Bitmap bm = null;
-		
-		try{
-		
-			if(targetWidth > 0){
-				bm = getResizedImage(data, targetWidth);
-			}else{
-				bm = BitmapFactory.decodeByteArray(data, 0, data.length);
-			}
-		
-		}catch(OutOfMemoryError e){
-			AQUtility.report(e);
-		}
-		
-		return bm;
+		return bmGet(null, data);
 	}
 	
 	@Override
@@ -210,7 +172,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		}
 		
-		AQUtility.debug("concurrent", queueMap.size());
+		//AQUtility.debug("concurrent", queueMap.size());
 		
 	}
 	
@@ -220,14 +182,13 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		if(url.equals(iv.getTag())){
 			callback(url, iv, bm, status);
-			AQUtility.debug("set img", url + ":" + bm.getWidth());
+			//AQUtility.debug("set img", url + ":" + bm.getWidth());
 		}else{
-			AQUtility.debug("mismatch", iv.getTag() + ":" + url);
+			//AQUtility.debug("mismatch", iv.getTag() + ":" + url);
 		}
 	}
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
-
 		showBitmap(iv, bm);
 	}
 
@@ -238,6 +199,16 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	public static void setCacheLimit(int limit){
 		BIG_MAX = limit;
+		clearCache();
+	}
+	
+	public static void setPixelLimit(int pixels){
+		BIG_PIXELS = pixels;
+		clearCache();
+	}
+	
+	public static void setMaxPixelLimit(int pixels){
+		BIG_TPIXELS = pixels;
 		clearCache();
 	}
 	
@@ -252,7 +223,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	private static Map<String, Bitmap> getBImgCache(){
 		if(bigCache == null){
-			bigCache = new Cache<String, Bitmap>(BIG_MAX);
+			bigCache = new BitmapCache(BIG_MAX, BIG_PIXELS, BIG_TPIXELS);
 		}
 		return bigCache;
 	}
@@ -260,7 +231,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	private static Map<String, Bitmap> getSImgCache(){
 		if(smallCache == null){
-			smallCache = new Cache<String, Bitmap>(SMALL_MAX);
+			smallCache = new BitmapCache(SMALL_MAX, 50 * 50, 250000);
 		}
 		return smallCache;
 	}
@@ -298,12 +269,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		if(bm == null) return;
 		
 		int width = bm.getWidth();
-		int height = bm.getHeight();		
-		
-		if(width > MAX_WIDTH || height > MAX_HEIGHT){
-			AQUtility.debug("rejected memcache");
-			return;
-		}
 		
 		Map<String, Bitmap> cache = null;
 		
@@ -351,7 +316,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			return;
 		}
 		
-		//presetBitmap(iv, url);
+		presetBitmap(iv, url);
 		
 		//check memory
 		Bitmap bm = memGet2(url, targetWidth);
@@ -360,24 +325,13 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			return;
 		}
 		
-		/*
-		WeakHashMap<ImageView, Void> ivs = ivsMap.get(url);
-		
-		if(ivs == null){		
-			BitmapAjaxCallback cb = new BitmapAjaxCallback();
-			cb.setImageView(url, iv);
-			cb.start(context, url, memCache, fileCache);
-		}else{
-			ivs.put(iv, null);
-		}*/
-		
 		if(!queueMap.containsKey(url)){
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();
 			cb.setImageView(url, iv);
 			cb.setTargetWidth(targetWidth);
 			cb.start(context, url, memCache, fileCache);
 		}else{
-			presetBitmap(iv, url);			
+			//presetBitmap(iv, url);			
 			addQueue(url, iv);
 		}
 		
@@ -411,11 +365,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	private void start(Context context, String url, boolean memCache, boolean fileCache){
 		
-		
-		//ivsMap.put(url, ivs);
 		addQueue(url, iv.get());
-		
-		
 		super.async(context, url, memCache, fileCache, false);
 	}
 	

@@ -176,7 +176,6 @@ public class AjaxCallback<T> implements Runnable{
 	private void work(boolean async, Context context, String url, boolean memCache, boolean fileCache, boolean refresh){
 		
 		
-		
 		T object = memGet(url);
 		
 		if(object != null){		
@@ -200,7 +199,7 @@ public class AjaxCallback<T> implements Runnable{
 			
 			}else{
 				
-				background();
+				backgroundWork();
 				afterWork();
 			}
 		}
@@ -219,19 +218,13 @@ public class AjaxCallback<T> implements Runnable{
 			
 			if(status == null){
 				
-				background();
+				backgroundWork();
 			
 				if(status == null){
 					status = new AjaxStatus(-1, "OK", url, null, null, refresh);
 				}
-				
-				//if(status != null){
 					
-					AQUtility.post(this);
-					
-				//}else{
-					//clear();
-				//}
+				AQUtility.post(this);
 				
 			}else{
 				
@@ -250,6 +243,14 @@ public class AjaxCallback<T> implements Runnable{
 	
 	public void background(){
 		
+	}
+	
+	
+	private void backgroundWork(){
+	
+		background();
+		
+		
 		if(!refresh){
 			
 			if(fileCache){				
@@ -258,6 +259,7 @@ public class AjaxCallback<T> implements Runnable{
 		
 		}
 		
+		
 		if(result == null){
 			datastoreWork();			
 		}
@@ -265,7 +267,8 @@ public class AjaxCallback<T> implements Runnable{
 		if(result == null){
 			networkWork();
 		}
-				
+		
+		
 	}
 	
 	private void fileWork(){
@@ -293,6 +296,8 @@ public class AjaxCallback<T> implements Runnable{
 	}
 	
 	private void networkWork(){
+		
+		if(url == null) return;
 		
 		byte[] data = null;
 		
@@ -367,6 +372,7 @@ public class AjaxCallback<T> implements Runnable{
 	}
 	
 	private static String patchUrl(String url){
+		
 		url = url.replaceAll(" ", "%20");
 		return url;
 	}
