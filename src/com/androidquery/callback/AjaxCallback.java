@@ -99,8 +99,8 @@ public class AjaxCallback<T> implements Runnable{
 	
 	@SuppressWarnings("unchecked")
 	public T transform(String url, byte[] data, AjaxStatus status){
-		
-		if(type == null){
+				
+		if(data == null || type == null){
 			return null;
 		}
 		
@@ -152,7 +152,11 @@ public class AjaxCallback<T> implements Runnable{
 	}
 	
 	public void filePut(String url, T object, File file, byte[] data){
+		
+		if(file == null || data == null) return;
+		
 		AQUtility.storeAsync(file, data, 1000);
+		
 	}
 	
 	public File accessFile(File cacheDir, String url){		
@@ -314,7 +318,7 @@ public class AjaxCallback<T> implements Runnable{
 			AQUtility.report(e);
 		}
 		
-		if(data != null){
+		//if(data != null){
 		
 			try{
 				result = transform(url, data, status);
@@ -329,7 +333,7 @@ public class AjaxCallback<T> implements Runnable{
 					AQUtility.report(e);
 				}
 			}
-		}
+		//}
 		
 		
 	}
@@ -412,6 +416,8 @@ public class AjaxCallback<T> implements Runnable{
         	//throw new IOException();
         }else{
         	data = AQUtility.toBytes(connection.getInputStream());
+        	
+        	//AQUtility.debug("length", data.length);
         	redirect = connection.getURL().toExternalForm();
         }
         

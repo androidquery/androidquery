@@ -19,6 +19,7 @@ package com.androidquery.callback;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,8 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private static HashMap<String, WeakHashMap<ImageView, Void>> queueMap = new HashMap<String, WeakHashMap<ImageView, Void>>();	
 	
 	private WeakReference<ImageView> iv;
-	private int targetWidth = 0;
+	private int targetWidth;
+	private int fallback;
 	
 	public BitmapAjaxCallback(){
 		
@@ -64,6 +66,10 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	public void setTargetWidth(int targetWidth){
 		this.targetWidth = targetWidth;
+	}
+	
+	public void setFallback(int resId){
+		this.fallback = resId;
 	}
 	
 	private static Bitmap decode(String path, byte[] data, BitmapFactory.Options options){
@@ -140,6 +146,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			bm = decode(path, data, null);
 		}
 		
+		
 		return bm;
     }
 	
@@ -150,7 +157,28 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	@Override
 	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
-		return bmGet(null, data);
+		
+		Bitmap bm = bmGet(null, data);
+		
+		if(bm == null && fallback != 0){
+			
+			ImageView view = iv.get();
+			if(view != null){
+			
+				String key = Integer.toString(fallback);			
+				bm = memGet(key);
+				
+				if(bm == null){
+					bm = BitmapFactory.decodeResource(view.getResources(), fallback);
+					
+					if(bm != null){
+						memPut(key, bm);
+					}
+				}
+			}
+		}
+		
+		return bm;
 	}
 	
 	@Override
@@ -223,7 +251,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	private static Map<String, Bitmap> getBImgCache(){
 		if(bigCache == null){
-			bigCache = new BitmapCache(BIG_MAX, BIG_PIXELS, BIG_TPIXELS);
+			bigCache = Collections.synchronizedMap(new BitmapCache(BIG_MAX, BIG_PIXELS, BIG_TPIXELS));
 		}
 		return bigCache;
 	}
@@ -231,7 +259,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	private static Map<String, Bitmap> getSImgCache(){
 		if(smallCache == null){
-			smallCache = new BitmapCache(SMALL_MAX, 50 * 50, 250000);
+			smallCache = Collections.synchronizedMap(new BitmapCache(SMALL_MAX, 50 * 50, 250000));
 		}
 		return smallCache;
 	}
@@ -306,7 +334,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		}
 	}
 	
-	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth){
+	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int resId){
 		
 		if(iv == null) return;
 		
@@ -329,6 +357,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();
 			cb.setImageView(url, iv);
 			cb.setTargetWidth(targetWidth);
+			cb.setFallback(resId);
 			cb.start(context, url, memCache, fileCache);
 		}else{
 			//presetBitmap(iv, url);			

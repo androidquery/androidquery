@@ -240,16 +240,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	/**
-	 * Set the image of an ImageView.
-	 *
-	 * @param url Image url.
-	 * @return self
-	 */
 	
-	public T image(String url){
-		return image(url, true, true);
-	}
 	
 	
 	/**
@@ -305,7 +296,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	
+	/**
+	 * Set the image of an ImageView.
+	 *
+	 * @param url Image url.
+	 * @return self
+	 */
 	
+	public T image(String url){
+		return image(url, true, true);
+	}
 	
 	/**
 	 * Set the image of an ImageView.
@@ -320,7 +320,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view != null){
 			ImageView iv = (ImageView) view;
-			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, 0);
+			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, 0, 0);
 		}
 		
 		return self();
@@ -334,14 +334,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param memCache Use memory cache.
 	 * @param fileCache Use file cache.
 	 * @param targetWidth Target width for down sampling when reading large images.
+	 * @param resId Fallback image if result is network fetch and image convert failed. 
 	 * @return self
 	 */
-	public T image(String url, boolean memCache, boolean fileCache, int targetWidth){
+	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int resId){
 		
 		
 		if(view != null){
 			ImageView iv = (ImageView) view;			
-			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth);
+			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, resId);
 		}
 		
 		return self();
