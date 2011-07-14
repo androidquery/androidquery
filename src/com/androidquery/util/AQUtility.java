@@ -104,6 +104,7 @@ public class AQUtility {
 		if(handler == null) return;
 		
 		try{   
+			
 			invokeMethod(handler, callback, fallback, cls, params);
 		}catch(Exception e){		
 			AQUtility.report(e);
@@ -115,14 +116,13 @@ public class AQUtility {
 	
 	private static void invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params) throws Exception{
 		
-		//debug("method", callback);
 		
 		try{   
 			Method method = handler.getClass().getMethod(callback, cls);
 			method.invoke(handler, params);			
-			return;// method;
+			return;
 		}catch(NoSuchMethodException e){
-			//debug(e);
+			AQUtility.report(e);
 		}
 		
 		
