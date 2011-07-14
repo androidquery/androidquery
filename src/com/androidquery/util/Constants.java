@@ -22,4 +22,9 @@ public interface Constants {
 	public final int LAYER_TYPE_HARDWARE = 2;
 	public final int FLAG_HARDWARE_ACCELERATED = 0x01000000;
 	public final int FLAG_ACTIVITY_NO_ANIMATION = 0x00010000;
+	public final int OVER_SCROLL_ALWAYS = 0;
+	public final int OVER_SCROLL_IF_CONTENT_SCROLLS = 1;
+	public final int OVER_SCROLL_NEVER = 2;
+	
+	
 }

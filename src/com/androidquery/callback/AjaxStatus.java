@@ -11,7 +11,7 @@ public class AjaxStatus {
 	private Date time;
 	private boolean refresh;
 	
-	protected AjaxStatus(int code, String message, String redirect, byte[] data, Date time, boolean refresh){
+	public AjaxStatus(int code, String message, String redirect, byte[] data, Date time, boolean refresh){
 		this.code = code;
 		this.message = message;
 		this.redirect = redirect;

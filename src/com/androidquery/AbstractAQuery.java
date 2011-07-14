@@ -813,6 +813,23 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	private static final Class<?>[] OVER_SCROLL_SIG = {int.class};
+	
+	/**
+	 * Call the overridePendingTransition of the activity. Only applies when device API is 5+.
+	 *
+	 * @param mode AQuery.OVER_SCROLL_ALWAYS, AQuery.OVER_SCROLL_ALWAYS, AQuery.OVER_SCROLL_IF_CONTENT_SCROLLS
+	 * @return self
+	 */
+	public T setOverScrollMode9(int mode){
+		
+		if(view != null && view instanceof AbsListView){
+			AQUtility.invokeHandler(view, "setOverScrollMode", false, OVER_SCROLL_SIG, mode);
+		}
+		
+		return self();
+	}
+	
 	private static Class<?>[] LAYER_TYPE_SIG = {int.class, Paint.class};
 	
 	/**

@@ -97,6 +97,7 @@ public class AjaxCallback<T> implements Runnable{
 		
 	}
 	
+	
 	@SuppressWarnings("unchecked")
 	public T transform(String url, byte[] data, AjaxStatus status){
 				
@@ -318,22 +319,21 @@ public class AjaxCallback<T> implements Runnable{
 			AQUtility.report(e);
 		}
 		
-		//if(data != null){
 		
+		try{
+			result = transform(url, data, status);
+		}catch(Exception e){
+			AQUtility.report(e);
+		}
+		
+		if(result != null && fileCache){
 			try{
-				result = transform(url, data, status);
+				filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
 			}catch(Exception e){
 				AQUtility.report(e);
 			}
-			
-			if(result != null && fileCache){
-				try{
-					filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
-				}catch(Exception e){
-					AQUtility.report(e);
-				}
-			}
-		//}
+		}
+		
 		
 		
 	}
