@@ -313,6 +313,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private static void showBitmap(ImageView iv, Bitmap bm){
 		iv.setVisibility(View.VISIBLE);
 		iv.setImageBitmap(bm);
+		
 	}
 	
 	private static void setBitmap(ImageView iv, String url, Bitmap bm){

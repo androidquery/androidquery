@@ -141,6 +141,18 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return result;
 	}
 	
+	private View findView(int... path){
+		
+		View result = findView(path[0]);
+		
+		for(int i = 1; i < path.length && result != null; i++){
+			result = result.findViewById(path[i]);
+		}
+		
+		return result;
+		
+	}
+	
 	
 	/**
 	 * Return a new AQuery object that uses the found view as a root.
@@ -176,6 +188,17 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T id(int id){
 		view = findView(id);			
+		return self();
+	}
+	
+	/**
+	 * Find the first view with first id, under that view, find again with 2nd id, etc...
+	 *
+	 * @param id the id
+	 * @return self
+	 */
+	public T id(int... path){
+		view = findView(path);			
 		return self();
 	}
 	
