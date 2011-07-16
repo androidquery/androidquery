@@ -739,12 +739,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T itemClicked(Object handler, String method){
 		
-		if(view != null && view instanceof AbsListView){
+		if(view != null && view instanceof AdapterView){
 		
-			AbsListView alv = (AbsListView) view;
+			AdapterView<?> av = (AdapterView<?>) view;
 			
 			Common common = new Common().forward(handler, method, true, ON_ITEM_CLICK_SIG);
-			alv.setOnItemClickListener(common);
+			av.setOnItemClickListener(common);
 			
 		}
 		

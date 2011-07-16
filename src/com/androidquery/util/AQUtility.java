@@ -362,7 +362,7 @@ public class AQUtility {
 			
 			if(file != null){
 			
-				AQUtility.debug("store", file);
+				//AQUtility.debug("store", file);
 				
 				AQUtility.write(file, data);
 			}
