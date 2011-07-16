@@ -82,6 +82,10 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
 		}
 		
+		if(result != null && result.getWidth() == 1 && result.getHeight() == 1){        
+			result = null;
+		}
+		
 		return result;
 	}
 	
@@ -93,13 +97,13 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
     	decode(path, data, options);
         
         int width = options.outWidth;
-        int height = options.outHeight;
+        //int height = options.outHeight;
         
-        AQUtility.debug("width:" + width + " height:" + height);
+        //AQUtility.debug("width:" + width + " height:" + height);
         
         int ssize = sampleSize(width, targetWidth);
        
-        AQUtility.debug("sample:" + ssize + "->" + (width / ssize));
+        //AQUtility.debug("sample:" + ssize + "->" + (width / ssize));
        
         options = new BitmapFactory.Options();
         options.inSampleSize = ssize;
@@ -110,7 +114,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		}catch(OutOfMemoryError e){
 			AQUtility.report(e);
 		}
-        AQUtility.debug("resampled width:" + bm.getWidth());
         
         
         return bm;
@@ -311,6 +314,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	private static void showBitmap(ImageView iv, Bitmap bm){
+		
 		iv.setVisibility(View.VISIBLE);
 		iv.setImageBitmap(bm);
 		

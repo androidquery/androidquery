@@ -67,7 +67,7 @@ public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 			pixels -= pixels(old);
 		}
 		
-		AQUtility.debug("remove pixels", size() + ":" + pixels);
+		//AQUtility.debug("remove pixels", size() + ":" + pixels);
 		
 		return old;
 	}
