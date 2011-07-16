@@ -378,15 +378,18 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param url The image url.
 	 * @param memCache Use memory cache.
 	 * @param fileCache Use file cache.
+	 * @param targetWidth Target width for down sampling when reading large images.
+	 * @param resId Fallback image if result is network fetch and image convert failed. 
 	 * @param callback Callback handler for setting the image.
 	 * @return self
 	 */
-	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, BitmapAjaxCallback callback){
+	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int resId, BitmapAjaxCallback callback){
 		
 		if(view != null){
 			ImageView iv = (ImageView) view;
 			callback.setImageView(url, iv);
 			callback.setTargetWidth(targetWidth);
+			callback.setFallback(resId);
 			callback.async(getContext(), url, memCache, fileCache, false);
 		}
 		
