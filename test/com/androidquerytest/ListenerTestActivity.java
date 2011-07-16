@@ -241,6 +241,7 @@ public class ListenerTestActivity extends Activity {
 		aq.id(R.id.image1).image("http://www.vikispot.com/z/images/vikispot/android-w.png", memCache, fileCache);
 		*/
 		
+		/*
 		BitmapAjaxCallback cb = new BitmapAjaxCallback(){
 			
 			@Override
@@ -259,15 +260,12 @@ public class ListenerTestActivity extends Activity {
 			}
 			
 		};
-		
+		*/
 		
 		//String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		//String imageUrl = "http://lh6.ggpht.com/hgQVg7upCNxcSqJ9T2XabDm9d6IsRjI2lXDKJ03vHSlg5nXDV-2Actla3H8kCVCKdAu5-8-xDAXpxl_9";
-		String imageUrl = "http://popartmachine.com/machine/daily/2009-06-22/grand-teton-artwork-paintings/%20Grand%20Teton%20National%20Park,%20Landscape-hasta%20la%20vista.jpg";
-		
-		//final int tint = 0x77AA0000;
-		
-		aq.id(R.id.image1).image(imageUrl, true, true, 200, 0, cb);
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		aq.id(R.id.image1).image(imageUrl, true, true, 200, 0);
 		
 	}
 	
