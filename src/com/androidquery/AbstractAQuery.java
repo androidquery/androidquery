@@ -194,7 +194,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Find the first view with first id, under that view, find again with 2nd id, etc...
 	 *
-	 * @param id the id
+	 * @param path The id path.
 	 * @return self
 	 */
 	public T id(int... path){
@@ -419,10 +419,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param enabled state
 	 * @return self
 	 */
-	public T enabled(boolean enable){
+	public T enabled(boolean enabled){
 		
 		if(view != null){
-			view.setEnabled(enable);
+			view.setEnabled(enabled);
 		}
 		
 		return self();
