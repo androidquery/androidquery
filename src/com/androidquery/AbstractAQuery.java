@@ -923,10 +923,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	private int dip2pixel(float n){
-		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, n, view.getResources().getDisplayMetrics());
-		return value;
-	}
+	
 	
 	/**
 	 * Set the margin of a view. Notes all parameters are in DIP, not in pixel.
@@ -943,12 +940,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 			LayoutParams lp = view.getLayoutParams();
 			
+			Context context = getContext();
+			
 			if(lp instanceof MarginLayoutParams){
 				
-				int left = dip2pixel(leftDip);
-				int top = dip2pixel(topDip);
-				int right = dip2pixel(rightDip);
-				int bottom = dip2pixel(bottomDip);
+				int left = AQUtility.dip2pixel(context, leftDip);
+				int top = AQUtility.dip2pixel(context, topDip);
+				int right = AQUtility.dip2pixel(context, rightDip);
+				int bottom = AQUtility.dip2pixel(context, bottomDip);
 				
 				((MarginLayoutParams) lp).setMargins(left, top, right, bottom);
 				view.setLayoutParams(lp);

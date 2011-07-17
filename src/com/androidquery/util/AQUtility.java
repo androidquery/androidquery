@@ -37,6 +37,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 
@@ -457,6 +458,9 @@ public class AQUtility {
 		AQUtility.debug("deleted files" , deletes);
 	}
 	
-
+	public static int dip2pixel(Context context, float n){
+		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, n, context.getResources().getDisplayMetrics());
+		return value;
+	}
 	
 }
