@@ -34,6 +34,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.webkit.WebView;
 import android.widget.AbsListView;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -54,6 +55,7 @@ import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
+import com.pekca.android.utility.Utility;
 
 
 /**
@@ -548,20 +550,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T dataChanged(){
 		
-		if(view != null){
+		if(view != null && view instanceof AdapterView){
 			
-			if(view instanceof ListView){
-				
-				ListView lv = (ListView) view;
-				ListAdapter la = lv.getAdapter();
-				
-				if(la instanceof BaseAdapter){
-					BaseAdapter ba = (BaseAdapter) la;
-					ba.notifyDataSetChanged();
-				}
-				
+			AdapterView<?> av = (AdapterView<?>) view;
+			Adapter a = av.getAdapter();
+			
+			if(a instanceof BaseAdapter){
+				BaseAdapter ba = (BaseAdapter) a;
+				ba.notifyDataSetChanged();
 			}
-			
+				
 		}
 		
 		
