@@ -55,7 +55,6 @@ import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
-import com.pekca.android.utility.Utility;
 
 
 /**
