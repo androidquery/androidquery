@@ -32,6 +32,7 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
@@ -82,10 +83,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
 		}
 		
-		if(result != null && result.getWidth() == 1 && result.getHeight() == 1){        
-			result = null;
-		}
-		
 		return result;
 	}
 	
@@ -97,13 +94,9 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
     	decode(path, data, options);
         
         int width = options.outWidth;
-        //int height = options.outHeight;
-        
-        //AQUtility.debug("width:" + width + " height:" + height);
         
         int ssize = sampleSize(width, targetWidth);
        
-        //AQUtility.debug("sample:" + ssize + "->" + (width / ssize));
        
         options = new BitmapFactory.Options();
         options.inSampleSize = ssize;
@@ -163,7 +156,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		Bitmap bm = bmGet(null, data);
 		
-		if(bm == null && fallback != 0){
+		if(bm == null && fallback > 0){
 			
 			ImageView view = iv.get();
 			if(view != null){
@@ -220,7 +213,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
-		showBitmap(iv, bm);
+		showBitmap(iv, bm, fallback);
 	}
 
 	public static void setIconCacheLimit(int limit){
@@ -313,9 +306,21 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	private static void showBitmap(ImageView iv, Bitmap bm){
+	private static void showBitmap(ImageView iv, Bitmap bm, int fallback){
 		
-		iv.setVisibility(View.VISIBLE);
+		//ignore 1x1 pixels
+		if(bm != null && bm.getWidth() == 1 && bm.getHeight() == 1){        
+			bm = null;
+		}
+		
+		if(bm != null){
+			iv.setVisibility(View.VISIBLE);
+		}else if(fallback == AQuery.GONE){
+			iv.setVisibility(View.GONE);
+		}else if(fallback == AQuery.INVISIBLE){
+			iv.setVisibility(View.INVISIBLE);
+		}
+		
 		iv.setImageBitmap(bm);
 		
 	}
@@ -325,7 +330,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		iv.setTag(url);
 		
 		if(bm != null){			
-			showBitmap(iv, bm);
+			showBitmap(iv, bm, 0);
 		}else{
 			iv.setImageBitmap(null);	
 		}
@@ -354,7 +359,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		//check memory
 		Bitmap bm = memGet2(url, targetWidth);
 		if(bm != null){
-			showBitmap(iv, bm);
+			showBitmap(iv, bm, resId);
 			return;
 		}
 		

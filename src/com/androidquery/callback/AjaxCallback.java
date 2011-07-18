@@ -178,6 +178,12 @@ public class AjaxCallback<T> implements Runnable{
 		work(true, context, url, memCache, fileCache, refresh);
 	}
 	
+	protected void execute(){
+		AQUtility.getHandler();				
+		ExecutorService exe = getExecutor();
+		exe.execute(this);
+	}
+	
 	private void work(boolean async, Context context, String url, boolean memCache, boolean fileCache, boolean refresh){
 		
 		
@@ -198,9 +204,7 @@ public class AjaxCallback<T> implements Runnable{
 			
 			if(async){
 			
-				AQUtility.getHandler();				
-				ExecutorService exe = getExecutor();
-				exe.execute(this);
+				execute();
 			
 			}else{
 				

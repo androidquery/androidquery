@@ -25,6 +25,8 @@ public interface Constants {
 	public final int OVER_SCROLL_ALWAYS = 0;
 	public final int OVER_SCROLL_IF_CONTENT_SCROLLS = 1;
 	public final int OVER_SCROLL_NEVER = 2;
+	public final int INVISIBLE = -1;
+	public final int GONE = -2;
 	
 	
 }
