@@ -232,10 +232,12 @@ public class AjaxCallback<T> implements Runnable{
 				if(status == null){
 					status = new AjaxStatus(-1, "OK", url, null, null, refresh);
 				}
-					
+				
 				AQUtility.post(this);
 				
+				
 			}else{
+				
 				
 				afterWork();
 				clear();

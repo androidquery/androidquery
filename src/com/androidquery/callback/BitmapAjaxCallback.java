@@ -156,25 +156,48 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		Bitmap bm = bmGet(null, data);
 		
-		if(bm == null && fallback > 0){
+		if(bm == null){
 			
-			ImageView view = iv.get();
-			if(view != null){
+			if(fallback > 0){			
+				bm = getFallback();			
+			}else if(fallback == AQuery.GONE || fallback == AQuery.INVISIBLE){
+				bm = empty();
+			}
+		}
+		
+		return bm;
+	}
+	
+	private Bitmap getFallback(){
+		
+		Bitmap bm = null;
+		
+		ImageView view = iv.get();
+		if(view != null){
+		
+			String key = Integer.toString(fallback);			
+			bm = memGet(key);
 			
-				String key = Integer.toString(fallback);			
-				bm = memGet(key);
+			if(bm == null){
+				bm = BitmapFactory.decodeResource(view.getResources(), fallback);
 				
-				if(bm == null){
-					bm = BitmapFactory.decodeResource(view.getResources(), fallback);
-					
-					if(bm != null){
-						memPut(key, bm);
-					}
+				if(bm != null){
+					memPut(key, bm);
 				}
 			}
 		}
 		
 		return bm;
+	}
+	
+	private static Bitmap empty;
+	private static Bitmap empty(){
+		
+		if(empty == null){
+			empty = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
+		}
+		
+		return empty;
 	}
 	
 	@Override
