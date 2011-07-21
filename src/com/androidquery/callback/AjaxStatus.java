@@ -1,6 +1,11 @@
 package com.androidquery.callback;
 
 import java.util.Date;
+import java.util.List;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 public class AjaxStatus {
 
@@ -10,6 +15,7 @@ public class AjaxStatus {
 	private byte[] data;
 	private Date time;
 	private boolean refresh;
+	private DefaultHttpClient client;
 	
 	public AjaxStatus(int code, String message, String redirect, byte[] data, Date time, boolean refresh){
 		this.code = code;
@@ -18,7 +24,9 @@ public class AjaxStatus {
 		this.data = data;
 		this.time = time;
 	}
-
+	
+	
+	
 	public int getCode() {
 		return code;
 	}
@@ -45,6 +53,18 @@ public class AjaxStatus {
 	
 	protected void setRefresh(boolean refresh) {
 		this.refresh = refresh;
+	}
+
+
+
+	public void setClient(DefaultHttpClient client) {
+		this.client = client;
+	}
+
+
+
+	public DefaultHttpClient getClient() {
+		return client;
 	}
 	
 }

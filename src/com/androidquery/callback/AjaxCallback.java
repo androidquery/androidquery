@@ -52,7 +52,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.androidquery.util.AQUtility;
-import com.pekca.android.utility.Utility;
 
 public class AjaxCallback<T> implements Runnable{
 	
@@ -520,9 +519,9 @@ public class AjaxCallback<T> implements Runnable{
         
         AQUtility.debug("response", code);
         
-        return new AjaxStatus(code, message, redirect, data, new Date(), false);
-		
-		
+        AjaxStatus result = new AjaxStatus(code, message, redirect, data, new Date(), false);
+		result.setClient(client);
+		return result;
 			
 		
 		
