@@ -1070,10 +1070,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, AjaxCallback<K> callback){
 		
-		
-		AjaxCallback<K> cb = new AjaxCallback<K>();
-		cb.setType(type);
-		cb.async(getContext(), url, params, false, false, false);
+		callback.setType(type);
+		callback.async(getContext(), url, params, false, false, false);
 		
 		return self();
 	}

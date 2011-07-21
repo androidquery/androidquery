@@ -52,6 +52,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.androidquery.util.AQUtility;
+import com.pekca.android.utility.Utility;
 
 public class AjaxCallback<T> implements Runnable{
 	
@@ -94,7 +95,6 @@ public class AjaxCallback<T> implements Runnable{
 		Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
 		
 		AQUtility.invokeHandler(getHandler(), callback, false, AJAX_SIG, url, object, status);
-		
 		
 	}
 	
@@ -353,6 +353,7 @@ public class AjaxCallback<T> implements Runnable{
 		}catch(Exception e){
 			AQUtility.report(e);
 		}
+		
 		
 		if(result != null && fileCache){
 			try{
