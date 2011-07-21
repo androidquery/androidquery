@@ -261,10 +261,10 @@ public class AjaxCallback<T> implements Runnable{
 	
 		background();
 		
-		
 		if(!refresh){
-			
-			if(fileCache){				
+		
+			if(fileCache){		
+				
 				fileWork();			
 			}
 		

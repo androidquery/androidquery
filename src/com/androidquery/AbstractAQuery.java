@@ -398,6 +398,49 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 	}
 	
+	/**
+	 * Set the image of an ImageView from a file. 
+	 *
+	 * @param file The image file.
+	 * @param targetWidth Target width for down sampling when reading large images.
+	 * @return self
+	 */
+	
+	public T image(File file, int targetWidth){		
+		return image(file, true, targetWidth, null);
+	}
+	
+	
+	/**
+	 * Set the image of an ImageView from a file with a custom callback.
+	 *
+	 * @param file The image file.
+	 * @param memCache Use memory cache.
+	 * @param targetWidth Target width for down sampling when reading large images.
+	 * @param callback Callback handler for setting the image.
+	 * @return self
+	 */
+	public T image(File file, boolean memCache, int targetWidth, BitmapAjaxCallback callback){
+		
+		if(view != null){
+			
+			ImageView iv = (ImageView) view;
+			
+			if(callback == null){
+				callback = new BitmapAjaxCallback();
+			}
+			
+			String url = file.getAbsolutePath();
+			callback.setImageView(url, iv);
+			callback.setTargetWidth(targetWidth);
+			callback.setImageFile(file);
+			callback.async(getContext(), url, memCache, true, false);
+		}
+		
+		return self();
+		
+	}
+	
 	
 	/**
 	 * Set a view to be transparent.

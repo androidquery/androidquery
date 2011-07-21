@@ -182,3 +182,22 @@ aq.id(R.id.image1).image(imageUrl, true, true, new BitmapAjaxCallback(){
 	}
 	
 });
+
+File file = new File(path);
+
+aq.id(R.id.avatar).image(file, false, 300, new BitmapAjaxCallback(){
+
+    @Override
+    public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
+    	
+    	iv.setImageBitmap(bm);
+        
+    	if(bm != null){
+            byte[] upload = toBytes(bm);                
+            writeAvatar(upload);
+            newAvatar = upload;
+    	}
+        
+    }
+    
+});

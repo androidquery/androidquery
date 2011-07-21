@@ -67,7 +67,7 @@ public class ListenerTestActivity extends Activity {
 		aq.id(R.id.async_bm).clicked(this, "asyncBitmap");
 		aq.id(R.id.async_html).clicked(this, "asyncHtml");
 		
-		reloadImage(null);
+		loadImage();
 	}
 	
 	public void asyncBytes(){
@@ -230,6 +230,11 @@ public class ListenerTestActivity extends Activity {
 		BitmapAjaxCallback.clearCache();
 	}
 	
+	public void loadImage(){
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";			
+		aq.id(R.id.image1).image(imageUrl, true, true, 200, AQuery.INVISIBLE);
+	}
+	
 	public void reloadImage(View view){
 		
 
@@ -264,8 +269,9 @@ public class ListenerTestActivity extends Activity {
 		
 		//String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		//String imageUrl = "http://lh6.ggpht.com/hgQVg7upCNxcSqJ9T2XabDm9d6IsRjI2lXDKJ03vHSlg5nXDV-2Actla3H8kCVCKdAu5-8-xDAXpxl_9";
-		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
-		aq.id(R.id.image1).image(imageUrl, true, true, 200, 0);
+		//String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		String imageUrl = "http://a.b.com/invalid.jpg";		
+		aq.id(R.id.image1).image(imageUrl, true, true, 200, AQuery.INVISIBLE);
 		
 	}
 	

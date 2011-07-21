@@ -53,6 +53,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private WeakReference<ImageView> iv;
 	private int targetWidth;
 	private int fallback;
+	private File imageFile;
 	
 	public BitmapAjaxCallback(){
 		
@@ -67,6 +68,10 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	public void setTargetWidth(int targetWidth){
 		this.targetWidth = targetWidth;
+	}
+	
+	public void setImageFile(File imageFile){
+		this.imageFile = imageFile;
 	}
 	
 	public void setFallback(int resId){
@@ -146,6 +151,17 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		return bm;
     }
 	
+    @Override
+    public File accessFile(File cacheDir, String url){		
+    	
+    	if(imageFile != null && imageFile.exists()){
+    		return imageFile;
+    	}
+    	
+		return super.accessFile(cacheDir, url);
+	}
+    
+    
 	@Override
 	public Bitmap fileGet(String url, File file, AjaxStatus status) {		
 		return bmGet(file.getAbsolutePath(), null);
