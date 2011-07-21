@@ -19,6 +19,7 @@ package com.androidquery;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
@@ -27,6 +28,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spanned;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -155,6 +157,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	
+	
 	/**
 	 * Return a new AQuery object that uses the found view as a root.
 	 *
@@ -163,7 +166,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T find(int id){
 		View view = findView(id);
-		
 		return create(view);
 	}
 	
@@ -211,7 +213,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T text(int resid){
 		
-		if(view != null){			
+		if(view instanceof TextView){			
 			TextView tv = (TextView) view;
 			tv.setText(resid);
 		}
@@ -225,11 +227,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T text(CharSequence text){
-				
-		if(view != null){			
+			
+		if(view instanceof TextView){			
 			TextView tv = (TextView) view;
 			tv.setText(text);
 		}
+		
 		return self();
 	}
 	
@@ -242,7 +245,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T text(Spanned text){
 		
 		
-		if(view != null){			
+		if(view instanceof TextView){			
 			TextView tv = (TextView) view;
 			tv.setText(text);
 		}
@@ -257,7 +260,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T textColor(int color){
 		
-		if(view != null){			
+		if(view instanceof TextView){			
 			TextView tv = (TextView) view;
 			tv.setTextColor(color);
 		}
@@ -275,7 +278,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T image(int resid){
 		
-		if(view != null){
+		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;
 			if(resid == 0){
 				iv.setImageBitmap(null);
@@ -295,7 +298,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T image(Drawable drawable){
 		
-		if(view != null){
+		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;
 			iv.setImageDrawable(drawable);
 		}
@@ -311,7 +314,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T image(Bitmap bm){
 		
-		if(view != null){
+		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;
 			iv.setImageBitmap(bm);
 		}
@@ -328,7 +331,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	
 	public T image(String url){
-		return image(url, true, true);
+		return image(url, true, true, 0, 0);
 	}
 	
 	/**
@@ -339,15 +342,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param fileCache Use file cache.
 	 * @return self
 	 */
-	public T image(String url, boolean memCache, boolean fileCache){
-		
-		
-		if(view != null){
-			ImageView iv = (ImageView) view;
-			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, 0, 0);
-		}
-		
-		return self();
+	public T image(String url, boolean memCache, boolean fileCache){		
+		return image(url, memCache, fileCache, 0, 0);
 	}
 	
 	
@@ -364,7 +360,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int resId){
 		
 		
-		if(view != null){
+		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;			
 			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, resId);
 		}
@@ -386,12 +382,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int resId, BitmapAjaxCallback callback){
 		
-		if(view != null){
+		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;
 			callback.setImageView(url, iv);
 			callback.setTargetWidth(targetWidth);
 			callback.setFallback(resId);
-			callback.async(getContext(), url, memCache, fileCache, false);
+			callback.async(getContext(), url, null, memCache, fileCache, false);
 		}
 		
 		return self();
@@ -422,7 +418,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T image(File file, boolean memCache, int targetWidth, BitmapAjaxCallback callback){
 		
-		if(view != null){
+		if(view instanceof ImageView){
 			
 			ImageView iv = (ImageView) view;
 			
@@ -434,7 +430,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			callback.setImageView(url, iv);
 			callback.setTargetWidth(targetWidth);
 			callback.setImageFile(file);
-			callback.async(getContext(), url, memCache, true, false);
+			callback.async(getContext(), url, null, memCache, true, false);
 		}
 		
 		return self();
@@ -480,7 +476,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T checked(boolean checked){
 		
-		if(view != null && view instanceof CompoundButton){
+		if(view instanceof CompoundButton){
 			CompoundButton cb = (CompoundButton) view;
 			cb.setChecked(checked);
 		}
@@ -497,7 +493,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		boolean checked = false;
 		
-		if(view != null && view instanceof CompoundButton){
+		if(view instanceof CompoundButton){
 			CompoundButton cb = (CompoundButton) view;
 			checked = cb.isChecked();
 		}
@@ -592,7 +588,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T dataChanged(){
 		
-		if(view != null && view instanceof AdapterView){
+		if(view instanceof AdapterView){
 			
 			AdapterView<?> av = (AdapterView<?>) view;
 			Adapter a = av.getAdapter();
@@ -782,7 +778,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T itemClicked(Object handler, String method){
 		
-		if(view != null && view instanceof AdapterView){
+		if(view instanceof AdapterView){
 		
 			AdapterView<?> av = (AdapterView<?>) view;
 			
@@ -803,7 +799,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T itemClicked(OnItemClickListener listener){
 		
-		if(view != null && view instanceof AbsListView){
+		if(view instanceof AbsListView){
 		
 			AbsListView alv = (AbsListView) view;
 			alv.setOnItemClickListener(listener);
@@ -827,7 +823,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T scrolledBottom(Object handler, String method){
 		
-		if(view != null && view instanceof AbsListView){
+		if(view instanceof AbsListView){
 		
 			AbsListView lv = (AbsListView) view;
 			Common common = new Common().forward(handler, method, true, ON_SCROLLED_STATE_SIG);
@@ -849,7 +845,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T textChanged(Object handler, String method){
 		
-		if(view != null && view instanceof TextView){			
+		if(view instanceof TextView){			
 		
 			TextView tv = (TextView) view;
 			Common common = new Common().forward(handler, method, true, TEXT_CHANGE_SIG);
@@ -882,14 +878,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	private static final Class<?>[] OVER_SCROLL_SIG = {int.class};
 	
 	/**
-	 * Call the overridePendingTransition of the activity. Only applies when device API is 5+.
+	 * Call the setOverScrollMode of the view. Only applies when device API is 9+.
 	 *
 	 * @param mode AQuery.OVER_SCROLL_ALWAYS, AQuery.OVER_SCROLL_ALWAYS, AQuery.OVER_SCROLL_IF_CONTENT_SCROLLS
 	 * @return self
 	 */
 	public T setOverScrollMode9(int mode){
 		
-		if(view != null && view instanceof AbsListView){
+		if(view instanceof AbsListView){
 			AQUtility.invokeHandler(view, "setOverScrollMode", false, OVER_SCROLL_SIG, mode);
 		}
 		
@@ -1044,13 +1040,73 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Class<K> type, Object handler, String callback){
 		
-		
+		/*
 		AjaxCallback<K> cb = new AjaxCallback<K>();
 		cb.setCallback(handler, callback);
 		cb.setType(type);
 		cb.async(getContext(), url);
 		
 		return self();
+		*/
+		
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.setCallback(handler, callback);
+		
+		return ajax(url, type, cb);
+		
+	}
+	
+	/**
+	 * Ajax call with POST method.
+	 *
+	 * The handler signature must be (String url, <K> object, AjaxStatus status)
+	 *
+	 * @param url url
+	 * @param params 
+	 * @param type data type
+	 * @param callback callback method name
+	 * @return self
+	 */
+	
+	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, AjaxCallback<K> callback){
+		
+		
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.setType(type);
+		cb.async(getContext(), url, params, false, false, false);
+		
+		return self();
+	}
+	
+	
+	/**
+	 * Ajax call with POST method.
+	 *
+	 * The handler signature must be (String url, <K> object, AjaxStatus status)
+	 *
+	 * @param url url
+	 * @param params 
+	 * @param type data type
+	 * @param callback callback method name
+	 * @return self
+	 */
+	
+	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, Object handler, String callback){
+		
+		/*
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.setCallback(handler, callback);
+		cb.setType(type);
+		cb.async(getContext(), url, params, false, false, false);
+		
+		return self();
+		*/
+		
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.setCallback(handler, callback);
+		
+		return ajax(url, params, type, cb);
+		
 	}
 	
 	

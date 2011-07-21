@@ -11,6 +11,15 @@
 	    android:layout_height="fill_parent"
 	    >
 	
+		<TextView
+			android:id="@+id/text1"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="Hello World"
+		>	
+		</TextView>
+	
+	
 		<Button
 			android:id="@+id/clicked1"
 			android:layout_width="wrap_content"
@@ -57,6 +66,15 @@
 			android:text="Clear Disk Cache"
 		>	
 		</Button>
+		
+		<Button
+			android:id="@+id/async_post"
+			android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+			android:text="Async Post"
+		>	
+		</Button>
+		
 		
 		<Button
 			android:id="@+id/async_bytes"

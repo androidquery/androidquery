@@ -19,15 +19,31 @@ package com.androidquery.callback;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -44,6 +60,7 @@ public class AjaxCallback<T> implements Runnable{
 	private String callback;
 	
 	private String url;
+	private Map<String, Object> params;
 	private T result;
 	private File cacheDir;
 	private AjaxStatus status;
@@ -171,11 +188,11 @@ public class AjaxCallback<T> implements Runnable{
 	private static int NETWORK_POOL = 4;
 	
 	public void async(Context context, String url){
-		work(true, context, url, false, false, false);
+		work(true, context, url, null, false, false, false);
 	}
 	
-	public void async(Context context, String url, boolean memCache, boolean fileCache, boolean refresh){
-		work(true, context, url, memCache, fileCache, refresh);
+	public void async(Context context, String url, Map<String, Object> params, boolean memCache, boolean fileCache, boolean refresh){
+		work(true, context, url, params, memCache, fileCache, refresh);
 	}
 	
 	protected void execute(){
@@ -184,7 +201,7 @@ public class AjaxCallback<T> implements Runnable{
 		exe.execute(this);
 	}
 	
-	private void work(boolean async, Context context, String url, boolean memCache, boolean fileCache, boolean refresh){
+	private void work(boolean async, Context context, String url, Map<String, Object> params, boolean memCache, boolean fileCache, boolean refresh){
 		
 		
 		T object = memGet(url);
@@ -198,6 +215,7 @@ public class AjaxCallback<T> implements Runnable{
 			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
 			
 			this.url = url;
+			this.params = params;
 			this.memCache = memCache;
 			this.fileCache = fileCache;
 			this.refresh = refresh;
@@ -214,9 +232,9 @@ public class AjaxCallback<T> implements Runnable{
 		}
 	}
 	
-	public void sync(Context context, String url, boolean memCache, boolean fileCache, boolean refresh){
+	public void sync(Context context, String url, Map<String, Object> params, boolean memCache, boolean fileCache, boolean refresh){
 		
-		work(false, context, url, memCache, fileCache, refresh);
+		work(false, context, url, params, memCache, fileCache, refresh);
 		
 	}
 	
@@ -317,7 +335,11 @@ public class AjaxCallback<T> implements Runnable{
 			String networkUrl = url;
 			if(refresh) networkUrl = getRefreshUrl(url);
 			
-			status = openBytes(networkUrl, true);						
+			if(params == null){
+				status = httpGet(networkUrl, true);						
+			}else{
+				status = httpPost(networkUrl, params);
+			}
 			status.setRefresh(refresh);						
 			
 			data = status.getData();
@@ -391,7 +413,7 @@ public class AjaxCallback<T> implements Runnable{
 	private static String MOBILE_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533";	
 	
 	
-	private static AjaxStatus openBytes(String urlPath, boolean retry) throws IOException{
+	private static AjaxStatus httpGet(String urlPath, boolean retry) throws IOException{
 				
 		AQUtility.debug("net", urlPath);
 		
@@ -407,13 +429,13 @@ public class AjaxCallback<T> implements Runnable{
        
         if(code == -1 && retry){
         	AQUtility.debug("code -1", urlPath);
-        	return openBytes(urlPath, false);
+        	return httpGet(urlPath, false);
         }
         
         if(code == 307 && retry){
         	String redirect = connection.getHeaderField("Location");
         	AQUtility.debug("redirect", redirect);
-        	return openBytes(redirect, false);
+        	return httpGet(redirect, false);
         }
         
         byte[] data = null;
@@ -432,7 +454,83 @@ public class AjaxCallback<T> implements Runnable{
         return new AjaxStatus(code, connection.getResponseMessage(), redirect, data, new Date(), false);
 	}
 	
-
+	private static AjaxStatus httpPost(String url, Map<String, Object> params) throws ClientProtocolException, IOException{
+		
+		AQUtility.debug("post", url);
+		
+		
+		HttpPost post = new HttpPost(url);
+		
+		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		
+		for(Map.Entry<String, Object> e: params.entrySet()){
+			Object value = e.getValue();
+			if(value != null){
+				pairs.add(new BasicNameValuePair(e.getKey(), value.toString()));
+			}
+		}
+		
+		
+		post.setEntity(new UrlEncodedFormEntity(pairs));
+		return httpDo(post, url);
+		
+		
+	}
+	
+	private static AjaxStatus httpDo(HttpUriRequest hr, String url) throws ClientProtocolException, IOException{
+		
+		
+		HttpParams httpParams = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(httpParams, NET_TIMEOUT);
+		HttpConnectionParams.setSoTimeout(httpParams, NET_TIMEOUT);
+		
+		DefaultHttpClient client = new DefaultHttpClient(httpParams);
+		
+		/*
+		if(sendSession){
+			putSessionId(client);
+		}
+		*/
+		
+		HttpResponse response = client.execute(hr);
+		
+		/*
+		if(storeSession){
+			storeSessionId(client);
+		}
+		*/
+		
+        byte[] data = null;
+        
+        String redirect = url;
+        
+        int code = response.getStatusLine().getStatusCode();
+        String message = response.getStatusLine().getReasonPhrase();
+        
+        if(code == -1 || code < 200 || code >= 300){        	
+        	//throw new IOException();
+        }else{
+        	
+        	HttpEntity entity = response.getEntity();				
+			InputStream is = entity.getContent();
+			
+			data = AQUtility.toBytes(is);
+        }
+        
+        AQUtility.debug("response", code);
+        
+        return new AjaxStatus(code, message, redirect, data, new Date(), false);
+		
+		
+			
+		
+		
+		
+	}
+	
+	
+	
+	
 	protected Object getHandler() {
 		if(handler == null) return null;
 		return handler.get();

@@ -1,5 +1,8 @@
 package com.androidquerytest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -39,6 +42,9 @@ public class ListenerTestActivity extends Activity {
 		
 		aq = new AQuery(this);
 		
+		aq.id(R.id.image1).text("Hihi");
+		
+		
 		aq.id(R.id.clicked1).clicked(this, "clicked1");
 		
 		aq.id(R.id.clicked2).clicked(new OnClickListener() {
@@ -67,8 +73,24 @@ public class ListenerTestActivity extends Activity {
 		aq.id(R.id.async_bm).clicked(this, "asyncBitmap");
 		aq.id(R.id.async_html).clicked(this, "asyncHtml");
 		
+		aq.id(R.id.async_post).clicked(this, "asyncPost");
+		
 		loadImage();
 	}
+	
+	public void asyncPost(){
+		
+		//String url = "http://www.google.com/uds/GnewsSearch";
+		String url = "http://www.vikispot.com/api/likes";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("spotId", "1677246");
+		
+
+		aq.ajax(url, params, JSONObject.class, this, "jsonCallback");
+		
+	}
+	
 	
 	public void asyncBytes(){
 		
@@ -164,6 +186,8 @@ public class ListenerTestActivity extends Activity {
 		
 		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";		
 		aq.ajax(url, JSONObject.class, this, "jsonCallback");
+		
+		
 		
 	}
 	

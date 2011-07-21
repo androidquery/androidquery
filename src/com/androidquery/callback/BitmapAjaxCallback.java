@@ -444,7 +444,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private void start(Context context, String url, boolean memCache, boolean fileCache){
 		
 		addQueue(url, iv.get());
-		super.async(context, url, memCache, fileCache, false);
+		super.async(context, url, null, memCache, fileCache, false);
 	}
 	
 	

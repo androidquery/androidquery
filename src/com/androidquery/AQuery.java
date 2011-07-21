@@ -17,6 +17,7 @@
 package com.androidquery;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
 /**
@@ -34,6 +35,9 @@ public class AQuery extends AbstractAQuery<AQuery>{
 		super(view);
 	}
 	
+	public AQuery(Context context) {
+		super(context);
+	}
 	
 
 }
