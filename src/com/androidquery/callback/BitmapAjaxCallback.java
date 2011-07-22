@@ -61,8 +61,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	public void setImageView(String url, ImageView view){
 		
-		presetBitmap(view, url);
-		
+		presetBitmap(view, url, null);		
 		iv = new WeakReference<ImageView>(view);
 	}
 	
@@ -301,10 +300,10 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	@Override
 	public Bitmap memGet(String url){		
-		return memGet2(url, targetWidth);
+		return memGet(url, targetWidth);
 	}
 	
-	private static Bitmap memGet2(String url, int targetWidth){
+	public static Bitmap memGet(String url, int targetWidth){
 		
 		url = getKey(url, targetWidth);
 		
@@ -376,14 +375,14 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	private static void presetBitmap(ImageView iw, String url){
+	private static void presetBitmap(ImageView iw, String url, Bitmap preset){
 		if(!url.equals(iw.getTag())){
-			iw.setImageBitmap(null);
+			iw.setImageBitmap(preset);
 			iw.setTag(url);
 		}
 	}
 	
-	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int resId){
+	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int resId, Bitmap preset){
 		
 		if(iv == null) return;
 		
@@ -393,10 +392,10 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			return;
 		}
 		
-		presetBitmap(iv, url);
+		presetBitmap(iv, url, preset);
 		
 		//check memory
-		Bitmap bm = memGet2(url, targetWidth);
+		Bitmap bm = memGet(url, targetWidth);
 		if(bm != null){
 			showBitmap(iv, bm, resId);
 			return;

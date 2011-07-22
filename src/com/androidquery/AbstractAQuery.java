@@ -57,6 +57,7 @@ import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
+import com.pekca.vikispot.android.api.PQuery;
 
 
 /**
@@ -267,8 +268,23 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Set the adapter of an AdapterView.
+	 *
+	 * @param adapter adapter
+	 * @return self
+	 */
 	
-	
+	@SuppressWarnings({"unchecked", "rawtypes" })
+	public T adapter(Adapter adapter){
+		
+		if(view instanceof AdapterView){
+			AdapterView av = (AdapterView) view;
+			av.setAdapter(adapter);
+		}
+		
+		return self();
+	}
 	
 	/**
 	 * Set the image of an ImageView.
@@ -362,7 +378,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;			
-			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, resId);
+			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, resId, null);
 		}
 		
 		return self();
