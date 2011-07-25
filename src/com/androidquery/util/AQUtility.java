@@ -117,8 +117,8 @@ public class AQUtility {
 	
 	private static void invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params) throws Exception{
 		
-		
 		try{   
+			if(cls == null) cls = new Class[0];
 			Method method = handler.getClass().getMethod(callback, cls);
 			method.invoke(handler, params);			
 			return;
