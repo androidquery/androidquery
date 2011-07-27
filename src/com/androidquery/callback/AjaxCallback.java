@@ -55,6 +55,9 @@ import com.androidquery.util.AQUtility;
 
 public class AjaxCallback<T> implements Runnable{
 	
+	private static int NET_TIMEOUT = 30000;
+	private static String AGENT = null;
+	
 	private Class<T> type;
 	private WeakReference<Object> handler;
 	private String callback;
@@ -75,6 +78,13 @@ public class AjaxCallback<T> implements Runnable{
 		status = null;
 	}
 	
+	public static void setTimeout(int timeout){
+		NET_TIMEOUT = timeout;
+	}
+	
+	public static void setAgent(String agent){
+		AGENT = agent;
+	}
 	
 	public Class<T> getType() {
 		return type;
@@ -409,8 +419,6 @@ public class AjaxCallback<T> implements Runnable{
 		return url;
 	}
 	
-	private static int NET_TIMEOUT = 30000;
-	private static String MOBILE_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533";	
 	
 	
 	private static AjaxStatus httpGet(String urlPath, boolean retry) throws IOException{
@@ -423,8 +431,9 @@ public class AjaxCallback<T> implements Runnable{
         connection.setUseCaches(false);
         connection.setInstanceFollowRedirects(true);     
         connection.setConnectTimeout(NET_TIMEOUT);
-        connection.addRequestProperty("User-Agent", MOBILE_AGENT);
-        
+        if(AGENT != null){
+        	connection.addRequestProperty("User-Agent", AGENT);
+        }
         int code = connection.getResponseCode();
        
         if(code == -1 && retry){
