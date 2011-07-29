@@ -57,6 +57,7 @@ public class AjaxCallback<T> implements Runnable{
 	
 	private static int NET_TIMEOUT = 30000;
 	private static String AGENT = null;
+	private static int NETWORK_POOL = 4;
 	
 	private Class<T> type;
 	private WeakReference<Object> handler;
@@ -64,6 +65,7 @@ public class AjaxCallback<T> implements Runnable{
 	
 	private String url;
 	private Map<String, Object> params;
+	private Map<String, String> headers;
 	private T result;
 	private File cacheDir;
 	private AjaxStatus status;
@@ -71,6 +73,13 @@ public class AjaxCallback<T> implements Runnable{
 	private boolean fileCache;
 	private boolean memCache;
 	private boolean refresh;
+	
+	protected AjaxCallback(){		
+	}
+	
+	public AjaxCallback(Class<T> type){		
+		this.type = type;
+	}
 	
 	private void clear(){		
 		handler = null;
@@ -90,13 +99,51 @@ public class AjaxCallback<T> implements Runnable{
 		return type;
 	}
 
-	public void setCallback(Object handler, String callback){
+	public AjaxCallback<T> callback(Object handler, String callback){
 		this.handler = new WeakReference<Object>(handler);
 		this.callback = callback;
+		return this;
 	}
 	
-	public void setType(Class<T> type){
+	public AjaxCallback<T> url(String url){
+		this.url = url;
+		return this;
+	}
+	
+	public AjaxCallback<T> type(Class<T> type){
 		this.type = type;
+		return this;
+	}
+	
+	public AjaxCallback<T> fileCache(boolean cache){
+		this.fileCache = cache;
+		return this;
+	}
+	
+	public AjaxCallback<T> memCache(boolean cache){
+		this.memCache = cache;
+		return this;
+	}
+	
+	public AjaxCallback<T> refresh(boolean refresh){
+		this.refresh = refresh;
+		return this;
+	}
+	
+	public AjaxCallback<T> header(String name, String value){
+		if(headers == null){
+			headers = new HashMap<String, String>();
+		}
+		headers.put(name, value);
+		return this;
+	}
+	
+	public AjaxCallback<T> param(String name, Object value){
+		if(params == null){
+			params = new HashMap<String, Object>();
+		}
+		params.put(name, value);
+		return this;
 	}
 	
 	public void callback(String url, T object, AjaxStatus status){
@@ -194,15 +241,18 @@ public class AjaxCallback<T> implements Runnable{
 		return new AjaxStatus(200, "OK", url, null, time, refresh);
 	}
 	
-	private static int NETWORK_POOL = 4;
+	public void async(Context context){
+		work(context, true);
+	}
 	
+	/*
 	public void async(Context context, String url){
 		work(true, context, url, null, false, false, false);
 	}
 	
 	public void async(Context context, String url, Map<String, Object> params, boolean memCache, boolean fileCache, boolean refresh){
 		work(true, context, url, params, memCache, fileCache, refresh);
-	}
+	}*/
 	
 	protected void execute(){
 		AQUtility.getHandler();				
@@ -210,6 +260,38 @@ public class AjaxCallback<T> implements Runnable{
 		exe.execute(this);
 	}
 	
+	private void work(Context context, boolean async){
+		
+		
+		T object = memGet(url);
+		
+		if(object != null){		
+			
+			callback(url, object, makeStatus(url, null, refresh));
+		
+		}else{
+		
+			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
+			
+			if(async){
+			
+				execute();
+			
+			}else{
+				
+				backgroundWork();
+				afterWork();
+			}
+		}
+	}
+	
+	public void sync(Context context){
+		
+		work(context, false);
+		
+	}
+	
+	/*
 	private void work(boolean async, Context context, String url, Map<String, Object> params, boolean memCache, boolean fileCache, boolean refresh){
 		
 		
@@ -240,12 +322,15 @@ public class AjaxCallback<T> implements Runnable{
 			}
 		}
 	}
+	*/
 	
+	/*
 	public void sync(Context context, String url, Map<String, Object> params, boolean memCache, boolean fileCache, boolean refresh){
 		
 		work(false, context, url, params, memCache, fileCache, refresh);
 		
 	}
+	*/
 	
 	@Override
 	public void run() {
@@ -345,9 +430,9 @@ public class AjaxCallback<T> implements Runnable{
 			if(refresh) networkUrl = getRefreshUrl(url);
 			
 			if(params == null){
-				status = httpGet(networkUrl, true);						
+				status = httpGet(networkUrl, headers, true);						
 			}else{
-				status = httpPost(networkUrl, params);
+				status = httpPost(networkUrl, headers, params);
 			}
 			status.setRefresh(refresh);						
 			
@@ -420,8 +505,7 @@ public class AjaxCallback<T> implements Runnable{
 	}
 	
 	
-	
-	private static AjaxStatus httpGet(String urlPath, boolean retry) throws IOException{
+	private static AjaxStatus httpGet(String urlPath, Map<String, String> headers, boolean retry) throws IOException{
 				
 		AQUtility.debug("net", urlPath);
 		
@@ -431,20 +515,28 @@ public class AjaxCallback<T> implements Runnable{
         connection.setUseCaches(false);
         connection.setInstanceFollowRedirects(true);     
         connection.setConnectTimeout(NET_TIMEOUT);
+        
         if(AGENT != null){
         	connection.addRequestProperty("User-Agent", AGENT);
         }
+        
+        if(headers != null){
+        	for(String name: headers.keySet()){
+        		connection.addRequestProperty(name, headers.get(name));
+        	}
+        }
+        
         int code = connection.getResponseCode();
        
         if(code == -1 && retry){
         	AQUtility.debug("code -1", urlPath);
-        	return httpGet(urlPath, false);
+        	return httpGet(urlPath, headers, false);
         }
         
         if(code == 307 && retry){
         	String redirect = connection.getHeaderField("Location");
         	AQUtility.debug("redirect", redirect);
-        	return httpGet(redirect, false);
+        	return httpGet(redirect, headers, false);
         }
         
         byte[] data = null;
@@ -463,7 +555,7 @@ public class AjaxCallback<T> implements Runnable{
         return new AjaxStatus(code, connection.getResponseMessage(), redirect, data, new Date(), false);
 	}
 	
-	private static AjaxStatus httpPost(String url, Map<String, Object> params) throws ClientProtocolException, IOException{
+	private static AjaxStatus httpPost(String url, Map<String, String> headers, Map<String, Object> params) throws ClientProtocolException, IOException{
 		
 		AQUtility.debug("post", url);
 		
@@ -479,6 +571,12 @@ public class AjaxCallback<T> implements Runnable{
 			}
 		}
 		
+		if(headers != null){
+        	for(String name: headers.keySet()){
+        		//connection.addRequestProperty(name, headers.get(name));
+        		post.addHeader(name, headers.get(name));
+        	}
+        }
 		
 		post.setEntity(new UrlEncodedFormEntity(pairs));
 		return httpDo(post, url);

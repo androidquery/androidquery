@@ -402,7 +402,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			callback.setImageView(url, iv);
 			callback.setTargetWidth(targetWidth);
 			callback.setFallback(resId);
-			callback.async(getContext(), url, null, memCache, fileCache, false);
+			
+			//callback.async(getContext(), url, null, memCache, fileCache, false);
+			callback.url(url).memCache(memCache).fileCache(fileCache);
+			callback.async(getContext());
 		}
 		
 		return self();
@@ -445,7 +448,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			callback.setImageView(url, iv);
 			callback.setTargetWidth(targetWidth);
 			callback.setImageFile(file);
-			callback.async(getContext(), url, null, memCache, true, false);
+			
+			//callback.async(getContext(), url, null, memCache, true, false);
+			callback.url(url).memCache(memCache).fileCache(true);
+			callback.async(getContext());
 		}
 		
 		return self();
@@ -1036,9 +1042,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Class<K> type, AjaxCallback<K> callback){
 		
-		callback.setType(type);
-		callback.async(getContext(), url);
+		callback.type(type).url(url).async(getContext());
 		
+		/*
+		callback.type(type);
+		callback.async(getContext(), url);
+		*/
 		return self();
 	}
 	
@@ -1055,17 +1064,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Class<K> type, Object handler, String callback){
 		
-		/*
-		AjaxCallback<K> cb = new AjaxCallback<K>();
-		cb.setCallback(handler, callback);
-		cb.setType(type);
-		cb.async(getContext(), url);
 		
-		return self();
-		*/
-		
-		AjaxCallback<K> cb = new AjaxCallback<K>();
-		cb.setCallback(handler, callback);
+		AjaxCallback<K> cb = new AjaxCallback<K>(type);
+		cb.callback(handler, callback);
 		
 		return ajax(url, type, cb);
 		
@@ -1085,9 +1086,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, AjaxCallback<K> callback){
 		
-		callback.setType(type);
+		/*
+		callback.type(type);
 		callback.async(getContext(), url, params, false, false, false);
-		
+		*/
 		return self();
 	}
 	
@@ -1106,17 +1108,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, Object handler, String callback){
 		
-		/*
-		AjaxCallback<K> cb = new AjaxCallback<K>();
-		cb.setCallback(handler, callback);
-		cb.setType(type);
-		cb.async(getContext(), url, params, false, false, false);
 		
-		return self();
-		*/
-		
-		AjaxCallback<K> cb = new AjaxCallback<K>();
-		cb.setCallback(handler, callback);
+		AjaxCallback<K> cb = new AjaxCallback<K>(type);
+		cb.callback(handler, callback);
 		
 		return ajax(url, params, type, cb);
 		

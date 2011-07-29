@@ -443,7 +443,11 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private void start(Context context, String url, boolean memCache, boolean fileCache){
 		
 		addQueue(url, iv.get());
-		super.async(context, url, null, memCache, fileCache, false);
+		
+		url(url).memCache(memCache).fileCache(fileCache);
+		super.async(context);
+		
+		//super.async(context, url, null, memCache, fileCache, false);
 	}
 	
 	
