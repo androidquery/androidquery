@@ -184,13 +184,16 @@ public class ListenerTestActivity extends Activity {
 		
 		//perform a Google search in just a few lines of code
 		
-		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";		
+		//String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";		
+		String url = "http://androidquery.appspot.com/api/memorize";
 		aq.ajax(url, JSONObject.class, this, "jsonCallback");
 		
 		
 		
 	}
 	
+	//07-28 03:22:16.410: WARN/AQuery(931): {"req":"GET http:\/\/androidquery.appspot.com\/api\/memorize HTTP\/1.1\nHost: androidquery.appspot.com\r\nCookie: \r\nVia: 1.1 202.140.101.82:3128 (squid\/2.7.STABLE6)\r\nCache-Control: max-age=259200\r\nUser-Agent: Dalvik\/1.4.0 (Linux; U; Android 2.3.3; GT-I9000 Build\/GINGERBREAD)\r\nX-AppEngine-Country: HK\r\n\r\n","radd":"202.140.101.82","status":"1","rhost":"202.140.101.82"}
+
 	public void jsonCallback(String url, JSONObject json, AjaxStatus status){
 		
 		if(json != null){
@@ -198,6 +201,8 @@ public class ListenerTestActivity extends Activity {
 			//successful ajax call, show status code and json content
 			Toast.makeText(aq.getContext(), status.getCode() + ":" + json.toString(), Toast.LENGTH_LONG).show();
 		
+			//AQUtility.debug(json.);
+			
 		}else{
 			
 			//ajax error, show error code
