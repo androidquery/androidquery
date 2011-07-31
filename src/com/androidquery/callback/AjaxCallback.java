@@ -47,9 +47,15 @@ import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 
 import com.androidquery.util.AQUtility;
 
@@ -66,8 +72,13 @@ public class AjaxCallback<T> implements Runnable{
 	private String url;
 	private Map<String, Object> params;
 	private Map<String, String> headers;
+	
 	private T result;
+	
 	private File cacheDir;
+	private AccountManager am;
+	private Account acc;
+	
 	private AjaxStatus status;
 	
 	private boolean fileCache;
@@ -272,6 +283,7 @@ public class AjaxCallback<T> implements Runnable{
 		}else{
 		
 			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
+			if(account != null) findAccount(context);
 			
 			if(async){
 			
@@ -426,14 +438,22 @@ public class AjaxCallback<T> implements Runnable{
 		
 		try{
 			
-			String networkUrl = url;
-			if(refresh) networkUrl = getRefreshUrl(url);
-			
-			if(params == null){
-				status = httpGet(networkUrl, headers, true);						
-			}else{
-				status = httpPost(networkUrl, headers, params);
+			//authenticate if needed
+			boolean auth = authType != null;
+			if(auth){
+				setupAuthToken(false);
 			}
+			
+			status = network();
+			
+			if(auth && status.getCode() == 401){
+				AQUtility.debug("reauth needed!");
+				
+				setupAuthToken(true);
+				status = network();
+			}
+			
+			
 			status.setRefresh(refresh);						
 			
 			data = status.getData();
@@ -459,6 +479,21 @@ public class AjaxCallback<T> implements Runnable{
 		
 		
 		
+	}
+	
+	private AjaxStatus network() throws IOException{
+		
+		String networkUrl = url;
+		if(refresh) networkUrl = getRefreshUrl(url);
+		
+		AjaxStatus status;
+		if(params == null){
+			status = httpGet(networkUrl, headers, true);						
+		}else{
+			status = httpPost(networkUrl, headers, params);
+		}
+		
+		return status;
 	}
 	
 	
@@ -633,6 +668,84 @@ public class AjaxCallback<T> implements Runnable{
 		
 		
 		
+	}
+	
+	private String authType;
+	private String account;
+	
+	public void auth(String authType, String account){
+		this.authType = authType;
+		this.account = account;
+	}
+	
+	private void findAccount(Context context){
+		
+		if(android.os.Build.VERSION.SDK_INT < 5) return;
+		
+		AQUtility.time("find account");
+		
+		AccountManager manager = AccountManager.get(context);
+        
+		Account[] accounts = manager.getAccountsByType("com.google");
+        for(int i = 0; i < accounts.length; i++) {
+        	Account acc = accounts[i];
+            if(account.equals(acc.name)) {
+            	this.am = manager;
+            	this.acc = acc;
+            	AQUtility.debug("account ok", acc.name);
+            	AQUtility.timeEnd("find account", 0);
+            	return;
+            }
+        }
+		
+        AQUtility.debug("account doesn't exist", account);
+	}
+	
+	
+	private void setupAuthToken(boolean expired){
+		
+		if(am == null) return;
+		
+		if(expired){
+			AQUtility.debug("expired invalidate");
+			am.invalidateAuthToken(authType, authToken);
+		}
+		
+		AQUtility.time("auth future");
+		
+    	AccountManagerFuture<Bundle> future = am.getAuthToken(acc, authType, true, null, null);
+		
+    	AQUtility.timeEnd("auth future", 0);
+    	
+		Bundle bundle = null;
+		try {
+			bundle = future.getResult();
+		} catch (Exception e) {
+			AQUtility.report(e);
+		} 
+		
+		if(bundle != null && bundle.containsKey(AccountManager.KEY_AUTHTOKEN)){
+			String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+			
+			AQUtility.debug("tok", token);
+			
+			/*
+			if(!expired){
+				//test, messing up the token
+				token = "laladwadwadwaads";
+			}
+			*/
+			authToken(token);
+		}
+		
+		
+	}
+	
+	private String authToken;
+	public AjaxCallback<T> authToken(String token){
+		header("Authorization", "GoogleLogin auth=" + token);
+		this.authToken = token;
+		return this;
 	}
 	
 	
