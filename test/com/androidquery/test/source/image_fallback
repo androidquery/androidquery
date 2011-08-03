@@ -1,0 +1,6 @@
+	public void image_fallback(){
+		
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/xyz.png";
+		aq.id(R.id.image).image(imageUrl, true, true, 0, R.drawable.image_missing);
+		
+	}

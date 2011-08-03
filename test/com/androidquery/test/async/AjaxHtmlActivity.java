@@ -33,11 +33,15 @@ public class AjaxHtmlActivity extends RunSourceActivity {
 	    
 		String url = "http://www.google.com";
 
+		progress(true);
+		
 		aq.ajax(url, String.class, new AjaxCallback<String>() {
 
 	        @Override
 	        public void callback(String url, String html, AjaxStatus status) {
 	             
+	        	progress(false);
+	        	
 	        	showResult(html);
 	        }
 		        

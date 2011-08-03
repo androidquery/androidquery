@@ -33,10 +33,15 @@ public class AjaxBytesActivity extends RunSourceActivity {
 	    
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 
+		progress(true);
+		
 		aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
 
 	        @Override
 	        public void callback(String url, byte[] object, AjaxStatus status) {
+	        	
+	        	progress(false);
+	        	
 	        	showResult("bytes array length:" + object.length);
 	        }
 		});

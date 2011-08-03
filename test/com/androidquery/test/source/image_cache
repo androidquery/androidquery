@@ -1,0 +1,7 @@
+	public void image_cache(){
+		
+		boolean memCache = false;
+		boolean fileCache = true;
+
+		aq.id(R.id.image).image("http://www.vikispot.com/z/images/vikispot/android-w.png", memCache, fileCache);
+	}

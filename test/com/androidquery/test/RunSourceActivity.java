@@ -27,7 +27,7 @@ public class RunSourceActivity extends Activity {
 	protected AQuery aq;
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 				
@@ -58,8 +58,20 @@ public class RunSourceActivity extends Activity {
 		
 	}
 	
+	protected void progress(boolean show){
+		
+		aq.id(R.id.progress);
+		
+		if(show){
+			aq.visible();
+		}else{
+			aq.gone();
+		}
+		
+	}
+	
 	protected void showResult(Object result){
-		aq.id(R.id.result).text(result + "");
+		aq.id(R.id.result).visible().text(result + "");
 	}
 	
 	private static Map<String, String> titleMap;

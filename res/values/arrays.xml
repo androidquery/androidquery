@@ -5,12 +5,14 @@
    
     <string-array name="top_names">
         <item>Async Network</item>
-        <item>Image Loading</item>        
+        <item>Image Loading</item>  
+        <item>javadoc</item>        
     </string-array>
     
     <string-array name="top_values">
         <item>com.androidquery.test.IntentListActivity:async</item>
         <item>com.androidquery.test.IntentListActivity:image</item>
+        <item>com.androidquery.test.IntentListActivity</item>
     </string-array>
   
   	<string-array name="async_names">
@@ -25,16 +27,57 @@
         <item>com.androidquery.test.async.AjaxBytesActivity:async_bytes</item>     
     </string-array>
     
+    <string-array name="image_names">
+        <item>Simple</item>
+        <item>Cache Control</item>   
+        <item>Down Sampling</item>   
+        <item>Fallback</item>
+        <item>File (Async)</item>
+        <item>Duplicated URL</item>    
+        <item>Access Cached Images</item> 
+    </string-array>
+    
+    <string-array name="image_values">
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_simple</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_cache</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_down</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_fallback</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_dup</item>  
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_access</item>    
+    </string-array>
+    
+    
     <string-array name="source_keys">
+        
         <item>async_json</item>
         <item>async_html</item>   
-        <item>async_bytes</item>        
+        <item>async_bytes</item>  
+        
+        <item>image_simple</item>
+        <item>image_cache</item>
+        <item>image_down</item>
+        <item>image_fallback</item>
+        <item>image_file</item>
+        <item>image_dup</item>
+        <item>image_access</item>
+        
+              
     </string-array>
     
     <string-array name="source_title">
         <item>Asynchronous HTTP Fetch JSON Object</item>
         <item>Asynchronous HTTP Fetch HTML/XML</item>   
-        <item>Asynchronous HTTP Fetch as Bytes Array</item>        
+        <item>Asynchronous HTTP Fetch as Bytes Array</item> 
+        
+        <item>Asynchronous HTTP Image Load</item>
+        <item>Async Image Load with Cache Control</item>
+        <item>Async Image Load with Down-sampling (1024 -> 256)</item>
+        <item>Async Image Load with Fallback Image</item>
+        <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>
+        <item>Auto Detect Duplicated Request</item>
+        <item>Access Cached Images</item>
+               
     </string-array>
     
 </resources>

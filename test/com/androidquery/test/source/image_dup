@@ -1,0 +1,9 @@
+	public void image_dup(){
+		
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		aq.id(R.id.image).image(imageUrl, false, false);
+
+		//no network fetch for 2nd request, image will be shown when first request is completed
+		aq.id(R.id.image2).image(imageUrl, false, false);
+		
+	}

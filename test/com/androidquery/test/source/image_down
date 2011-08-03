@@ -1,0 +1,6 @@
+	public void image_down(){
+		
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";            
+		aq.id(R.id.image).image(imageUrl, true, true, 200, 0);
+
+	}

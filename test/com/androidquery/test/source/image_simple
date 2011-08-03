@@ -1,0 +1,6 @@
+	public void image_simple(){
+		
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		aq.id(R.id.image).image(url);
+		
+	}

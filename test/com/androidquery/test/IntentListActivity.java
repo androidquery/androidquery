@@ -13,6 +13,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -55,6 +56,8 @@ public class IntentListActivity extends ListActivity {
 		
 		if("async".equals(type)){
 			return new int[]{R.array.async_names, R.array.async_values};
+		}else if("image".equals(type)){
+			return new int[]{R.array.image_names, R.array.image_values};
 		}else{
 			return new int[]{R.array.top_names, R.array.top_values};
 		}
@@ -102,9 +105,33 @@ public class IntentListActivity extends ListActivity {
 	
 	public void itemClicked(AdapterView<?> parent, View view, int position, long id){
 		
-		ActivityItem ai = list.get(position);		
-		invokeIntent(ai);
+		ActivityItem ai = list.get(position);	
+		
+		if("javadoc".equalsIgnoreCase(ai.getName())){
+			openBrowser(this, "http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html");
+		}else{		
+			invokeIntent(ai);
+		}
 	}
+	
+    public static boolean openBrowser(Activity act, String url) {
+    
+    	
+    	try{
+   
+	    	if(url == null) return false;
+	    	
+	    	Uri uri = Uri.parse(url);
+	    	Intent intent = new Intent(Intent.ACTION_VIEW, uri);	    	
+	    	act.startActivity(intent);
+    	
+	    	return true;
+    	}catch(Exception e){
+    		return false;
+    	}
+    }
+	
+	
 	
 	private void invokeIntent(ActivityItem ai){
 		

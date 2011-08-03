@@ -33,11 +33,15 @@ public class AjaxJSONActivity extends RunSourceActivity {
 	    
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
         
+        progress(true);
+        
         aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
 
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                    
+            	progress(false);
+            	
                 showResult(json);
                
             }

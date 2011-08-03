@@ -1,0 +1,10 @@
+	public void image_access(){
+		
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		File file = aq.getCachedFile(imageUrl);
+		
+		if(file != null){
+			showResult("File:" + file + " Length:" + file.length());
+		}
+		
+	}

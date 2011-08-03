@@ -28,6 +28,7 @@
 		<activity android:name=".test.async.AjaxHtmlActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.async.AjaxBytesActivity" android:theme="@style/android:Theme.Light"></activity>
 		
+		<activity android:name=".test.image.ImageLoadingActivity" android:theme="@style/android:Theme.Light"></activity>
 		
     </application>
 </manifest>
