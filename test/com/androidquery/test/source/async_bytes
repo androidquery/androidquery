@@ -1,0 +1,13 @@
+	public void asyncBytes(){
+	    
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+
+		aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
+
+	        @Override
+	        public void callback(String url, byte[] object, AjaxStatus status) {
+	        	showResult("bytes array:" + object.length);
+	        }
+		});
+	        
+	}	

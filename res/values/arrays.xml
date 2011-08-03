@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+   
+    <string-array name="top_names">
+        <item>Async Network</item>
+        <item>Image Loading</item>        
+    </string-array>
+    
+    <string-array name="top_values">
+        <item>com.androidquery.test.IntentListActivity:async</item>
+        <item>com.androidquery.test.IntentListActivity:image</item>
+    </string-array>
+  
+  	<string-array name="async_names">
+        <item>JSON</item>
+        <item>HTML/XML</item>   
+        <item>byte[]</item>        
+    </string-array>
+  
+  	<string-array name="async_values">
+        <item>com.androidquery.test.async.AjaxJSONActivity:async_json</item>
+        <item>com.androidquery.test.async.AjaxHtmlActivity:async_html</item>   
+        <item>com.androidquery.test.async.AjaxBytesActivity:async_bytes</item>     
+    </string-array>
+    
+    <string-array name="source_keys">
+        <item>async_json</item>
+        <item>async_html</item>   
+        <item>async_bytes</item>        
+    </string-array>
+    
+    <string-array name="source_title">
+        <item>Asynchronous HTTP Fetch JSON Object</item>
+        <item>Asynchronous HTTP Fetch HTML/XML</item>   
+        <item>Asynchronous HTTP Fetch as Bytes Array</item>        
+    </string-array>
+    
+</resources>

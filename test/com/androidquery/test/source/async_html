@@ -1,0 +1,15 @@
+	public void asyncHtml(){
+	    
+		String url = "http://www.google.com";
+
+		aq.ajax(url, String.class, new AjaxCallback<String>() {
+
+	        @Override
+	        public void callback(String url, String html, AjaxStatus status) {
+	             
+	        	showResult(html);
+	        }
+		        
+		});
+	        
+	}
