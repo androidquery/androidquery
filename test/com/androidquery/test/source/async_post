@@ -1,0 +1,17 @@
+	public void async_post(){
+		
+        String url = "http://search.twitter.com/search.json";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("q", "androidquery");
+		
+        aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {              
+                showResult(json);              
+            }
+        });
+		
+		
+	}

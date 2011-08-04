@@ -4,8 +4,8 @@
 <resources>
    
     <string-array name="top_names">
-        <item>Async Network</item>
-        <item>Image Loading</item>  
+        <item>Async network demo</item>
+        <item>Image loading demo</item>  
         <item>javadoc</item>        
     </string-array>
     
@@ -18,13 +18,15 @@
   	<string-array name="async_names">
         <item>JSON</item>
         <item>HTML/XML</item>   
-        <item>byte[]</item>        
+        <item>byte[]</item>  
+        <item>Http POST</item>      
     </string-array>
   
   	<string-array name="async_values">
-        <item>com.androidquery.test.async.AjaxJSONActivity:async_json</item>
-        <item>com.androidquery.test.async.AjaxHtmlActivity:async_html</item>   
-        <item>com.androidquery.test.async.AjaxBytesActivity:async_bytes</item>     
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_json</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_html</item>   
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item>     
     </string-array>
     
     <string-array name="image_names">
@@ -55,6 +57,7 @@
         <item>async_json</item>
         <item>async_html</item>   
         <item>async_bytes</item>  
+        <item>async_post</item>  
         
         <item>image_simple</item>
         <item>image_cache</item>
@@ -69,9 +72,10 @@
     </string-array>
     
     <string-array name="source_title">
-        <item>Asynchronous HTTP Fetch JSON Object</item>
-        <item>Asynchronous HTTP Fetch HTML/XML</item>   
-        <item>Asynchronous HTTP Fetch as Bytes Array</item> 
+        <item>Asynchronous HTTP Get JSON Object</item>
+        <item>Asynchronous HTTP Get HTML/XML</item>   
+        <item>Asynchronous HTTP Get as Bytes Array</item>
+        <item>Asynchronous HTTP Post</item> 
         
         <item>Asynchronous HTTP Image Load</item>
         <item>Async Image Load with Cache Control</item>
