@@ -1012,6 +1012,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return context;
 	}
 	
+	
 	/**
 	 * Advanced Ajax callback. User must prepare the callback object settings (url, type, etc...) by using it's methods.
 	 *
