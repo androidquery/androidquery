@@ -100,43 +100,37 @@ public class AQUtility {
 		
 	}
 	
-	public static void invokeHandler(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params){
+	public static Object invokeHandler(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params){
     	
-		if(handler == null) return;
-		
-		try{   
-			
-			invokeMethod(handler, callback, fallback, cls, params);
-		}catch(Exception e){		
-			AQUtility.report(e);
+		try {
+			return invokeMethod(handler, callback, fallback, cls, params);
+		} catch (Exception e) {
+			return null;
 		}
-		
-		
 		
     }
 	
-	private static void invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params) throws Exception{
+	private static Object invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params) throws Exception{
+		
+		if(handler == null || callback == null) return null;
 		
 		try{   
 			if(cls == null) cls = new Class[0];
 			Method method = handler.getClass().getMethod(callback, cls);
-			method.invoke(handler, params);			
-			return;
+			return method.invoke(handler, params);			
 		}catch(NoSuchMethodException e){
-			//AQUtility.report(e);
 		}
 		
 		
 		try{
 			if(fallback){
 				Method method = handler.getClass().getMethod(callback);				
-				method.invoke(handler);
-				return;// method;
+				return method.invoke(handler);
 			}
 		}catch(NoSuchMethodException e){
-			//debug(e);
 		}
 		
+		return null;
 		
 	}
 	
@@ -361,10 +355,7 @@ public class AQUtility {
 		
 		try{
 			
-			if(file != null){
-			
-				//AQUtility.debug("store", file);
-				
+			if(file != null){			
 				AQUtility.write(file, data);
 			}
 		}catch(Exception e){

@@ -899,6 +899,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Call the setLayerType of the view. Only applies when device API is 11+.
 	 *
+	 * Type must be AQuery.LAYER_TYPE_SOFTWARE or AQuery.LAYER_TYPE_HARDWARE.
+	 * 
 	 * @param type the type
 	 * @param paint the paint
 	 * @return self
@@ -911,6 +913,19 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		
 		return self();
+	}
+	
+	/**
+	 * Invoke the method on the current view.
+	 *
+	 * @param method The name of the method
+	 * @param sig The signature of the method
+	 * @param params Input parameters
+	 * @return object The returning object of the method. Null if no such method or return void.
+	 */
+	public Object invoke(String method, Class<?>[] sig, Object... params){
+		
+		return AQUtility.invokeHandler(view, method, false, sig, params);
 	}
 	
 	
