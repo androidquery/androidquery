@@ -56,25 +56,35 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private File imageFile;
 	
 	public BitmapAjaxCallback(){
-		
+		type(Bitmap.class);
 	}
 	
-	public void setImageView(String url, ImageView view){
-		
-		presetBitmap(view, url, null);		
+	public BitmapAjaxCallback imageView(ImageView view){
+				
 		iv = new WeakReference<ImageView>(view);
+		
+		return this;
 	}
 	
-	public void setTargetWidth(int targetWidth){
+	@Override
+	public void async(Context context){
+		presetBitmap(iv.get(), getUrl(), null);
+		super.async(context);
+	}
+	
+	public BitmapAjaxCallback targetWidth(int targetWidth){
 		this.targetWidth = targetWidth;
+		return this;
 	}
 	
-	public void setImageFile(File imageFile){
+	public BitmapAjaxCallback file(File imageFile){
 		this.imageFile = imageFile;
+		return this;
 	}
 	
-	public void setFallback(int resId){
+	public BitmapAjaxCallback fallback(int resId){
 		this.fallback = resId;
+		return this;
 	}
 	
 	private static Bitmap decode(String path, byte[] data, BitmapFactory.Options options){
@@ -151,7 +161,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
     }
 	
     @Override
-    public File accessFile(File cacheDir, String url){		
+    protected File accessFile(File cacheDir, String url){		
     	
     	if(imageFile != null && imageFile.exists()){
     		return imageFile;
@@ -162,12 +172,12 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
     
     
 	@Override
-	public Bitmap fileGet(String url, File file, AjaxStatus status) {		
+	protected Bitmap fileGet(String url, File file, AjaxStatus status) {		
 		return bmGet(file.getAbsolutePath(), null);
 	}
 	
 	@Override
-	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
+	protected Bitmap transform(String url, byte[] data, AjaxStatus status) {
 		
 		Bitmap bm = bmGet(null, data);
 		
@@ -216,7 +226,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	public final void callback(String url, Bitmap bm, AjaxStatus status) {
+	protected final void callback(String url, Bitmap bm, AjaxStatus status) {
 		
 		ImageView firstView = iv.get();
 		
@@ -234,8 +244,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		}
 		
-		//AQUtility.debug("concurrent", queueMap.size());
-		
 	}
 	
 	private void checkCb(String url, ImageView iv, Bitmap bm, AjaxStatus status){
@@ -244,9 +252,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		if(url.equals(iv.getTag())){
 			callback(url, iv, bm, status);
-			//AQUtility.debug("set img", url + ":" + bm.getWidth());
-		}else{
-			//AQUtility.debug("mismatch", iv.getTag() + ":" + url);
 		}
 	}
 	
@@ -299,7 +304,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	public Bitmap memGet(String url){		
+	protected Bitmap memGet(String url){		
 		return memGet(url, targetWidth);
 	}
 	
@@ -326,7 +331,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	public void memPut(String url, Bitmap bm){
+	protected void memPut(String url, Bitmap bm){
 		
 		if(bm == null) return;
 		
@@ -402,13 +407,16 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		}
 		
 		if(!queueMap.containsKey(url)){
+			
+			addQueue(url, iv);
+			
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();
-			cb.setImageView(url, iv);
-			cb.setTargetWidth(targetWidth);
-			cb.setFallback(resId);
-			cb.start(context, url, memCache, fileCache);
-		}else{
-			//presetBitmap(iv, url);			
+			
+			cb.imageView(iv).targetWidth(targetWidth).fallback(resId);
+			cb.url(url).memCache(memCache).fileCache(fileCache);
+			cb.async(context);
+			
+		}else{		
 			addQueue(url, iv);
 		}
 		
@@ -439,16 +447,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	
-	private void start(Context context, String url, boolean memCache, boolean fileCache){
-		
-		addQueue(url, iv.get());
-		
-		url(url).memCache(memCache).fileCache(fileCache);
-		super.async(context);
-		
-		//super.async(context, url, null, memCache, fileCache, false);
-	}
 	
 	
 }

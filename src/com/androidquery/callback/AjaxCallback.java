@@ -162,7 +162,7 @@ public class AjaxCallback<T> implements Runnable{
 		return this;
 	}
 	
-	public void callback(String url, T object, AjaxStatus status){
+	protected void callback(String url, T object, AjaxStatus status){
 		
 		Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
 		
@@ -170,7 +170,7 @@ public class AjaxCallback<T> implements Runnable{
 		
 	}
 	
-	public T fileGet(String url, File file, AjaxStatus status){
+	protected T fileGet(String url, File file, AjaxStatus status){
 		try {			
 			byte[] data = AQUtility.toBytes(new FileInputStream(file));			
 			return transform(url, data, status);
@@ -180,7 +180,7 @@ public class AjaxCallback<T> implements Runnable{
 		}
 	}
 	
-	public T datastoreGet(String url){
+	protected T datastoreGet(String url){
 		
 		return null;
 		
@@ -188,7 +188,7 @@ public class AjaxCallback<T> implements Runnable{
 	
 	
 	@SuppressWarnings("unchecked")
-	public T transform(String url, byte[] data, AjaxStatus status){
+	protected T transform(String url, byte[] data, AjaxStatus status){
 				
 		if(data == null || type == null){
 			return null;
@@ -230,18 +230,18 @@ public class AjaxCallback<T> implements Runnable{
 		return null;
 	}
 	
-	public T memGet(String url){
+	protected T memGet(String url){
 		return null;
 	}
 	
-	public void memPut(String url, T object){
+	protected void memPut(String url, T object){
 	}
 	
-	public String getRefreshUrl(String url){
+	protected String getRefreshUrl(String url){
 		return url;
 	}
 	
-	public void filePut(String url, T object, File file, byte[] data){
+	protected void filePut(String url, T object, File file, byte[] data){
 		
 		if(file == null || data == null) return;
 		
@@ -249,7 +249,7 @@ public class AjaxCallback<T> implements Runnable{
 		
 	}
 	
-	public File accessFile(File cacheDir, String url){		
+	protected File accessFile(File cacheDir, String url){		
 		return AQUtility.getExistedCacheByUrl(cacheDir, url);
 	}
 	
@@ -261,14 +261,6 @@ public class AjaxCallback<T> implements Runnable{
 		work(context, true);
 	}
 	
-	/*
-	public void async(Context context, String url){
-		work(true, context, url, null, false, false, false);
-	}
-	
-	public void async(Context context, String url, Map<String, Object> params, boolean memCache, boolean fileCache, boolean refresh){
-		work(true, context, url, params, memCache, fileCache, refresh);
-	}*/
 	
 	protected void execute(){
 		AQUtility.getHandler();				
@@ -277,7 +269,6 @@ public class AjaxCallback<T> implements Runnable{
 	}
 	
 	private void work(Context context, boolean async){
-		
 		
 		T object = memGet(url);
 		
@@ -308,46 +299,6 @@ public class AjaxCallback<T> implements Runnable{
 		
 	}
 	
-	/*
-	private void work(boolean async, Context context, String url, Map<String, Object> params, boolean memCache, boolean fileCache, boolean refresh){
-		
-		
-		T object = memGet(url);
-		
-		if(object != null){		
-			
-			callback(url, object, makeStatus(url, null, refresh));
-		
-		}else{
-		
-			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
-			
-			this.url = url;
-			this.params = params;
-			this.memCache = memCache;
-			this.fileCache = fileCache;
-			this.refresh = refresh;
-			
-			if(async){
-			
-				execute();
-			
-			}else{
-				
-				backgroundWork();
-				afterWork();
-			}
-		}
-	}
-	*/
-	
-	/*
-	public void sync(Context context, String url, Map<String, Object> params, boolean memCache, boolean fileCache, boolean refresh){
-		
-		work(false, context, url, params, memCache, fileCache, refresh);
-		
-	}
-	*/
 	
 	@Override
 	public void run() {
@@ -381,7 +332,7 @@ public class AjaxCallback<T> implements Runnable{
 		
 	}
 	
-	public void background(){
+	protected void background(){
 		
 	}
 	
@@ -754,7 +705,9 @@ public class AjaxCallback<T> implements Runnable{
 	}
 	
 	
-	
+	protected String getUrl(){
+		return url;
+	}
 	
 	protected Object getHandler() {
 		if(handler == null) return null;

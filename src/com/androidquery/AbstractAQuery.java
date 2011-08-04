@@ -398,14 +398,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int resId, BitmapAjaxCallback callback){
 		
 		if(view instanceof ImageView){
-			ImageView iv = (ImageView) view;
-			callback.setImageView(url, iv);
-			callback.setTargetWidth(targetWidth);
-			callback.setFallback(resId);
 			
-			//callback.async(getContext(), url, null, memCache, fileCache, false);
-			callback.url(url).memCache(memCache).fileCache(fileCache);
-			callback.async(getContext());
+			ImageView iv = (ImageView) view;
+			
+			callback.imageView(iv).targetWidth(targetWidth).fallback(resId)
+			.url(url).memCache(memCache).fileCache(fileCache).async(getContext());
+			
 		}
 		
 		return self();
@@ -436,25 +434,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T image(File file, boolean memCache, int targetWidth, BitmapAjaxCallback callback){
 		
-		if(view instanceof ImageView){
-			
-			ImageView iv = (ImageView) view;
-			
-			if(callback == null){
-				callback = new BitmapAjaxCallback();
-			}
-			
-			String url = file.getAbsolutePath();
-			callback.setImageView(url, iv);
-			callback.setTargetWidth(targetWidth);
-			callback.setImageFile(file);
-			
-			//callback.async(getContext(), url, null, memCache, true, false);
-			callback.url(url).memCache(memCache).fileCache(true);
-			callback.async(getContext());
-		}
-		
-		return self();
+		callback.file(file);		
+		return image(file.getAbsolutePath(), memCache, true, targetWidth, 0, callback);
 		
 	}
 	
