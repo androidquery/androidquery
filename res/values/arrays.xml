@@ -32,6 +32,7 @@
         <item>Cache Control</item>   
         <item>Down Sampling</item>   
         <item>Fallback</item>
+        <item>Custom Callback</item>
         <item>File (Async)</item>
         <item>Duplicated URL</item>    
         <item>Access Cached Images</item> 
@@ -42,6 +43,7 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_cache</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_down</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_fallback</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_dup</item>  
         <item>com.androidquery.test.image.ImageLoadingActivity:image_access</item>    
@@ -58,6 +60,7 @@
         <item>image_cache</item>
         <item>image_down</item>
         <item>image_fallback</item>
+        <item>image_custom</item>
         <item>image_file</item>
         <item>image_dup</item>
         <item>image_access</item>
@@ -74,6 +77,7 @@
         <item>Async Image Load with Cache Control</item>
         <item>Async Image Load with Down-sampling (1024 -> 256)</item>
         <item>Async Image Load with Fallback Image</item>
+        <item>Async Image Load with Custom Callback</item>
         <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>
         <item>Auto Detect Duplicated Request</item>
         <item>Access Cached Images</item>

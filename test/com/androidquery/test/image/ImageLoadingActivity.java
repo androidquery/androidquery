@@ -91,6 +91,25 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	public void image_custom(){
+		
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		final int tint = 0x77AA0000;
+
+		aq.id(R.id.image).visible().image(imageUrl, true, true, 0, 0, new BitmapAjaxCallback(){
+
+	        @Override
+	        public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
+	           
+                iv.setImageBitmap(bm);
+                iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
+	                
+	        }
+		        
+		});
+	}
+	
+	
 	public void image_dup(){
 		
 		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
