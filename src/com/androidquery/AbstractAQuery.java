@@ -1032,6 +1032,20 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * Advanced Ajax callback. User must prepare the callback object settings (url, type, etc...) by using it's methods.
+	 *
+	 * @param callback callback handler
+	 * @return self
+	 */
+	
+	public <K> T ajax(AjaxCallback<K> callback){
+				
+		callback.async(getContext());
+		
+		return self();
+	}	
+	
+	/**
 	 * Ajax call with various callback data types.
 	 *
 	 * @param url url
@@ -1044,10 +1058,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		callback.type(type).url(url).async(getContext());
 		
-		/*
-		callback.type(type);
-		callback.async(getContext(), url);
-		*/
 		return self();
 	}
 	
@@ -1086,10 +1096,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, AjaxCallback<K> callback){
 		
-		/*
-		callback.type(type);
-		callback.async(getContext(), url, params, false, false, false);
-		*/
+		callback.type(type).url(url).params(params).async(getContext());
 		return self();
 	}
 	

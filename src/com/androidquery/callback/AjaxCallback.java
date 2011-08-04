@@ -157,6 +157,11 @@ public class AjaxCallback<T> implements Runnable{
 		return this;
 	}
 	
+	public AjaxCallback<T> params(Map<String, Object> params){
+		this.params = params;
+		return this;
+	}
+	
 	public void callback(String url, T object, AjaxStatus status){
 		
 		Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
