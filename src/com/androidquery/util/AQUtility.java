@@ -33,8 +33,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.pekca.android.utility.Utility;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -132,7 +130,7 @@ public class AQUtility {
 			method = handler.getClass().getMethod(callback, cls);
 			return method.invoke(handler, params);			
 		}catch(NoSuchMethodException e){
-			AQUtility.debug(e.getMessage());
+			//AQUtility.debug(e.getMessage());
 		}
 		
 		
