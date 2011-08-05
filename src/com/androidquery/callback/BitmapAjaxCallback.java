@@ -226,7 +226,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	protected final void callback(String url, Bitmap bm, AjaxStatus status) {
+	public final void callback(String url, Bitmap bm, AjaxStatus status) {
 		
 		ImageView firstView = iv.get();
 		

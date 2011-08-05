@@ -1073,7 +1073,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		
 		AjaxCallback<K> cb = new AjaxCallback<K>(type);
-		cb.callback(handler, callback);
+		cb.weakHandler(handler, callback);
 		
 		return ajax(url, type, cb);
 		
@@ -1114,7 +1114,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		
 		AjaxCallback<K> cb = new AjaxCallback<K>(type);
-		cb.callback(handler, callback);
+		cb.weakHandler(handler, callback);
 		
 		return ajax(url, params, type, cb);
 		

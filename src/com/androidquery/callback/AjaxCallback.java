@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -66,7 +67,8 @@ public class AjaxCallback<T> implements Runnable{
 	private static int NETWORK_POOL = 4;
 	
 	private Class<T> type;
-	private WeakReference<Object> handler;
+	private Reference<Object> whandler;
+	private Object handler;
 	private String callback;
 	
 	private String url;
@@ -93,9 +95,10 @@ public class AjaxCallback<T> implements Runnable{
 	}
 	
 	private void clear(){		
-		handler = null;
+		whandler = null;
 		result = null;
 		status = null;
+		handler = null;
 	}
 	
 	public static void setTimeout(int timeout){
@@ -110,9 +113,17 @@ public class AjaxCallback<T> implements Runnable{
 		return type;
 	}
 
-	public AjaxCallback<T> callback(Object handler, String callback){
-		this.handler = new WeakReference<Object>(handler);
+	public AjaxCallback<T> weakHandler(Object handler, String callback){
+		this.whandler = new WeakReference<Object>(handler);
 		this.callback = callback;
+		this.handler = null;
+		return this;
+	}
+	
+	public AjaxCallback<T> handler(Object handler, String callback){
+		this.handler = handler;
+		this.callback = callback;
+		this.whandler = null;
 		return this;
 	}
 	
@@ -162,11 +173,21 @@ public class AjaxCallback<T> implements Runnable{
 		return this;
 	}
 	
-	protected void callback(String url, T object, AjaxStatus status){
+	private static final Class<?>[] DEFAULT_SIG = {String.class, Object.class, AjaxStatus.class};	
+	
+	private void callback(){
 		
-		Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
-		
-		AQUtility.invokeHandler(getHandler(), callback, false, AJAX_SIG, url, object, status);
+		if(callback != null){
+			
+			Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
+			AQUtility.invokeHandler(getHandler(), callback, true, AJAX_SIG, DEFAULT_SIG, url, result, status);			
+		}else{		
+			callback(url, result, status);
+		}
+	}
+	
+	
+	public void callback(String url, T object, AjaxStatus status){
 		
 	}
 	
@@ -274,8 +295,9 @@ public class AjaxCallback<T> implements Runnable{
 		
 		if(object != null){		
 			
-			callback(url, object, makeStatus(url, null, refresh));
-		
+			result = object;
+			status = makeStatus(url, null, refresh);
+			callback();
 		}else{
 		
 			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
@@ -459,7 +481,7 @@ public class AjaxCallback<T> implements Runnable{
 			memPut(url, result);
 		}
 		
-		callback(url, result, status);
+		callback();
 	}
 	
 	
@@ -584,19 +606,8 @@ public class AjaxCallback<T> implements Runnable{
 		
 		DefaultHttpClient client = new DefaultHttpClient(httpParams);
 		
-		/*
-		if(sendSession){
-			putSessionId(client);
-		}
-		*/
-		
 		HttpResponse response = client.execute(hr);
 		
-		/*
-		if(storeSession){
-			storeSessionId(client);
-		}
-		*/
 		
         byte[] data = null;
         
@@ -629,9 +640,10 @@ public class AjaxCallback<T> implements Runnable{
 	private String authType;
 	private String account;
 	
-	public void auth(String authType, String account){
+	public AjaxCallback<T> auth(String authType, String account){
 		this.authType = authType;
 		this.account = account;
+		return this;
 	}
 	
 	private void findAccount(Context context){
@@ -685,12 +697,6 @@ public class AjaxCallback<T> implements Runnable{
 			
 			AQUtility.debug("tok", token);
 			
-			/*
-			if(!expired){
-				//test, messing up the token
-				token = "laladwadwadwaads";
-			}
-			*/
 			authToken(token);
 		}
 		
@@ -705,16 +711,17 @@ public class AjaxCallback<T> implements Runnable{
 	}
 	
 	
-	protected String getUrl(){
+	public String getUrl(){
 		return url;
 	}
 	
-	protected Object getHandler() {
-		if(handler == null) return null;
-		return handler.get();
+	public Object getHandler() {
+		if(handler != null) return handler;
+		if(whandler == null) return null;
+		return whandler.get();
 	}
 
-	protected String getCallback() {
+	public String getCallback() {
 		return callback;
 	}
 

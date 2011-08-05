@@ -33,6 +33,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.pekca.android.utility.Utility;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -102,30 +104,49 @@ public class AQUtility {
 	
 	public static Object invokeHandler(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params){
     	
+		return invokeHandler(handler, callback, fallback, cls, null, params);
+		
+    }
+
+	public static Object invokeHandler(Object handler, String callback, boolean fallback, Class<?>[] cls, Class<?>[] cls2, Object... params){
 		try {
-			return invokeMethod(handler, callback, fallback, cls, params);
+			return invokeMethod(handler, callback, fallback, cls, cls2, params);
 		} catch (Exception e) {
 			return null;
 		}
-		
-    }
+	}
 	
-	private static Object invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params) throws Exception{
+	
+	
+	
+	private static Object invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Class<?>[] cls2, Object... params) throws Exception{
+		
+		//AQUtility.debug("invoke", handler + ":" + callback);
 		
 		if(handler == null || callback == null) return null;
 		
+		Method method = null;
+		
 		try{   
 			if(cls == null) cls = new Class[0];
-			Method method = handler.getClass().getMethod(callback, cls);
+			method = handler.getClass().getMethod(callback, cls);
 			return method.invoke(handler, params);			
 		}catch(NoSuchMethodException e){
+			AQUtility.debug(e.getMessage());
 		}
 		
 		
 		try{
 			if(fallback){
-				Method method = handler.getClass().getMethod(callback);				
-				return method.invoke(handler);
+			
+				if(cls2 == null){
+					method = handler.getClass().getMethod(callback);	
+					return method.invoke(handler);
+				}else{
+					method = handler.getClass().getMethod(callback, cls2);
+					return method.invoke(handler, params);	
+				}
+				
 			}
 		}catch(NoSuchMethodException e){
 		}
