@@ -26,6 +26,11 @@ public class RunSourceActivity extends Activity {
 
 	protected AQuery aq;
 	
+	protected int getContainer(){
+		return R.layout.source_activity;
+	}
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -33,7 +38,7 @@ public class RunSourceActivity extends Activity {
 				
 		aq = new AQuery(this);
 		
-		setContentView(R.layout.source_activity);
+		setContentView(getContainer());
 		
 		String source = getSource();
 		

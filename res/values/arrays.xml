@@ -34,10 +34,13 @@
         <item>Cache Control</item>   
         <item>Down Sampling</item>   
         <item>Fallback</item>
+        <item>List Items</item> 
         <item>Custom Callback</item>
+        
         <item>File (Async)</item>
         <item>Duplicated URL</item>    
         <item>Access Cached Images</item> 
+        
     </string-array>
     
     <string-array name="image_values">
@@ -45,10 +48,14 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_cache</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_down</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_fallback</item>
+        
+        <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
+        
         <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_dup</item>  
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_access</item>    
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_access</item> 
+            
     </string-array>
     
     
@@ -63,6 +70,7 @@
         <item>image_cache</item>
         <item>image_down</item>
         <item>image_fallback</item>
+        <item>image_list</item>
         <item>image_custom</item>
         <item>image_file</item>
         <item>image_dup</item>
@@ -81,11 +89,16 @@
         <item>Async Image Load with Cache Control</item>
         <item>Async Image Load with Down-sampling (1024 -> 256)</item>
         <item>Async Image Load with Fallback Image</item>
+        
+        <item>Loading Image in List View Items</item>   
+        
         <item>Async Image Load with Custom Callback</item>
         <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>
         <item>Auto Detect Duplicated Request</item>
         <item>Access Cached Images</item>
                
+               
+            
     </string-array>
     
 </resources>

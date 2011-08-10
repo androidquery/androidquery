@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="100dip" 
+    >
+    
+    
+    <TextView 		
+		android:layout_width="75dip"       
+        android:layout_height="75dip"
+		android:id="@+id/tb_alt" 
+		android:text="no image" 
+		android:gravity="center"
+		android:textSize="12sp"	
+	/>
+    
+    <ImageView
+        android:id="@+id/tb"       
+        android:layout_width="75dip"       
+        android:layout_height="75dip"
+        />
+        
+	<TextView 
+		android:id="@+id/name" 
+		android:layout_toRightOf="@id/tb_alt"
+		android:layout_width="fill_parent" android:layout_height="wrap_content" 		
+		android:text="Europe's Leaders Fear Libya Could Become Next Afghanistan" 
+		android:paddingLeft="6dip"
+		android:paddingRight="6dip"
+		android:paddingTop="6dip"
+		android:maxLines="2"
+		android:textSize="15sp"
+		android:textStyle="bold"
+		android:layout_alignWithParentIfMissing="true"
+	/>
+	
+	
+	<TextView 		
+		android:id="@+id/meta"			
+		android:layout_toRightOf="@id/tb_alt"
+		android:layout_below="@id/name"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:text="March 29th, 2010. 09:34 AM" 		
+		android:layout_marginTop="2dip"
+		android:paddingLeft="6dip"
+		android:paddingBottom="6dip"
+		android:ellipsize="marquee"
+		android:singleLine="true"
+		android:textSize="14sp"
+	/>
+	
+    
+
+</RelativeLayout>

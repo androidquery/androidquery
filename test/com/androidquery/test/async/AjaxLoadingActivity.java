@@ -40,7 +40,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         
         progress(true);
         
-        aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
 
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
@@ -50,7 +50,13 @@ public class AjaxLoadingActivity extends RunSourceActivity {
                 showResult(json);
                
             }
-        });
+        };
+        
+        cb.url(url).type(JSONObject.class).fileCache(true);
+        
+        //aq.ajax(url, JSONObject.class, cb);
+        aq.ajax(cb);
+        
 	        
 	}	
 	
