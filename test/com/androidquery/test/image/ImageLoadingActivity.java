@@ -38,7 +38,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		if("image_access".equals(type)){
 			image_simple();
-		}else if("image_file".equals(type)){
+		}else if("image_file".equals(type) || "image_file_custom".equals(type)){
 			image_down();			
 		}
 		
@@ -47,7 +47,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	@Override
 	protected void runSource(){
-		
+		AQUtility.debug(type);
 		AQUtility.invokeHandler(this, type, false, null);
 	}
 	
@@ -114,10 +114,22 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
 		File file = aq.getCachedFile(imageUrl);
-		
+		final int tint = 0x77AA0000;
 		
 		if(file != null){
-			aq.id(R.id.image).image(file, 300);
+			
+			aq.id(R.id.image).image(file, true, 300, new BitmapAjaxCallback(){
+
+		        @Override
+		        public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
+		           
+	                iv.setImageBitmap(bm);
+	                iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
+		                
+		        }
+			        
+			});
+			
 		}
 		
 	}

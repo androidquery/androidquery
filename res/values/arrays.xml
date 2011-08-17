@@ -38,6 +38,7 @@
         <item>Custom Callback</item>
         
         <item>File (Async)</item>
+        <item>File Custom Callback</item>
         <item>Duplicated URL</item>    
         <item>Access Cached Images</item> 
         
@@ -53,6 +54,7 @@
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_file_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_dup</item>  
         <item>com.androidquery.test.image.ImageLoadingActivity:image_access</item> 
             
@@ -73,6 +75,7 @@
         <item>image_list</item>
         <item>image_custom</item>
         <item>image_file</item>
+        <item>image_file_custom</item>
         <item>image_dup</item>
         <item>image_access</item>
         
@@ -94,6 +97,7 @@
         
         <item>Async Image Load with Custom Callback</item>
         <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>
+        <item>Async Image Load from File with Custom Callback</item>
         <item>Auto Detect Duplicated Request</item>
         <item>Access Cached Images</item>
                

@@ -68,7 +68,15 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	@Override
 	public void async(Context context){
-		presetBitmap(iv.get(), getUrl(), null);
+		
+		String url = getUrl();
+		
+		if(url == null){
+			setBitmap(iv.get(), null, null);
+			return;
+		}
+		
+		presetBitmap(iv.get(), url, null);
 		super.async(context);
 	}
 	
@@ -392,7 +400,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		if(iv == null) return;
 		
 		//invalid url
-		if(url == null || url.length() < 4){
+		if(url == null){
 			setBitmap(iv, null, null);
 			return;
 		}
