@@ -223,3 +223,37 @@ public void async_post(){
     });
 	
 }
+
+
+ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
+	
+	@Override
+	public View getView(int position, View view, ViewGroup parent) {
+		
+		if(view == null){
+			view = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.content_item_s, null);
+		}
+		
+		JSONObject jo = getItem(position);
+		
+		AQuery aq = new AQuery(view);
+		aq.id(R.id.name).text(jo.optString("titleNoFormatting", "No Title"));
+		aq.id(R.id.meta).text(jo.optString("publisher", ""));
+		
+		JSONObject image = jo.optJSONObject("image");
+		String tb = null;
+		if(image != null){
+			tb = image.optString("tbUrl");
+			aq.id(R.id.tb).visible().image(tb);
+		}else{
+			aq.id(R.id.tb).gone();
+		}
+		
+		
+		
+		return view;
+		
+	}
+};
+
+aq.id(R.id.list).adapter(aa);

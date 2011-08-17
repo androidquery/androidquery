@@ -39,7 +39,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		if("image_access".equals(type)){
 			image_simple();
 		}else if("image_file".equals(type)){
-			image_down();
+			image_down();			
 		}
 		
 			
@@ -85,6 +85,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
 		File file = aq.getCachedFile(imageUrl);
 		
+		
 		if(file != null){
 			aq.id(R.id.image).image(file, 300);
 		}
@@ -107,6 +108,18 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	        }
 		        
 		});
+	}
+	
+	public void image_file_custom(){
+		
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
+		File file = aq.getCachedFile(imageUrl);
+		
+		
+		if(file != null){
+			aq.id(R.id.image).image(file, 300);
+		}
+		
 	}
 	
 	

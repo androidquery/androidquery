@@ -419,7 +419,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	
 	public T image(File file, int targetWidth){		
-		return image(file, true, targetWidth, null);
+		return image(file, true, targetWidth, new BitmapAjaxCallback());
 	}
 	
 	
@@ -434,9 +434,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T image(File file, boolean memCache, int targetWidth, BitmapAjaxCallback callback){
 		
-		callback.file(file);		
+		callback.file(file);	
 		return image(file.getAbsolutePath(), memCache, true, targetWidth, 0, callback);
-		
+	
 	}
 	
 	
