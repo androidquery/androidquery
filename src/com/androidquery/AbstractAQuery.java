@@ -929,7 +929,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public Object invoke(String method, Class<?>[] sig, Object... params){
 		
-		return AQUtility.invokeHandler(view, method, false, sig, params);
+		Object handler = view;
+		if(handler == null) handler = act;
+		
+		return AQUtility.invokeHandler(handler, method, false, sig, params);
 	}
 	
 	
