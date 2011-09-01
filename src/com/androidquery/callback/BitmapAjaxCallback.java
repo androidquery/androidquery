@@ -30,6 +30,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 
 import com.androidquery.AQuery;
@@ -45,6 +50,8 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private static int BIG_PIXELS = 400 * 400;
 	private static int BIG_TPIXELS = 1000000;
 	
+	public static final int FADE_IN = -1;
+	
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
 	
@@ -54,6 +61,8 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private int targetWidth;
 	private int fallback;
 	private File imageFile;
+	private int animation;
+	private Bitmap preset;
 	
 	public BitmapAjaxCallback(){
 		type(Bitmap.class);
@@ -61,9 +70,9 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	public BitmapAjaxCallback imageView(ImageView view){
 				
-		iv = new WeakReference<ImageView>(view);
-		
+		iv = new WeakReference<ImageView>(view);		
 		return this;
+		
 	}
 	
 	@Override
@@ -76,8 +85,11 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			return;
 		}
 		
-		presetBitmap(iv.get(), url, null);
+		presetBitmap(iv.get(), url, preset);
+		
+		//if(preset == null)
 		super.async(context);
+		
 	}
 	
 	public BitmapAjaxCallback targetWidth(int targetWidth){
@@ -90,8 +102,19 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		return this;
 	}
 	
+	public BitmapAjaxCallback preset(Bitmap preset){
+		
+		this.preset = preset;
+		return this;
+	}
+	
 	public BitmapAjaxCallback fallback(int resId){
 		this.fallback = resId;
+		return this;
+	}
+	
+	public BitmapAjaxCallback animation(int animation){
+		this.animation = animation;
 		return this;
 	}
 	
@@ -264,7 +287,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
-		showBitmap(iv, bm, fallback);
+		showBitmap(iv, bm, fallback, animation);
 	}
 
 	public static void setIconCacheLimit(int limit){
@@ -316,7 +339,15 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		return memGet(url, targetWidth);
 	}
 	
-	public static Bitmap memGet(String url, int targetWidth){
+	public static Bitmap getMemoryCached(String url){
+		return memGet(url, 0);
+	}
+	
+	public static Bitmap getMemoryCached(String url, int targetWidth){
+		return memGet(url, targetWidth);
+	}
+	
+	private static Bitmap memGet(String url, int targetWidth){
 		
 		url = getKey(url, targetWidth);
 		
@@ -357,7 +388,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	private static void showBitmap(ImageView iv, Bitmap bm, int fallback){
+	private static void showBitmap(ImageView iv, Bitmap bm, int fallback, int animation){
 		
 		//ignore 1x1 pixels
 		if(bm != null && bm.getWidth() == 1 && bm.getHeight() == 1){        
@@ -372,30 +403,70 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			iv.setVisibility(View.INVISIBLE);
 		}
 		
+		if(animation != 0){
+			animate(iv, bm, animation);
+		}
+		
+		AQUtility.debug("show bitmap", bm);
 		iv.setImageBitmap(bm);
 		
+		
+		
+		
 	}
+	
+	private static void animate(ImageView iv, Bitmap bm, int animationId){
+		
+		Animation animation = null;
+		
+		if(animationId == FADE_IN){
+			animation = new AlphaAnimation(0, 1);
+			animation.setInterpolator(new DecelerateInterpolator()); 
+			animation.setDuration(500);
+		}else{
+			
+		}
+		/*
+		Animation fadeOut = new AlphaAnimation(1, 0);
+		fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+		fadeOut.setStartOffset(1000);
+		fadeOut.setDuration(1000);
+*/
+		
+		//AnimationSet animation = new AnimationSet(false); //change to false
+		//animation.addAnimation(fadeIn);
+		//animation.addAnimation(fadeOut);
+		iv.setAnimation(animation);
+		
+		
+	}
+	
+	
 	
 	private static void setBitmap(ImageView iv, String url, Bitmap bm){
 		
 		iv.setTag(url);
 		
 		if(bm != null){			
-			showBitmap(iv, bm, 0);
+			showBitmap(iv, bm, 0, 0);
 		}else{
+			AQUtility.debug("set bitmap", bm);
 			iv.setImageBitmap(null);	
 		}
 		
 	}
 	
 	private static void presetBitmap(ImageView iw, String url, Bitmap preset){
-		if(!url.equals(iw.getTag())){
+		
+		if(!url.equals(iw.getTag()) || preset != null){
+			AQUtility.debug("preset image", preset);
 			iw.setImageBitmap(preset);
 			iw.setTag(url);
 		}
+		
 	}
 	
-	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int resId, Bitmap preset){
+	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int resId, Bitmap preset, int animation){
 		
 		if(iv == null) return;
 		
@@ -410,7 +481,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		//check memory
 		Bitmap bm = memGet(url, targetWidth);
 		if(bm != null){
-			showBitmap(iv, bm, resId);
+			showBitmap(iv, bm, resId, animation);
 			return;
 		}
 		

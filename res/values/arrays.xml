@@ -34,9 +34,13 @@
         <item>Cache Control</item>   
         <item>Down Sampling</item>   
         <item>Fallback</item>
-        <item>List Items</item> 
-        <item>Custom Callback</item>
         
+        <item>Preload</item>
+        <item>Animation</item>
+        
+        <item>List Items</item>         
+        
+        <item>Custom Callback</item>        
         <item>File (Async)</item>
         <item>File Custom Callback</item>
         <item>Duplicated URL</item>    
@@ -49,6 +53,10 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_cache</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_down</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_fallback</item>
+        
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_preload</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_animation</item>
+        
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
         
@@ -72,6 +80,10 @@
         <item>image_cache</item>
         <item>image_down</item>
         <item>image_fallback</item>
+        
+        <item>image_preload</item>
+        <item>image_animation</item>
+        
         <item>image_list</item>
         <item>image_custom</item>
         <item>image_file</item>
@@ -92,6 +104,9 @@
         <item>Async Image Load with Cache Control</item>
         <item>Async Image Load with Down-sampling (1024 -> 256)</item>
         <item>Async Image Load with Fallback Image</item>
+        
+        <item>Async Image Load with Preloaded Image</item>
+        <item>Async Image Load with Image Animation</item>
         
         <item>Loading Image in List View Items</item>   
         

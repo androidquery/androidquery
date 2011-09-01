@@ -58,6 +58,8 @@
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_horizontal" 
+			android:scaleType="fitXY"
+			android:adjustViewBounds="true"
 			android:visibility="gone"	
 		/>
 		
@@ -69,6 +71,19 @@
 			android:layout_gravity="center_horizontal" 
 			android:visibility="gone"
 		/>
+		
+		<LinearLayout 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:visibility="gone"
+		>
+			<ImageView
+				android:id="@+id/hidden"	
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"
+			/>
+		</LinearLayout>
+		
 		
 		<ProgressBar 
 			android:id="@+id/progress"	

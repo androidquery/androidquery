@@ -377,10 +377,30 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;			
-			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, resId, null);
+			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, resId, null, 0);
 		}
 		
 		return self();
+	}
+	
+	/**
+	 * Set the image of an ImageView with a custom callback.
+	 *
+	 * @param callback Callback handler for setting the image.
+	 * @return self
+	 */
+	
+	public T image(BitmapAjaxCallback callback){
+		
+		if(view instanceof ImageView){
+			
+			ImageView iv = (ImageView) view;			
+			callback.imageView(iv).async(getContext());
+			
+		}
+		
+		return self();
+		
 	}
 	
 	
@@ -421,6 +441,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T image(File file, int targetWidth){		
 		return image(file, true, targetWidth, null);
 	}
+	
+	
 	
 	
 	/**
@@ -1000,10 +1022,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 			LayoutParams lp = view.getLayoutParams();
 			
-			Context context = getContext();
-			
 			if(lp instanceof MarginLayoutParams){
-				
+			
+				Context context = getContext();
+					
 				int left = AQUtility.dip2pixel(context, leftDip);
 				int top = AQUtility.dip2pixel(context, topDip);
 				int right = AQUtility.dip2pixel(context, rightDip);
@@ -1017,6 +1039,49 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		return self();
 	}
+	
+	
+	
+	public T width(int dip){
+		
+		if(view != null){
+		
+			LayoutParams lp = view.getLayoutParams();
+			
+			Context context = getContext();
+				
+			if(dip > 0){
+				dip = AQUtility.dip2pixel(context, dip);
+			}
+			
+			lp.width = dip;			
+			view.setLayoutParams(lp);
+		
+		}
+		
+		return self();
+	}
+	
+	public T height(int dip){
+		
+		if(view != null){
+		
+			LayoutParams lp = view.getLayoutParams();
+			
+			Context context = getContext();
+				
+			if(dip > 0){
+				dip = AQUtility.dip2pixel(context, dip);
+			}
+			
+			lp.height = dip;			
+			view.setLayoutParams(lp);
+		
+		}
+		
+		return self();
+	}
+	
 	
 	/**
 	 * Return the context of activity of view.

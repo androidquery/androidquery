@@ -10,8 +10,10 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -40,6 +42,8 @@ public class ImageLoadingActivity extends RunSourceActivity {
 			image_simple();
 		}else if("image_file".equals(type) || "image_file_custom".equals(type)){
 			image_down();			
+		}else if("image_preload".equals(type)){
+			image_prepreload();
 		}
 		
 			
@@ -77,6 +81,45 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		String imageUrl = "http://www.vikispot.com/z/images/vikispot/xyz.png";
 		aq.id(R.id.image).image(imageUrl, true, true, 0, R.drawable.image_missing);
+		
+	}
+	
+	public void image_prepreload(){
+		
+		String small = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";		
+		aq.id(R.id.hidden).image(small);
+		
+	}
+	
+	
+	public void image_preload(){
+		
+		aq.id(R.id.image).width(250).height(250).image(0).visible();
+		
+		String thumbnail = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";
+		
+		Bitmap preset = BitmapAjaxCallback.getMemoryCached(thumbnail);
+		
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
+		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.preset(preset).url(imageUrl).memCache(false).fileCache(false);
+		
+		aq.id(R.id.image).image(cb);
+		//aq.id(R.id.image).image(preset);
+		
+	}
+
+	public void image_animation(){
+	
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		//aq.id(R.id.image).image(imageUrl, true, true, 0, R.drawable.image_missing);
+		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.url(imageUrl).memCache(true).fileCache(true);
+		cb.animation(BitmapAjaxCallback.FADE_IN);
+		
+		aq.id(R.id.image).image(cb);
 		
 	}
 	
