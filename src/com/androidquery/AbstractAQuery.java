@@ -1073,7 +1073,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * Set the width of a view. Notes all parameters are in DIP, not in pixel. 
 	 * Input can also be ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, or ViewGroup.LayoutParams.MATCH_PARENT.
 	 *
-	 * @param width width in dip
+	 * @param dip width in dip
 	 * @return self
 	 */
 	
@@ -1086,7 +1086,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * Set the height of a view. Notes all parameters are in DIP, not in pixel. 
 	 * Input can also be ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, or ViewGroup.LayoutParams.MATCH_PARENT.
 	 *
-	 * @param height height in dip
+	 * @param dip height in dip
 	 * @return self
 	 */
 	
