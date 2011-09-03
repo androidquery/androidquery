@@ -1,0 +1,6 @@
+	public void image_animation(){
+	
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";		
+		aq.id(R.id.image).image(imageUrl, true, true, 0, null, 0, AQuery.FADE_IN);
+
+	}

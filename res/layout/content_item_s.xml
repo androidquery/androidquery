@@ -5,12 +5,11 @@
     android:layout_height="100dip" 
     >
     
-    
     <TextView 		
 		android:layout_width="75dip"       
         android:layout_height="75dip"
 		android:id="@+id/tb_alt" 
-		android:text="no image" 
+		android:text="" 
 		android:gravity="center"
 		android:textSize="12sp"	
 	/>

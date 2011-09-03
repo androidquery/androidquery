@@ -31,6 +31,7 @@ import android.text.Spanned;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -368,16 +369,44 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param url The image url.
 	 * @param memCache Use memory cache.
 	 * @param fileCache Use file cache.
-	 * @param targetWidth Target width for down sampling when reading large images.
-	 * @param resId Fallback image if result is network fetch and image convert failed. 
+	 * @param targetWidth Target width for down sampling when reading large images. 0 = no downsampling.
+	 * @param fallbackId Fallback image if result is network fetch and image convert failed. 0 = no fallback. 
 	 * @return self
 	 */
-	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int resId){
+	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId){
 		
+		/*
+		if(view instanceof ImageView){
+			ImageView iv = (ImageView) view;			
+			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, fallbackId, null, 0);
+		}
+		
+		return self();
+		*/
+		
+		
+		return image(url, memCache, fileCache, targetWidth, fallbackId, null, 0);
+	}
+	
+	
+	
+	/**
+	 * Set the image of an ImageView.
+	 *
+	 * @param url The image url.
+	 * @param memCache Use memory cache.
+	 * @param fileCache Use file cache.
+	 * @param targetWidth Target width for down sampling when reading large images. 0 = no downsampling.
+	 * @param fallbackId Fallback image if result is network fetch and image convert failed. 0 = no fallback. 
+	 * @param preset Default image to show before real image loaded. null = no preset.
+	 * @param animId Apply this animation when image is loaded. 0 = no animation. Also accept AQuery.FADE_IN as a predefined 500ms fade in animation.
+	 * @return self
+	 */
+	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId){
 		
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;			
-			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, resId, null, 0);
+			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, fallbackId, preset, animId);
 		}
 		
 		return self();
@@ -1040,9 +1069,34 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Set the width of a view. Notes all parameters are in DIP, not in pixel. 
+	 * Input can also be ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, or ViewGroup.LayoutParams.MATCH_PARENT.
+	 *
+	 * @param width width in dip
+	 * @return self
+	 */
+	
+	public T width(int dip){		
+		size(true, dip);		
+		return self();
+	}
+	
+	/**
+	 * Set the height of a view. Notes all parameters are in DIP, not in pixel. 
+	 * Input can also be ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, or ViewGroup.LayoutParams.MATCH_PARENT.
+	 *
+	 * @param height height in dip
+	 * @return self
+	 */
+	
+	public T height(int dip){		
+		size(false, dip);
+		return self();
+	}
 	
 	
-	public T width(int dip){
+	private void size(boolean width, int dip){
 		
 		if(view != null){
 		
@@ -1054,33 +1108,18 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 				dip = AQUtility.dip2pixel(context, dip);
 			}
 			
-			lp.width = dip;			
-			view.setLayoutParams(lp);
-		
-		}
-		
-		return self();
-	}
-	
-	public T height(int dip){
-		
-		if(view != null){
-		
-			LayoutParams lp = view.getLayoutParams();
-			
-			Context context = getContext();
-				
-			if(dip > 0){
-				dip = AQUtility.dip2pixel(context, dip);
+			if(width){
+				lp.width = dip;
+			}else{
+				lp.height = dip;
 			}
 			
-			lp.height = dip;			
 			view.setLayoutParams(lp);
 		
 		}
 		
-		return self();
 	}
+	
 	
 	
 	/**
@@ -1207,15 +1246,47 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
-	 * Return file cached by image requests. Returns null if url is not cached.
+	 * Return file cached by ajax or image requests. Returns null if url is not cached.
 	 *
-	 * 
+	 * @param url 
 	 * @return File
 	 */
 	public File getCachedFile(String url){
 		
 		return AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(getContext()), url);
 		
+	}
+	
+	/**
+	 * Return bitmap cached by image requests. Returns null if url is not cached.
+	 *
+	 * @param url 
+	 * @return Bitmap
+	 */
+	
+	public Bitmap getCachedImage(String url){
+		return getCachedImage(url, 0);
+	}
+	
+	/**
+	 * Return bitmap cached by image requests. Returns null if url is not cached.
+	 *
+	 * @param url 
+	 * @param targetWidth The desired downsampled width.
+	 * 
+	 * @return Bitmap
+	 */
+	public Bitmap getCachedImage(String url, int targetWidth){
+		
+		Bitmap result = BitmapAjaxCallback.getMemoryCached(url, targetWidth);
+		if(result == null){
+			File file = getCachedFile(url);
+			if(file != null){
+				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth);
+			}
+		}
+		
+		return result;
 	}
 	
 }

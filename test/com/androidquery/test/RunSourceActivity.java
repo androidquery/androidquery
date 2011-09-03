@@ -48,7 +48,7 @@ public class RunSourceActivity extends Activity {
 		aq.id(R.id.code).text(source);
 		aq.id(R.id.go_run).clicked(this, "runSource");
 		
-		AQUtility.debug("source", source);
+		//AQUtility.debug("source", source);
 		
 	}
 	

@@ -8,11 +8,16 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.Layout;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -38,10 +43,12 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		type = getIntent().getStringExtra("type");
 		
-		if("image_access".equals(type)){
+		
+		if("image_access_file".equals(type) || "image_access_memory".equals(type)){
 			image_simple();
 		}else if("image_file".equals(type) || "image_file_custom".equals(type)){
-			image_down();			
+			//image_down();			
+			load("http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg");
 		}else if("image_preload".equals(type)){
 			image_prepreload();
 		}
@@ -87,47 +94,45 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	public void image_prepreload(){
 		
 		String small = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";		
-		aq.id(R.id.hidden).image(small);
-		
+		load(small);
+		aq.id(R.id.image).width(250).height(250).image(0).visible();
 	}
 	
+	private void load(String url){
+		aq.id(R.id.hidden).image(url);
+	}
 	
 	public void image_preload(){
 		
-		aq.id(R.id.image).width(250).height(250).image(0).visible();
+		String thumbnail = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";	
+		Bitmap preset = aq.getCachedImage(thumbnail);
 		
-		String thumbnail = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";
-		
-		Bitmap preset = BitmapAjaxCallback.getMemoryCached(thumbnail);
-		
-		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
-		
-		BitmapAjaxCallback cb = new BitmapAjaxCallback();
-		cb.preset(preset).url(imageUrl).memCache(false).fileCache(false);
-		
-		aq.id(R.id.image).image(cb);
-		//aq.id(R.id.image).image(preset);
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		aq.id(R.id.image).image(imageUrl, false, false, 0, 0, preset, AQuery.FADE_IN);
 		
 	}
 
 	public void image_animation(){
 	
-		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
-		//aq.id(R.id.image).image(imageUrl, true, true, 0, R.drawable.image_missing);
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";					
+		aq.id(R.id.image).image(imageUrl, true, true, 0, 0, null, AQuery.FADE_IN);
 		
-		BitmapAjaxCallback cb = new BitmapAjaxCallback();
-		cb.url(imageUrl).memCache(true).fileCache(true);
-		cb.animation(BitmapAjaxCallback.FADE_IN);
-		
-		aq.id(R.id.image).image(cb);
 		
 	}
+	
+	
+	public void image_animation2(){
+		
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";		
+		aq.id(R.id.image).image(imageUrl, true, true, 0, 0, null, R.anim.slide_in_left);
+		
+	}
+	
 	
 	public void image_file(){
 		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
 		File file = aq.getCachedFile(imageUrl);
-		
 		
 		if(file != null){
 			aq.id(R.id.image).image(file, 300);
@@ -161,7 +166,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		if(file != null){
 			
-			aq.id(R.id.image).image(file, true, 300, new BitmapAjaxCallback(){
+			aq.id(R.id.image).visible().image(file, true, 300, new BitmapAjaxCallback(){
 
 		        @Override
 		        public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
@@ -188,7 +193,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 	}
 	
-	public void image_access(){
+	public void image_access_file(){
 		
 		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		File file = aq.getCachedFile(imageUrl);
@@ -198,5 +203,17 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		}
 		
 	}
+	
+	public void image_access_memory(){
+		
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";			
+		Bitmap bm = aq.getCachedImage(imageUrl);
+		
+		if(bm != null){
+			showResult("Dimension:" + bm.getWidth() + "x" + bm.getHeight());
+		}
+		
+	}
+	
 	
 }

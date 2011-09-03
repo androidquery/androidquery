@@ -60,7 +60,7 @@
 			android:layout_gravity="center_horizontal" 
 			android:scaleType="fitXY"
 			android:adjustViewBounds="true"
-			android:visibility="gone"	
+			android:visibility="visible"	
 		/>
 		
 		<ImageView

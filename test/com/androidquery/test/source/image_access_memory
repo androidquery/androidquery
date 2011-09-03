@@ -1,0 +1,10 @@
+	public void image_access_memory(){
+		
+		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";			
+		Bitmap bm = aq.getCachedImage(imageUrl);
+		
+		if(bm != null){
+			showResult("Dimension:" + bm.getWidth() + "x" + bm.getHeight());
+		}
+		
+	}

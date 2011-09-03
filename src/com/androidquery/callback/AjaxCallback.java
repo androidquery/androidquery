@@ -87,6 +87,8 @@ public class AjaxCallback<T> implements Runnable{
 	private boolean memCache;
 	private boolean refresh;
 	
+	private long expire;
+	
 	protected AjaxCallback(){		
 	}
 	
@@ -149,6 +151,11 @@ public class AjaxCallback<T> implements Runnable{
 	
 	public AjaxCallback<T> refresh(boolean refresh){
 		this.refresh = refresh;
+		return this;
+	}
+	
+	public AjaxCallback<T> expire(long expire){
+		this.expire = expire;
 		return this;
 	}
 	
@@ -271,7 +278,18 @@ public class AjaxCallback<T> implements Runnable{
 	}
 	
 	protected File accessFile(File cacheDir, String url){		
-		return AQUtility.getExistedCacheByUrl(cacheDir, url);
+		File file = AQUtility.getExistedCacheByUrl(cacheDir, url);
+		
+		if(file != null && expire != 0){
+			long diff = System.currentTimeMillis() - file.lastModified();
+			if(diff > expire){
+				AQUtility.debug("expired", diff +":" + url);
+				return null;
+			}
+			
+		}
+		
+		return file;
 	}
 	
 	private static AjaxStatus makeStatus(String url, Date time, boolean refresh){

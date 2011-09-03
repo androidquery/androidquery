@@ -36,7 +36,8 @@
         <item>Fallback</item>
         
         <item>Preload</item>
-        <item>Animation</item>
+        <item>Animation (Default Fade In)</item>
+        <item>Animation (Custom)</item>
         
         <item>List Items</item>         
         
@@ -44,7 +45,9 @@
         <item>File (Async)</item>
         <item>File Custom Callback</item>
         <item>Duplicated URL</item>    
-        <item>Access Cached Images</item> 
+        
+        <item>Access Cached Images (File)</item> 
+        <item>Access Cached Images (Memory)</item> 
         
     </string-array>
     
@@ -56,7 +59,7 @@
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_preload</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_animation</item>
-        
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_animation2</item>
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
         
@@ -64,8 +67,8 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_dup</item>  
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_access</item> 
-            
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_access_file</item> 
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_access_memory</item>    
     </string-array>
     
     
@@ -83,14 +86,15 @@
         
         <item>image_preload</item>
         <item>image_animation</item>
+        <item>image_animation2</item>
         
         <item>image_list</item>
         <item>image_custom</item>
         <item>image_file</item>
         <item>image_file_custom</item>
         <item>image_dup</item>
-        <item>image_access</item>
-        
+        <item>image_access_file</item>
+        <item>image_access_memory</item>
               
     </string-array>
     
@@ -105,8 +109,9 @@
         <item>Async Image Load with Down-sampling (1024 -> 256)</item>
         <item>Async Image Load with Fallback Image</item>
         
-        <item>Async Image Load with Preloaded Image</item>
-        <item>Async Image Load with Image Animation</item>
+        <item>Preload a placement image before loading real image</item>
+        <item>Async Image Load with Predefined Fade-In Animation</item>
+        <item>Async Image Load with Custom Animation</item>
         
         <item>Loading Image in List View Items</item>   
         
@@ -114,8 +119,8 @@
         <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>
         <item>Async Image Load from File with Custom Callback</item>
         <item>Auto Detect Duplicated Request</item>
-        <item>Access Cached Images</item>
-               
+        <item>Access Cached Images (Raw File)</item>
+        <item>Access Cached Images (Memory cached Bitmap)</item>     
                
             
     </string-array>

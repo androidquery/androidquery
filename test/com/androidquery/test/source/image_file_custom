@@ -14,10 +14,7 @@
 	                iv.setImageBitmap(bm);
 	                iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
 		                
-		        }
-			        
-			});
-			
-		}
-		
+		        }			        
+			});			
+		}		
 	}
