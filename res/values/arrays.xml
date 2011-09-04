@@ -39,6 +39,8 @@
         <item>Animation (Default Fade In)</item>
         <item>Animation (Custom)</item>
         
+        <item>Aspect Ratio</item>  
+        
         <item>List Items</item>         
         
         <item>Custom Callback</item>        
@@ -60,6 +62,9 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_preload</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_animation</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_animation2</item>
+        
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_ratio</item>
+        
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
         
@@ -88,6 +93,8 @@
         <item>image_animation</item>
         <item>image_animation2</item>
         
+        <item>image_ratio</item>
+        
         <item>image_list</item>
         <item>image_custom</item>
         <item>image_file</item>
@@ -112,6 +119,8 @@
         <item>Preload a placement image before loading real image</item>
         <item>Async Image Load with Predefined Fade-In Animation</item>
         <item>Async Image Load with Custom Animation</item>
+        
+        <item>Preserve Image Aspect Ratio Dynamically</item>
         
         <item>Loading Image in List View Items</item>   
         

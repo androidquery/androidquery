@@ -1123,7 +1123,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	
 	/**
-	 * Return the context of activity of view.
+	 * Return the context of activity or view.
 	 *	 
 	 * @return Context
 	 */

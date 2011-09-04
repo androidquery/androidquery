@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.text.Layout;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -95,7 +96,9 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		String small = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";		
 		load(small);
+		
 		aq.id(R.id.image).width(250).height(250).image(0).visible();
+		
 	}
 	
 	private void load(String url){
@@ -117,7 +120,6 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";					
 		aq.id(R.id.image).image(imageUrl, true, true, 0, 0, null, AQuery.FADE_IN);
 		
-		
 	}
 	
 	
@@ -128,6 +130,17 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	public void image_ratio(){
+		
+		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
+		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.ratio(AQuery.RATIO_PRESERVE).url(imageUrl);
+		//cb.url(imageUrl);
+		
+		//aq.id(R.id.image).width(300).image(cb);
+		aq.id(R.id.image).visible().width(LayoutParams.FILL_PARENT).image(cb);
+	}
 	
 	public void image_file(){
 		

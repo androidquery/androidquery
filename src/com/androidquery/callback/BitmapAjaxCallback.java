@@ -30,6 +30,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -53,6 +54,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private static int BIG_TPIXELS = 1000000;
 	
 	public static final int FADE_IN = Constants.FADE_IN;
+	public static final float RATIO_PRESERVE = Constants.RATIO_PRESERVE;
 	
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
@@ -65,9 +67,10 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private File imageFile;
 	private int animation;
 	private Bitmap preset;
+	private float ratio;
 	
 	public BitmapAjaxCallback(){
-		type(Bitmap.class);
+		type(Bitmap.class).memCache(true).fileCache(true);
 	}
 	
 	public BitmapAjaxCallback imageView(ImageView view){
@@ -116,6 +119,11 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	public BitmapAjaxCallback animation(int animation){
 		this.animation = animation;
+		return this;
+	}
+	
+	public BitmapAjaxCallback ratio(float ratio){
+		this.ratio = ratio;
 		return this;
 	}
 	
@@ -184,20 +192,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
     }
 	
     private Bitmap bmGet(String path, byte[] data){
-    	
-    	/*
-    	Bitmap bm = null;
-		
-		if(targetWidth > 0){
-			bm = getResizedImage(path, data, targetWidth);
-		}else{
-			bm = decode(path, data, null);
-		}
-		
-		
-		return bm;
-		
-		*/
     	
     	return getResizedImage(path, data, targetWidth);
     }
@@ -298,7 +292,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
-		showBitmap(iv, bm, fallback, preset, animation);
+		showBitmap(iv, bm, fallback, preset, animation, ratio);
 	}
 
 	public static void setIconCacheLimit(int limit){
@@ -346,7 +340,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	@Override
-	protected Bitmap memGet(String url){		
+	protected Bitmap memGet(String url){			
 		return memGet(url, targetWidth);
 	}
 	
@@ -396,7 +390,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	private static void showBitmap(ImageView iv, Bitmap bm, int fallback, Bitmap preset, int animation){
+	private static void showBitmap(ImageView iv, Bitmap bm, int fallback, Bitmap preset, int animation, float ratio){
 		
 		//ignore 1x1 pixels
 		if(bm != null && bm.getWidth() == 1 && bm.getHeight() == 1){        
@@ -414,6 +408,9 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		//AQUtility.debug("show bitmap", bm + ":" + animation);
 		iv.setImageBitmap(bm);
 		
+		if(ratio > 0){
+			ratio(iv, bm, ratio);
+		}
 		
 		if(animation != 0 && preset == null){
 			animate(iv, bm, animation);
@@ -421,6 +418,46 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		
 	}
+	
+	private static int getWidth(ImageView iv){
+		
+		int vw = 0;
+		
+		if(iv != null){
+			vw = iv.getWidth();		
+		
+			AQUtility.debug("vw", vw + ":" + iv.getLayoutParams().width);
+		
+			if(vw <= 0) vw = iv.getLayoutParams().width;
+		}
+		
+		return vw;
+		
+	}
+	
+	
+	private static void ratio(ImageView iv, Bitmap bm, float ratio){
+		
+		int vw = getWidth(iv);
+		
+		if(vw <= 0) return;
+		
+		AQUtility.debug("ratio", ratio);
+		
+		if(bm != null && ratio == RATIO_PRESERVE){
+			ratio = ((float) bm.getHeight()) / ((float) bm.getWidth());
+		}
+		
+		int vh = (int) (vw * ratio);
+		
+		AQUtility.debug("to", vw + "x" + vh);
+		
+		LayoutParams lp = iv.getLayoutParams();
+		lp.height = vh;
+		iv.setLayoutParams(lp);
+		
+	}
+	
 	
 	private static void animate(ImageView iv, Bitmap bm, int animId){
 		
@@ -435,22 +472,21 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			animation = AnimationUtils.loadAnimation(iv.getContext(), animId);
 		}
 		
-		//AQUtility.debug("anime", bm + ":" + animation);
-		
-		animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-		//iv.setAnimation(animation);
+		animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());		
 		iv.startAnimation(animation);
 		
 	}
 	
-	
+	protected boolean syncMemGet(){
+		return ratio == 0 || getWidth(iv.get()) > 0;
+	}
 	
 	private static void setBitmap(ImageView iv, String url, Bitmap bm){
 		
 		iv.setTag(url);
 		
 		if(bm != null){			
-			showBitmap(iv, bm, 0, null, 0);
+			showBitmap(iv, bm, 0, null, 0, -1);
 		}else{
 			//AQUtility.debug("set bitmap", bm);
 			iv.setImageBitmap(null);	
@@ -483,7 +519,10 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		//check memory
 		Bitmap bm = memGet(url, targetWidth);
 		if(bm != null){
-			showBitmap(iv, bm, resId, preset, animation);
+			
+			AQUtility.debug("mem hit", getWidth(iv));
+			
+			showBitmap(iv, bm, resId, preset, animation, -1);
 			return;
 		}
 		

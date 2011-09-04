@@ -262,6 +262,10 @@ public class AjaxCallback<T> implements Runnable{
 		return null;
 	}
 	
+	protected boolean syncMemGet(){
+		return true;
+	}
+	
 	protected void memPut(String url, T object){
 	}
 	
@@ -309,10 +313,13 @@ public class AjaxCallback<T> implements Runnable{
 	
 	private void work(Context context, boolean async){
 		
-		T object = memGet(url);
+		T object = null;
+		
+		if(syncMemGet()){
+			object = memGet(url);
+		}
 		
 		if(object != null){		
-			
 			result = object;
 			status = makeStatus(url, null, refresh);
 			callback();
@@ -379,11 +386,24 @@ public class AjaxCallback<T> implements Runnable{
 	
 	private void backgroundWork(){
 	
+		AQUtility.debug("background");
+		
 		background();
 		
 		if(!refresh){
 		
-			if(fileCache){		
+			if(memCache){
+				
+				result = memGet(url);
+				
+				if(result != null){		
+					status = makeStatus(url, null, refresh);
+				}
+			
+			}
+			
+			
+			if(result == null && fileCache){		
 				
 				fileWork();			
 			}
