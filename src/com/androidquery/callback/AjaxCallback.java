@@ -48,17 +48,13 @@ import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.AccountHandle;
 
 public class AjaxCallback<T> implements Runnable{
 	
@@ -78,8 +74,7 @@ public class AjaxCallback<T> implements Runnable{
 	private T result;
 	
 	private File cacheDir;
-	private AccountManager am;
-	private Account acc;
+	private AccountHandle ah;
 	
 	private AjaxStatus status;
 	
@@ -326,7 +321,10 @@ public class AjaxCallback<T> implements Runnable{
 		}else{
 		
 			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
-			if(account != null) findAccount(context);
+			if(account != null && android.os.Build.VERSION.SDK_INT >= 5){
+				//acc.findAccount(context);
+				ah = AccountHandle.makeHandle(context, account, authType);
+			}
 			
 			if(async){
 			
@@ -455,9 +453,9 @@ public class AjaxCallback<T> implements Runnable{
 		try{
 			
 			//authenticate if needed
-			boolean auth = authType != null;
+			boolean auth = ah != null;
 			if(auth){
-				setupAuthToken(false);
+				authToken(ah.setupAuthToken(false));
 			}
 			
 			status = network();
@@ -465,7 +463,7 @@ public class AjaxCallback<T> implements Runnable{
 			if(auth && status.getCode() == 401){
 				AQUtility.debug("reauth needed!");
 				
-				setupAuthToken(true);
+				authToken(ah.setupAuthToken(true));
 				status = network();
 			}
 			
@@ -684,67 +682,17 @@ public class AjaxCallback<T> implements Runnable{
 		return this;
 	}
 	
-	private void findAccount(Context context){
-		
-		if(android.os.Build.VERSION.SDK_INT < 5) return;
-		
-		AQUtility.time("find account");
-		
-		AccountManager manager = AccountManager.get(context);
-        
-		Account[] accounts = manager.getAccountsByType("com.google");
-        for(int i = 0; i < accounts.length; i++) {
-        	Account acc = accounts[i];
-            if(account.equals(acc.name)) {
-            	this.am = manager;
-            	this.acc = acc;
-            	AQUtility.debug("account ok", acc.name);
-            	AQUtility.timeEnd("find account", 0);
-            	return;
-            }
-        }
-		
-        AQUtility.debug("account doesn't exist", account);
-	}
+
 	
 	
-	private void setupAuthToken(boolean expired){
-		
-		if(am == null) return;
-		
-		if(expired){
-			AQUtility.debug("expired invalidate");
-			am.invalidateAuthToken(authType, authToken);
-		}
-		
-		AQUtility.time("auth future");
-		
-    	AccountManagerFuture<Bundle> future = am.getAuthToken(acc, authType, true, null, null);
-		
-    	AQUtility.timeEnd("auth future", 0);
-    	
-		Bundle bundle = null;
-		try {
-			bundle = future.getResult();
-		} catch (Exception e) {
-			AQUtility.report(e);
-		} 
-		
-		if(bundle != null && bundle.containsKey(AccountManager.KEY_AUTHTOKEN)){
-			String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-			
-			AQUtility.debug("tok", token);
-			
-			authToken(token);
-		}
-		
-		
-	}
+
 	
-	private String authToken;
+	//private String authToken;
 	public AjaxCallback<T> authToken(String token){
-		header("Authorization", "GoogleLogin auth=" + token);
-		this.authToken = token;
+		if(token != null){
+			header("Authorization", "GoogleLogin auth=" + token);
+			//this.authToken = token;
+		}
 		return this;
 	}
 	
