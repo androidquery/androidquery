@@ -421,15 +421,12 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	private static int getWidth(ImageView iv){
 		
-		int vw = 0;
+		int vw = iv.getWidth();		
 		
-		if(iv != null){
-			vw = iv.getWidth();		
-		
-			AQUtility.debug("vw", vw + ":" + iv.getLayoutParams().width);
-		
-			if(vw <= 0) vw = iv.getLayoutParams().width;
-		}
+		AQUtility.debug("vw", vw + ":" + iv.getLayoutParams().width);
+	
+		if(vw <= 0) vw = iv.getLayoutParams().width;
+	
 		
 		return vw;
 		
@@ -477,9 +474,18 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
+	
 	protected boolean syncMemGet(){
-		return ratio == 0 || getWidth(iv.get()) > 0;
+		//return ratio == 0 || getWidth(iv.get()) > 0;
+		return !unknownWidth(ratio, iv.get());
 	}
+	
+	private static boolean unknownWidth(float ratio, ImageView iv){
+		
+		if(iv == null) return false;
+		return !(ratio > 0 && getWidth(iv) <= 0);
+	}
+	
 	
 	private static void setBitmap(ImageView iv, String url, Bitmap bm){
 		
@@ -504,7 +510,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int resId, Bitmap preset, int animation){
+	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int resId, Bitmap preset, int animation, float ratio){
 		
 		if(iv == null) return;
 		
@@ -522,7 +528,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			
 			AQUtility.debug("mem hit", getWidth(iv));
 			
-			showBitmap(iv, bm, resId, preset, animation, -1);
+			showBitmap(iv, bm, resId, preset, animation, ratio);
 			return;
 		}
 		

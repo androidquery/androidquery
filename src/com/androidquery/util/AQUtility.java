@@ -192,8 +192,12 @@ public class AQUtility {
 	private static Handler handler;
 	public static Handler getHandler(){
 		if(handler == null){
-			ensureUIThread();
-			handler = new Handler();
+			
+			//ensureUIThread();
+			//handler = new Handler();
+			
+			handler = new Handler(Looper.getMainLooper());
+			
 		}
 		return handler;
 	}
