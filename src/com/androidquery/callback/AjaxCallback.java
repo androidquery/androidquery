@@ -310,8 +310,9 @@ public class AjaxCallback<T> implements Runnable{
 		
 		T object = null;
 		
-		if(syncMemGet()){
+		if(syncMemGet()){			
 			object = memGet(url);
+			AQUtility.debug("sync mem get", object);
 		}
 		
 		if(object != null){		

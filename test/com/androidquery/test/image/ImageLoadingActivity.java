@@ -132,14 +132,16 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_ratio(){
 		
+		aq.id(R.id.image).visible().width(LayoutParams.FILL_PARENT);
+		
 		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
 		
-		BitmapAjaxCallback cb = new BitmapAjaxCallback();
-		cb.ratio(AQuery.RATIO_PRESERVE).url(imageUrl);
-		//cb.url(imageUrl);
+		//BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		//cb.ratio(AQuery.RATIO_PRESERVE).url(imageUrl);
 		
-		//aq.id(R.id.image).width(300).image(cb);
-		aq.id(R.id.image).visible().width(LayoutParams.FILL_PARENT).image(cb);
+		//aq.id(R.id.image).visible().width(LayoutParams.FILL_PARENT).image(cb);
+		
+		BitmapAjaxCallback.async(this, aq.getImageView(), imageUrl, true, true, 0, 0, null, 0, AQuery.RATIO_PRESERVE);
 	}
 	
 	public void image_file(){

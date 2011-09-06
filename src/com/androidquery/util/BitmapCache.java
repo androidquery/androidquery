@@ -44,6 +44,10 @@ public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 	@Override
 	public Bitmap put(String key, Bitmap bm){
 		
+		
+		//AQUtility.debug("reject" + key + ":" + bm.getWidth() + ":" + bm.getHeight());
+		
+		
 		Bitmap old = null;
 		
 		int px = pixels(bm);
@@ -53,8 +57,6 @@ public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 			if(old != null){
 				pixels -= pixels(old);
 			}
-		}else{
-			//AQUtility.debug("reject" + key + ":" + bm.getWidth() + ":" + bm.getHeight());
 		}
 		
 		

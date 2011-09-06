@@ -73,7 +73,10 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 		
 		List<JSONObject> items = new ArrayList<JSONObject>();
 		for(int i = 0 ; i < ja.length(); i++){
-			items.add(ja.optJSONObject(i));
+			JSONObject jo = ja.optJSONObject(i);
+			if(jo.has("image")){
+				items.add(jo);
+			}
 		}
 		
 		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
@@ -95,14 +98,10 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 				String tb = null;
 				if(image != null){
 					tb = image.optString("tbUrl");
-					//aq.id(R.id.tb).visible().image(tb);
 					aq.id(R.id.tb).visible().image(tb, true, true, 0, 0, null, BitmapAjaxCallback.FADE_IN);
 				}else{
-				//	aq.id(R.id.tb).gone();
 					aq.id(R.id.tb).clear();
 				}
-				
-				
 				
 				return view;
 				

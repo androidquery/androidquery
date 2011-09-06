@@ -351,6 +351,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *
 	 * @param url Image url.
 	 * @return self
+	 * 
+	 * @see testImage4
 	 */
 	
 	public T image(String url){
@@ -364,6 +366,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param memCache Use memory cache.
 	 * @param fileCache Use file cache.
 	 * @return self
+	 * 
+	 * @see testImage5
 	 */
 	public T image(String url, boolean memCache, boolean fileCache){		
 		return image(url, memCache, fileCache, 0, 0);
@@ -379,18 +383,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param targetWidth Target width for down sampling when reading large images. 0 = no downsampling.
 	 * @param fallbackId Fallback image if result is network fetch and image convert failed. 0 = no fallback. 
 	 * @return self
+	 * 
+	 * @see testImage6
 	 */
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId){
-		
-		/*
-		if(view instanceof ImageView){
-			ImageView iv = (ImageView) view;			
-			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, fallbackId, null, 0);
-		}
-		
-		return self();
-		*/
-		
 		
 		return image(url, memCache, fileCache, targetWidth, fallbackId, null, 0);
 	}
@@ -408,6 +404,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param preset Default image to show before real image loaded. null = no preset.
 	 * @param animId Apply this animation when image is loaded. 0 = no animation. Also accept AQuery.FADE_IN as a predefined 500ms fade in animation.
 	 * @return self
+	 * 
+	 * @see testImage7
+	 * 
 	 */
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId){
 		
@@ -424,6 +423,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *
 	 * @param callback Callback handler for setting the image.
 	 * @return self
+	 * 
+	 * @see testImage8
 	 */
 	
 	public T image(BitmapAjaxCallback callback){
@@ -450,6 +451,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param resId Fallback image if result is network fetch and image convert failed. 
 	 * @param callback Callback handler for setting the image.
 	 * @return self
+	 * 
+	 * @see testImage9
 	 */
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int resId, BitmapAjaxCallback callback){
 		
@@ -472,6 +475,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param file The image file.
 	 * @param targetWidth Target width for down sampling when reading large images.
 	 * @return self
+	 * 
+	 * @see testImage10
 	 */
 	
 	public T image(File file, int targetWidth){		
@@ -489,6 +494,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param targetWidth Target width for down sampling when reading large images.
 	 * @param callback Callback handler for setting the image.
 	 * @return self
+	 * 
+	 * @see testImage11
 	 */
 	public T image(File file, boolean memCache, int targetWidth, BitmapAjaxCallback callback){
 		

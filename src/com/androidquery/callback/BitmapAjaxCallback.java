@@ -280,6 +280,8 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		}
 		
+		AQUtility.debugNotify();
+		
 	}
 	
 	private void checkCb(String url, ImageView iv, Bitmap bm, AjaxStatus status){
@@ -408,11 +410,11 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		//AQUtility.debug("show bitmap", bm + ":" + animation);
 		iv.setImageBitmap(bm);
 		
-		/*
+		
 		if(ratio > 0){
 			ratio(iv, bm, ratio);
 		}
-		*/
+		
 		if(animation != 0 && preset == null){
 			animate(iv, bm, animation);
 		}
@@ -420,7 +422,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	/*
+	
 	private static int getWidth(ImageView iv){
 		
 		int vw = iv.getWidth();		
@@ -456,7 +458,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		iv.setLayoutParams(lp);
 		
 	}
-	*/
+	
 	
 	private static void animate(ImageView iv, Bitmap bm, int animId){
 		
@@ -476,18 +478,20 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	/*
+	
 	protected boolean syncMemGet(){
-		//return ratio == 0 || getWidth(iv.get()) > 0;
 		return !unknownWidth(ratio, iv.get());
 	}
 	
 	private static boolean unknownWidth(float ratio, ImageView iv){
 		
+		AQUtility.debug("ratio", ratio);
+		
 		if(iv == null) return false;
-		return !(ratio > 0 && getWidth(iv) <= 0);
+		
+		return ratio > 0 && getWidth(iv) <= 0;
 	}
-	*/
+	
 	
 	private static void setBitmap(ImageView iv, String url, Bitmap bm){
 		
@@ -516,7 +520,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		if(iv == null) return;
 		
-		//invalid url
 		if(url == null){
 			setBitmap(iv, null, null);
 			return;
@@ -526,8 +529,8 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		//check memory
 		Bitmap bm = memGet(url, targetWidth);
-		if(bm != null){
-			
+		if(bm != null && !unknownWidth(ratio, iv)){		
+			AQUtility.debug("direct memhit");
 			showBitmap(iv, bm, resId, preset, animation, ratio);
 			return;
 		}
@@ -538,7 +541,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();
 			
-			cb.imageView(iv).targetWidth(targetWidth).fallback(resId).preset(preset).animation(animation);
+			cb.imageView(iv).targetWidth(targetWidth).fallback(resId).preset(preset).animation(animation).ratio(ratio);
 			cb.url(url).memCache(memCache).fileCache(fileCache);
 			cb.async(context);
 			

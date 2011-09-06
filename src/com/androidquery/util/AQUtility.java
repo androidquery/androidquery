@@ -49,7 +49,7 @@ import android.view.animation.AlphaAnimation;
 public class AQUtility {
 
 	private static boolean debug = false;
-	private static Object wait = new Object();
+	private static Object wait;
 	
 	public static void setDebug(boolean debug){
 		AQUtility.debug = debug;
@@ -58,6 +58,8 @@ public class AQUtility {
 	public static void debugWait(){
 		
 		if(!debug) return;
+		
+		if(wait == null) wait = new Object();
 		
 		synchronized(wait) {
 			
@@ -72,7 +74,7 @@ public class AQUtility {
 	
 	public static void debugNotify(){
 		
-		if(!debug) return;
+		if(!debug || wait == null) return;
 		
 		synchronized(wait) {
 			wait.notifyAll();			
@@ -204,7 +206,6 @@ public class AQUtility {
 	
 	public static void ensureUIThread(){
     	
-    	
     	long uiId = Looper.getMainLooper().getThread().getId();
     	long cId = Thread.currentThread().getId();
     	
@@ -217,23 +218,18 @@ public class AQUtility {
 	
 	private static Handler handler;
 	public static Handler getHandler(){
-		if(handler == null){
-			
-			//ensureUIThread();
-			//handler = new Handler();
-			
-			handler = new Handler(Looper.getMainLooper());
-			
+		if(handler == null){			
+			handler = new Handler(Looper.getMainLooper());			
 		}
 		return handler;
 	}
 	
 	public static void post(Runnable run){
-		handler.post(run);
+		getHandler().post(run);
 	}
 	
 	public static void postDelayed(Runnable run, long delay){
-		handler.postDelayed(run, delay);
+		getHandler().postDelayed(run, delay);
 	}
 	
 	public static String getMD5Hex(String str){
