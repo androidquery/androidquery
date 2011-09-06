@@ -5,6 +5,7 @@
 	<property name="down-version" value="0-2-1"/>
 	
     <target name="proguard">
+    
     	<input addproperty="version">Enter version number</input>
     	<java fork="true" jar="dist/proguard.jar">
 			<arg value="@dist/proguard.cfg"/>
@@ -14,6 +15,10 @@
 			<arg value="dist/android-query.${version}.jar"/>
 			<arg value="-keepparameternames"/>
 		</java>
+		
+		<copy file="dist/android-query.${version}.jar" tofile="dist/android-query-optimized.jar"/>
+		
+		<!-- 
 		<java fork="true" jar="dist/proguard.jar">
 			<arg value="@dist/proguard.cfg"/>
 			<arg value="-injars"/>
@@ -21,7 +26,10 @@
 			<arg value="-outjars"/>
 			<arg value="dist/android-query-optimized.jar"/>
 		</java>
+		
+		 
 		<copy file="dist/android-query-optimized.jar" tofile="dist/android-query-optimized.${version}.jar"/>
+		-->
     </target>
 	
 

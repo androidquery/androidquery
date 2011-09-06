@@ -408,10 +408,11 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		//AQUtility.debug("show bitmap", bm + ":" + animation);
 		iv.setImageBitmap(bm);
 		
+		/*
 		if(ratio > 0){
 			ratio(iv, bm, ratio);
 		}
-		
+		*/
 		if(animation != 0 && preset == null){
 			animate(iv, bm, animation);
 		}
@@ -419,6 +420,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
+	/*
 	private static int getWidth(ImageView iv){
 		
 		int vw = iv.getWidth();		
@@ -454,7 +456,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		iv.setLayoutParams(lp);
 		
 	}
-	
+	*/
 	
 	private static void animate(ImageView iv, Bitmap bm, int animId){
 		
@@ -474,7 +476,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	
+	/*
 	protected boolean syncMemGet(){
 		//return ratio == 0 || getWidth(iv.get()) > 0;
 		return !unknownWidth(ratio, iv.get());
@@ -485,7 +487,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		if(iv == null) return false;
 		return !(ratio > 0 && getWidth(iv) <= 0);
 	}
-	
+	*/
 	
 	private static void setBitmap(ImageView iv, String url, Bitmap bm){
 		
@@ -525,8 +527,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		//check memory
 		Bitmap bm = memGet(url, targetWidth);
 		if(bm != null){
-			
-			AQUtility.debug("mem hit", getWidth(iv));
 			
 			showBitmap(iv, bm, resId, preset, animation, ratio);
 			return;

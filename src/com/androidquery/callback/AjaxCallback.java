@@ -384,7 +384,6 @@ public class AjaxCallback<T> implements Runnable{
 	
 	private void backgroundWork(){
 	
-		AQUtility.debug("background");
 		
 		background();
 		
@@ -518,6 +517,7 @@ public class AjaxCallback<T> implements Runnable{
 		}
 		
 		callback();
+		
 	}
 	
 	
@@ -525,7 +525,7 @@ public class AjaxCallback<T> implements Runnable{
 	private static ExecutorService getExecutor(){
 		
 		if(fetchExe == null){
-			fetchExe = Executors.newFixedThreadPool(NETWORK_POOL);
+			fetchExe = Executors.newFixedThreadPool(NETWORK_POOL);			
 		}
 		
 		return fetchExe;

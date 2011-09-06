@@ -291,6 +291,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *
 	 * @param resid the resource id
 	 * @return self
+	 * 
+	 * @see testImage1
 	 */
 	public T image(int resid){
 		
@@ -311,6 +313,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *
 	 * @param drawable the drawable
 	 * @return self
+	 * 
+	 * @see testImage2
+	 * 
 	 */
 	public T image(Drawable drawable){
 		
@@ -327,6 +332,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *
 	 * @param bm Bitmap
 	 * @return self
+	 * 
+	 * @see testImage3
 	 */
 	public T image(Bitmap bm){
 		
@@ -1144,6 +1151,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *
 	 * @param callback callback handler
 	 * @return self
+	 * 
+	 * @see testAjax1
 	 */
 	
 	public <K> T ajax(AjaxCallback<K> callback){
@@ -1160,6 +1169,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param type data type
 	 * @param callback callback handler
 	 * @return self
+	 * 
+	 * @see testAjax2
 	 */
 	
 	public <K> T ajax(String url, Class<K> type, AjaxCallback<K> callback){
@@ -1178,6 +1189,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param type data type
 	 * @param callback callback method name
 	 * @return self
+	 * 
+	 * @see testAjax3
 	 */
 	
 	public <K> T ajax(String url, Class<K> type, Object handler, String callback){
@@ -1200,6 +1213,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param type data type
 	 * @param callback callback method name
 	 * @return self
+	 * 
+	 * @see testAjax4
 	 */
 	
 	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, AjaxCallback<K> callback){
@@ -1219,6 +1234,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param type data type
 	 * @param callback callback method name
 	 * @return self
+	 * 
+	 * @see testAjax5
 	 */
 	
 	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, Object handler, String callback){

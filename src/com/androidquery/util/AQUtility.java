@@ -49,11 +49,37 @@ import android.view.animation.AlphaAnimation;
 public class AQUtility {
 
 	private static boolean debug = false;
-	
+	private static Object wait = new Object();
 	
 	public static void setDebug(boolean debug){
 		AQUtility.debug = debug;
 	}
+	
+	public static void debugWait(){
+		
+		if(!debug) return;
+		
+		synchronized(wait) {
+			
+			try {
+				wait.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	public static void debugNotify(){
+		
+		if(!debug) return;
+		
+		synchronized(wait) {
+			wait.notifyAll();			
+		}
+		
+	}
+	
 	
 	public static void debug(Object msg){
 		if(debug){
@@ -469,7 +495,7 @@ public class AQUtility {
 			
 		}
 		
-		AQUtility.debug("deleted files" , deletes);
+		AQUtility.debug("deleted" , deletes);
 	}
 	
 	public static int dip2pixel(Context context, float n){
