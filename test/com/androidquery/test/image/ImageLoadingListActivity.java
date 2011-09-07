@@ -98,7 +98,7 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 				String tb = null;
 				if(image != null){
 					tb = image.optString("tbUrl");
-					aq.id(R.id.tb).visible().image(tb, true, true, 0, 0, null, BitmapAjaxCallback.FADE_IN);
+					aq.id(R.id.tb).image(tb, true, true, 0, 0, null, AQuery.FADE_IN, 1.0f);
 				}else{
 					aq.id(R.id.tb).clear();
 				}

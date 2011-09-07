@@ -26,6 +26,7 @@
 		<activity android:name=".test.async.AjaxLoadingActivity" android:theme="@style/android:Theme.Light"></activity>		
 		<activity android:name=".test.image.ImageLoadingActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.image.ImageLoadingListActivity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.image.ImageLoadingAspectRatioActivity" android:theme="@style/android:Theme.Light"></activity>
 		
     </application>
 </manifest>

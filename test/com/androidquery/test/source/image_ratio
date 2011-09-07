@@ -1,0 +1,6 @@
+	public void image_ratio(){
+		
+		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
+		aq.image(imageUrl, false, false, 0, 0, null, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
+	
+	}

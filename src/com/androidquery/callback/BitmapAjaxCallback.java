@@ -61,7 +61,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
 	
-	private static HashMap<String, WeakHashMap<ImageView, Void>> queueMap = new HashMap<String, WeakHashMap<ImageView, Void>>();	
+	private static HashMap<String, WeakHashMap<ImageView, BitmapAjaxCallback>> queueMap = new HashMap<String, WeakHashMap<ImageView, BitmapAjaxCallback>>();	
 	
 	private WeakReference<ImageView> iv;
 	private int targetWidth;
@@ -88,11 +88,12 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		String url = getUrl();
 		
 		if(url == null){
-			setBitmap(iv.get(), null, null);
+			//setBitmap(iv.get(), null, null);
+			setBitmap(url, iv.get(), null, null, animation, ratio, false);
 			return;
 		}
 		
-		presetBitmap(iv.get(), url, preset);
+		presetBitmap(iv.get(), url, preset, animation, ratio);
 		
 		super.async(context);
 		
@@ -268,16 +269,17 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		ImageView firstView = iv.get();
 		
-		checkCb(url, firstView, bm, status);
+		checkCb(this, url, firstView, bm, status);
 		
-		WeakHashMap<ImageView, Void> ivs = queueMap.remove(url);
+		WeakHashMap<ImageView, BitmapAjaxCallback> ivs = queueMap.remove(url);
 		
 		if(ivs != null){
 		
 			Set<ImageView> set = ivs.keySet();
 			
 			for(ImageView view: set){
-				checkCb(url, view, bm, status);
+				BitmapAjaxCallback cb = ivs.get(view);
+				checkCb(cb, url, view, bm, status);
 			}
 		
 		}
@@ -286,17 +288,17 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	private void checkCb(String url, ImageView iv, Bitmap bm, AjaxStatus status){
+	private void checkCb(BitmapAjaxCallback cb, String url, ImageView iv, Bitmap bm, AjaxStatus status){
 		
-		if(iv == null) return;
+		if(iv == null || cb == null) return;
 		
-		if(url.equals(iv.getTag())){
-			callback(url, iv, bm, status);
+		if(url.equals(iv.getTag())){			
+			cb.callback(url, iv, bm, status);
 		}
 	}
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
-		showBitmap(iv, bm, fallback, preset, animation, ratio);
+		showBitmap(url, iv, bm, fallback, preset, animation, ratio);
 	}
 
 	public static void setIconCacheLimit(int limit){
@@ -394,7 +396,8 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	private static void showBitmap(ImageView iv, Bitmap bm, int fallback, Bitmap preset, int animation, float ratio){
+	private static void showBitmap(String url, ImageView iv, Bitmap bm, int fallback, Bitmap preset, int animation, float ratio){
+		
 		
 		//ignore 1x1 pixels
 		if(bm != null && bm.getWidth() == 1 && bm.getHeight() == 1){        
@@ -409,21 +412,52 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			iv.setVisibility(View.INVISIBLE);
 		}
 		
-		//AQUtility.debug("show bitmap", bm + ":" + animation);
-		iv.setImageBitmap(bm);
-		
-		
-		if(ratio > 0){
-			ratio(iv, bm, ratio);
-		}
-		
-		if(animation != 0 && preset == null){
-			animate(iv, bm, animation);
-		}
-		
+		setBitmap(url, iv, bm, preset, animation, ratio, false);
 		
 	}
 	
+	private static void presetBitmap(ImageView iv, String url, Bitmap preset, int animation, float ratio){
+		
+		if(!url.equals(iv.getTag()) || preset != null){
+			
+			iv.setTag(url);
+			setBitmap(url, iv, preset, null, animation, ratio, false);
+			
+		}
+		
+	}
+	
+	private static void setBitmap(final String url, final ImageView iv, final Bitmap bm, final Bitmap preset, final int animation, final float ratio, boolean async){
+		
+		
+		if(needAsyncRatio(ratio, iv)){
+			
+			if(!async){
+				
+				AQUtility.debug("async set needed");
+				
+				AQUtility.postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						setBitmap(url, iv, bm, preset, animation, ratio, true);
+					}
+				}, 50);
+				
+			}
+			return;
+		}
+		
+		iv.setImageBitmap(bm);
+		
+		if(ratio > 0){
+			setRatio(iv, bm, ratio);
+		}
+		
+		if(animation != 0 && preset == null){			
+			animate(iv, bm, animation);
+		}
+	}
 	
 	private static int getWidth(ImageView iv){
 		
@@ -434,13 +468,16 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	}
 	
 	
-	private static void ratio(ImageView iv, Bitmap bm, float ratio){
+	private static void setRatio(ImageView iv, Bitmap bm, float ratio){
 		
 		int vw = getWidth(iv);
 		
-		if(vw <= 0) return;
+		if(vw <= 0){
+			AQUtility.debug("set ratio but has no width!");			
+			return;
+		}
 		
-		AQUtility.debug("ratio", ratio);
+		//AQUtility.debug("ratio", ratio);
 		
 		float r = ratio;
 		
@@ -450,7 +487,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		int vh = (int) (vw * r);
 		
-		AQUtility.debug("to", vw + "x" + vh);
+		//AQUtility.debug("to", vw + "x" + vh);
 		
 		LayoutParams lp = iv.getLayoutParams();
 		lp.height = vh;
@@ -459,7 +496,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		Matrix m = null;
 		if(bm != null){
 			m = makeMatrix(bm.getWidth(), bm.getHeight(), vw, vh);		
-			AQUtility.debug("matrix", m);
+			//AQUtility.debug("matrix", m);
 			
 		}
 		iv.setScaleType(ScaleType.MATRIX);
@@ -533,42 +570,10 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 	}
 	
-	
-	protected boolean syncMemGet(){
-		return !unknownWidth(ratio, iv.get());
-	}
-	
-	private static boolean unknownWidth(float ratio, ImageView iv){
-		
-		AQUtility.debug("ratio", ratio);
+	private static boolean needAsyncRatio(float ratio, ImageView iv){
 		
 		if(iv == null) return false;
-		
 		return ratio > 0 && getWidth(iv) <= 0;
-	}
-	
-	
-	private static void setBitmap(ImageView iv, String url, Bitmap bm){
-		
-		iv.setTag(url);
-		
-		if(bm != null){			
-			showBitmap(iv, bm, 0, null, 0, 0);
-		}else{
-			//AQUtility.debug("set bitmap", bm);
-			iv.setImageBitmap(null);	
-		}
-		
-	}
-	
-	private static void presetBitmap(ImageView iw, String url, Bitmap preset){
-		
-		if(!url.equals(iw.getTag()) || preset != null){
-			//AQUtility.debug("preset image", preset);
-			iw.setImageBitmap(preset);
-			iw.setTag(url);
-		}
-		
 	}
 	
 	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int resId, Bitmap preset, int animation, float ratio){
@@ -576,47 +581,46 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		if(iv == null) return;
 		
 		if(url == null){
-			setBitmap(iv, null, null);
+			setBitmap(url, iv, null, null, animation, ratio, false);
 			return;
 		}
-		
-		presetBitmap(iv, url, preset);
 		
 		//check memory
 		Bitmap bm = memGet(url, targetWidth);
-		if(bm != null && !unknownWidth(ratio, iv)){		
-			AQUtility.debug("direct memhit");
-			showBitmap(iv, bm, resId, preset, animation, ratio);
+		if(bm != null){		
+			iv.setTag(url);
+			showBitmap(url, iv, bm, resId, preset, animation, ratio);
 			return;
 		}
 		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		
+		cb.imageView(iv).targetWidth(targetWidth).fallback(resId).preset(preset).animation(animation).ratio(ratio);
+		cb.url(url).memCache(memCache).fileCache(fileCache);
+		
 		if(!queueMap.containsKey(url)){
 			
-			addQueue(url, iv);
-			
-			BitmapAjaxCallback cb = new BitmapAjaxCallback();
-			
-			cb.imageView(iv).targetWidth(targetWidth).fallback(resId).preset(preset).animation(animation).ratio(ratio);
-			cb.url(url).memCache(memCache).fileCache(fileCache);
+			addQueue(url, iv, cb);			
 			cb.async(context);
 			
 		}else{		
-			addQueue(url, iv);
+			presetBitmap(iv, url, preset, animation, ratio);
+			addQueue(url, iv, cb);
 		}
 		
 	}
 	
-	private static void addQueue(String url, ImageView iv){
+	private static void addQueue(String url, ImageView iv, BitmapAjaxCallback cb){
 		
 		
-		WeakHashMap<ImageView, Void> ivs = queueMap.get(url);
+		WeakHashMap<ImageView, BitmapAjaxCallback> ivs = queueMap.get(url);
 		
 		if(ivs == null){
 			
 			if(queueMap.containsKey(url)){
 				//already a image view fetching
-				ivs = new WeakHashMap<ImageView, Void>();
-				ivs.put(iv, null);
+				ivs = new WeakHashMap<ImageView, BitmapAjaxCallback>();
+				ivs.put(iv, cb);
 				queueMap.put(url, ivs);
 			}else{
 				//register a view by putting a url with no value
@@ -625,7 +629,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			
 		}else{
 			//add to list of image views
-			ivs.put(iv, null);
+			ivs.put(iv, cb);
 			
 		}
 		

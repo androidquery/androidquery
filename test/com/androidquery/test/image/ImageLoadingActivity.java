@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.Layout;
@@ -21,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
@@ -132,24 +134,10 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_ratio(){
 		
-		aq.id(R.id.image).visible().width(LayoutParams.FILL_PARENT);
+		aq.id(R.id.image).width(LayoutParams.FILL_PARENT);
 		
-		//String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
-		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
-		//String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
-		
-		//BitmapAjaxCallback cb = new BitmapAjaxCallback();
-		//cb.ratio(AQuery.RATIO_PRESERVE).url(imageUrl);
-		
-		//aq.id(R.id.image).visible().width(LayoutParams.FILL_PARENT).image(cb);
-		
-		//BitmapAjaxCallback.async(this, aq.getImageView(), imageUrl, true, true, 0, 0, null, 0, AQuery.RATIO_PRESERVE);
-		
-		//BitmapAjaxCallback.async(this, aq.getImageView(), imageUrl, true, true, 0, 0, null, 0, 1.0f);
-	
-		Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
-		
-		aq.image(imageUrl, false, false, 0, 0, bm, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
+		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
+		aq.image(imageUrl, false, false, 0, 0, null, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
 	
 	}
 	
