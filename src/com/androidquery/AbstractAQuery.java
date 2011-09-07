@@ -410,13 +410,35 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId){
 		
+		/*
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;			
 			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, 0);
 		}
 		
 		return self();
+		*/
+		
+		return image(url, memCache, fileCache, targetWidth, fallbackId, preset, animId, 0);
 	}
+	
+	/**
+	 * Set the image of an ImageView.
+	 *
+	 * @param url The image url.
+	 * @param memCache Use memory cache.
+	 * @param fileCache Use file cache.
+	 * @param targetWidth Target width for down sampling when reading large images. 0 = no downsampling.
+	 * @param fallbackId Fallback image if result is network fetch and image convert failed. 0 = no fallback. 
+	 * @param preset Default image to show before real image loaded. null = no preset.
+	 * @param animId Apply this animation when image is loaded. 0 = no animation. Also accept AQuery.FADE_IN as a predefined 500ms fade in animation.
+	 * @param ratio The desired aspect ratio of the imageview. Ratio is height / width, or AQuery.RATIO_PRESERVE to preserve the original aspect ratio of the image.
+	 * @return self
+	 * 
+	 * @see testImage12
+	 * 
+	 */
+	
 	
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio){
 		
