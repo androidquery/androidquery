@@ -88,7 +88,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		String url = getUrl();
 		
 		if(url == null){
-			//setBitmap(iv.get(), null, null);
 			setBitmap(url, iv.get(), null, null, animation, ratio, false);
 			return;
 		}
@@ -510,10 +509,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
         float scale;
         float dx = 0, dy = 0;
         
-        
-        //Utility.debug("dwh", dwidth, dheight);
-        
-        
         Matrix m = new Matrix();
         
         if (dwidth * vheight >= vwidth * dheight) {
@@ -527,11 +522,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			
 			dy = (vheight - dheight * scale) * sy;
 		}
-        
-        
-        	        
-        //Utility.debug("scale", scale, dx, dy);	        
-        
         
         m.setScale(scale, scale);
         m.postTranslate(dx, dy);
