@@ -29,6 +29,7 @@ import java.util.WeakHashMap;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AccelerateInterpolator;
@@ -38,6 +39,7 @@ import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -426,12 +428,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	private static int getWidth(ImageView iv){
 		
 		int vw = iv.getWidth();		
-		
-		AQUtility.debug("vw", vw + ":" + iv.getLayoutParams().width);
-	
 		if(vw <= 0) vw = iv.getLayoutParams().width;
-	
-		
 		return vw;
 		
 	}
@@ -445,11 +442,13 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		AQUtility.debug("ratio", ratio);
 		
+		float r = ratio;
+		
 		if(bm != null && ratio == RATIO_PRESERVE){
-			ratio = ((float) bm.getHeight()) / ((float) bm.getWidth());
+			r = ((float) bm.getHeight()) / ((float) bm.getWidth());
 		}
 		
-		int vh = (int) (vw * ratio);
+		int vh = (int) (vw * r);
 		
 		AQUtility.debug("to", vw + "x" + vh);
 		
@@ -457,7 +456,63 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		lp.height = vh;
 		iv.setLayoutParams(lp);
 		
+		Matrix m = null;
+		if(bm != null){
+			m = makeMatrix(bm.getWidth(), bm.getHeight(), vw, vh);		
+			AQUtility.debug("matrix", m);
+			
+		}
+		iv.setScaleType(ScaleType.MATRIX);
+		iv.setImageMatrix(m);
 	}
+	
+    private static Matrix makeMatrix(int dwidth, int dheight, int vwidth, int vheight){
+    	
+    	if(dwidth <= 0 || dheight <= 0 || vwidth <= 0 || vheight <= 0) return null;
+    		
+        float scale;
+        float dx = 0, dy = 0;
+        
+        
+        //Utility.debug("dwh", dwidth, dheight);
+        
+        
+        Matrix m = new Matrix();
+        
+        if (dwidth * vheight >= vwidth * dheight) {
+        	//if image is super wider
+			scale = (float) vheight / (float) dheight;
+			dx = (vwidth - dwidth * scale) * 0.5f;
+		} else {
+			//if image is taller
+			scale = (float) vwidth / (float) dwidth;	
+			float sy = getYOffset(dwidth, dheight);
+			
+			dy = (vheight - dheight * scale) * sy;
+		}
+        
+        
+        	        
+        //Utility.debug("scale", scale, dx, dy);	        
+        
+        
+        m.setScale(scale, scale);
+        m.postTranslate(dx, dy);
+    	
+    	return m;
+    	
+    }
+	
+    private static float getYOffset(int vwidth, int vheight){
+    	
+    	float ratio = (float) vheight / (float) vwidth;
+    	
+    	ratio = Math.min(1.5f, ratio);
+    	ratio = Math.max(1, ratio);
+    	
+    	return  0.25f + ((1.5f - ratio) / 2.0f);
+    	
+    }
 	
 	
 	private static void animate(ImageView iv, Bitmap bm, int animId){
@@ -498,7 +553,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		iv.setTag(url);
 		
 		if(bm != null){			
-			showBitmap(iv, bm, 0, null, 0, -1);
+			showBitmap(iv, bm, 0, null, 0, 0);
 		}else{
 			//AQUtility.debug("set bitmap", bm);
 			iv.setImageBitmap(null);	
