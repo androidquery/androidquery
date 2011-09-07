@@ -48,7 +48,7 @@ import com.androidquery.util.AQUtility;
 import com.androidquery.util.BitmapCache;
 import com.androidquery.util.Constants;
 
-public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
+public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxCallback>{
 
 	private static int SMALL_MAX = 20;
 	private static int BIG_MAX = 20;
@@ -428,7 +428,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 	
 	private static void setBitmap(final String url, final ImageView iv, final Bitmap bm, final Bitmap preset, final int animation, final float ratio, boolean async){
 		
-		
 		if(needAsyncRatio(ratio, iv)){
 			
 			if(!async){
@@ -476,8 +475,6 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 			return;
 		}
 		
-		//AQUtility.debug("ratio", ratio);
-		
 		float r = ratio;
 		
 		if(bm != null && ratio == RATIO_PRESERVE){
@@ -486,17 +483,13 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		int vh = (int) (vw * r);
 		
-		//AQUtility.debug("to", vw + "x" + vh);
-		
 		LayoutParams lp = iv.getLayoutParams();
 		lp.height = vh;
 		iv.setLayoutParams(lp);
 		
 		Matrix m = null;
 		if(bm != null){
-			m = makeMatrix(bm.getWidth(), bm.getHeight(), vw, vh);		
-			//AQUtility.debug("matrix", m);
-			
+			m = makeMatrix(bm.getWidth(), bm.getHeight(), vw, vh);					
 		}
 		iv.setScaleType(ScaleType.MATRIX);
 		iv.setImageMatrix(m);
@@ -585,8 +578,7 @@ public class BitmapAjaxCallback extends AjaxCallback<Bitmap>{
 		
 		BitmapAjaxCallback cb = new BitmapAjaxCallback();
 		
-		cb.imageView(iv).targetWidth(targetWidth).fallback(resId).preset(preset).animation(animation).ratio(ratio);
-		cb.url(url).memCache(memCache).fileCache(fileCache);
+		cb.url(url).memCache(memCache).fileCache(fileCache).imageView(iv).targetWidth(targetWidth).fallback(resId).preset(preset).animation(animation).ratio(ratio);
 		
 		if(!queueMap.containsKey(url)){
 			
