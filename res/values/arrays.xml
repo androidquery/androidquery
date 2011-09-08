@@ -49,6 +49,8 @@
         <item>File Custom Callback</item>
         <item>Duplicated URL</item>    
         
+        <item>BitmapAjaxCallback (Advance)</item> 
+        
         <item>Access Cached Images (File)</item> 
         <item>Access Cached Images (Memory)</item> 
         
@@ -73,7 +75,10 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file_custom</item>
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_dup</item>  
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_dup</item>
+        
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_advance</item>
+          
         <item>com.androidquery.test.image.ImageLoadingActivity:image_access_file</item> 
         <item>com.androidquery.test.image.ImageLoadingActivity:image_access_memory</item>    
     </string-array>
@@ -103,6 +108,9 @@
         <item>image_file</item>
         <item>image_file_custom</item>
         <item>image_dup</item>
+        
+        <item>image_advance</item>
+        
         <item>image_access_file</item>
         <item>image_access_memory</item>
               
@@ -132,6 +140,9 @@
         <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>
         <item>Async Image Load from File with Custom Callback</item>
         <item>Auto Detect Duplicated Request</item>
+        
+        <item>Using BitmapAjaxCallback Directly</item>
+        
         <item>Access Cached Images (Raw File)</item>
         <item>Access Cached Images (Memory cached Bitmap)</item>     
                

@@ -205,6 +205,19 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	public void image_advance(){
+		
+		aq.id(R.id.image).width(LayoutParams.FILL_PARENT);
+		
+		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
+	
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.url(imageUrl).animation(AQuery.FADE_IN).ratio(1.0f);
+		
+		aq.id(R.id.image).image(cb);
+		
+	}
+	
 	public void image_access_file(){
 		
 		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";

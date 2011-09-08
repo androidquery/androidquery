@@ -57,6 +57,7 @@ public class ImageLoadingAspectRatioActivity extends RunSourceActivity {
 		
 		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
 		
+		
 		aq.id(R.id.image1).image(imageUrl, true, true, 0, 0, null, 0, AQuery.RATIO_PRESERVE);
 		aq.id(R.id.text1).text("Original Aspect Ratio");
 		
@@ -71,6 +72,7 @@ public class ImageLoadingAspectRatioActivity extends RunSourceActivity {
 		
 		aq.id(R.id.image5).image(imageUrl, true, true, 0, 0, null, 0, 3.0f / 4.0f);
 		aq.id(R.id.text5).text("3:4");
+		
 		
 		
 	}

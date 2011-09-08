@@ -1,0 +1,10 @@
+	public void image_advance(){
+		
+		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
+	
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.url(imageUrl).animation(AQuery.FADE_IN).ratio(1.0f);
+		
+		aq.id(R.id.image).image(cb);
+		
+	}
