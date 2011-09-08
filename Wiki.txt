@@ -257,3 +257,22 @@ ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.conten
 };
 
 aq.id(R.id.list).adapter(aa);
+
+
+@Override
+protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    
+	Drawable draw = getDrawable();
+	
+	int vwidth = MeasureSpec.getSize(widthMeasureSpec);
+	int vheight = MeasureSpec.getSize(heightMeasureSpec);
+    
+	
+	if(draw != null){
+		double r = getRatio(draw);
+		vheight = (int) Math.ceil(vwidth * r);
+	}   
+	
+    setMeasuredDimension(vwidth, vheight);   
+    
+}

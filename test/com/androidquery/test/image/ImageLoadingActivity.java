@@ -54,7 +54,10 @@ public class ImageLoadingActivity extends RunSourceActivity {
 			load("http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg");
 		}else if("image_preload".equals(type)){
 			image_prepreload();
+		}else if("image_ratio".equals(type)){
+			aq.id(R.id.image).width(LayoutParams.FILL_PARENT);
 		}
+			
 		
 			
 	}
@@ -134,10 +137,10 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_ratio(){
 		
-		aq.id(R.id.image).width(LayoutParams.FILL_PARENT);
+		
 		
 		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
-		aq.image(imageUrl, false, false, 0, 0, null, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
+		aq.id(R.id.image).image(imageUrl, true, true, 0, 0, null, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
 	
 	}
 	

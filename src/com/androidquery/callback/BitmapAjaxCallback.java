@@ -424,7 +424,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 					public void run() {
 						setBitmap(url, iv, bm, preset, animation, ratio, true);
 					}
-				}, 50);
+				}, 100);
 				
 			}
 			return;
