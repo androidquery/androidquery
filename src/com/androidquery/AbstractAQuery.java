@@ -404,15 +404,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId){
 		
-		/*
-		if(view instanceof ImageView){
-			ImageView iv = (ImageView) view;			
-			BitmapAjaxCallback.async(getContext(), iv, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, 0);
-		}
-		
-		return self();
-		*/
-		
 		return image(url, memCache, fileCache, targetWidth, fallbackId, preset, animId, 0);
 	}
 	
@@ -722,7 +713,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public Object getTag(){
 		Object result = null;
 		if(view != null){
-			view.getTag();
+			result = view.getTag();
 		}
 		return result;
 	}
