@@ -58,12 +58,10 @@ import com.androidquery.util.AccountHandle;
 
 public class AjaxCallback<T> extends AbstractAjaxCallback<T, AjaxCallback<T>>{
 	
-	protected AjaxCallback(){		
+	public AjaxCallback(){		
 	}
 	
-	public AjaxCallback(Class<T> type){		
-		type(type);
-	}
+	
 }
 
 

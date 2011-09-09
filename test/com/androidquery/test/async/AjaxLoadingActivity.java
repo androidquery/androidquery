@@ -125,4 +125,51 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	public void async_method_cb(){
+	    
+        String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+        progress(true);        
+        aq.ajax(url, JSONObject.class, this, "jsonCb");
+           
+	}	
+	
+	public void async_cached(){
+	    
+		String url = "http://www.google.com";
+
+		progress(true);
+		
+		aq.ajax(url, String.class, 15 * 60 * 1000, new AjaxCallback<String>() {
+
+	        @Override
+	        public void callback(String url, String html, AjaxStatus status) {
+	             
+	        	progress(false);
+	        	
+	        	showResult(html);
+	        }
+		        
+		});
+	        
+	}
+	
+	public void async_advance(){
+	    
+        String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+        progress(true);
+        
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();        
+        cb.url(url).type(JSONObject.class).weakHandler(this, "jsonCb").fileCache(true).expire(0);
+        
+        aq.ajax(cb);
+	        
+	}	
+	
+	public void jsonCb(String url, JSONObject json, AjaxStatus status) {
+		progress(false);   	
+        showResult(json);
+	}
+	
 }

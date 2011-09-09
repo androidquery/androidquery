@@ -1,0 +1,15 @@
+	public void async_cached(){
+	    
+		String url = "http://www.google.com";
+
+		aq.ajax(url, String.class, 15 * 60 * 1000, new AjaxCallback<String>() {
+
+	        @Override
+	        public void callback(String url, String html, AjaxStatus status) {
+	             
+	        	showResult(html);
+	        }
+		        
+		});
+	        
+	}

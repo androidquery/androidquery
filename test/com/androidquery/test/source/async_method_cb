@@ -1,0 +1,8 @@
+	public void async_method_cb(){	    
+        String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";      
+        aq.ajax(url, JSONObject.class, this, "jsonCb");           
+	}	
+	
+	public void jsonCb(String url, JSONObject json, AjaxStatus status) {
+        showResult(json);
+	}

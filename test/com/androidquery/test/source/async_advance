@@ -1,0 +1,14 @@
+	public void async_advance(){
+	    
+        String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();        
+        cb.url(url).type(JSONObject.class).weakHandler(this, "jsonCb").fileCache(true).expire(0);
+        
+        aq.ajax(cb);
+	        
+	}	
+	
+	public void jsonCb(String url, JSONObject json, AjaxStatus status) {
+        showResult(json);
+	}

@@ -1221,12 +1221,40 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * Ajax call with various callback data types with file caching.
+	 * 
+	 * The expire param is the duration to consider cached data expired (if hit).
+	 * For example, expire = 15 * 60 * 1000 means if the cache data is within 15 minutes old, 
+	 * return cached data immediately, otherwise go fetch the source again.
+	 * 
+	 *
+	 * @param url url
+	 * @param type data type
+	 * @param expire duration in millseconds, 0 = always use cache
+	 * @param callback callback handler
+	 * @return self
+	 * 
+	 * @see testAjax6
+	 */
+	
+	public <K> T ajax(String url, Class<K> type, long expire, AjaxCallback<K> callback){
+		
+		callback.type(type).url(url).fileCache(true).expire(expire).async(getContext());
+		
+		return self();
+	}
+	
+	
+	
+	
+	/**
 	 * Ajax call with various callback data types.
 	 *
 	 * The handler signature must be (String url, <K> object, AjaxStatus status)
 	 *
 	 * @param url url
 	 * @param type data type
+	 * @param handler the handler object with the callback method to be called
 	 * @param callback callback method name
 	 * @return self
 	 * 
@@ -1236,11 +1264,38 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public <K> T ajax(String url, Class<K> type, Object handler, String callback){
 		
 		
-		AjaxCallback<K> cb = new AjaxCallback<K>(type);
-		cb.weakHandler(handler, callback);
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.type(type).weakHandler(handler, callback);
 		
 		return ajax(url, type, cb);
 		
+	}
+	
+	
+	/**
+	 * Ajax call with various callback data types with file caching.
+	 * 
+	 * The expire param is the duration to consider cache data expired (if hit).
+	 * For example, expire = 15 * 60 * 1000 means if the cache data is within 15 minutes old, 
+	 * return cached data immediately, otherwise go fetch the source again.
+	 * 
+	 *
+	 * @param url url
+	 * @param type data type
+	 * @param expire duration in millseconds, 0 = always use cache
+	 * @param handler the handler object with the callback method to be called
+	 * @param callback callback method name
+	 * @return self
+	 * 
+	 * @see testAjax7
+	 */
+	
+	public <K> T ajax(String url, Class<K> type, long expire, Object handler, String callback){
+		
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.type(type).weakHandler(handler, callback).fileCache(true).expire(expire);
+		
+		return ajax(url, type, cb);
 	}
 	
 	/**
@@ -1281,8 +1336,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, Object handler, String callback){
 		
 		
-		AjaxCallback<K> cb = new AjaxCallback<K>(type);
-		cb.weakHandler(handler, callback);
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.type(type).weakHandler(handler, callback);
 		
 		return ajax(url, params, type, cb);
 		

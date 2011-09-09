@@ -55,7 +55,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		}else if("image_preload".equals(type)){
 			image_prepreload();
 		}else if("image_ratio".equals(type)){
-			aq.id(R.id.image).width(320);
+			aq.id(R.id.image).width(250);
 		}
 			
 		
