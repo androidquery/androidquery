@@ -12,11 +12,11 @@
 <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>     
 
 
-<div id='app433' class='appbrain-app'> <a href='http://www.appbrain.com/app/androidquery/com.androidquery' style='font-size: 11px; color: #555; font-family: Arial, sans-serif;'> AndroidQuery API Demo </a></div>
+<div id="app433" class="appbrain-app" style="float:left;"> <a href="http://www.appbrain.com/app/androidquery/com.androidquery" style="font-size: 11px; color: #555; font-family: Arial, sans-serif;"> AndroidQuery API Demo </a></div>
 <script type='text/javascript' language='javascript' src='http://www.appbrain.com/api/api.nocache.js'></script> 
 
 <a href="https://github.com/androidquery/androidquery">
-<img src="http://a248.e.akamai.net/assets.github.com/images/modules/header/logov6-hover.png" width="100"/>
+<img src="http://a248.e.akamai.net/assets.github.com/images/modules/header/logov6-hover.png" width="100" style="float: left;margin-top:20px;margin-left:20px;"/>
 </a>
 
 </div>
