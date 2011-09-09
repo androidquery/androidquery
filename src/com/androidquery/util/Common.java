@@ -17,7 +17,6 @@
 package com.androidquery.util;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.Comparator;
 
 import android.text.Editable;

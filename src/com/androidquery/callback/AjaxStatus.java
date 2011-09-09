@@ -1,10 +1,7 @@
 package com.androidquery.callback;
 
 import java.util.Date;
-import java.util.List;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 public class AjaxStatus {
