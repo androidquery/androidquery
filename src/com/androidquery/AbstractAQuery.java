@@ -31,6 +31,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.Adapter;
@@ -1393,6 +1396,40 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Starts an animation on the view.
+	 * @param animId Id of the desired animation.
+	 * @return self
+	 */
+	public T startAnimation(int animId){
+		Animation anim = AnimationUtils.loadAnimation(view.getContext(), animId);
+		return startAnimation(anim);
+	}
+	
+	/**
+	 * Starts an animation on the view.
+	 * @param animId Id of the desired animation.
+	 * @param listener The listener to recieve notifications from the animation on its events.
+	 * @return
+	 */
+	public T startAnimation(int animId, AnimationListener listener){
+		Animation anim = AnimationUtils.loadAnimation(view.getContext(), animId);
+		anim.setAnimationListener(listener);
+		return startAnimation(anim);
+	}
+	
+	/**
+	 * Starts an animation on the view.
+	 * @param anim The desired animation.
+	 * @return
+	 */
+	public T startAnimation(Animation anim){
+		if(anim != null){
+			view.startAnimation(anim);
+		}
+		return self();
 	}
 	
 }
