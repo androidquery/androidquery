@@ -5,13 +5,15 @@
    
     <string-array name="top_names">
         <item>Async network demo</item>
-        <item>Image loading demo</item>  
+        <item>Image loading demo</item> 
+        <item>Google service demo</item>  
         <item>javadoc</item>        
     </string-array>
     
     <string-array name="top_values">
         <item>com.androidquery.test.IntentListActivity:async</item>
         <item>com.androidquery.test.IntentListActivity:image</item>
+        <item>com.androidquery.test.IntentListActivity:auth</item>
         <item>com.androidquery.test.IntentListActivity</item>
     </string-array>
   
@@ -89,6 +91,17 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_access_memory</item>    
     </string-array>
     
+  	<string-array name="auth_names">
+        <item>Google Reader (Pick Account)</item>  
+        <item>Google Reader (Active Account)</item>  
+        <item>Google Reader (Specific Account)</item>    
+    </string-array>
+  
+  	<string-array name="auth_values">
+        <item>com.androidquery.test.async.AjaxAuthActivity:auth_pick_account</item>  
+        <item>com.androidquery.test.async.AjaxAuthActivity:auth_last_account</item>  
+        <item>com.androidquery.test.async.AjaxAuthActivity:auth_specific_account</item>
+    </string-array>    
     
     <string-array name="source_keys">
         
@@ -123,6 +136,9 @@
         <item>image_access_file</item>
         <item>image_access_memory</item>
               
+        <item>auth_pick_account</item>  
+        <item>auth_last_account</item>      
+        <item>auth_specific_account</item> 
     </string-array>
     
     <string-array name="source_title">
@@ -158,7 +174,9 @@
         <item>Access Cached Images (Raw File)</item>
         <item>Access Cached Images (Memory cached Bitmap)</item>     
                
-            
+        <item>Google Reader (user select account)</item> 
+        <item>Google Reader (remember last selected account, pick if first uses)</item> 
+        <item>Google Reader (app manage and specify account)</item>    
     </string-array>
     
 </resources>

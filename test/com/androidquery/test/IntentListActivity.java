@@ -58,6 +58,8 @@ public class IntentListActivity extends ListActivity {
 			return new int[]{R.array.async_names, R.array.async_values};
 		}else if("image".equals(type)){
 			return new int[]{R.array.image_names, R.array.image_values};
+		}else if("auth".equals(type)){
+			return new int[]{R.array.auth_names, R.array.auth_values};
 		}else{
 			return new int[]{R.array.top_names, R.array.top_values};
 		}

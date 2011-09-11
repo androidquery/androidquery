@@ -1,0 +1,12 @@
+	public void auth_specific_account(){
+		
+		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
+		
+		AjaxCallback<String> cb = new AjaxCallback<String>();
+  
+		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
+		cb.auth(this, "reader", "someone@gmail.com");
+  
+		aq.ajax(cb);
+	        
+	}	

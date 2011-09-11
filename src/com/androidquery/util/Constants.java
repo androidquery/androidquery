@@ -29,5 +29,6 @@ public interface Constants {
 	public final int GONE = -2;
 	public final int FADE_IN = -1;
 	public final float RATIO_PRESERVE = Float.MAX_VALUE;
+	public final String ACTIVE_ACCOUNT = "aq.account";
 	
 }

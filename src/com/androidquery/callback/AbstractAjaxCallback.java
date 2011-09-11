@@ -47,6 +47,7 @@ import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -181,7 +182,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private void callback(){
 		
 		if(callback != null){
-			
 			Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
 			AQUtility.invokeHandler(getHandler(), callback, true, AJAX_SIG, DEFAULT_SIG, url, result, status);			
 		}else{		
@@ -294,7 +294,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	public void async(Context context){
+		
+		if(ah != null){
+			
+			if(ah.needToken()){
+				ah.async(this);
+				return;
+			}
+			
+			if(ah.getToken() == null){
+				status = new AjaxStatus(401, "Auth failed.", url, null, new Date(), true);
+				callback();
+				return;
+			}
+		}
+		
 		work(context, true);
+		
+	
 	}
 	
 	
@@ -315,17 +332,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}else{
 		
 			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
-			if(account != null && android.os.Build.VERSION.SDK_INT >= 5){
-				//acc.findAccount(context);
-				ah = AccountHandle.makeHandle(context, account, authType);
-			}
 			
-			if(async){
-			
-				execute();
-			
+			if(async){			
+				execute();			
 			}else{
-				
 				backgroundWork();
 				afterWork();
 			}
@@ -434,18 +444,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		try{
 			
-			//authenticate if needed
-			boolean auth = ah != null;
-			if(auth){
-				authToken(ah.setupAuthToken(false));
-			}
-			
 			status = network();
 			
-			if(auth && status.getCode() == 401){
-				AQUtility.debug("reauth needed!");
-				
-				authToken(ah.setupAuthToken(true));
+			if(ah != null && status.getCode() == 401){
+				AQUtility.debug("reauth needed!");				
+				authToken(ah.reauth());
 				status = network();
 			}
 			
@@ -656,13 +659,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	private String authType;
-	private String account;
-	
-	public K auth(String authType, String account){
-		this.authType = authType;
-		this.account = account;
+	public K auth(Activity act, String type, String account){
+		
+		if(android.os.Build.VERSION.SDK_INT >= 5){		
+			ah = new AccountHandle(act, type, account);
+		}
 		return self();
+		
 	}
 	
 
