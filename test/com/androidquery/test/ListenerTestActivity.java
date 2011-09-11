@@ -7,11 +7,9 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;

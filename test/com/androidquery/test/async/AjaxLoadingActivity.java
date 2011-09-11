@@ -7,7 +7,6 @@ import org.json.JSONObject;
 
 import android.os.Bundle;
 
-import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;

@@ -1,19 +1,11 @@
 package com.androidquery.test.async;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONObject;
-
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.androidquery.AQuery;
-import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;
-import com.androidquery.test.TestQuery;
 import com.androidquery.util.AQUtility;
 
 public class AjaxAuthActivity extends RunSourceActivity {

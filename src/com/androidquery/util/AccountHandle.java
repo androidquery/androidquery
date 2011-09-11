@@ -2,26 +2,22 @@ package com.androidquery.util;
 
 import java.io.IOException;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AbstractAjaxCallback;
-import com.androidquery.callback.AjaxCallback;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
+import com.androidquery.AQuery;
+import com.androidquery.callback.AbstractAjaxCallback;
 
 
 
