@@ -95,7 +95,8 @@
         <item>Google Reader (Pick Account)</item>  
         <item>Google Reader (Active Account)</item>  
         <item>Google Reader (Specific Account)</item>    
-        <item>Picasa</item>    
+        <item>Picasa</item> 
+        <item>YouTube</item>    
     </string-array>
   
   	<string-array name="auth_values">
@@ -103,6 +104,7 @@
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_last_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_specific_account</item>
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_picasa</item>
+        <item>com.androidquery.test.async.AjaxAuthActivity:auth_youtube</item>
     </string-array>    
     
     <string-array name="source_keys">
@@ -143,7 +145,7 @@
         <item>auth_specific_account</item> 
         
         <item>auth_picasa</item> 
-        
+        <item>auth_youtube</item>
     </string-array>
     
     <string-array name="source_title">
@@ -179,11 +181,12 @@
         <item>Access Cached Images (Raw File)</item>
         <item>Access Cached Images (Memory cached Bitmap)</item>     
                
-        <item>Google Reader (user select account)</item> 
+        <item>Google Reader (user select account, if multiple)</item> 
         <item>Google Reader (remember last selected account, pick if first uses)</item> 
         <item>Google Reader (app manage and specify account)</item>    
         
-        <item>Picasa</item> 
+        <item>Picasa Example - Get list of user albums.</item> 
+        <item>YouTube Example - Get user subscriptions.</item> 
         
     </string-array>
     

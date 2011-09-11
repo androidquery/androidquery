@@ -97,6 +97,8 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 		progress(false);
 		
+		showResult(jo);
+		
 		if(jo != null){
 			
 			JSONArray entries = jo.optJSONObject("feed").optJSONArray("entry");
@@ -112,9 +114,6 @@ public class AjaxAuthActivity extends RunSourceActivity {
 					AQUtility.debug("tb", tb);
 					
 					aq.id(R.id.image).image(tb);
-					
-					showResult(jo);
-					
 					break;
 				}
 			}
@@ -124,6 +123,40 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	}
 	
+	public void auth_youtube(){
+		
+		progress(true);
+		
+		String url = "https://gdata.youtube.com/feeds/api/users/default/subscriptions?v=2&alt=json";
+		//String url = "http://gdata.youtube.com/feeds/api/users/default?v=2&alt=json";
+		
+		//String url = "http://gdata.youtube.com/schemas/2007#user.newsubscriptionvideos";
+		
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(); 
+		cb.url(url).type(JSONObject.class).weakHandler(this, "youtubeCb");  
+		
+		
+		/*
+		AjaxCallback<String> cb = new AjaxCallback<String>(); 
+		cb.url(url).type(String.class).weakHandler(this, "stringCb"); 
+		*/
+		cb.auth(this, AQuery.AUTH_YOUTUBE, AQuery.ACTIVE_ACCOUNT);
+  
+		aq.ajax(cb);
+	        
+	}
+	
+	public void youtubeCb(String url, JSONObject jo, AjaxStatus status) {
+		
+		progress(false);
+		
+		if(jo != null){
+			AQUtility.debug(jo);
+			showResult(jo);
+		}
+	
+	}
 	
 	public void stringCb(String url, String str, AjaxStatus status) {
 		

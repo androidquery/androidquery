@@ -1,9 +1,12 @@
 	public void auth_pick_account(){
+	    	
+	    //Note: Required these permissions in AndroidManifest.xml			
+	    //<uses-permission android:name="android.permission.GET_ACCOUNTS" />	
+		//<uses-permission android:name="android.permission.USE_CREDENTIALS" />			
 	    				
 		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
 		
-		AjaxCallback<String> cb = new AjaxCallback<String>();
-  
+		AjaxCallback<String> cb = new AjaxCallback<String>();  
 		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
 		cb.auth(this, AQuery.AUTH_READER, null);
   
