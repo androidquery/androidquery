@@ -80,8 +80,7 @@ public class AccountHandle extends AsyncTask<String, String, Bundle> implements 
 	public String reauth(){
 		
 		
-		AQUtility.debug("expired invalidate");
-		am.invalidateAuthToken(type, token);
+		am.invalidateAuthToken(acc.type, token);
 		
 		try {
 			token = am.blockingGetAuthToken(acc, type, true);

@@ -30,5 +30,16 @@ public interface Constants {
 	public final int FADE_IN = -1;
 	public final float RATIO_PRESERVE = Float.MAX_VALUE;
 	public final String ACTIVE_ACCOUNT = "aq.account";
-	
+	public final String AUTH_READER = "reader";
+	public final String AUTH_PICASA = "lh2";
+	public final String AUTH_SPREADSHEETS = "wise";
+	public final String AUTH_YOUTUBE = "youtube";
+	public final String AUTH_ANALYTICS = "analytics";
+	public final String AUTH_BLOGGER = "blogger";
+	public final String AUTH_CALENDAR = "cl";
+	public final String AUTH_BUZZ = "buzz";
+	public final String AUTH_CONTACTS = "cp";
+	public final String AUTH_FINANCE = "finance";
+	public final String AUTH_MAPS = "local";
+
 }

@@ -1,8 +1,12 @@
 package com.androidquery.test.async;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import android.os.Bundle;
 
 import com.androidquery.AQuery;
+import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;
@@ -38,7 +42,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		AjaxCallback<String> cb = new AjaxCallback<String>();
   
 		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
-		cb.auth(this, "reader", null);
+		cb.auth(this, AQuery.AUTH_READER, null);
   
 		aq.ajax(cb);
 	        
@@ -53,7 +57,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		AjaxCallback<String> cb = new AjaxCallback<String>();
   
 		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
-		cb.auth(this, "reader", AQuery.ACTIVE_ACCOUNT);
+		cb.auth(this, AQuery.AUTH_READER, AQuery.ACTIVE_ACCOUNT);
   
 		aq.ajax(cb);
 	        
@@ -68,11 +72,58 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		AjaxCallback<String> cb = new AjaxCallback<String>();
   
 		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
-		cb.auth(this, "reader", AQuery.ACTIVE_ACCOUNT);
+		cb.auth(this, AQuery.AUTH_READER, AQuery.ACTIVE_ACCOUNT);
   
 		aq.ajax(cb);
 	        
 	}	
+	
+	public void auth_picasa(){
+		
+		progress(true);
+		
+		String url = "http://picasaweb.google.com/data/feed/api/user/default?alt=json";
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+  
+		cb.url(url).type(JSONObject.class).weakHandler(this, "picasaCb");  
+		cb.auth(this, AQuery.AUTH_PICASA, AQuery.ACTIVE_ACCOUNT);
+  
+		aq.ajax(cb);
+	        
+	}	
+	
+	public void picasaCb(String url, JSONObject jo, AjaxStatus status) {
+	
+		progress(false);
+		
+		if(jo != null){
+			
+			JSONArray entries = jo.optJSONObject("feed").optJSONArray("entry");
+			
+			AQUtility.debug(entries.toString());
+						
+			for(int i = 0; i < entries.length(); i++){
+				JSONObject entry = entries.optJSONObject(i);
+				JSONObject co = entry.optJSONObject("gphoto$numphotos");
+				int count = co.optInt("$t", 0);
+				if(count > 0){
+					String tb = entry.optJSONObject("media$group").optJSONArray("media$content").optJSONObject(0).optString("url");
+					AQUtility.debug("tb", tb);
+					
+					aq.id(R.id.image).image(tb);
+					
+					showResult(jo);
+					
+					break;
+				}
+			}
+			
+			
+		}
+	
+	}
+	
 	
 	public void stringCb(String url, String str, AjaxStatus status) {
 		
@@ -83,6 +134,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		}else{		
 			showResult(str);
 		}
+		
 	}
 
 	

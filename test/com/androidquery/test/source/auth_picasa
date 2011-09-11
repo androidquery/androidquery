@@ -1,0 +1,12 @@
+	public void auth_picasa(){
+		
+		String url = "http://picasaweb.google.com/data/feed/api/user/default?alt=json";
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+  
+		cb.url(url).type(JSONObject.class).weakHandler(this, "picasaCb");  
+		cb.auth(this, AQuery.AUTH_PICASA, AQuery.ACTIVE_ACCOUNT);
+  
+		aq.ajax(cb);
+	        
+	}	

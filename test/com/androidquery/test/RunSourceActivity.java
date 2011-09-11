@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -65,7 +68,26 @@ public class RunSourceActivity extends Activity {
 		
 	}
 	
+	protected void showResult(JSONObject result){
+		
+		String str = null;
+		
+		if(result != null){
+			try {
+				str = result.toString(2);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+		aq.id(R.id.result).visible().text(str);
+		
+	}
+	
 	protected void showResult(Object result){
+		
 		aq.id(R.id.result).visible().text(result + "");
 	}
 	

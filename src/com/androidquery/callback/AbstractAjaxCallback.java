@@ -446,7 +446,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			status = network();
 			
-			if(ah != null && status.getCode() == 401){
+			if(ah != null && (status.getCode() == 401 || status.getCode() == 403)){
 				AQUtility.debug("reauth needed!");				
 				authToken(ah.reauth());
 				status = network();

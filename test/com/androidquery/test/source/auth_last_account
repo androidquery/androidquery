@@ -5,7 +5,7 @@
 		AjaxCallback<String> cb = new AjaxCallback<String>();
   
 		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
-		cb.auth(this, "reader", AQuery.ACTIVE_ACCOUNT);
+		cb.auth(this, AQuery.AUTH_READER, AQuery.ACTIVE_ACCOUNT);
   
 		aq.ajax(cb);
 	        
