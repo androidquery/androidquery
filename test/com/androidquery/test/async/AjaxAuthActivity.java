@@ -119,6 +119,8 @@ public class AjaxAuthActivity extends RunSourceActivity {
 			}
 			
 			
+		}else{
+			showError(status);
 		}
 	
 	}
@@ -128,19 +130,10 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		progress(true);
 		
 		String url = "https://gdata.youtube.com/feeds/api/users/default/subscriptions?v=2&alt=json";
-		//String url = "http://gdata.youtube.com/feeds/api/users/default?v=2&alt=json";
-		
-		//String url = "http://gdata.youtube.com/schemas/2007#user.newsubscriptionvideos";
-		
 		
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(); 
-		cb.url(url).type(JSONObject.class).weakHandler(this, "youtubeCb");  
+		cb.url(url).type(JSONObject.class).weakHandler(this, "youtubeCb").fileCache(true).expire(15 * 60 * 1000);  
 		
-		
-		/*
-		AjaxCallback<String> cb = new AjaxCallback<String>(); 
-		cb.url(url).type(String.class).weakHandler(this, "stringCb"); 
-		*/
 		cb.auth(this, AQuery.AUTH_YOUTUBE, AQuery.ACTIVE_ACCOUNT);
   
 		aq.ajax(cb);
@@ -152,10 +145,71 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		progress(false);
 		
 		if(jo != null){
-			AQUtility.debug(jo);
-			showResult(jo);
+			
+			JSONArray entries = jo.optJSONObject("feed").optJSONArray("entry");
+			
+			if(entries.length() > 0){	
+				
+				String src = entries.optJSONObject(0).optJSONObject("content").optString("src");			
+				auth_youtube2(src + "&alt=json");
+			}else{
+				showResult(jo);				
+			}
+			
+			
+		}else{
+			showError(status);
 		}
 	
+	}
+	
+	private void auth_youtube2(String src){
+		
+		progress(true);
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(); 
+		cb.url(src).type(JSONObject.class).weakHandler(this, "youtubeCb2");  
+		
+		cb.auth(this, AQuery.AUTH_YOUTUBE, AQuery.ACTIVE_ACCOUNT);
+  
+		aq.ajax(cb);
+	        
+	}
+	
+	public void youtubeCb2(String url, JSONObject jo, AjaxStatus status) {
+		
+		progress(false);
+		
+		if(jo != null){
+			
+			JSONArray entries = jo.optJSONObject("feed").optJSONArray("entry");
+			
+			if(entries.length() > 0){	
+				showResult(entries);
+				JSONArray tbs = entries.optJSONObject(0).optJSONObject("media$group").optJSONArray("media$thumbnail");
+				
+				for(int i = 0; i < tbs.length(); i++){
+					JSONObject tbo = tbs.optJSONObject(i);
+					if("hqdefault".equals(tbo.optString("yt$name"))){
+						String tb = tbo.optString("url");							
+						aq.id(R.id.image).image(tb);
+						break;
+					}
+				}
+				
+				
+				
+			}else{			
+				showResult(jo);				
+			}
+		}else{
+			showError(status);
+		}
+	
+	}
+	
+	private void showError(AjaxStatus status){
+		showResult(status.getCode(), "This account might not exist for this service.");
 	}
 	
 	public void stringCb(String url, String str, AjaxStatus status) {

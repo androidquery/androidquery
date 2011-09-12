@@ -1,0 +1,12 @@
+	public void auth_youtube(){
+		
+		String url = "https://gdata.youtube.com/feeds/api/users/default/subscriptions?v=2&alt=json";
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(); 
+		cb.url(url).type(JSONObject.class).weakHandler(this, "youtubeCb").fileCache(true).expire(15 * 60 * 1000);  
+		
+		cb.auth(this, AQuery.AUTH_YOUTUBE, AQuery.ACTIVE_ACCOUNT);
+  
+		aq.ajax(cb);
+	        
+	}

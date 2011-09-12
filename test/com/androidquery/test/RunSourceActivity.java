@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -86,9 +87,32 @@ public class RunSourceActivity extends Activity {
 		
 	}
 	
+	protected void showResult(JSONArray result){
+		
+		String str = null;
+		
+		if(result != null){
+			try {
+				str = result.toString(2);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+		aq.id(R.id.result).visible().text(str);
+		
+	}
+	
 	protected void showResult(Object result){
 		
 		aq.id(R.id.result).visible().text(result + "");
+	}
+	
+	protected void showResult(int code, Object msg){
+		
+		showResult(code + ":" + msg);
 	}
 	
 	private static Map<String, String> titleMap;
