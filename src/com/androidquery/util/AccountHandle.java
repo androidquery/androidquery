@@ -94,6 +94,10 @@ public class AccountHandle extends AsyncTask<String, String, Bundle> implements 
 		
 	}
 	
+	public String getType(){
+		return type;
+	}
+	
 	private void accountDialog() {
 	    
         AlertDialog.Builder builder = new AlertDialog.Builder(act);
@@ -162,7 +166,7 @@ public class AccountHandle extends AsyncTask<String, String, Bundle> implements 
 	
 	private void startCb(){
 		
-		cb.authToken(token);
+		cb.authToken(type, token);
 		cb.async(act);
 		
 		act = null;

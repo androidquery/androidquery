@@ -448,7 +448,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			if(ah != null && (status.getCode() == 401 || status.getCode() == 403)){
 				AQUtility.debug("reauth needed!");				
-				authToken(ah.reauth());
+				authToken(ah.getType(), ah.reauth());
 				status = network();
 			}
 			
@@ -669,7 +669,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 
-	public K authToken(String token){
+	public K authToken(String type, String token){
 		if(token != null){
 			header("Authorization", "GoogleLogin auth=" + token);
 		}
