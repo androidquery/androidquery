@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView 
+	xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+>  
+
+	<LinearLayout 
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    >
+		
+		<ImageView
+			android:id="@+id/image"				
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal" 
+			android:adjustViewBounds="true"
+			android:visibility="visible"
+			android:layout_marginTop="10dip"	
+			android:layout_marginBottom="10dip"
+		/>
+		
+		<TextView
+			android:id="@+id/text"				
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal" 
+			android:adjustViewBounds="true"
+			android:visibility="visible"
+			android:layout_marginTop="10dip"	
+			android:layout_marginBottom="10dip"
+			android:text="Hello World"
+		/>
+	</LinearLayout>
+
+
+</ScrollView>

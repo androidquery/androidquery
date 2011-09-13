@@ -428,8 +428,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio){
 		
 		if(view instanceof ImageView){
-			ImageView iv = (ImageView) view;			
+			ImageView iv = (ImageView) view;	
+			
+			/*
 			BitmapAjaxCallback.async(iv, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio);
+			*/
+			
+			BitmapAjaxCallback cb = new BitmapAjaxCallback();		
+			cb.url(url).memCache(memCache).fileCache(fileCache).imageView(iv).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animId).ratio(ratio);			
+			cb.async(iv.getContext());
 		}
 		
 		return self();

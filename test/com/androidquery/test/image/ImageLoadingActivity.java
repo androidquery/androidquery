@@ -84,6 +84,9 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		String small = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";		
 		load(small);
 		
+		//aq.id(R.id.image).width(LayoutParams.FILL_PARENT);
+		
+		
 		aq.id(R.id.image).width(250).height(250).image(0).visible();
 		
 	}
@@ -93,6 +96,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	}
 	
 	public void image_preload(){
+		
 		
 		String thumbnail = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";	
 		Bitmap preset = aq.getCachedImage(thumbnail);
@@ -225,5 +229,18 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	
+	public void image_nocache(){
+		
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		
+		//force a network refetch without any caching
+		aq.id(R.id.image).image(url, false, false);
+		
+		//force no proxy cache by appending a random number 
+		String url2 = url + "?t=" + System.currentTimeMillis();
+		aq.id(R.id.image2).image(url2, false, false);
+		
+	}
 	
 }

@@ -1,0 +1,12 @@
+	public void image_nocache(){
+		
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		
+		//force a network refetch without any caching
+		aq.id(R.id.image).image(url, false, false);
+		
+		//force no proxy cache by appending a random number to url 
+		String url2 = url + "?t=" + System.currentTimeMillis();
+		aq.id(R.id.image2).image(url2, false, false);
+		
+	}

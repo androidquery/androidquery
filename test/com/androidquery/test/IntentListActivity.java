@@ -19,7 +19,9 @@ import com.androidquery.util.AQUtility;
 
 public class IntentListActivity extends ListActivity {
 
+	private boolean debug = false;
 	private AQuery aq;
+	private String type;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -27,20 +29,29 @@ public class IntentListActivity extends ListActivity {
 		AQUtility.setDebug(true);
 		
 		super.onCreate(savedInstanceState);
-				
-		aq = new AQuery(this);
+		
+		type = getIntent().getStringExtra("type");
 		
 		
+		aq = new AQuery(this);		
 		setContentView(R.layout.empty_list);
-		
 		aq.id(android.R.id.list).adapter(getAA()).itemClicked(this, "itemClicked");
 		
+		if(type == null && debug){
+			forward();
+		}
 
 	}
 	
+	private void forward(){
+		
+		Intent intent = new Intent(this, AdhocActivity.class);
+		this.startActivity(intent);
+	}
+	
+	
 	private int[] getResList(){
 		
-		String type = getIntent().getStringExtra("type");
 		
 		if("async".equals(type)){
 			return new int[]{R.array.async_names, R.array.async_values};

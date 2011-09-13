@@ -76,8 +76,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-
-	
 	public BitmapAjaxCallback targetWidth(int targetWidth){
 		this.targetWidth = targetWidth;
 		return this;
@@ -267,17 +265,20 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
+	private boolean completed;
 	private void checkCb(BitmapAjaxCallback cb, String url, ImageView iv, Bitmap bm, AjaxStatus status){
 		
 		if(iv == null || cb == null) return;
 		
 		if(url.equals(iv.getTag())){			
-			cb.callback(url, iv, bm, status);
+			cb.callback(url, iv, bm, status);			
 		}
+		
+		completed = true;
 	}
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
-		showBitmap(url, iv, bm, fallback, preset, animation, ratio);
+		showBitmap(url, iv, bm);
 	}
 
 	public static void setIconCacheLimit(int limit){
@@ -375,13 +376,14 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-	private static void showBitmap(String url, ImageView iv, Bitmap bm, int fallback, Bitmap preset, int animation, float ratio){
-		
+	private void showBitmap(String url, ImageView iv, Bitmap bm){
+			
 		
 		//ignore 1x1 pixels
 		if(bm != null && bm.getWidth() == 1 && bm.getHeight() == 1){        
 			bm = null;
 		}
+		
 		
 		if(bm != null){
 			iv.setVisibility(View.VISIBLE);
@@ -391,22 +393,25 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			iv.setVisibility(View.INVISIBLE);
 		}
 		
-		setBitmap(url, iv, bm, preset, animation, ratio, false);
+		
+		setBitmap(url, iv, bm, false, false);
 		
 	}
 	
-	private static void presetBitmap(ImageView iv, String url, Bitmap preset, int animation, float ratio){
+	private void presetBitmap(String url, ImageView iv){
 		
 		if(!url.equals(iv.getTag()) || preset != null){
 			
 			iv.setTag(url);
-			setBitmap(url, iv, preset, null, animation, ratio, false);
+			
+			//iv.setImageBitmap(null);
+			setBitmap(url, iv, preset, true, false);
 			
 		}
 		
 	}
 	
-	private static void setBitmap(final String url, final ImageView iv, final Bitmap bm, final Bitmap preset, final int animation, final float ratio, boolean async){
+	private void setBitmap(final String url, final ImageView iv, final Bitmap bm, final boolean isPreset, boolean async){
 		
 		if(needAsyncRatio(ratio, iv)){
 			
@@ -416,19 +421,27 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 					
 					@Override
 					public void run() {
-						setBitmap(url, iv, bm, preset, animation, ratio, true);
+						
+						if(!completed || !isPreset){						
+							setBitmap(url, iv, bm, isPreset, true);
+						}
 					}
 				}, 100);
 				
+			}else{
+				AQUtility.debug("skip set not rendered");
 			}
+			
+			
 			return;
 		}
 		
-		iv.setImageBitmap(bm);
 		
 		if(ratio > 0){
 			setRatio(iv, bm, ratio);
 		}
+		
+		iv.setImageBitmap(bm);
 		
 		if(animation != 0 && preset == null){			
 			animate(iv, bm, animation);
@@ -439,6 +452,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		int vw = iv.getWidth();		
 		if(vw <= 0) vw = iv.getLayoutParams().width;
+		
 		return vw;
 		
 	}
@@ -448,8 +462,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		int vw = getWidth(iv);
 		
-		if(vw <= 0){
-			AQUtility.debug("set ratio but has no width!");			
+		if(vw <= 0){		
 			return;
 		}
 		
@@ -543,13 +556,20 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		String url = getUrl();		
 		
 		if(url == null){
-			setBitmap(url, iv.get(), null, null, animation, ratio, false);
+			setBitmap(url, iv.get(), null, false, false);
 			return;
 		}
 		
 		ImageView iv = this.iv.get();
 		
-		presetBitmap(iv, url, preset, animation, ratio);
+		Bitmap bm = memGet(url, targetWidth);
+		if(bm != null){		
+			iv.setTag(url);
+			showBitmap(url, iv, bm);
+			return;
+		}
+		
+		presetBitmap(url, iv);
 		
 		if(!queueMap.containsKey(url)){
 			addQueue(url, iv);			
@@ -559,23 +579,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 	}
 	
-	public static void async(ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int resId, Bitmap preset, int animation, float ratio){
-		
-		//check memory
-		Bitmap bm = memGet(url, targetWidth);
-		if(bm != null){		
-			iv.setTag(url);
-			showBitmap(url, iv, bm, resId, preset, animation, ratio);
-			return;
-		}
-		
-		BitmapAjaxCallback cb = new BitmapAjaxCallback();		
-		cb.url(url).memCache(memCache).fileCache(fileCache).imageView(iv).targetWidth(targetWidth).fallback(resId).preset(preset).animation(animation).ratio(ratio);
-		
-		cb.async(iv.getContext());
-	}
-	
-	
+
 	
 	private void addQueue(String url, ImageView iv){
 		
