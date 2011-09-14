@@ -105,7 +105,8 @@
         <item>Google Reader (Active Account)</item>  
         <item>Google Reader (Specific Account)</item>    
         <item>Picasa</item> 
-        <item>YouTube</item>    
+        <item>YouTube</item> 
+        <item>Contacts</item>    
     </string-array>
   
   	<string-array name="auth_values">
@@ -114,6 +115,7 @@
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_specific_account</item>
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_picasa</item>
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_youtube</item>
+        <item>com.androidquery.test.async.AjaxAuthActivity:auth_contacts</item>
     </string-array>    
     
     <string-array name="source_keys">
@@ -160,6 +162,7 @@
         
         <item>auth_picasa</item> 
         <item>auth_youtube</item>
+        <item>auth_contacts</item>
     </string-array>
     
     <string-array name="source_title">
@@ -206,6 +209,7 @@
         
         <item>Picasa Example - Get list of user albums.</item> 
         <item>YouTube Example - Get user subscriptions.</item> 
+        <item>Google Contacts Example - Get list of contacts.</item>
         
     </string-array>
     

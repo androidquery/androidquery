@@ -208,6 +208,22 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	}
 	
+	public void auth_contacts(){
+		
+		showProgress(true);
+		
+		String url = "https://www.google.com/m8/feeds/contacts/default/full";
+		
+		AjaxCallback<String> cb = new AjaxCallback<String>();
+  
+		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
+		cb.auth(this, AQuery.AUTH_CONTACTS, AQuery.ACTIVE_ACCOUNT);
+  
+		aq.ajax(cb);
+	        
+	}
+	
+	
 	private void showError(AjaxStatus status){
 		showResult(status.getCode(), "This account might not exist for this service.");
 	}
