@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 
 public class IntentListActivity extends ListActivity {
@@ -23,10 +24,17 @@ public class IntentListActivity extends ListActivity {
 	private AQuery aq;
 	private String type;
 	
+	private static boolean init;
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		
-		AQUtility.setDebug(true);
+		if(!init){
+			AQUtility.setDebug(true);
+			BitmapAjaxCallback.setPixelLimit(600 * 600);
+			init = true;
+		}
 		
 		super.onCreate(savedInstanceState);
 		

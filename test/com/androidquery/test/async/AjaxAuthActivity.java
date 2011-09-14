@@ -35,7 +35,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void auth_pick_account(){
 	    		
-		progress(true);
+		showProgress(true);
 		
 		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
 		
@@ -50,7 +50,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void auth_last_account(){
 		
-		progress(true);
+		showProgress(true);
 		
 		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
 		
@@ -65,7 +65,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void auth_specific_account(){
 		
-		progress(true);
+		showProgress(true);
 		
 		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
 		
@@ -80,7 +80,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void auth_picasa(){
 		
-		progress(true);
+		showProgress(true);
 		
 		String url = "http://picasaweb.google.com/data/feed/api/user/default?alt=json";
 		
@@ -95,7 +95,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void picasaCb(String url, JSONObject jo, AjaxStatus status) {
 	
-		progress(false);
+		showProgress(false);
 		
 		showResult(jo);
 		
@@ -127,7 +127,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void auth_youtube(){
 		
-		progress(true);
+		showProgress(true);
 		
 		String url = "https://gdata.youtube.com/feeds/api/users/default/subscriptions?v=2&alt=json";
 		
@@ -142,7 +142,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void youtubeCb(String url, JSONObject jo, AjaxStatus status) {
 		
-		progress(false);
+		showProgress(false);
 		
 		if(jo != null){
 			
@@ -165,7 +165,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	private void auth_youtube2(String src){
 		
-		progress(true);
+		showProgress(true);
 		
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(); 
 		cb.url(src).type(JSONObject.class).weakHandler(this, "youtubeCb2");  
@@ -178,7 +178,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void youtubeCb2(String url, JSONObject jo, AjaxStatus status) {
 		
-		progress(false);
+		showProgress(false);
 		
 		if(jo != null){
 			
@@ -214,7 +214,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void stringCb(String url, String str, AjaxStatus status) {
 		
-		progress(false);   
+		showProgress(false);   
 		
 		if(status.getCode() == 401){
 			showResult("Authenticate Error with Http Response 401");

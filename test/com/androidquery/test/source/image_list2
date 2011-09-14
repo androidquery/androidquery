@@ -1,0 +1,18 @@
+		ArrayAdapter<String> aa = new ArrayAdapter<String>(this, R.layout.content_item_s, items){
+			
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				
+				if(convertView == null){
+					convertView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.content_item_s2, null);
+				}
+				
+				String url = getItem(position);
+				
+				AQuery aq = new AQuery(convertView);
+				aq.id(R.id.tb).image(url, true, true, 0, 0, null, 0, 1.5f);
+				
+				return convertView;
+				
+			}
+		};

@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -28,11 +29,20 @@ public class AdhocActivity extends RunSourceActivity {
 		
 		AQUtility.debug("adhoc");
 		
+		/*
 		String thumbnail = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";	
 		Bitmap preset = aq.getCachedImage(thumbnail);
 		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
 		aq.id(R.id.image).image(imageUrl, true, true, 0, 0, preset, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
+		*/
+		
+		String thumbnail = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";	
+		 ImageView imageView = new ImageView(this) ;
+        
+         AQuery aq = new AQuery(imageView);
+         aq.image(thumbnail, true, true, 0, 0, null, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
+         
 		
 	}
 	

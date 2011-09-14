@@ -14,6 +14,15 @@
 		android:textSize="12sp"	
 	/>
     
+    <!-- 
+    <ImageView
+        android:id="@+id/tb"       
+        android:layout_width="fill_parent"       
+        android:layout_height="wrap_content"
+        />
+    -->
+    
+    
     <ImageView
         android:id="@+id/tb"       
         android:layout_width="75dip"       

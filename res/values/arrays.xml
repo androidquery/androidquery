@@ -50,7 +50,8 @@
         <item>Aspect Ratio (Dynamic)</item>          
         <item>Aspect Ratio (Fixed)</item>  
         
-        <item>List Items</item>         
+        <item>List Items</item>  
+        <item>List Items (Aspect Ratio)</item>        
         
         <item>Custom Callback</item>        
         <item>File (Async)</item>
@@ -81,6 +82,8 @@
         
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
+        <item>com.androidquery.test.image.ImageLoadingList2Activity:image_list2</item>
+        
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
@@ -134,6 +137,8 @@
         <item>image_ratio_fixed</item>
         
         <item>image_list</item>
+        <item>image_list2</item>
+        
         <item>image_custom</item>
         <item>image_file</item>
         <item>image_file_custom</item>
@@ -176,6 +181,8 @@
         <item>Predefined Image Aspect Ratio</item>
         
         <item>Loading Image in List View Items</item>   
+        <item>Loading Image in List View with Aspect Ratio</item>   
+        
         
         <item>Async Image Load with Custom Callback</item>
         <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>

@@ -413,9 +413,11 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	private void setBitmap(final String url, final ImageView iv, final Bitmap bm, final boolean isPreset, boolean async){
 		
-		if(needAsyncRatio(ratio, iv)){
+		if(bm != null && needAsyncRatio(ratio, iv)){
 			
 			if(!async){
+				
+				AQUtility.debug("async image", bm);
 				
 				AQUtility.postDelayed(new Runnable() {
 					
@@ -451,7 +453,15 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private static int getWidth(ImageView iv){
 		
 		int vw = iv.getWidth();		
-		if(vw <= 0) vw = iv.getLayoutParams().width;
+		
+		if(vw <= 0){
+			LayoutParams lp = iv.getLayoutParams();
+			if(lp != null){
+				vw = lp.width;
+			}
+		}
+		
+		//AQUtility.debug("width", vw);
 		
 		return vw;
 		

@@ -51,6 +51,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.AccountHandle;
@@ -65,6 +67,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private Reference<Object> whandler;
 	private Object handler;
 	private String callback;
+	private WeakReference<ProgressBar> pbar;
 	
 	private String url;
 	private Map<String, Object> params;
@@ -177,9 +180,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	public K progress(ProgressBar pbar){
+		if(pbar != null){
+			this.pbar = new WeakReference<ProgressBar>(pbar);
+		}
+		return self();
+	}
+	
 	private static final Class<?>[] DEFAULT_SIG = {String.class, Object.class, AjaxStatus.class};	
 	
 	private void callback(){
+		
+		showProgress(false);
 		
 		if(callback != null){
 			Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
@@ -210,6 +222,20 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	private void showProgress(boolean show){
+		
+		if(pbar != null){
+			ProgressBar pb = pbar.get();
+			if(pb != null){
+				if(show){
+					pb.setVisibility(View.VISIBLE);
+				}else{
+					pb.setVisibility(View.GONE);
+				}
+			}
+		}
+		
+	}
 	
 	@SuppressWarnings("unchecked")
 	protected T transform(String url, byte[] data, AjaxStatus status){
