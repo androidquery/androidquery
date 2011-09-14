@@ -24,7 +24,8 @@
         <item>Http POST</item> 
         <item>Activity Method as Callback</item> 
         <item>Caching</item> 
-        <item>AjaxCallback</item>      
+        <item>AjaxCallback</item>   
+        <item>Http Request Headers</item>      
     </string-array>
   
   	<string-array name="async_values">
@@ -34,7 +35,8 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>    
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>    
     </string-array>
     
     <string-array name="image_names">
@@ -123,6 +125,7 @@
         <item>async_method_cb</item>  
         <item>async_cached</item>
         <item>async_advance</item>
+        <item>async_header</item>
         
         <item>image_simple</item>
         <item>image_cache</item>
@@ -167,6 +170,7 @@
         <item>Use Activity Method as Callback</item> 
         <item>Asynchronous HTTP Get with Cache Control</item>
         <item>Using AjaxCallback Directly</item>
+        <item>Setting HTTP Headers for Ajax Requests</item>
         
         <item>Asynchronous HTTP Image Load</item>
         <item>Async Image Load with Cache Control</item>

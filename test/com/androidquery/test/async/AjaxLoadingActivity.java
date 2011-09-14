@@ -139,7 +139,9 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 
 		showProgress(true);
 		
-		aq.ajax(url, String.class, 15 * 60 * 1000, new AjaxCallback<String>() {
+		long expire = 15 * 60 * 1000;
+		
+		aq.ajax(url, String.class, expire, new AjaxCallback<String>() {
 
 	        @Override
 	        public void callback(String url, String html, AjaxStatus status) {
@@ -166,9 +168,30 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}	
 	
+	public void async_header(){
+	    
+        String url = "http://www.google.com";
+        
+        showProgress(true);
+        
+        AjaxCallback<String> cb = new AjaxCallback<String>();        
+        cb.url(url).type(String.class).weakHandler(this, "stringCb");
+        
+        cb.header("Referer", "http://code.google.com/p/android-query/");
+        cb.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+        
+        aq.ajax(cb);
+	        
+	}	
+	
 	public void jsonCb(String url, JSONObject json, AjaxStatus status) {
 		showProgress(false);   	
         showResult(json);
+	}
+	
+	public void stringCb(String url, String str, AjaxStatus status) {
+		showProgress(false);   	
+        showResult(str);
 	}
 	
 }
