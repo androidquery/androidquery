@@ -1,5 +1,8 @@
 package com.androidquery.test.async;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,6 +14,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.XmlDom;
 
 public class AjaxAuthActivity extends RunSourceActivity {
 
@@ -39,9 +43,9 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
 		
-		AjaxCallback<String> cb = new AjaxCallback<String>();
+		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();
   
-		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
+		cb.url(url).type(XmlDom.class).weakHandler(this, "readerCb");  
 		cb.auth(this, AQuery.AUTH_READER, null);
   
 		aq.ajax(cb);
@@ -54,9 +58,9 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
 		
-		AjaxCallback<String> cb = new AjaxCallback<String>();
+		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();
   
-		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
+		cb.url(url).type(XmlDom.class).weakHandler(this, "readerCb");  
 		cb.auth(this, AQuery.AUTH_READER, AQuery.ACTIVE_ACCOUNT);
   
 		aq.ajax(cb);
@@ -69,14 +73,34 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
 		
-		AjaxCallback<String> cb = new AjaxCallback<String>();
+		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();
   
-		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
+		cb.url(url).type(XmlDom.class).weakHandler(this, "readerCb");  
 		cb.auth(this, AQuery.AUTH_READER, AQuery.ACTIVE_ACCOUNT);
   
 		aq.ajax(cb);
 	        
 	}	
+	
+	public void readerCb(String url, XmlDom xml, AjaxStatus status) {
+		
+		showProgress(false);   
+	
+		if(xml != null){
+		
+			List<XmlDom> entries = xml.tags("entry");			
+			List<String> titles = new ArrayList<String>();
+			
+			for(XmlDom entry: entries){
+				titles.add(entry.text("title"));
+			}
+			
+			showTextResult(titles);			
+		}
+		
+		showResult(xml);
+	}
+	
 	
 	public void auth_picasa(){
 		
@@ -214,13 +238,32 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 		String url = "https://www.google.com/m8/feeds/contacts/default/full";
 		
-		AjaxCallback<String> cb = new AjaxCallback<String>();
-  
-		cb.url(url).type(String.class).weakHandler(this, "stringCb");  
+		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();  
+		cb.url(url).type(XmlDom.class).weakHandler(this, "contactsCb");  
 		cb.auth(this, AQuery.AUTH_CONTACTS, AQuery.ACTIVE_ACCOUNT);
-  
 		aq.ajax(cb);
 	        
+	}
+	
+	public void contactsCb(String url, XmlDom xml, AjaxStatus status) {
+		
+		showProgress(false);   
+	
+		if(xml != null){
+		
+			List<XmlDom> entries = xml.tags("entry");
+			
+			List<String> friends = new ArrayList<String>();
+			
+			for(XmlDom entry: entries){
+				friends.add(entry.text("title"));
+			}
+			
+			showTextResult(friends);
+			
+		}
+		
+		showResult(xml);
 	}
 	
 	

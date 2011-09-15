@@ -56,6 +56,7 @@ import android.widget.ProgressBar;
 
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.AccountHandle;
+import com.androidquery.util.XmlDom;
 
 public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
@@ -272,6 +273,20 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			}
 			return (T) result;
 		}
+		
+		if(type.equals(XmlDom.class)){
+			
+			XmlDom result = null;
+			
+			try {    
+				result = new XmlDom(data);
+			} catch (Exception e) {	  		
+				AQUtility.report(e);
+			}
+			
+			return (T) result; 
+		}
+		
 		
 		if(type.equals(byte[].class)){
 			return (T) data;

@@ -28,6 +28,11 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
+/**
+ * AQuery internal use only. 
+ * 
+ */
+
 public class Common implements Comparator<File>, Runnable, OnClickListener, OnItemClickListener, OnScrollListener, TextWatcher{
 
 	private Object handler;

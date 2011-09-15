@@ -1,0 +1,22 @@
+	public void auth_contacts(){
+
+		String url = "https://www.google.com/m8/feeds/contacts/default/full";
+		
+		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();  
+		cb.url(url).type(XmlDom.class).weakHandler(this, "contactsCb");  
+		cb.auth(this, AQuery.AUTH_CONTACTS, AQuery.ACTIVE_ACCOUNT);
+		aq.ajax(cb);	        
+	}
+	
+	public void contactsCb(String url, XmlDom xml, AjaxStatus status) {
+	
+		List<XmlDom> entries = xml.tags("entry");	
+		List<String> friends = new ArrayList<String>();
+		
+		for(XmlDom entry: entries){
+			friends.add(entry.text("title"));
+		}
+		
+		showTextResult(friends);
+		showResult(xml);
+	}

@@ -22,6 +22,11 @@ import java.util.Map;
 
 import android.graphics.Bitmap;
 
+/**
+ * AQuery internal use only. 
+ * 
+ */
+
 public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 
 	private static final long serialVersionUID = 1L;

@@ -107,6 +107,12 @@ public class RunSourceActivity extends Activity {
 		
 	}
 	
+	protected void showTextResult(Object result){
+		
+		aq.id(R.id.text_result).visible().text(result + "");
+	}
+	
+	
 	protected void showResult(Object result){
 		
 		aq.id(R.id.result).visible().text(result + "");
