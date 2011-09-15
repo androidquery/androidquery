@@ -45,7 +45,8 @@ import android.util.Xml;
  * Specialized class for simple and easy XML parsing. Designed to be used in basic Android api 4+
  * runtime without any dependency. There's no support to modify the dom object and serialization.
  * 
- * The toString method return a string that represents the original xml content.
+ * The toString method return a string that represents the xml content.
+ * WARNING: The toString methods are for debugging only and do not guarantee a proper XML transformation.
  * 
  */
 
