@@ -132,8 +132,6 @@ public class XmlDom {
 	 */
 	public XmlDom tag(String tag){
 		
-		if(root == null) return null;
-		
 		NodeList nl = root.getElementsByTagName(tag);
 		
 		XmlDom result = null;
@@ -239,8 +237,7 @@ public class XmlDom {
 	 * @see testChildren2
 	 */
 	public List<XmlDom> children(String tag, String attr, String value){
-		
-		if(root == null) return Collections.emptyList();					
+							
 		return convert(root.getChildNodes(), tag, attr, value);
 	
 	}
@@ -259,8 +256,6 @@ public class XmlDom {
 	 * @see testTags2
 	 */
 	public List<XmlDom> tags(String tag, String attr, String value){
-		
-		if(root == null) return Collections.emptyList();
 		
 		NodeList nl = root.getElementsByTagName(tag);		
 		return convert(nl, null, attr, value);
@@ -302,7 +297,7 @@ public class XmlDom {
 	
 	/**
 	 * Return the text content of the first matched tag.
-	 * Short cut for "xml.tag(tag).text()"
+	 * Short cut for "xml.child(tag).text()"
 	 *
 	 * @param tag the tag
 	 * @return text
@@ -310,10 +305,8 @@ public class XmlDom {
 	 * @see testText2
 	 */
 	public String text(String tag){
-		
-		if(root == null) return null;
-		
-		XmlDom dom = tag(tag);
+			
+		XmlDom dom = child(tag);
 		if(dom == null) return null;
 		return dom.text();
 	}
@@ -327,8 +320,6 @@ public class XmlDom {
 	 * @see testText
 	 */
 	public String text(){
-		
-		if(root == null) return null;
 		
 		NodeList list = root.getChildNodes();
 		if(list.getLength() == 1) return list.item(0).getNodeValue();
