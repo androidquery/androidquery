@@ -19,7 +19,9 @@ package com.androidquery.util;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,11 +29,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlSerializer;
 
 import android.util.Xml;
 
@@ -47,7 +52,6 @@ import android.util.Xml;
 public class XmlDom {
 
 	private Element root;
-	private byte[] data;
 	
 	
 	/**
@@ -90,7 +94,6 @@ public class XmlDom {
 	public XmlDom(byte[] data) throws SAXException{
 		
 		this(new ByteArrayInputStream(data));		
-		this.data = data;
 		
 	}
 	
@@ -137,6 +140,7 @@ public class XmlDom {
 		if(nl != null && nl.getLength() > 0){
 			result = new XmlDom((Element) nl.item(0));
 		}
+		
 		
 		return result;
 	}
@@ -354,17 +358,129 @@ public class XmlDom {
 	/**
 	 * Return the raw xml if current node is root of document. Otherwise return default toString of node object.
 	 *
+	 * WARNING: This method is for debugging only. Does not guarantee a proper XML transformation.
+	 *
 	 * @return raw xml
 	 * 
 	 * @see testToString
 	 */
 	public String toString(){
+		return toString(0);
+	}
+	
+	/**
+	 * Return a "pretty print" raw xml if current node is root of document. Otherwise return default toString of node object.
+	 *
+	 * WARNING: This method is for debugging only. Does not guarantee a proper XML transformation.
+	 *
+	 * @param intentSpaces number of white spaces to intent
+	 * @return raw xml
+	 * 
+	 * @see testToString2
+	 */
+	
+	public String toString(int intentSpaces){		
+		return serialize(root, intentSpaces);
+	}
+	
+	private String serialize(Element e, int intent){
 		
-		if(data != null){
-			return new String(data);
+		try{
+		
+			XmlSerializer s = Xml.newSerializer();
+			StringWriter sw = new StringWriter();
+		
+			s.setOutput(sw);
+			s.startDocument("utf-8", null);
+			
+			String spaces = null;
+			if(intent > 0){
+				char[] chars = new char[intent];
+				Arrays.fill(chars, ' ');
+				spaces = new String(chars);
+			}
+			
+			serialize(root, s, 0, spaces);
+			s.endDocument();
+			
+			return sw.toString();
+		}catch(Exception ex){
+			ex.printStackTrace();
 		}
 		
-		return super.toString();
+		return null;
 	}
+	
+	private void writeSpace(XmlSerializer s, int depth, String spaces) throws Exception{
+		
+		if(spaces != null){			
+			s.text("\n");			
+			for(int i = 0; i < depth; i++){
+				s.text(spaces);
+			}
+		}
+	}
+	
+	private void serialize(Element e, XmlSerializer s, int depth, String spaces) throws Exception{
+		
+		String name = e.getTagName();
+		
+		writeSpace(s, depth, spaces);
+		
+		s.startTag("", name);
+		
+		if(e.hasAttributes()){
+			NamedNodeMap nm = e.getAttributes();
+			for(int i = 0; i < nm.getLength(); i++){
+				Attr attr = (Attr) nm.item(i);
+				s.attribute("", attr.getName(), attr.getValue());
+			}
+		}
+		
+		if(e.hasChildNodes()){
+			
+			NodeList nl = e.getChildNodes();
+			
+			int elements = 0;
+			
+			for(int i = 0; i < nl.getLength(); i++){
+				
+				Node n = nl.item(i);
+				
+				short type = n.getNodeType();
+				
+				switch(type){				
+					case Node.ELEMENT_NODE:
+						serialize((Element) n, s, depth + 1, spaces);
+						elements++;
+						break;
+					case Node.TEXT_NODE:
+						String text = n.getNodeValue();
+						if(text != null){
+							s.text(text.trim());
+						}
+						break;
+					case Node.CDATA_SECTION_NODE:
+						String cdata = n.getNodeValue();
+						if(cdata != null){
+							s.cdsect(cdata);
+						}
+						break;
+					default:
+						AQUtility.debug("unknown", n);
+				}
+				
+				
+			}
+			
+			if(elements > 0){
+				writeSpace(s, depth, spaces);
+			}
+		}
+		
+		s.endTag("", name);
+		
+	}
+	
 	
 }

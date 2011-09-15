@@ -15,6 +15,7 @@ import android.view.View;
 import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.XmlDom;
 import com.flurry.android.FlurryAgent;
 
 public class RunSourceActivity extends Activity {
@@ -112,6 +113,10 @@ public class RunSourceActivity extends Activity {
 		aq.id(R.id.text_result).visible().text(result + "");
 	}
 	
+	protected void showResult(XmlDom xml){
+		
+		aq.id(R.id.result).visible().text(xml.toString(2));
+	}
 	
 	protected void showResult(Object result){
 		

@@ -41,7 +41,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	    		
 		showProgress(true);
 		
-		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
+		String url = "https://www.google.com/reader/atom/user/-/state/com.google/reading-list?n=8";
 		
 		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();
   
@@ -56,7 +56,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 		showProgress(true);
 		
-		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
+		String url = "https://www.google.com/reader/atom/user/-/state/com.google/reading-list?n=8";
 		
 		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();
   
@@ -71,7 +71,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 		showProgress(true);
 		
-		String url = "http://www.google.com/reader/atom/user/-/state/com.google/reading-list";
+		String url = "https://www.google.com/reader/atom/user/-/state/com.google/reading-list?n=8";
 		
 		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();
   
@@ -106,7 +106,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 		showProgress(true);
 		
-		String url = "http://picasaweb.google.com/data/feed/api/user/default?alt=json";
+		String url = "https://picasaweb.google.com/data/feed/api/user/default?alt=json";
 		
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
   
