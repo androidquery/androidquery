@@ -17,6 +17,7 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
+import com.flurry.android.FlurryAgent;
 
 public class IntentListActivity extends ListActivity {
 
@@ -50,6 +51,17 @@ public class IntentListActivity extends ListActivity {
 		}
 
 	}
+	
+	public void onStart(){
+	   super.onStart();
+	   FlurryAgent.onStartSession(this, "D29A1QDKNZEIYFJBKXNR");
+	}
+	
+	public void onStop(){
+	   super.onStop();
+	   FlurryAgent.onEndSession(this);
+	}
+	
 	
 	private void forward(){
 		
@@ -87,37 +99,53 @@ public class IntentListActivity extends ListActivity {
 		String[] names = getResources().getStringArray(ids[0]);
 		String[] values = getResources().getStringArray(ids[1]);
 		
-		AQUtility.debug("names", Arrays.asList(names));
-		AQUtility.debug("values", Arrays.asList(values));
+		//AQUtility.debug("count", names.length);
 		
 		
 		for(int i = 0; i < names.length; i++){
 			String name = names[i];
-			String[] vs = values[i].split(":");
-			Class<?> cls = null;
-			String type = null;
-			try {
-				cls = Class.forName(vs[0]);
-				if(vs.length > 1){
-					type = vs[1];
-				}
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			String value = values[i];
+			
+			AQUtility.debug("name", name);
+			AQUtility.debug("value", values[i]);
+			
+			
+			if(value.startsWith("http")){
+				list.add(new ActivityItem(null, name, value));
+			}else{
+				String[] vs = value.split(":");
+				list.add(makeActivity(vs[0], name, vs[1]));
 			}
-			list.add(new ActivityItem(cls, name, type));
+			
+			
 		}
 		
 		
 		return new ArrayAdapter<ActivityItem>(this, R.layout.list_item, list);
 	}
 	
+	private ActivityItem makeActivity(String cls, String name, String type){
+		
+		Class c = null;
+		
+		try {
+			c = Class.forName(cls);			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new ActivityItem(c, name, type);
+	}
+	
+	
 	public void itemClicked(AdapterView<?> parent, View view, int position, long id){
 		
 		ActivityItem ai = list.get(position);	
-		
-		if("javadoc".equalsIgnoreCase(ai.getName())){
-			openBrowser(this, "http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html");
+	
+		if(ai.isLink()){
+			//openBrowser(this, "http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html");
+			openBrowser(this, ai.getType());
 		}else{		
 			invokeIntent(ai);
 		}

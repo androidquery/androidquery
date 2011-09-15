@@ -6,6 +6,11 @@ public class ActivityItem {
 	private Class<?> cls;
 	private String type;
 	
+	public boolean isLink(){
+		return type.startsWith("http");
+	}
+	
+	
 	public ActivityItem(Class<?> cls, String name, String type){
 		this.name = name;
 		this.cls = cls;

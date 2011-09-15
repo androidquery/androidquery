@@ -15,6 +15,7 @@ import android.view.View;
 import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.util.AQUtility;
+import com.flurry.android.FlurryAgent;
 
 public class RunSourceActivity extends Activity {
 
@@ -45,6 +46,7 @@ public class RunSourceActivity extends Activity {
 		//AQUtility.debug("source", source);
 		
 	}
+	
 	
 	public void runSource(View view){
 		
@@ -174,4 +176,14 @@ public class RunSourceActivity extends Activity {
 		return result;
 	}
 	
+	
+	public void onStart(){
+	   super.onStart();
+	   FlurryAgent.onStartSession(this, "D29A1QDKNZEIYFJBKXNR");
+	}
+	
+	public void onStop(){
+	   super.onStop();
+	   FlurryAgent.onEndSession(this);
+	}
 }

@@ -6,15 +6,18 @@
     <string-array name="top_names">
         <item>Async Network</item>
         <item>Image Loading</item> 
-        <item>Google Service (Beta)</item>  
-        <item>javadoc</item>        
+        <item>Google Service (Beta)</item> 
+        <item>Home @AndroidQuery</item>
+        <item>Javadoc</item>    
+          
     </string-array>
     
     <string-array name="top_values">
         <item>com.androidquery.test.IntentListActivity:async</item>
         <item>com.androidquery.test.IntentListActivity:image</item>
         <item>com.androidquery.test.IntentListActivity:auth</item>
-        <item>com.androidquery.test.IntentListActivity</item>
+        <item>http://code.google.com/p/android-query/</item>
+        <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html</item>       
     </string-array>
   
   	<string-array name="async_names">
@@ -25,7 +28,8 @@
         <item>Activity Method as Callback</item> 
         <item>Caching</item> 
         <item>AjaxCallback</item>   
-        <item>Http Request Headers</item>      
+        <item>Http Request Headers</item>  
+        <item>Doc @ AndroidQuery</item>      
     </string-array>
   
   	<string-array name="async_values">
@@ -36,7 +40,8 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>    
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
+        <item>http://code.google.com/p/android-query/wiki/AsyncAPI</item>    
     </string-array>
     
     <string-array name="image_names">
@@ -66,7 +71,7 @@
         <item>Access Cached Images (Memory)</item> 
         
         <item>Refetch and Cache Busting</item> 
-        
+        <item>Doc @ AndroidQuery</item>
     </string-array>
     
     <string-array name="image_values">
@@ -98,6 +103,8 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_access_memory</item>  
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_nocache</item>    
+        
+        <item>http://code.google.com/p/android-query/wiki/ImageLoading</item>
     </string-array>
     
   	<string-array name="auth_names">
