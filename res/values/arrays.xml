@@ -230,12 +230,14 @@
     
     <string-array name="xml_names">
         <item>XML Ajax Result</item>
-        <item>XML Resource</item>    
+        <item>XML Resource</item> 
+        <item>Doc @ AndroidQuery</item>   
     </string-array>
   
   	<string-array name="xml_values">
         <item>com.androidquery.test.async.XmlActivity:xml_ajax</item>
-        <item>com.androidquery.test.async.XmlActivity:xml_resource</item>  
+        <item>com.androidquery.test.async.XmlActivity:xml_resource</item>
+        <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/util/XmlDom.html</item>  
     </string-array>
     
 </resources>
