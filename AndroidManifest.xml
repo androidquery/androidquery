@@ -37,6 +37,6 @@
 		<activity android:name=".test.image.ImageLoadingList2Activity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.image.ImageLoadingAspectRatioActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.async.AjaxAuthActivity" android:theme="@style/android:Theme.Light"></activity>	
-		
+		<activity android:name=".test.async.XmlActivity" android:theme="@style/android:Theme.Light"></activity>
     </application>
 </manifest>

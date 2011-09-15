@@ -7,15 +7,16 @@
         <item>Async Network</item>
         <item>Image Loading</item> 
         <item>Google Service (Beta)</item> 
+        <item>XML Parsing</item> 
         <item>Home @AndroidQuery</item>
-        <item>Javadoc</item>    
-          
+        <item>Javadoc</item>              
     </string-array>
     
     <string-array name="top_values">
         <item>com.androidquery.test.IntentListActivity:async</item>
         <item>com.androidquery.test.IntentListActivity:image</item>
         <item>com.androidquery.test.IntentListActivity:auth</item>
+        <item>com.androidquery.test.IntentListActivity:xml</item>
         <item>http://code.google.com/p/android-query/</item>
         <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html</item>       
     </string-array>
@@ -170,6 +171,10 @@
         <item>auth_picasa</item> 
         <item>auth_youtube</item>
         <item>auth_contacts</item>
+        
+        
+        <item>xml_ajax</item>
+        <item>xml_resource</item>
     </string-array>
     
     <string-array name="source_title">
@@ -218,6 +223,19 @@
         <item>YouTube Example - Get user subscriptions.</item> 
         <item>Google Contacts Example - Get list of contacts.</item>
         
+        <item>Ajax Request with XmlDom Type - Get a list of featured images on Picasa.</item>
+        <item>Parse XML Resource in Resource Folder</item>
+    </string-array>
+    
+    
+    <string-array name="xml_names">
+        <item>XML Ajax Result</item>
+        <item>XML Resource</item>    
+    </string-array>
+  
+  	<string-array name="xml_values">
+        <item>com.androidquery.test.async.XmlActivity:xml_ajax</item>
+        <item>com.androidquery.test.async.XmlActivity:xml_resource</item>  
     </string-array>
     
 </resources>

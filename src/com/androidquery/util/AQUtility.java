@@ -138,6 +138,7 @@ public class AQUtility {
 		try {
 			return invokeMethod(handler, callback, fallback, cls, cls2, params);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

@@ -18,6 +18,7 @@ package com.androidquery.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -47,31 +49,18 @@ public class XmlDom {
 	private Element root;
 	private byte[] data;
 	
-	/**
-	 * Instantiates a new xml dom.
-	 */
-	public XmlDom(){
-	
-	}
 	
 	/**
 	 * Gets the element that this node represent.
 	 *
 	 * @return the element
+	 * 
+	 * @see testGetElement
 	 */
 	public Element getElement(){
 		return root;
 	}
 	
-	
-	/**
-	 * Check if this node exists.
-	 *
-	 * @return exist
-	 */
-	public boolean exist(){
-		return root != null;
-	}
 	
 	/**
 	 * Instantiates a new xml dom.
@@ -86,10 +75,9 @@ public class XmlDom {
 	 * Instantiates a new xml dom.
 	 *
 	 * @param str Raw XML
-	 * @throws SAXException the sAX exception
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws SAXException the SAX exception
 	 */
-	public XmlDom(String str) throws SAXException, IOException{
+	public XmlDom(String str) throws SAXException{
 		this(str.getBytes());
 	}
 	
@@ -97,20 +85,33 @@ public class XmlDom {
 	 * Instantiates a new xml dom.
 	 *
 	 * @param data Raw XML
-	 * @throws SAXException the sAX exception
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws SAXException the SAX exception
 	 */
-	public XmlDom(byte[] data) throws SAXException, IOException{
+	public XmlDom(byte[] data) throws SAXException{
+		
+		this(new ByteArrayInputStream(data));		
+		this.data = data;
+		
+	}
+	
+	/**
+	 * Instantiates a new xml dom.
+	 *
+	 * @param is Raw XML.
+	 * @throws SAXException the SAX exception
+	 */
+	public XmlDom(InputStream is) throws SAXException{
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		
 		try {
 			builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(data));			
+			Document doc = builder.parse(is);			
 			this.root = (Element) doc.getDocumentElement();
-			this.data = data;
-		} catch (ParserConfigurationException e) {			
+		}catch(ParserConfigurationException e) {			
+		}catch(IOException e){
+			throw new SAXException(e);
 		}
 	
 	}
@@ -118,12 +119,16 @@ public class XmlDom {
 	/**
 	 * Return a node that represents the first matched tag.
 	 *
+	 * A dummy node is returned if none found.
+	 *
 	 * @param tag tag name
 	 * @return the xml dom
+	 * 
+	 * @see testTag
 	 */
 	public XmlDom tag(String tag){
 		
-		if(root == null) return this;
+		if(root == null) return null;
 		
 		NodeList nl = root.getElementsByTagName(tag);
 		
@@ -133,34 +138,158 @@ public class XmlDom {
 			result = new XmlDom((Element) nl.item(0));
 		}
 		
-		if(result == null){
-			result = new XmlDom();
-		}
-		
 		return result;
 	}
+	
+	/**
+	 * Return a node that represents the first matched tag.
+	 *
+	 * If value == null, node that has the attr are considered a match.
+	 *
+	 * A dummy node is returned if none found.
+	 *
+	 * @param tag tag name
+	 * @param attr attr name to match
+	 * @param value attr value to match
+	 * @return the xml dom
+	 * 
+	 * @see testTag2
+	 */
+	public XmlDom tag(String tag, String attr, String value){
+		
+		List<XmlDom> tags = tags(tag, attr, value);
+		
+		if(tags.size() == 0){
+			return null;
+		}else{
+			return tags.get(0);
+		}
+		
+	}	
 	
 	/**
 	 * Return a list of nodes that represents the matched tags.
 	 *
 	 * @param tag tag name
 	 * @return the list of xml dom
+	 * 
+	 * @see testTags
 	 */
-	public List<XmlDom> tags(String tag){
+	public List<XmlDom> tags(String tag){		
+		return tags(tag, null, null);
+	}
+	
+	/**
+	 * Return the first child node that represent the matched tag.
+	 * A dummy node is returned if none found.
+	 *
+	 * @param tag tag name
+	 * @return the list of xml dom
+	 * 
+	 * @see testChild
+	 */
+	public XmlDom child(String tag){
+		return child(tag, null, null);
+	}
+	
+	/**
+	 * Return the first child node that represent the matched tag.
+	 * A dummy node is returned if none found.
+	 *
+	 * @param tag tag name
+	 * @param attr attr name to match
+	 * @param value attr value to match
+	 * @return the list of xml dom
+	 * 
+	 * @see testChild2
+	 */
+	
+	public XmlDom child(String tag, String attr, String value){
+		List<XmlDom> c = children(tag, attr, value);
+		if(c.size() == 0) return null;
+		return c.get(0);
+	}
+	
+	
+	/**
+	 * Return a list of child nodes that represents the matched tags.
+	 *
+	 * @param tag tag name
+	 * @return the list of xml dom
+	 * 
+	 * @see testChildren
+	 */
+	public List<XmlDom> children(String tag){
+		return children(tag, null, null);
+	}
+	
+	/**
+	 * Return a list of child nodes that represents the matched tags.
+	 *
+	 * @param tag tag name
+	 * @param attr attr name to match
+	 * @param value attr value to match
+	 * @return the list of xml dom
+	 * 
+	 * @see testChildren2
+	 */
+	public List<XmlDom> children(String tag, String attr, String value){
+		
+		if(root == null) return Collections.emptyList();					
+		return convert(root.getChildNodes(), tag, attr, value);
+	
+	}
+	
+	
+	/**
+	 * Return a list of nodes that represents the matched tags that has attribute attr=value.
+	 * If attr == null, any tag with input name match.
+	 * If value == null, any nodes that has the attr are considered a match.
+	 *
+	 * @param tag tag name
+	 * @param attr attr name to match
+	 * @param value attr value to match
+	 * @return the list of xml dom
+	 * 
+	 * @see testTags2
+	 */
+	public List<XmlDom> tags(String tag, String attr, String value){
 		
 		if(root == null) return Collections.emptyList();
 		
-		NodeList nl = root.getElementsByTagName(tag);
-		
-		return convert(nl);
+		NodeList nl = root.getElementsByTagName(tag);		
+		return convert(nl, null, attr, value);
 	}
 	
-	private static List<XmlDom> convert(NodeList nl){
+	//convert to list and filter to nodes that has attr=value
+	private static List<XmlDom> convert(NodeList nl, String tag, String attr, String value){
 		
 		List<XmlDom> result = new ArrayList<XmlDom>();
 		
-		for(int i = 0; i < nl.getLength(); i++){
-			result.add(new XmlDom((Element) nl.item(i)));;
+		for(int i = 0; i < nl.getLength(); i++){			
+			XmlDom xml = convert(nl.item(i), tag, attr, value);
+			if(xml != null) result.add(xml);
+		}
+		
+		return result;
+	}
+	
+	private static XmlDom convert(Node node, String tag, String attr, String value){
+		
+		if(node.getNodeType() != Node.ELEMENT_NODE){
+			return null;
+		}
+		
+		Element e = (Element) node;
+		
+		XmlDom result = null;
+		
+		if(tag == null || tag.equals(e.getTagName())){		
+			if(attr == null || e.hasAttribute(attr)){			
+				if(value == null || value.equals(e.getAttribute(attr))){
+					result = new XmlDom(e);
+				}
+			}
 		}
 		
 		return result;
@@ -168,9 +297,12 @@ public class XmlDom {
 	
 	/**
 	 * Return the text content of the first matched tag.
+	 * Short cut for "xml.tag(tag).text()"
 	 *
 	 * @param tag the tag
 	 * @return text
+	 * 
+	 * @see testText2
 	 */
 	public String text(String tag){
 		
@@ -186,6 +318,8 @@ public class XmlDom {
 	 * Return the text content of the current node.
 	 *
 	 * @return text
+	 * 
+	 * @see testText
 	 */
 	public String text(){
 		
@@ -208,6 +342,8 @@ public class XmlDom {
 	 *
 	 * @param name attribute name
 	 * @return value
+	 * 
+	 * @see testAttr
 	 */
 	public String attr(String name){
 		
@@ -219,6 +355,8 @@ public class XmlDom {
 	 * Return the raw xml if current node is root of document. Otherwise return default toString of node object.
 	 *
 	 * @return raw xml
+	 * 
+	 * @see testToString
 	 */
 	public String toString(){
 		
