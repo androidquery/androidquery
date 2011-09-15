@@ -196,7 +196,7 @@ public class XmlDom {
 	}
 	
 	/**
-	 * Return the first child node that represent the matched tag.
+	 * Return the first child node that represent the matched tag that has attribute attr=value.
 	 * A dummy node is returned if none found.
 	 *
 	 * @param tag tag name
@@ -348,7 +348,7 @@ public class XmlDom {
 	}
 	
 	/**
-	 * Return the raw xml if current node is root of document. Otherwise return default toString of node object.
+	 * Return the raw xml of this node.
 	 *
 	 * WARNING: This method is for debugging only. Does not guarantee a proper XML transformation.
 	 *
@@ -361,7 +361,7 @@ public class XmlDom {
 	}
 	
 	/**
-	 * Return a "pretty print" raw xml if current node is root of document. Otherwise return default toString of node object.
+	 * Return the raw xml of this node.
 	 *
 	 * WARNING: This method is for debugging only. Does not guarantee a proper XML transformation.
 	 *
