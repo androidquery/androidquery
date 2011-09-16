@@ -35,7 +35,10 @@ public class AdhocActivity extends RunSourceActivity {
 		
 		
 		String tb = "http://www.vikispot.com/z/images/vikispot/android-w.png";	
+		aq.id(R.id.button).image(tb);
 		
+		
+		/*
 		AjaxCallback<Bitmap> cb = new AjaxCallback<Bitmap>(){
 			
 			@Override
@@ -52,6 +55,7 @@ public class AdhocActivity extends RunSourceActivity {
 		cb.url(tb).type(Bitmap.class).fileCache(true);
 		
 		aq.ajax(cb);
+		*/
 	}
 	
 	

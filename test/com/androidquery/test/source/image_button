@@ -1,0 +1,6 @@
+	public void image_button(){
+		
+		String tb = "http://www.vikispot.com/z/images/vikispot/android-w.png";	
+		aq.id(R.id.button).image(tb);
+		
+	}

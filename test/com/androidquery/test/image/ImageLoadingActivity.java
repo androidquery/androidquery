@@ -40,6 +40,10 @@ public class ImageLoadingActivity extends RunSourceActivity {
 			aq.id(R.id.image).width(250);
 		}else if("image_pre_cache".equals(type)){
 			pre_cache();
+		}else if("image_button".equals(type)){
+			aq.id(R.id.button).visible();
+			aq.id(R.id.go_run).gone();
+			image_button();
 		}
 			
 		
@@ -198,6 +202,13 @@ public class ImageLoadingActivity extends RunSourceActivity {
 
 		//no network fetch for 2nd request, image will be shown when first request is completed
 		aq.id(R.id.image2).image(imageUrl, false, false);
+		
+	}
+	
+	public void image_button(){
+		
+		String tb = "http://www.vikispot.com/z/images/vikispot/android-w.png";	
+		aq.id(R.id.button).image(tb);
 		
 	}
 	

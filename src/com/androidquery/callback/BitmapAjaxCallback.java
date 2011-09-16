@@ -28,6 +28,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AlphaAnimation;
@@ -36,6 +37,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.util.AQUtility;
@@ -55,9 +57,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
 	
-	private static HashMap<String, WeakHashMap<ImageView, BitmapAjaxCallback>> queueMap = new HashMap<String, WeakHashMap<ImageView, BitmapAjaxCallback>>();	
+	private static HashMap<String, WeakHashMap<View, BitmapAjaxCallback>> queueMap = new HashMap<String, WeakHashMap<View, BitmapAjaxCallback>>();	
 	
-	private WeakReference<ImageView> iv;
+	private WeakReference<View> v;
 	private int targetWidth;
 	private int fallback;
 	private File imageFile;
@@ -69,11 +71,13 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		type(Bitmap.class).memCache(true).fileCache(true);
 	}
 	
-	public BitmapAjaxCallback imageView(ImageView view){
-				
-		iv = new WeakReference<ImageView>(view);		
+	public BitmapAjaxCallback imageView(ImageView view){				
+		return view(view);
+	}
+	
+	public BitmapAjaxCallback view(View view){				
+		v = new WeakReference<View>(view);		
 		return this;
-		
 	}
 	
 	public BitmapAjaxCallback targetWidth(int targetWidth){
@@ -213,7 +217,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		Bitmap bm = null;
 		
-		ImageView view = iv.get();
+		View view = v.get();
 		if(view != null){
 		
 			String key = Integer.toString(fallback);			
@@ -244,34 +248,36 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	@Override
 	public final void callback(String url, Bitmap bm, AjaxStatus status) {
 		
-		ImageView firstView = iv.get();
+		View firstView = v.get();
 		
 		checkCb(this, url, firstView, bm, status);
 		
-		WeakHashMap<ImageView, BitmapAjaxCallback> ivs = queueMap.remove(url);
+		WeakHashMap<View, BitmapAjaxCallback> ivs = queueMap.remove(url);
 		
 		if(ivs != null){
 		
-			Set<ImageView> set = ivs.keySet();
+			Set<View> set = ivs.keySet();
 			
-			for(ImageView view: set){
+			for(View view: set){
 				BitmapAjaxCallback cb = ivs.get(view);
 				checkCb(cb, url, view, bm, status);
 			}
 		
 		}
 		
-		//AQUtility.debugNotify();
-		
 	}
 	
 	private boolean completed;
-	private void checkCb(BitmapAjaxCallback cb, String url, ImageView iv, Bitmap bm, AjaxStatus status){
+	private void checkCb(BitmapAjaxCallback cb, String url, View v, Bitmap bm, AjaxStatus status){
 		
-		if(iv == null || cb == null) return;
+		if(v == null || cb == null) return;
 		
-		if(url.equals(iv.getTag())){			
-			cb.callback(url, iv, bm, status);			
+		if(url.equals(v.getTag())){			
+			if(v instanceof ImageView){
+				cb.callback(url, (ImageView) v, bm, status);
+			}else if(v instanceof TextView){
+				cb.callback(url, (TextView) v, bm, status);
+			}
 		}
 		
 		completed = true;
@@ -279,6 +285,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
 		showBitmap(url, iv, bm);
+	}
+	
+	protected void callback(String url, TextView tv, Bitmap bm, AjaxStatus status){
+		showBitmap(url, tv, bm);
 	}
 
 	public static void setIconCacheLimit(int limit){
@@ -376,7 +386,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-	private void showBitmap(String url, ImageView iv, Bitmap bm){
+	private void showBitmap(String url, View iv, Bitmap bm){
 			
 		
 		//ignore 1x1 pixels
@@ -398,16 +408,31 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-	private void presetBitmap(String url, ImageView iv){
+	private void presetBitmap(String url, View v){
 		
-		if(!url.equals(iv.getTag()) || preset != null){
-			
-			iv.setTag(url);
-			
-			//iv.setImageBitmap(null);
-			setBitmap(url, iv, preset, true, false);
-			
+		if(!url.equals(v.getTag()) || preset != null){			
+			v.setTag(url);
+			setBitmap(url, v, preset, true, false);			
 		}
+		
+	}
+	
+	private void setBitmap(String url, View v, Bitmap bm, boolean isPreset, boolean async){
+		
+		if(v instanceof ImageView){
+			setBitmap(url, (ImageView) v, bm, isPreset, async);
+		}else if(v instanceof TextView){
+			setBitmap(url, (TextView) v, bm, isPreset);
+		}
+		
+	}
+	
+	private void setBitmap(String url, TextView tv, Bitmap bm, boolean isPreset){
+		
+		BitmapDrawable bd = null;
+		if(bm != null) bd = new BitmapDrawable(bm); 
+							
+		tv.setCompoundDrawablesWithIntrinsicBounds(bd, null, null, null);
 		
 	}
 	
@@ -565,42 +590,43 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		String url = getUrl();		
 		
+		View v = this.v.get();
+		
 		if(url == null){
-			setBitmap(url, iv.get(), null, false, false);
+			setBitmap(url, v, null, false, false);
 			return;
 		}
 		
-		ImageView iv = this.iv.get();
 		
 		Bitmap bm = memGet(url, targetWidth);
 		if(bm != null){		
-			iv.setTag(url);
-			showBitmap(url, iv, bm);
+			v.setTag(url);
+			showBitmap(url, v, bm);
 			return;
 		}
 		
-		presetBitmap(url, iv);
+		presetBitmap(url, v);
 		
 		if(!queueMap.containsKey(url)){
-			addQueue(url, iv);			
-			super.async(iv.getContext());
+			addQueue(url, v);			
+			super.async(v.getContext());
 		}else{	
-			addQueue(url, iv);
+			addQueue(url, v);
 		}
 	}
 	
 
 	
-	private void addQueue(String url, ImageView iv){
+	private void addQueue(String url, View iv){
 		
 		
-		WeakHashMap<ImageView, BitmapAjaxCallback> ivs = queueMap.get(url);
+		WeakHashMap<View, BitmapAjaxCallback> ivs = queueMap.get(url);
 		
 		if(ivs == null){
 			
 			if(queueMap.containsKey(url)){
 				//already a image view fetching
-				ivs = new WeakHashMap<ImageView, BitmapAjaxCallback>();
+				ivs = new WeakHashMap<View, BitmapAjaxCallback>();
 				ivs.put(iv, this);
 				queueMap.put(url, ivs);
 			}else{

@@ -61,6 +61,8 @@
         <item>List Items</item>  
         <item>List Items (Aspect Ratio)</item>        
         
+        <item>Button with Icon</item>  
+        
         <item>Custom Callback</item>        
         <item>File (Async)</item>
         <item>File Custom Callback</item>
@@ -94,6 +96,7 @@
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
         <item>com.androidquery.test.image.ImageLoadingList2Activity:image_list2</item>
         
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_button</item>
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
@@ -156,6 +159,8 @@
         <item>image_list</item>
         <item>image_list2</item>
         
+        <item>image_button</item>
+        
         <item>image_custom</item>
         <item>image_file</item>
         <item>image_file_custom</item>
@@ -208,6 +213,7 @@
         <item>Loading Image in List View Items</item>   
         <item>Loading Image in List View with Aspect Ratio</item>   
         
+        <item>Loading Remote Button Icon as Left Drawable</item>   
         
         <item>Async Image Load with Custom Callback</item>
         <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>

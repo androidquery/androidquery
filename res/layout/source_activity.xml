@@ -53,6 +53,16 @@
 			android:layout_gravity="center_horizontal"
 		/>
 		
+		<Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:id="@+id/button"
+	        android:textSize="20dip"
+	        android:text=" Button"
+	        android:layout_gravity="center_horizontal"
+	        android:visibility="gone"
+	   	/>
+	    
 		<ImageView
 			android:id="@+id/image"				
 			android:layout_width="wrap_content" 

@@ -427,12 +427,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio){
 		
+		/*
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;	
-			
-			/*
-			BitmapAjaxCallback.async(iv, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio);
-			*/
 			
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();		
 			cb.url(url).memCache(memCache).fileCache(fileCache).imageView(iv).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animId).ratio(ratio);			
@@ -440,6 +437,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		
 		return self();
+		*/
+		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();		
+		cb.url(url).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animId).ratio(ratio);	
+		
+		return image(cb);
 	}
 	
 	
@@ -454,11 +457,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public T image(BitmapAjaxCallback callback){
 		
-		if(view instanceof ImageView){
-			
-			ImageView iv = (ImageView) view;			
-			callback.imageView(iv).async(getContext());
-			
+		if(view instanceof ImageView || view instanceof TextView){			
+			callback.view(view).async(getContext());			
 		}
 		
 		return self();
@@ -481,6 +481,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int resId, BitmapAjaxCallback callback){
 		
+		/*
 		if(view instanceof ImageView){
 			
 			ImageView iv = (ImageView) view;
@@ -491,7 +492,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		
 		return self();
+		*/
 		
+		callback.targetWidth(targetWidth).fallback(resId)
+		.url(url).memCache(memCache).fileCache(fileCache);
+		
+		return image(callback);
 	}
 	
 	/**
