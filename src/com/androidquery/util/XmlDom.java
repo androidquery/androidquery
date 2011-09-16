@@ -312,26 +312,7 @@ public class XmlDom {
 	}
 	
 	
-	/**
-	 * Return the text content of the current node.
-	 *
-	 * @return text
-	 * 
-	 * @see testText
-	 */
-	public String text(){
-		
-		NodeList list = root.getChildNodes();
-		if(list.getLength() == 1) return list.item(0).getNodeValue();
-		
-		StringBuffer sb = new StringBuffer();
-		for(int i = 0; i < list.getLength(); i++){
-			String frag = list.item(i).getNodeValue();
-			sb.append(frag);
-		}
-		
-		return sb.toString();
-	}
+
 	
 	/**
 	 * Return the value of the attribute of current node.
@@ -413,6 +394,48 @@ public class XmlDom {
 		}
 	}
 	
+	/**
+	 * Return the text content of the current node. Returns empty string if there's no text or cdata child elements.
+	 *
+	 * @return text
+	 * 
+	 * @see testText
+	 */
+	public String text(){
+		
+		NodeList list = root.getChildNodes();
+		if(list.getLength() == 1) return list.item(0).getNodeValue();
+		
+		StringBuffer sb = new StringBuffer();
+		for(int i = 0; i < list.getLength(); i++){
+			sb.append(text(list.item(i)));
+		}
+		
+		return sb.toString();
+	}
+	
+	private String text(Node n){
+		
+		String text = null;
+		
+		switch(n.getNodeType()){
+			case Node.TEXT_NODE:
+				text = n.getNodeValue();
+				if(text != null) text = text.trim();
+				break;
+			case Node.CDATA_SECTION_NODE:
+				text = n.getNodeValue();
+				break;
+			default:
+				//AQUtility.debug("unknown", n);
+		}
+		
+		if(text == null) text = "";
+		
+		return text;
+		
+	}
+	
 	private void serialize(Element e, XmlSerializer s, int depth, String spaces) throws Exception{
 		
 		String name = e.getTagName();
@@ -447,19 +470,11 @@ public class XmlDom {
 						elements++;
 						break;
 					case Node.TEXT_NODE:
-						String text = n.getNodeValue();
-						if(text != null){
-							s.text(text.trim());
-						}
+						s.text(text(n));
 						break;
-					case Node.CDATA_SECTION_NODE:
-						String cdata = n.getNodeValue();
-						if(cdata != null){
-							s.cdsect(cdata);
-						}
+					case Node.CDATA_SECTION_NODE:					
+						s.cdsect(text(n));
 						break;
-					default:
-						AQUtility.debug("unknown", n);
 				}
 				
 				

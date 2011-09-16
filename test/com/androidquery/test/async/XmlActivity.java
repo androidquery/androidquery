@@ -66,39 +66,28 @@ public class XmlActivity extends RunSourceActivity {
 		for(XmlDom entry: entries){
 			titles.add(entry.text("title"));
 			imageUrl = entry.tag("content", "type", "image/jpeg").attr("src");
+			
 		}
 		
 		showTextResult(titles);
 		
 		aq.id(R.id.image).image(imageUrl);
 		
+		
+		
 	}
 	
 	
 	public void xml_resource() throws SAXException{
 		
-		AQUtility.debug("enter");
+		InputStream is = getResources().openRawResource(R.raw.code);
 		
-		InputStream is = getResources().openRawResource(R.layout.source_activity);
+		XmlDom xml = new XmlDom(is);		
+		String code1 = xml.tag("entry", "name", "snippet1").text();
 		
-		byte[] data = AQUtility.toBytes(is);
+		showTextResult(code1);		
+		showResult(xml);
 		
-		showResult(new String(data));
-		
-		/*
-		XmlDom xml = new XmlDom(is);
-		
-		List<XmlDom> colors = xml.tags("color");		
-		Map<String, String> map = new HashMap<String, String>();
-		
-		for(XmlDom color: colors){
-			map.put(color.attr("name"), color.text());
-		}
-		
-		showResult(map);
-		
-		AQUtility.debug("exit");
-		*/
 	}
 	
 }

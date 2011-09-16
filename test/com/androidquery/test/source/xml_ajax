@@ -14,8 +14,7 @@
 			titles.add(entry.text("title"));
 			imageUrl = entry.tag("content", "type", "image/jpeg").attr("src");
 		}
-		
-		showTextResult(titles);		
+			
 		aq.id(R.id.image).image(imageUrl);
 		
 	}}

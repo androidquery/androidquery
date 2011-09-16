@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<code>
+
+	<entry name="snippet1">
+		<![CDATA[
+		function hello(a,b)
+		{
+			alert("hello");
+		}
+		]]>
+	</entry>
+	
+	<entry name="snippet2">
+		<![CDATA[
+			public void xml_ajax(){
+		
+				showProgress(true);		
+				
+				String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
+				aq.ajax(url, XmlDom.class, this, "picasaCb");
+				
+			}
+		]]>
+	</entry>
+	
+</code>

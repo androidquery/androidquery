@@ -190,11 +190,11 @@ public class RunSourceActivity extends Activity {
 	
 	public void onStart(){
 	   super.onStart();
-	   FlurryAgent.onStartSession(this, "D29A1QDKNZEIYFJBKXNR");
+	   TestUtility.flurryStart(this);
 	}
 	
 	public void onStop(){
 	   super.onStop();
-	   FlurryAgent.onEndSession(this);
+	   TestUtility.flurryStop(this);
 	}
 }
