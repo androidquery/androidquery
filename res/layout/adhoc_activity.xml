@@ -23,6 +23,15 @@
 			android:layout_marginBottom="10dip"
 		/>
 		
+		<Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:id="@+id/button"
+	        android:textSize="20dip"
+	        android:drawableLeft="@drawable/icon"
+	        android:text=" Flag"></Button>
+	
+		
 		<TextView
 			android:id="@+id/text"				
 			android:layout_width="fill_parent" 

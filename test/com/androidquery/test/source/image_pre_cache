@@ -1,0 +1,15 @@
+	private void pre_cache(){
+		aq.cache("http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg", 0);
+	}
+	
+	public void image_pre_cache(){
+		
+		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";
+		
+		File file = aq.getCachedFile(imageUrl);		
+		if(file != null){
+			showTextResult("File cached:" + file.getAbsolutePath() + " Length:" + file.length());
+		}
+		aq.id(R.id.image).image(imageUrl);
+		
+	}

@@ -4,7 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.androidquery.AQuery;
@@ -29,21 +32,26 @@ public class AdhocActivity extends RunSourceActivity {
 		
 		AQUtility.debug("adhoc");
 		
-		/*
-		String thumbnail = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";	
-		Bitmap preset = aq.getCachedImage(thumbnail);
 		
-		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
-		aq.id(R.id.image).image(imageUrl, true, true, 0, 0, preset, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
-		*/
 		
-		String thumbnail = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";	
-		 ImageView imageView = new ImageView(this) ;
-        
-         AQuery aq = new AQuery(imageView);
-         aq.image(thumbnail, true, true, 0, 0, null, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
-         
+		String tb = "http://www.vikispot.com/z/images/vikispot/android-w.png";	
 		
+		AjaxCallback<Bitmap> cb = new AjaxCallback<Bitmap>(){
+			
+			@Override
+			public void callback(String url, Bitmap bm, AjaxStatus status) {
+				
+				if(bm != null){
+					Button button = aq.id(R.id.button).getButton();					
+					button.setCompoundDrawablesWithIntrinsicBounds(new BitmapDrawable(bm), null, null, null);
+				}
+				
+			}
+		};
+		
+		cb.url(tb).type(Bitmap.class).fileCache(true);
+		
+		aq.ajax(cb);
 	}
 	
 	

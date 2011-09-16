@@ -21,7 +21,7 @@ import com.flurry.android.FlurryAgent;
 
 public class IntentListActivity extends ListActivity {
 
-	private boolean debug = false;
+	private boolean debug = true;
 	private AQuery aq;
 	private String type;
 	

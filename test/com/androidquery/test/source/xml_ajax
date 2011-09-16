@@ -4,7 +4,7 @@
 	}
 	
 	public void picasaCb(String url, XmlDom xml, AjaxStatus status){
-
+	
 		List<XmlDom> entries = xml.tags("entry");		
 		List<String> titles = new ArrayList<String>();
 		

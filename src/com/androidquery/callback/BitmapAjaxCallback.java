@@ -261,7 +261,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		}
 		
-		AQUtility.debugNotify();
+		//AQUtility.debugNotify();
 		
 	}
 	

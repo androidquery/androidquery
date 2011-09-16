@@ -71,6 +71,8 @@
         <item>Access Cached Images (File)</item> 
         <item>Access Cached Images (Memory)</item> 
         
+        <item>Pre-Caching</item> 
+        
         <item>Refetch and Cache Busting</item> 
         <item>Doc @ AndroidQuery</item>
     </string-array>
@@ -102,6 +104,8 @@
           
         <item>com.androidquery.test.image.ImageLoadingActivity:image_access_file</item> 
         <item>com.androidquery.test.image.ImageLoadingActivity:image_access_memory</item>  
+        
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_pre_cache</item>
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_nocache</item>    
         
@@ -162,6 +166,8 @@
         <item>image_access_file</item>
         <item>image_access_memory</item>
         
+        <item>image_pre_cache</item>
+        
         <item>image_nocache</item>
               
         <item>auth_pick_account</item>  
@@ -213,6 +219,7 @@
         <item>Access Cached Images (Raw File)</item>
         <item>Access Cached Images (Memory cached Bitmap)</item>     
            
+        <item>Prefetch an Image without Displaying</item>        
         <item>Force Refetch and Cache Busting</item>     
            
         <item>Google Reader (user select account, if multiple)</item> 

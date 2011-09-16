@@ -55,6 +55,24 @@ public class AQUtility {
 		AQUtility.debug = debug;
 	}
 	
+	public static void debugWait(long time){
+		
+		if(!debug) return;
+		
+		if(wait == null) wait = new Object();
+		
+		synchronized(wait) {
+			
+			try {
+				wait.wait(time);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	
 	public static void debugWait(){
 		
 		if(!debug) return;

@@ -42,8 +42,8 @@ import android.util.Xml;
 
 
 /**
- * Specialized class for simple and easy XML parsing. Designed to be used in basic Android api 4+
- * runtime without any dependency. There's no support to modify the dom object and serialization.
+ * Specialized class for simple and easy XML parsing. Designed to be used in basic Android API 4+
+ * runtime without any dependency. There's no support to modify the dom object.
  * 
  * The toString method return a string that represents the xml content.
  * WARNING: The toString methods are for debugging only and do not guarantee a proper XML transformation.
@@ -245,8 +245,8 @@ public class XmlDom {
 	
 	/**
 	 * Return a list of nodes that represents the matched tags that has attribute attr=value.
-	 * If attr == null, any tag with input name match.
-	 * If value == null, any nodes that has the attr are considered a match.
+	 * If attr == null, any tag with specified name matches.
+	 * If value == null, any nodes that has the attr matches.
 	 *
 	 * @param tag tag name
 	 * @param attr attr name to match
@@ -299,7 +299,9 @@ public class XmlDom {
 	 * Return the text content of the first matched tag.
 	 * Short cut for "xml.child(tag).text()"
 	 *
-	 * @param tag the tag
+	 * Return null if there's no matched tag.
+	 * 
+	 * @param tag tag name
 	 * @return text
 	 * 
 	 * @see testText2

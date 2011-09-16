@@ -38,10 +38,16 @@ public class ImageLoadingActivity extends RunSourceActivity {
 			image_prepreload();
 		}else if("image_ratio".equals(type)){
 			aq.id(R.id.image).width(250);
+		}else if("image_pre_cache".equals(type)){
+			pre_cache();
 		}
 			
 		
 			
+	}
+	
+	private void pre_cache(){
+		aq.cache("http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg", 0);
 	}
 	
 	@Override
@@ -92,7 +98,8 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	}
 	
 	private void load(String url){
-		aq.id(R.id.hidden).image(url);
+		//aq.id(R.id.hidden).image(url);
+		aq.cache(url, 0);
 	}
 	
 	public void image_preload(){
@@ -226,6 +233,20 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		if(bm != null){
 			showResult("Dimension:" + bm.getWidth() + "x" + bm.getHeight());
 		}
+		
+	}
+	
+	public void image_pre_cache(){
+		
+		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";
+		
+		File file = aq.getCachedFile(imageUrl);
+		
+		if(file != null){
+			showTextResult("File cached:" + file.getAbsolutePath() + " Length:" + file.length());
+		}
+		
+		aq.id(R.id.image).image(imageUrl);
 		
 	}
 	

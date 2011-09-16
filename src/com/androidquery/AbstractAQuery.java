@@ -1179,7 +1179,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	
 	/**
-	 * Advanced Ajax callback. User must prepare the callback object settings (url, type, etc...) by using it's methods.
+	 * Advanced Ajax callback. User must manually prepare the callback object settings (url, type, etc...) by using its methods.
 	 *
 	 * @param callback callback handler
 	 * @return self
@@ -1333,6 +1333,21 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		return ajax(url, params, type, cb);
 		
+	}
+	
+	/**
+	 * Cache the url to file cache without any callback.
+	 *
+	 *
+	 * @param url url to cache
+	 * @param expire duration in millseconds, 0 = never consider cached data as expired
+	 * 
+	 * @return self
+	 * 
+	 * @see testCache
+	 */
+	public T cache(String url, long expire){		
+		return ajax(url, byte[].class, expire, null, null);		
 	}
 	
 	
