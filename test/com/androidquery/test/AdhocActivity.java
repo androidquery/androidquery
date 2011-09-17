@@ -14,6 +14,7 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.androidquery.service.MarketService;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 
@@ -32,9 +33,9 @@ public class AdhocActivity extends RunSourceActivity {
 		
 		AQUtility.debug("adhoc");
 		
-		AQService aqs = new AQService(this);
+		MarketService aqs = new MarketService(this);
 		
-		aqs.versionCheck();
+		aqs.checkVersion();
 		
 	}
 	
