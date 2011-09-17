@@ -7,7 +7,8 @@
         <item>Async Network</item>
         <item>Image Loading</item> 
         <item>Google Service (Beta)</item> 
-        <item>XML Parsing</item> 
+        <item>XML Parsing</item>
+        <item>AQuery Service (Beta)</item> 
         <item>Home @AndroidQuery</item>
         <item>Javadoc</item>              
     </string-array>
@@ -17,6 +18,7 @@
         <item>com.androidquery.test.IntentListActivity:image</item>
         <item>com.androidquery.test.IntentListActivity:auth</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
+        <item>com.androidquery.test.IntentListActivity:service</item>
         <item>http://code.google.com/p/android-query/</item>
         <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html</item>       
     </string-array>
@@ -186,6 +188,9 @@
         
         <item>xml_ajax</item>
         <item>xml_resource</item>
+        
+        <item>service_version</item>
+        <item>service_version2</item>
     </string-array>
     
     <string-array name="source_title">
@@ -238,6 +243,10 @@
         
         <item>Ajax Request with XmlDom Type - Get a list of featured images on Picasa.</item>
         <item>Parse XML Resource in Raw Resource Folder</item>
+        
+        
+        <item>Check App Version Show Update Dialog</item> 
+        <item>Check App Version Show Update Dialog</item> 
     </string-array>
     
     
@@ -252,5 +261,16 @@
         <item>com.androidquery.test.async.XmlActivity:xml_resource</item>
         <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/util/XmlDom.html</item>  
     </string-array>
+    
+    <string-array name="service_names">
+        <item>Version Check</item>
+        <item>Version Check (Other Locale)</item> 
+    </string-array>
+  
+  	<string-array name="service_values">
+        <item>com.androidquery.test.async.ServiceActivity:service_version</item>
+        <item>com.androidquery.test.async.ServiceActivity:service_version2</item>
+    </string-array>
+    
     
 </resources>
