@@ -32,30 +32,10 @@ public class AdhocActivity extends RunSourceActivity {
 		
 		AQUtility.debug("adhoc");
 		
+		AQService aqs = new AQService(this);
 		
+		aqs.versionCheck();
 		
-		String tb = "http://www.vikispot.com/z/images/vikispot/android-w.png";	
-		aq.id(R.id.button).image(tb);
-		
-		
-		/*
-		AjaxCallback<Bitmap> cb = new AjaxCallback<Bitmap>(){
-			
-			@Override
-			public void callback(String url, Bitmap bm, AjaxStatus status) {
-				
-				if(bm != null){
-					Button button = aq.id(R.id.button).getButton();					
-					button.setCompoundDrawablesWithIntrinsicBounds(new BitmapDrawable(bm), null, null, null);
-				}
-				
-			}
-		};
-		
-		cb.url(tb).type(Bitmap.class).fileCache(true);
-		
-		aq.ajax(cb);
-		*/
 	}
 	
 	

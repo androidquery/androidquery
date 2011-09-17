@@ -275,9 +275,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		if(url.equals(v.getTag())){			
 			if(v instanceof ImageView){
 				cb.callback(url, (ImageView) v, bm, status);
-			}else if(v instanceof TextView){
-				cb.callback(url, (TextView) v, bm, status);
+			}else{
+				showBitmap(url, v, bm);
 			}
+			
 		}
 		
 		completed = true;
@@ -287,9 +288,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		showBitmap(url, iv, bm);
 	}
 	
-	protected void callback(String url, TextView tv, Bitmap bm, AjaxStatus status){
-		showBitmap(url, tv, bm);
-	}
 
 	public static void setIconCacheLimit(int limit){
 		SMALL_MAX = limit;
