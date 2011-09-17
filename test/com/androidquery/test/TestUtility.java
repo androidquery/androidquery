@@ -28,6 +28,17 @@ public class TestUtility {
 		}
 	}
 	
+	public static void flurryEvent(Context context, String name){
+		
+		if(!isTestDevice(context)){
+			try{
+				FlurryAgent.onEvent(name, null);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static void flurryStop(Context context){
 		if(!isTestDevice(context)){
 			FlurryAgent.onEndSession(context);

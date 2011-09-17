@@ -17,7 +17,6 @@ import com.androidquery.util.AQUtility;
 
 public class ImageLoadingActivity extends RunSourceActivity {
 
-	private String type;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +24,6 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		super.onCreate(savedInstanceState);
 		
 		aq.id(R.id.result).gone();
-		
-		type = getIntent().getStringExtra("type");
 		
 		
 		if("image_access_file".equals(type) || "image_access_memory".equals(type)){

@@ -21,6 +21,7 @@ import com.flurry.android.FlurryAgent;
 public class RunSourceActivity extends Activity {
 
 	protected AQuery aq;
+	protected String type;
 	
 	protected int getContainer(){
 		return R.layout.source_activity;
@@ -34,6 +35,8 @@ public class RunSourceActivity extends Activity {
 				
 		aq = new AQuery(this);
 		
+		type = getIntent().getStringExtra("type");
+		
 		setContentView(getContainer());
 		
 		String source = getSource();
@@ -45,7 +48,7 @@ public class RunSourceActivity extends Activity {
 		aq.id(R.id.go_run).clicked(this, "runSource");
 		
 		//AQUtility.debug("source", source);
-		
+		TestUtility.flurryEvent(this, type);
 	}
 	
 	

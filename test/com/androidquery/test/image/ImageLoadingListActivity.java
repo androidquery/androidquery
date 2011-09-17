@@ -20,15 +20,11 @@ import com.androidquery.test.RunSourceActivity;
 
 public class ImageLoadingListActivity extends RunSourceActivity {
 
-	private String type;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 	
 		super.onCreate(savedInstanceState);
-		
-		
-		type = getIntent().getStringExtra("type");
 		
 		async_json();	
 	}

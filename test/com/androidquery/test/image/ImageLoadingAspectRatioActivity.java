@@ -12,8 +12,6 @@ public class ImageLoadingAspectRatioActivity extends RunSourceActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 	
 		super.onCreate(savedInstanceState);
-			
-		
 		aspectRatio();
 	}
 	
