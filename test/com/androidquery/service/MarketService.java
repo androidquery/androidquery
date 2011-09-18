@@ -138,6 +138,53 @@ public class MarketService{
     	
     }
     
+    protected void callback(String url, JSONObject jo, AjaxStatus status){
+    	
+    	String latest = jo.optString("version", null);
+		String version = getVersion();
+		
+		if(latest != null && version != null){
+			
+			AQUtility.debug("version", version + "->" + latest);
+			
+			if(force || !latest.equals(version)){
+				//makeUpdateDialog(jo).show();
+				showUpdateDialog(jo);
+			}
+			
+		}
+    	
+    }
+    
+	protected void showUpdateDialog(JSONObject jo){
+		
+		if(jo == null) return; 
+		
+		JSONObject dia = jo.optJSONObject("dialog");
+		
+		String update = dia.optString("update", "Update");
+		String skip = dia.optString("skip", "Skip");
+		String rate = dia.optString("rate", "Rate");
+		String body = dia.optString("body", jo.optString("recent", "N/A"));
+		String title = dia.optString("title", "Update Available");
+		
+		Drawable icon = getAppIcon();
+		
+		Dialog dialog = new AlertDialog.Builder(act)
+        .setIcon(icon)
+		.setTitle(title)
+        .setMessage(body)        
+		.setPositiveButton(rate, handler)
+        .setNeutralButton(skip, handler)
+        .setNegativeButton(update, handler)
+        .create();
+		
+		dialog.show();
+		
+		return;
+		
+	}
+    
 	
 	protected class Handler implements DialogInterface.OnClickListener{
         
@@ -167,23 +214,13 @@ public class MarketService{
 					cb.url(marketUrl).type(String.class).handler(this, "detailCb");				
 					aq.ajax(cb);
 					
-				}else{
-					
-					String latest = jo.optString("version", null);
-					String version = getVersion();
-					
-					if(latest != null && version != null){
-						
-						AQUtility.debug("version", version + "->" + latest);
-						
-						if(force || !latest.equals(version)){
-							makeUpdateDialog(jo).show();
-						}
-						
-					}
+				}else{					
+					callback(url, jo, status);
 					
 				}
 				
+			}else{
+				callback(url, jo, status);				
 			}
 		}
 		
@@ -205,27 +242,7 @@ public class MarketService{
 		}
 		
 		
-		private Dialog makeUpdateDialog(JSONObject jo){
-			
-			JSONObject dia = jo.optJSONObject("dialog");
-			
-			String update = dia.optString("update", "Update");
-			String skip = dia.optString("skip", "Skip");
-			String rate = dia.optString("rate", "Rate");
-			String body = dia.optString("body", jo.optString("recent", "N/A"));
-			String title = dia.optString("title", "Update Available");
-			
-			Drawable icon = getAppIcon();
-			
-			return new AlertDialog.Builder(act)
-	        .setIcon(icon)
-			.setTitle(title)
-	        .setMessage(body)        
-			.setPositiveButton(rate, this)
-	        .setNeutralButton(skip, this)
-	        .setNegativeButton(update, this)
-	        .create();
-		}
+
 
 		@Override
 		public void onClick(DialogInterface dialog, int which) {

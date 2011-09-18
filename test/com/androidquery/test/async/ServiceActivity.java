@@ -41,7 +41,18 @@ public class ServiceActivity extends RunSourceActivity {
 	
 	public void service_version(){
 	    		
-		MarketService ms = new MarketService(this);
+		showProgress(true);
+		
+		MarketService ms = new MarketService(this){
+			
+			@Override
+			protected void callback(String url, JSONObject jo, AjaxStatus status) {
+				showProgress(false);
+				super.callback(url, jo, status);
+			}
+			
+		};
+		
 		ms.checkVersion();
 	        
 	}	
