@@ -248,6 +248,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	@Override
 	public final void callback(String url, Bitmap bm, AjaxStatus status) {
 		
+		//AQUtility.debug("bjcb", url);
+		
 		View firstView = v.get();
 		
 		checkCb(this, url, firstView, bm, status);
@@ -599,7 +601,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		Bitmap bm = memGet(url, targetWidth);
 		if(bm != null){		
 			v.setTag(url);
-			showBitmap(url, v, bm);
+			//showBitmap(url, v, bm);
+			callback(url, bm, new AjaxStatus(200, "OK", url, null, null, true));
 			return;
 		}
 		
