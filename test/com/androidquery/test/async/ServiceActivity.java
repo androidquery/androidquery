@@ -59,8 +59,18 @@ public class ServiceActivity extends RunSourceActivity {
 	
 	public void service_version2(){
 		
-		MarketService ms = new MarketService(this);
-		ms.locale(Locale.TRADITIONAL_CHINESE.toString()).checkVersion();
-	        
+		//MarketService ms = new MarketService(this);
+		//ms.locale(Locale.TRADITIONAL_CHINESE.toString()).checkVersion();
+	      
+		String url = "https://market.android.com/details?id=com.androidquery&hl=zh-TW";
+		
+		aq.ajax(url, String.class, this, "stringCb");
 	}	
+	
+	public void stringCb(String url, String html, AjaxStatus status){
+		
+		showResult(html);
+		
+	}
+	
 }
