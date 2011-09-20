@@ -8,7 +8,11 @@
         <item>Image Loading</item> 
         <item>Google Service (Beta)</item> 
         <item>XML Parsing</item>
+        
+          
         <item>AQuery Service (Beta)</item> 
+        
+        
         <item>Home @AndroidQuery</item>
         <item>Javadoc</item>              
     </string-array>
@@ -18,7 +22,11 @@
         <item>com.androidquery.test.IntentListActivity:image</item>
         <item>com.androidquery.test.IntentListActivity:auth</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
+        
+        
         <item>com.androidquery.test.IntentListActivity:service</item>
+        
+        
         <item>http://code.google.com/p/android-query/</item>
         <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html</item>       
     </string-array>
@@ -78,6 +86,10 @@
         <item>Pre-Caching</item> 
         
         <item>Refetch and Cache Busting</item> 
+        
+        <item>Clear Memory Cache</item>
+        <item>Clear File Cache</item>
+        
         <item>Doc @ AndroidQuery</item>
     </string-array>
     
@@ -112,7 +124,10 @@
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_pre_cache</item>
         
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_nocache</item>    
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_nocache</item> 
+        
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_clear_mem</item> 
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_clear_disk</item>    
         
         <item>http://code.google.com/p/android-query/wiki/ImageLoading</item>
     </string-array>
@@ -176,6 +191,9 @@
         <item>image_pre_cache</item>
         
         <item>image_nocache</item>
+        
+        <item>image_clear_mem</item>
+        <item>image_clear_disk</item>
               
         <item>auth_pick_account</item>  
         <item>auth_last_account</item>      
@@ -232,6 +250,9 @@
            
         <item>Prefetch an Image without Displaying</item>        
         <item>Force Refetch and Cache Busting</item>     
+        
+        <item>Clear Image Memory Cache</item>     
+        <item>Clear File Cache</item>     
            
         <item>Google Reader (user select account, if multiple)</item> 
         <item>Google Reader (remember last selected account, pick if first uses)</item> 

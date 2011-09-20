@@ -1,0 +1,3 @@
+	public void image_clear_disk(){
+		AQUtility.cleanCacheAsync(this, 0, 0);
+	}

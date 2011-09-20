@@ -272,4 +272,15 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	public void image_clear_mem(){
+		BitmapAjaxCallback.clearCache();
+		showTextResult("Bitmap Memcache cleared");
+	}
+	
+	public void image_clear_disk(){
+		
+		AQUtility.cleanCacheAsync(this, 0, 0);
+		showTextResult("File cache cleared");
+	}
+	
 }

@@ -33,10 +33,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -44,6 +46,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.ExecutionContext;
+import org.apache.http.protocol.HttpContext;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -225,7 +230,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	private void showProgress(boolean show){
+	protected void showProgress(boolean show){
 		
 		if(pbar != null){
 			ProgressBar pb = pbar.get();
@@ -581,7 +586,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return url;
 	}
 	
-	
+	/*
 	private static AjaxStatus httpGet(String urlPath, Map<String, String> headers, boolean retry) throws IOException{
 				
 		AQUtility.debug("net", urlPath);
@@ -631,11 +636,22 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         
         return new AjaxStatus(code, connection.getResponseMessage(), redirect, data, new Date(), false);
 	}
+	*/
+	
+	private static AjaxStatus httpGet(String url, Map<String, String> headers, boolean retry) throws IOException{
+		
+		AQUtility.debug("net", url);
+		url = patchUrl(url);
+		
+		HttpGet get = new HttpGet(url);
+		
+		return httpDo(get, url, headers);
+		
+	}
 	
 	private static AjaxStatus httpPost(String url, Map<String, String> headers, Map<String, Object> params) throws ClientProtocolException, IOException{
 		
 		AQUtility.debug("post", url);
-		
 		
 		HttpPost post = new HttpPost(url);
 		
@@ -648,20 +664,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			}
 		}
 		
-		if(headers != null){
-        	for(String name: headers.keySet()){
-        		//connection.addRequestProperty(name, headers.get(name));
-        		post.addHeader(name, headers.get(name));
-        	}
-        }
 		
 		post.setEntity(new UrlEncodedFormEntity(pairs));
-		return httpDo(post, url);
+		return httpDo(post, url, headers);
 		
 		
 	}
 	
-	private static AjaxStatus httpDo(HttpUriRequest hr, String url) throws ClientProtocolException, IOException{
+	private static AjaxStatus httpDo(HttpUriRequest hr, String url, Map<String, String> headers) throws ClientProtocolException, IOException{
+		
+		if(AGENT != null){
+			hr.addHeader("User-Agent", AGENT);
+        }
+		
+		if(headers != null){
+        	for(String name: headers.keySet()){
+        		hr.addHeader(name, headers.get(name));
+        	}
+        }
 		
 		
 		HttpParams httpParams = new BasicHttpParams();
@@ -670,7 +690,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		DefaultHttpClient client = new DefaultHttpClient(httpParams);
 		
-		HttpResponse response = client.execute(hr);
+		HttpContext context = new BasicHttpContext(); 	
+		HttpResponse response = client.execute(hr, context);
 		
 		
         byte[] data = null;
@@ -687,6 +708,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	HttpEntity entity = response.getEntity();				
 			InputStream is = entity.getContent();
 			
+			HttpHost currentHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
+			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
+	        redirect = currentHost.toURI() + currentReq.getURI();
+			
+			//AQUtility.debug("redirect", redirect);
+			
 			data = AQUtility.toBytes(is);
         }
         
@@ -696,8 +723,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		result.setClient(client);
 		return result;
 			
-		
-		
 		
 	}
 	

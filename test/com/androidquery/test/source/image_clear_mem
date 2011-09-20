@@ -1,0 +1,3 @@
+	public void image_clear_mem(){
+		BitmapAjaxCallback.clearCache();
+	}

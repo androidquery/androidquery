@@ -250,6 +250,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		//AQUtility.debug("bjcb", url);
 		
+		showProgress(false);
+		
 		View firstView = v.get();
 		
 		checkCb(this, url, firstView, bm, status);
