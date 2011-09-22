@@ -660,12 +660,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		for(Map.Entry<String, Object> e: params.entrySet()){
 			Object value = e.getValue();
 			if(value != null){
+				//System.err.println(e.getKey() + "->" + value.toString());
 				pairs.add(new BasicNameValuePair(e.getKey(), value.toString()));
+				
 			}
 		}
 		
-		
-		post.setEntity(new UrlEncodedFormEntity(pairs));
+		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+		post.setEntity(entity);
 		return httpDo(post, url, headers);
 		
 		
