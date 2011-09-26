@@ -140,6 +140,8 @@ public class MarketService{
     
     protected void callback(String url, JSONObject jo, AjaxStatus status){
     	
+    	if(jo == null) return;
+    	
     	String latest = jo.optString("version", null);
 		String version = getVersion();
 		
