@@ -36,6 +36,7 @@ import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -45,6 +46,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.androidquery.callback.AjaxCallback;
@@ -812,6 +814,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return (WebView) view;
 	}
 	
+	/**
+	 * Gets the current view as a spinner.
+	 *
+	 * @return Spinner
+	 */
+	public Spinner getSpinner(){
+		return (Spinner) view;
+	}
 	
 	/**
 	 * Gets the editable.
@@ -829,6 +839,22 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return result;
 	}
 	
+	/**
+	 * Gets the selected item if current view is an adapter view.
+	 *
+	 * @return selected
+	 */
+	public Object getSelectedItem(){
+		
+		Object result = null;
+		
+		if(view instanceof AdapterView<?>){
+			result = ((AdapterView<?>) view).getSelectedItem();
+		}
+		
+		return result;
+		
+	}
 	
 	
 	
@@ -843,6 +869,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T clicked(Object handler, String method){
 		
+		/*
 		if(view != null){			
 			
 			Common common = new Common().forward(handler, method, true, ON_CLICK_SIG);
@@ -851,6 +878,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		
 		return self();
+		*/
+		
+		Common common = new Common().forward(handler, method, true, ON_CLICK_SIG);
+		return clicked(common);
+		
 	}
 	
 	
@@ -869,7 +901,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	private static Class<?>[] ON_ITEM_CLICK_SIG = {AdapterView.class, View.class, int.class, long.class};
+	private static Class<?>[] ON_ITEM_SIG = {AdapterView.class, View.class, int.class, long.class};
 	
 	/**
 	 * Register a callback method for when an item is clicked in the ListView. Method must have signature of method(AdapterView<?> parent, View v, int pos, long id).
@@ -880,6 +912,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T itemClicked(Object handler, String method){
 		
+		/*
 		if(view instanceof AdapterView){
 		
 			AdapterView<?> av = (AdapterView<?>) view;
@@ -890,6 +923,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		
 		return self();
+		*/
+		
+		Common common = new Common().forward(handler, method, true, ON_ITEM_SIG);
+		return itemClicked(common);
 		
 	}
 	
@@ -901,9 +938,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T itemClicked(OnItemClickListener listener){
 		
-		if(view instanceof AbsListView){
+		if(view instanceof AdapterView){
 		
-			AbsListView alv = (AbsListView) view;
+			AdapterView<?> alv = (AdapterView<?>) view;
 			alv.setOnItemClickListener(listener);
 		
 		}
@@ -911,6 +948,39 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 		
 	}	
+	
+	/**
+	 * Register a callback method for when an item is selected. Method must have signature of method(AdapterView<?> parent, View v, int pos, long id).
+	 *
+	 * @param handler The handler that has the public callback method.
+	 * @param method The method name of the callback.
+	 * @return self
+	 */
+	public T itemSelected(Object handler, String method){
+				
+		Common common = new Common().forward(handler, method, true, ON_ITEM_SIG);
+		return itemSelected(common);
+		
+	}
+	
+	/**
+	 * Register a callback method for when an item is selected. 
+	 *
+	 * @param handler The handler that has the public callback method.
+	 * @param method The method name of the callback.
+	 * @return self
+	 */
+	public T itemSelected(OnItemSelectedListener listener){
+		
+		if(view instanceof AdapterView){		
+			AdapterView<?> alv = (AdapterView<?>) view;
+			alv.setOnItemSelectedListener(listener);		
+		}
+		
+		return self();
+		
+	}	
+	
 	
 	
 	

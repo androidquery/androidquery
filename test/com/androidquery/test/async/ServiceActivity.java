@@ -8,6 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Spinner;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -29,7 +33,23 @@ public class ServiceActivity extends RunSourceActivity {
 		
 		type = getIntent().getStringExtra("type");
 			
+		if(type.equals("service_version_locale")){
+			aq.id(R.id.spinner).visible().itemSelected(this, "localeSelected");			
+		}
 	}
+	
+	
+	public void localeSelected(AdapterView<?> parent, View v, int pos, long id) {
+        
+		service_version_locale();
+	}
+	
+	
+	@Override
+	protected int getContainer(){
+		return R.layout.service_activity;
+	}
+	
 	
 	@Override
 	protected void runSource(){
@@ -39,7 +59,7 @@ public class ServiceActivity extends RunSourceActivity {
 		AQUtility.invokeHandler(this, type, false, null);
 	}
 	
-	public void service_version(){
+	public void service_version_force(){
 	    		
 		showProgress(true);
 		
@@ -53,21 +73,40 @@ public class ServiceActivity extends RunSourceActivity {
 			
 		};
 		
-		ms.checkVersion();
+		ms.force(true).checkVersion();
 	        
 	}	
 	
-	//09-26 13:34:17.707: WARN/AQuery(11534): {"update":1317015178274,"fetch":false,"app":"com.androidquery","icon":"https:\/\/g1.gstatic.com\/android\/market\/com.androidquery\/hi-256-0-32ae6f723f990caab754ae5dfd5e3718b72aa3d3","desc":null,"status":"1","locale":"zh_TW","name":"AndroidQuery代碼段","published":null,"dialog":{"update":"Update","body":"Version:  0.13.2\n\nRecent Changes:\n\n????0.13.2?","title":"Update Available","rate":"Rate","skip":"Skip","later":"Later"},"recent":"預覽版本0.13.2。","version":"0.13.2"}
-
-	
-	public void service_version2(){
+	public void service_version_locale(){
+		
+		String locale = aq.id(R.id.spinner).getSelectedItem().toString();
 		
 		MarketService ms = new MarketService(this);
-		ms.locale(Locale.TRADITIONAL_CHINESE.toString()).checkVersion();
+		ms.locale(locale).force(true).checkVersion();
 	      
-		//String url = "https://market.android.com/details?id=com.androidquery&hl=zh-TW";		
-		//aq.ajax(url, String.class, this, "stringCb");
+	}
+	
+	public void service_version_auto(){
+		
+		showProgress(true);
+		
+		MarketService ms = new MarketService(this){
+			
+			@Override
+			protected void callback(String url, JSONObject jo, AjaxStatus status) {
+				showProgress(false);
+				super.callback(url, jo, status);
+			}
+			
+		};
+		
+		ms.checkVersion();
+	    
+		showResult("Nothing happends if current version is up to date.");
+		
 	}	
+	
+	
 	
 	public void stringCb(String url, String html, AjaxStatus status){
 		

@@ -27,13 +27,14 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 /**
  * AQuery internal use only. 
  * 
  */
 
-public class Common implements Comparator<File>, Runnable, OnClickListener, OnItemClickListener, OnScrollListener, TextWatcher{
+public class Common implements Comparator<File>, Runnable, OnClickListener, OnItemClickListener, OnScrollListener, OnItemSelectedListener, TextWatcher{
 
 	private Object handler;
 	private String method;
@@ -172,6 +173,18 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		
 		invoke(s, start, before, count);
+	}
+
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+		invoke(parent, v, pos, id);
+	}
+
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		
 	}
 	
 }

@@ -266,8 +266,9 @@
         <item>Parse XML Resource in Raw Resource Folder</item>
         
         
-        <item>Check App Version Show Update Dialog</item> 
-        <item>Check App Version Show Update Dialog</item> 
+        <item>Check App Version - Force update dialog with default locale</item> 
+        <item>Check App Version - Pick any supported locale</item> 
+        <item>Check App Version - Automatic detect update needed</item> 
     </string-array>
     
     
@@ -284,14 +285,38 @@
     </string-array>
     
     <string-array name="service_names">
-        <item>Version Check</item>
+        <item>Version Check (Force)</item>
         <item>Version Check (Other Locale)</item> 
+        <item>Version Check (Automatic)</item>
     </string-array>
   
   	<string-array name="service_values">
-        <item>com.androidquery.test.async.ServiceActivity:service_version</item>
-        <item>com.androidquery.test.async.ServiceActivity:service_version2</item>
+        <item>com.androidquery.test.async.ServiceActivity:service_version_force</item>
+        <item>com.androidquery.test.async.ServiceActivity:service_version_locale</item>
+        <item>com.androidquery.test.async.ServiceActivity:service_version_auto</item>
     </string-array>
     
+    <string-array name="locales">
+        <item>en</item>
+        <item>zh-TW</item>
+        <item>zh-CN</item>
+        <item>fr</item>
+        <item>de</item>
+        <item>it</item>
+        <item>es</item>
+        <item>nl</item>
+        <item>pl</item>
+        <item>cs</item>
+        <item>pt</item>
+        <item>ja</item>
+        <item>ko</item>
+        <item>ru</item>
+        <item>sv</item>
+        <item>no</item>
+        <item>da</item>
+        <item>hi</item>
+        <item>iw</item>
+        <item>fi</item>
+    </string-array>
     
 </resources>

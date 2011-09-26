@@ -63,7 +63,8 @@ public class MarketService{
 	}
 	
 	private String getHost(){
-		return "http://192.168.1.222";
+		//return "http://192.168.1.222";
+		return "https://androidquery.appspot.com";
 	}
 	
 	private String getQueryUrl(){
@@ -101,8 +102,6 @@ public class MarketService{
 	
 	
 	public void checkVersion(){
-		
-		//http://192.168.1.222/api/market?app=com.pekca.vikispot.android
 		
 		String url = getQueryUrl();
 		
@@ -150,7 +149,6 @@ public class MarketService{
 			AQUtility.debug("version", version + "->" + latest);
 			
 			if(force || !latest.equals(version)){
-				//makeUpdateDialog(jo).show();
 				showUpdateDialog(jo);
 			}
 			
@@ -204,7 +202,7 @@ public class MarketService{
 		
 		private void marketCb(String url, JSONObject jo, AjaxStatus status, boolean fetched){
 			
-			AQUtility.debug(jo);
+			//AQUtility.debug(jo);
 			
 			if(jo != null && "1".equals(jo.optString("status"))){
 				
