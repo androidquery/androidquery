@@ -84,7 +84,7 @@ public class ImageLoadingGridActivity extends RunSourceActivity {
 				AQuery aq = new AQuery(view);
 				
 				String tb = jo.optJSONObject("image").optString("tbUrl");
-				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, AQuery.FADE_IN, 1.0f);
+				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, 0, 1.0f);
 				
 				return view;
 				
