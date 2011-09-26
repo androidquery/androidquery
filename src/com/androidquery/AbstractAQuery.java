@@ -68,7 +68,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	private Context context;
 	
 	protected View view;
-	
+	private ProgressBar progress;
 
 	private T create(View view){
 		
@@ -187,7 +187,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int id){
-		view = findView(id);			
+		view = findView(id);	
+		progress = null;
 		return self();
 	}
 	
@@ -198,9 +199,22 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int... path){
-		view = findView(path);			
+		view = findView(path);	
+		progress = null;		
 		return self();
 	}
+	
+	
+	public T progress(int id){
+	
+		View pbar = findView(id);
+		if(pbar instanceof ProgressBar){
+			progress = (ProgressBar) pbar;
+		}
+		
+		return self();
+	}
+	
 	
 	/**
 	 * Set the text of a TextView.
@@ -429,18 +443,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio){
 		
-		/*
-		if(view instanceof ImageView){
-			ImageView iv = (ImageView) view;	
-			
-			BitmapAjaxCallback cb = new BitmapAjaxCallback();		
-			cb.url(url).memCache(memCache).fileCache(fileCache).imageView(iv).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animId).ratio(ratio);			
-			cb.async(iv.getContext());
-		}
-		
-		return self();
-		*/
-		
 		BitmapAjaxCallback cb = new BitmapAjaxCallback();		
 		cb.url(url).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animId).ratio(ratio);	
 		
@@ -460,7 +462,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T image(BitmapAjaxCallback callback){
 		
 		if(view instanceof ImageView || view instanceof TextView){			
-			callback.view(view).async(getContext());			
+			callback.view(view).progress(progress).async(getContext());			
 		}
 		
 		return self();
@@ -482,19 +484,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @see testImage9
 	 */
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int resId, BitmapAjaxCallback callback){
-		
-		/*
-		if(view instanceof ImageView){
-			
-			ImageView iv = (ImageView) view;
-			
-			callback.imageView(iv).targetWidth(targetWidth).fallback(resId)
-			.url(url).memCache(memCache).fileCache(fileCache).async(getContext());
-			
-		}
-		
-		return self();
-		*/
 		
 		callback.targetWidth(targetWidth).fallback(resId)
 		.url(url).memCache(memCache).fileCache(fileCache);
@@ -1265,7 +1254,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(AjaxCallback<K> callback){
 				
-		callback.async(getContext());
+		callback.progress(progress).async(getContext());
 		
 		return self();
 	}	
@@ -1283,9 +1272,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Class<K> type, AjaxCallback<K> callback){
 		
-		callback.type(type).url(url).async(getContext());
-		
-		return self();
+		callback.type(type).url(url);
+		return ajax(callback);
 	}
 	
 	/**
@@ -1307,9 +1295,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Class<K> type, long expire, AjaxCallback<K> callback){
 		
-		callback.type(type).url(url).fileCache(true).expire(expire).async(getContext());
+		callback.type(type).url(url).fileCache(true).expire(expire);
 		
-		return self();
+		return ajax(callback);
 	}
 	
 	
@@ -1382,8 +1370,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, AjaxCallback<K> callback){
 		
-		callback.type(type).url(url).params(params).async(getContext());
-		return self();
+		callback.type(type).url(url).params(params);
+		return ajax(callback);
 	}
 	
 	

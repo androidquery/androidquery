@@ -340,12 +340,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	protected void showProgress(boolean show){
 		
 		if(pbar != null){
+			
 			ProgressBar pb = pbar.get();
-			if(pb != null){
+			if(pb != null){				
 				if(show){
+					pb.setTag(url);
 					pb.setVisibility(View.VISIBLE);
 				}else{
-					pb.setVisibility(View.GONE);
+					Object tag = pb.getTag();
+					if(tag == null || tag.equals(url)){
+						pb.setTag(null);
+						pb.setVisibility(View.GONE);						
+					}
 				}
 			}
 		}
@@ -452,6 +458,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @param context the context
 	 */
 	public void async(Context context){
+		
+		showProgress(true);
 		
 		if(ah != null){
 			

@@ -689,6 +689,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		View v = this.v.get();
 		
 		if(url == null){
+			showProgress(false);
 			setBitmap(url, v, null, false, false);
 			return;
 		}
