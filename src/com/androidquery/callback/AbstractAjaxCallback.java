@@ -63,6 +63,10 @@ import com.androidquery.util.AQUtility;
 import com.androidquery.util.AccountHandle;
 import com.androidquery.util.XmlDom;
 
+/**
+ * The Class AbstractAjaxCallback.
+ *
+ */
 public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private static int NET_TIMEOUT = 30000;
@@ -93,34 +97,54 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private long expire;
 	
 	
-
-	
 	@SuppressWarnings("unchecked")
 	private K self(){
 		return (K) this;
 	}
-	
-	
 	
 	private void clear(){		
 		whandler = null;
 		result = null;
 		status = null;
 		handler = null;
+		pbar = null;
 	}
 	
+	/**
+	 * Sets the timeout.
+	 *
+	 * @param timeout the default network timeout in milliseconds
+	 */
 	public static void setTimeout(int timeout){
 		NET_TIMEOUT = timeout;
 	}
 	
+	/**
+	 * Sets the agent.
+	 *
+	 * @param agent the default agent sent in http header
+	 */
 	public static void setAgent(String agent){
 		AGENT = agent;
 	}
 	
+	/**
+	 * Gets the ajax response type.
+	 *
+	 * @return the type
+	 */
 	public Class<T> getType() {
 		return type;
 	}
 
+	/**
+	 * Set a callback handler with a weak reference. Use weak handler if you do not want the ajax callback to hold the handler object from garbage collection.
+	 * For example, if the handler is an activity, weakHandler should be used since the method shouldn't be invoked if an activity is already dead and garbage collected.
+	 *
+	 * @param handler the handler
+	 * @param callback the callback
+	 * @return self
+	 */
 	public K weakHandler(Object handler, String callback){
 		this.whandler = new WeakReference<Object>(handler);
 		this.callback = callback;
@@ -128,6 +152,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	/**
+	 * Set a callback handler. See weakHandler for handler objects, such as Activity, that should not be held from garbaged collected. 
+	 *
+	 * @param handler the handler
+	 * @param callback the callback
+	 * @return self
+	 */
 	public K handler(Object handler, String callback){
 		this.handler = handler;
 		this.callback = callback;
@@ -135,36 +166,83 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	/**
+	 * Url.
+	 *
+	 * @param url the url
+	 * @return self
+	 */
 	public K url(String url){
 		this.url = url;
 		return self();
 	}
 	
+	/**
+	 * Set the desired ajax response type. Type parameter is required otherwise the ajax callback will not occur.
+	 * 
+	 * Current supported type: JSONObject.class, String.class, byte[].class, Bitmap.class, XmlDom.class
+	 * 
+	 *
+	 * @param type the type
+	 * @return self
+	 */
 	public K type(Class<T> type){
 		this.type = type;
 		return self();
 	}
 	
+	/**
+	 * Set ajax request to be file cached.
+	 *
+	 * @param cache the cache
+	 * @return self
+	 */
 	public K fileCache(boolean cache){
 		this.fileCache = cache;
 		return self();
 	}
 	
+	/**
+	 * Indicate ajax request to be memcached. Note: The default ajax handler does not supply a memcache.
+	 * Subclasses such as BitmapAjaxCallback can provide their own memcache. 
+	 *
+	 * @param cache the cache
+	 * @return self
+	 */
 	public K memCache(boolean cache){
 		this.memCache = cache;
 		return self();
 	}
 	
+	/**
+	 * Indicate the ajax request should ignore memcache and filecache.
+	 *
+	 * @param refresh the refresh
+	 * @return self
+	 */
 	public K refresh(boolean refresh){
 		this.refresh = refresh;
 		return self();
 	}
 	
+	/**
+	 * The expire duation for filecache. If a cached copy will be served if a cached file exists within current time minus expire duration.
+	 *
+	 * @param expire the expire
+	 * @return self
+	 */
 	public K expire(long expire){
 		this.expire = expire;
 		return self();
 	}
 	
+	/**
+	 * Set the header fields for the http request.
+	 *
+	 * @param name the name
+	 * @param value the value
+	 * @return self
+	 */
 	public K header(String name, String value){
 		if(headers == null){
 			headers = new HashMap<String, String>();
@@ -173,6 +251,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	/**
+	 * Set http POST params. If params are set, http POST method will be used. 
+	 * The UTF-8 encoded value.toString() will be sent with POST. 
+	 * 
+	 * Header field "Content-Type: application/x-www-form-urlencoded;charset=UTF-8" will be added if no Content-Type header field presents.
+	 *
+	 * @param name the name
+	 * @param value the value
+	 * @return self
+	 */
 	public K param(String name, Object value){
 		if(params == null){
 			params = new HashMap<String, Object>();
@@ -181,11 +269,23 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	/**
+	 * Set the http POST params. See param(String name, Object value).
+	 *
+	 * @param params the params
+	 * @return self
+	 */
 	public K params(Map<String, Object> params){
 		this.params = params;
 		return self();
 	}
 	
+	/**
+	 * Warning: BETA method and it's subjected to be changed.
+	 *
+	 * @param pbar the pbar
+	 * @return the k
+	 */
 	public K progress(ProgressBar pbar){
 		if(pbar != null){
 			this.pbar = new WeakReference<ProgressBar>(pbar);
@@ -210,6 +310,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	
+	/**
+	 * The callback method to be overwritten for subclasses.
+	 *
+	 * @param url the url
+	 * @param object the object
+	 * @param status the status
+	 */
 	public void callback(String url, T object, AjaxStatus status){
 		
 	}
@@ -252,17 +359,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			return null;
 		}
 		
-		if(type.equals(Bitmap.class)){			
-			return (T) BitmapFactory.decodeByteArray(data, 0, data.length);
-		}
-		
-		
 		if(type.equals(JSONObject.class)){
 			
 			JSONObject result = null;
 	    	
 	    	try {    		
-	    		String str = new String(data);
+	    		String str = new String(data, "UTF-8");
 				result = (JSONObject) new JSONTokener(str).nextValue();
 			} catch (Exception e) {	  		
 				AQUtility.report(e);
@@ -297,6 +399,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		if(type.equals(byte[].class)){
 			return (T) data;
+		}
+		
+		if(type.equals(Bitmap.class)){			
+			return (T) BitmapFactory.decodeByteArray(data, 0, data.length);
 		}
 		
 		return null;
@@ -340,6 +446,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return new AjaxStatus(200, "OK", url, null, time, refresh);
 	}
 	
+	/**
+	 * Starts the async process. 
+	 *
+	 * @param context the context
+	 */
 	public void async(Context context){
 		
 		if(ah != null){
@@ -389,6 +500,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 	}
 	
+	/**
+	 * Warning: BETA method and subject to change.
+	 *
+	 * @param context the context
+	 */
 	public void sync(Context context){
 		
 		work(context, false);
@@ -396,6 +512,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		
@@ -564,11 +683,20 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return fetchExe;
 	}
 	
+	/**
+	 * Sets the simultaneous network threads limit. Highest limit is 8.
+	 *
+	 * @param limit the new network threads limit
+	 */
 	public static void setNetworkLimit(int limit){
 		
 		NETWORK_POOL = Math.max(1, Math.min(8, limit));
 		fetchExe = null;
 	}
+	
+	/**
+	 * Cancel ALL ajax tasks.
+	 */
 	
 	public static void cancel(){
 		
@@ -667,6 +795,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 		
 		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+		
+		if(headers != null  && !headers.containsKey("Content-Type")){
+			headers.put("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+		}
+		
 		post.setEntity(entity);
 		return httpDo(post, url, headers);
 		
@@ -728,6 +861,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	/**
+	 * Set the authentication type of this request. This method requires API 5+.
+	 *
+	 * @param act the current activity
+	 * @param type the auth type
+	 * @param account the account, such as someone@gmail.com
+	 * @return self
+	 */
 	public K auth(Activity act, String type, String account){
 		
 		if(android.os.Build.VERSION.SDK_INT >= 5){		
@@ -738,6 +879,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 
+	/**
+	 * Set the auth token directly. Note: Currently only support GoogleLogin auth.
+	 *
+	 * @param type the type
+	 * @param token the token
+	 * @return the k
+	 */
 	public K authToken(String type, String token){
 		if(token != null){
 			header("Authorization", "GoogleLogin auth=" + token);
@@ -746,16 +894,31 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	
+	/**
+	 * Gets the url.
+	 *
+	 * @return the url
+	 */
 	public String getUrl(){
 		return url;
 	}
 	
+	/**
+	 * Gets the handler.
+	 *
+	 * @return the handler
+	 */
 	public Object getHandler() {
 		if(handler != null) return handler;
 		if(whandler == null) return null;
 		return whandler.get();
 	}
 
+	/**
+	 * Gets the callback method name.
+	 *
+	 * @return the callback
+	 */
 	public String getCallback() {
 		return callback;
 	}

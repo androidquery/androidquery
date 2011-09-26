@@ -44,15 +44,15 @@ import com.androidquery.util.AQUtility;
 import com.androidquery.util.BitmapCache;
 import com.androidquery.util.Constants;
 
+/**
+ * The Class BitmapAjaxCallback.
+ */
 public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxCallback>{
 
 	private static int SMALL_MAX = 20;
 	private static int BIG_MAX = 20;
 	private static int BIG_PIXELS = 400 * 400;
 	private static int BIG_TPIXELS = 1000000;
-	
-	public static final int FADE_IN = Constants.FADE_IN;
-	public static final float RATIO_PRESERVE = Constants.RATIO_PRESERVE;
 	
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
@@ -67,45 +67,96 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private Bitmap preset;
 	private float ratio;
 	
+	/**
+	 * Instantiates a new bitmap ajax callback.
+	 */
 	public BitmapAjaxCallback(){
 		type(Bitmap.class).memCache(true).fileCache(true);
 	}
 	
+	/**
+	 * Set the target Image view.
+	 *
+	 * @param view the view
+	 * @return self
+	 */
 	public BitmapAjaxCallback imageView(ImageView view){				
 		return view(view);
 	}
 	
+	/**
+	 * Set the target view. 
+	 *
+	 * @param view the view
+	 * @return self
+	 */
 	public BitmapAjaxCallback view(View view){				
 		v = new WeakReference<View>(view);		
 		return this;
 	}
 	
+	/**
+	 * Set the target width for downsampling.
+	 *
+	 * @param targetWidth the target width
+	 * @return self
+	 */
 	public BitmapAjaxCallback targetWidth(int targetWidth){
 		this.targetWidth = targetWidth;
 		return this;
 	}
 	
+	/**
+	 * Set the image source file.
+	 *
+	 * @param imageFile the image file
+	 * @return self
+	 */
 	public BitmapAjaxCallback file(File imageFile){
 		this.imageFile = imageFile;
 		return this;
 	}
 	
+	/**
+	 * Set the preset bitmap. This bitmap will be shown immediately until the ajax callback returns the final image from the url.
+	 *
+	 * @param preset the preset
+	 * @return self
+	 */
 	public BitmapAjaxCallback preset(Bitmap preset){
 		
 		this.preset = preset;
 		return this;
 	}
 	
+	/**
+	 * Set the fallback image in resource id.
+	 *
+	 * @param resId the res id
+	 * @return self
+	 */
 	public BitmapAjaxCallback fallback(int resId){
 		this.fallback = resId;
 		return this;
 	}
 	
+	/**
+	 * Set the animation resource id, or AQuery.FADE_IN.
+	 *
+	 * @param animation the animation
+	 * @return self
+	 */
 	public BitmapAjaxCallback animation(int animation){
 		this.animation = animation;
 		return this;
 	}
 	
+	/**
+	 * Set the image aspect ratio (height / width).
+	 *
+	 * @param ratio the ratio
+	 * @return self
+	 */
 	public BitmapAjaxCallback ratio(float ratio){
 		this.ratio = ratio;
 		return this;
@@ -124,6 +175,14 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return result;
 	}
 	
+	/**
+	 * Utility method for downsampling images.
+	 *
+	 * @param path the file path
+	 * @param data if file path is null, provide the image data directly
+	 * @param targetWidth the target width
+	 * @return the resized image
+	 */
 	public static Bitmap getResizedImage(String path, byte[] data, int targetWidth){
     	
     	BitmapFactory.Options options = null;
@@ -245,6 +304,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return empty;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.androidquery.callback.AbstractAjaxCallback#callback(java.lang.String, java.lang.Object, com.androidquery.callback.AjaxStatus)
+	 */
 	@Override
 	public final void callback(String url, Bitmap bm, AjaxStatus status) {
 		
@@ -293,26 +355,49 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 
+	/**
+	 * Sets the icon cache size in count. Icons are images less than 50x50 pixels.
+	 *
+	 * @param limit the new icon cache limit
+	 */
 	public static void setIconCacheLimit(int limit){
 		SMALL_MAX = limit;
 		clearCache();
 	}
 	
+	/**
+	 * Sets the cache limit in count.
+	 *
+	 * @param limit the new cache limit
+	 */
 	public static void setCacheLimit(int limit){
 		BIG_MAX = limit;
 		clearCache();
 	}
 	
+	/**
+	 * Sets the pixel limit per image. Image larger than limit will not be memcached.
+	 *
+	 * @param pixels the new pixel limit
+	 */
 	public static void setPixelLimit(int pixels){
 		BIG_PIXELS = pixels;
 		clearCache();
 	}
 	
+	/**
+	 * Sets the max pixel limit for the entire memcache. LRU images will be expunged if max pixels limit is reached.
+	 *
+	 * @param pixels the new max pixel limit
+	 */
 	public static void setMaxPixelLimit(int pixels){
 		BIG_TPIXELS = pixels;
 		clearCache();
 	}
 	
+	/**
+	 * Clear the bitmap memcache.
+	 */
 	public static void clearCache(){
 		bigCache = null;
 		smallCache = null;
@@ -343,6 +428,13 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	
+	/**
+	 * Gets the memory cached bitmap.
+	 *
+	 * @param url the url
+	 * @param targetWidth the target width, 0 for non downsampling
+	 * @return the memory cached
+	 */
 	public static Bitmap getMemoryCached(String url, int targetWidth){
 		return memGet(url, targetWidth);
 	}
@@ -488,7 +580,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			}
 		}
 		
-		//AQUtility.debug("width", vw);
 		
 		return vw;
 		
@@ -505,7 +596,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		float r = ratio;
 		
-		if(bm != null && ratio == RATIO_PRESERVE){
+		if(bm != null && ratio == AQuery.RATIO_PRESERVE){
 			r = ((float) bm.getHeight()) / ((float) bm.getWidth());
 		}
 		
@@ -568,7 +659,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		Animation animation = null;
 		
 		
-		if(animId == FADE_IN){
+		if(animId == AQuery.FADE_IN){
 			animation = new AlphaAnimation(0, 1);
 			animation.setInterpolator(new DecelerateInterpolator()); 
 			animation.setDuration(500);
@@ -587,6 +678,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return ratio > 0 && getWidth(iv) <= 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.androidquery.callback.AbstractAjaxCallback#async(android.content.Context)
+	 */
 	@Override
 	public void async(Context context){
 		
