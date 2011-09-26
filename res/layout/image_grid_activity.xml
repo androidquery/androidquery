@@ -20,7 +20,7 @@
 	
 	<ScrollView 
 		android:layout_width="fill_parent"
-		android:layout_height="200dip"
+		android:layout_height="140dip"
 		android:layout_margin="10dip"
 	>
 	
@@ -53,13 +53,17 @@
 		android:visibility="gone"
 	/>
 	
-	<ListView 
-		android:id="@+id/list"
-		android:layout_width="fill_parent"
-    	android:layout_height="fill_parent"	
-	>
-	
-	</ListView>
+	<GridView xmlns:android="http://schemas.android.com/apk/res/android" 
+	    android:id="@+id/grid"
+	    android:layout_width="fill_parent" 
+	    android:layout_height="fill_parent"
+	    android:columnWidth="90dp"
+	    android:numColumns="auto_fit"
+	    android:verticalSpacing="10dp"
+	    android:horizontalSpacing="10dp"
+	    android:stretchMode="columnWidth"
+	    android:gravity="center"
+	/>
 	
 
 	

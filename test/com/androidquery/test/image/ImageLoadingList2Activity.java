@@ -29,9 +29,6 @@ public class ImageLoadingList2Activity extends RunSourceActivity {
 	
 		super.onCreate(savedInstanceState);		
 	
-		//AQUtility.cleanCacheAsync(this, 0, 0);
-		//BitmapAjaxCallback.clearCache();
-		
 		render();
 	}
 	

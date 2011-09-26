@@ -18,7 +18,7 @@ import com.androidquery.R;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;
 
-public class ImageLoadingListActivity extends RunSourceActivity {
+public class ImageLoadingGridActivity extends RunSourceActivity {
 
 	
 	@Override
@@ -30,7 +30,7 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 	}
 	
 	protected int getContainer(){
-		return R.layout.image_list_activity;
+		return R.layout.image_grid_activity;
 	}
 	
 	public void async_json(){
@@ -70,31 +70,28 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 		addItems(ja, items);
 		addItems(ja, items);
 		
-		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
+		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.grid_item, items){
 			
 			@Override
 			public View getView(int position, View view, ViewGroup parent) {
 				
 				if(view == null){
-					view = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.content_item_s, null);
+					view = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.grid_item, null);
 				}
 				
 				JSONObject jo = getItem(position);
 				
 				AQuery aq = new AQuery(view);
-				aq.id(R.id.name).text(jo.optString("titleNoFormatting", "No Title"));
-				aq.id(R.id.meta).text(jo.optString("publisher", ""));
 				
 				String tb = jo.optJSONObject("image").optString("tbUrl");
 				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, AQuery.FADE_IN, 1.0f);
-				
 				
 				return view;
 				
 			}
 		};
 		
-		aq.id(R.id.list).adapter(aa);
+		aq.id(R.id.grid).adapter(aa);
 		
 	}
 	
