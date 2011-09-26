@@ -44,16 +44,14 @@ public class XmlActivity extends RunSourceActivity {
 	
 	public void xml_ajax(){
 		
-		showProgress(true);		
 		
 		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
-		aq.ajax(url, XmlDom.class, this, "picasaCb");
+		aq.progress(R.id.progress).ajax(url, XmlDom.class, this, "picasaCb");
 		
 	}
 	
 	public void picasaCb(String url, XmlDom xml, AjaxStatus status){
 		
-		showProgress(false);
 		showResult(xml);		
 		if(xml == null) return;
 

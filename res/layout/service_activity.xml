@@ -64,6 +64,14 @@
 			android:layout_gravity="center_horizontal"
 		/>
 		
+		<ProgressBar 
+			android:id="@+id/progress"	
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal" 
+			android:visibility="gone"
+		/>
+		
 		<ImageView
 			android:id="@+id/image"				
 			android:layout_width="wrap_content" 
@@ -97,13 +105,7 @@
 		</LinearLayout>
 		
 		
-		<ProgressBar 
-			android:id="@+id/progress"	
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal" 
-			android:visibility="gone"
-		/>
+		
 		
 		<TextView  
 			android:id="@+id/text_result"

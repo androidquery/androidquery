@@ -75,14 +75,14 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	public void image_down(){
 		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";            
-		aq.id(R.id.image).image(imageUrl, true, true, 200, 0);
+		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 200, 0);
 
 	}
 	
 	public void image_fallback(){
 		
 		String imageUrl = "http://www.vikispot.com/z/images/vikispot/xyz.png";
-		aq.id(R.id.image).image(imageUrl, true, true, 0, R.drawable.image_missing);
+		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 0, R.drawable.image_missing);
 		
 	}
 	
@@ -110,7 +110,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		Bitmap preset = aq.getCachedImage(thumbnail);
 		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
-		aq.id(R.id.image).image(imageUrl, false, false, 0, 0, preset, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
+		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, false, false, 0, 0, preset, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
 		
 	}
 
@@ -131,10 +131,8 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_ratio(){
 		
-		
-		
 		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
-		aq.id(R.id.image).image(imageUrl, true, true, 0, 0, null, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
+		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 0, 0, null, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
 	
 	}
 	
@@ -144,7 +142,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		File file = aq.getCachedFile(imageUrl);
 		
 		if(file != null){
-			aq.id(R.id.image).image(file, 300);
+			aq.id(R.id.image).progress(R.id.progress).image(file, 300);
 		}
 		
 	}

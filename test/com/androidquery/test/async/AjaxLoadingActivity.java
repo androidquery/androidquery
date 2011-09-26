@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import android.os.Bundle;
 
+import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;
@@ -37,24 +38,18 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	    
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
         
-        showProgress(true);
-        
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
 
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
-                   
-            	showProgress(false);
-            	
+                 
                 showResult(json);
                
             }
         };
         
         cb.url(url).type(JSONObject.class).fileCache(true);
-        
-        //aq.ajax(url, JSONObject.class, cb);
-        aq.ajax(cb);
+        aq.progress(R.id.progress).ajax(cb);
         
 	        
 	}	
@@ -63,15 +58,11 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	    
 		String url = "http://www.google.com";
 
-		showProgress(true);
-		
-		aq.ajax(url, String.class, new AjaxCallback<String>() {
+		aq.progress(R.id.progress).ajax(url, String.class, new AjaxCallback<String>() {
 
 	        @Override
 	        public void callback(String url, String html, AjaxStatus status) {
 	             
-	        	showProgress(false);
-	        	
 	        	showResult(html);
 	        }
 		        
@@ -84,14 +75,10 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	    
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 
-		showProgress(true);
-		
-		aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
+		aq.progress(R.id.progress).ajax(url, byte[].class, new AjaxCallback<byte[]>() {
 
 	        @Override
 	        public void callback(String url, byte[] object, AjaxStatus status) {
-	        	
-	        	showProgress(false);
 	        	
 	        	showResult("bytes array length:" + object.length);
 	        }
@@ -107,15 +94,11 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("q", "androidquery");
 		
-        showProgress(true);
-        
-        aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.progress(R.id.progress).ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
 
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
-                   
-            	showProgress(false);
-            	
+                
                 showResult(json);
                
             }
@@ -127,9 +110,8 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	public void async_method_cb(){
 	    
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
-        
-        showProgress(true);        
-        aq.ajax(url, JSONObject.class, this, "jsonCb");
+                
+        aq.progress(R.id.progress).ajax(url, JSONObject.class, this, "jsonCb");
            
 	}	
 	
@@ -137,11 +119,9 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	    
 		String url = "http://www.google.com";
 
-		showProgress(true);
-		
 		long expire = 15 * 60 * 1000;
 		
-		aq.ajax(url, String.class, expire, new AjaxCallback<String>() {
+		aq.progress(R.id.progress).ajax(url, String.class, expire, new AjaxCallback<String>() {
 
 	        @Override
 	        public void callback(String url, String html, AjaxStatus status) {
@@ -159,12 +139,10 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	    
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
         
-        showProgress(true);
-        
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();        
         cb.url(url).type(JSONObject.class).weakHandler(this, "jsonCb").fileCache(true).expire(0);
         
-        aq.ajax(cb);
+        aq.progress(R.id.progress).ajax(cb);
 	        
 	}	
 	
@@ -172,7 +150,6 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	    
         String url = "http://www.google.com";
         
-        showProgress(true);
         
         AjaxCallback<String> cb = new AjaxCallback<String>();        
         cb.url(url).type(String.class).weakHandler(this, "stringCb");
@@ -180,17 +157,17 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         cb.header("Referer", "http://code.google.com/p/android-query/");
         cb.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
         
-        aq.ajax(cb);
+        aq.progress(R.id.progress).ajax(cb);
 	        
 	}	
 	
 	public void jsonCb(String url, JSONObject json, AjaxStatus status) {
-		showProgress(false);   	
+		  	
         showResult(json);
 	}
 	
 	public void stringCb(String url, String str, AjaxStatus status) {
-		showProgress(false);   	
+		 	
         showResult(str);
 	}
 	

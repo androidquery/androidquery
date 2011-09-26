@@ -62,27 +62,11 @@ public class ImageLoadingList2Activity extends RunSourceActivity {
 				
 				AQuery aq = new AQuery(convertView);
 				
-				ProgressBar pbar = aq.id(R.id.pbar).getProgressBar();
-				
-				BitmapAjaxCallback cb = new BitmapAjaxCallback();
-				cb.url(url).ratio(1.5f).progress(pbar);				
-				aq.id(R.id.tb).image(cb);
+				aq.id(R.id.tb).progress(R.id.pbar).image(url, true, true, 0, 0, null, 0, 1.5f);
 				
 				return convertView;
 				
 				
-				/*
-				ImageView imageView = (ImageView) convertView ;
-	            if( convertView == null )
-	            {
-	            	imageView = new ImageView(ImageLoadingList2Activity.this) ;
-	            }
-	            AQuery aq = new AQuery(imageView);
-	            //String tb = "http://www.vikispot.com/z/images/vikispot/android-w.png";
-	            String tb = getItem(position);
-	            aq.image(tb, true, true, 0, 0, null, 0, 1.5f);
-	            return imageView ;
-	            */
 			}
 		};
 		

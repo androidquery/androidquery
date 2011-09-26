@@ -47,6 +47,15 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 		
 	}
 	
+	private void addItems(JSONArray ja, List<JSONObject> items){
+		for(int i = 0 ; i < ja.length(); i++){
+			JSONObject jo = ja.optJSONObject(i);
+			if(jo.has("image")){
+				items.add(jo);
+			}
+		}
+	}
+	
 	
 	public void renderNews(String url, JSONObject json, AjaxStatus status) {
 	
@@ -56,12 +65,10 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 		if(ja == null) return;
 		
 		List<JSONObject> items = new ArrayList<JSONObject>();
-		for(int i = 0 ; i < ja.length(); i++){
-			JSONObject jo = ja.optJSONObject(i);
-			if(jo.has("image")){
-				items.add(jo);
-			}
-		}
+		addItems(ja, items);
+		addItems(ja, items);
+		addItems(ja, items);
+		addItems(ja, items);
 		
 		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
 			
@@ -82,9 +89,7 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 				String tb = null;
 				if(image != null){
 					tb = image.optString("tbUrl");
-					aq.id(R.id.tb).image(tb, true, true, 0, 0, null, AQuery.FADE_IN, 1.0f);
-				}else{
-					aq.id(R.id.tb).clear();
+					aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, AQuery.FADE_IN, 1.0f);
 				}
 				
 				return view;

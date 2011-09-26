@@ -38,9 +38,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	}
 	
 	public void auth_pick_account(){
-	    		
-		showProgress(true);
-		
+	    
 		String url = "https://www.google.com/reader/atom/user/-/state/com.google/reading-list?n=8";
 		
 		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();
@@ -48,13 +46,12 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		cb.url(url).type(XmlDom.class).weakHandler(this, "readerCb");  
 		cb.auth(this, AQuery.AUTH_READER, null);
   
-		aq.ajax(cb);
+		aq.progress(R.id.progress).ajax(cb);
 	        
 	}	
 	
 	public void auth_last_account(){
 		
-		showProgress(true);
 		
 		String url = "https://www.google.com/reader/atom/user/-/state/com.google/reading-list?n=8";
 		
@@ -63,13 +60,12 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		cb.url(url).type(XmlDom.class).weakHandler(this, "readerCb");  
 		cb.auth(this, AQuery.AUTH_READER, AQuery.ACTIVE_ACCOUNT);
   
-		aq.ajax(cb);
+		aq.progress(R.id.progress).ajax(cb);
 	        
 	}	
 	
 	public void auth_specific_account(){
 		
-		showProgress(true);
 		
 		String url = "https://www.google.com/reader/atom/user/-/state/com.google/reading-list?n=8";
 		
@@ -78,14 +74,12 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		cb.url(url).type(XmlDom.class).weakHandler(this, "readerCb");  
 		cb.auth(this, AQuery.AUTH_READER, AQuery.ACTIVE_ACCOUNT);
   
-		aq.ajax(cb);
+		aq.progress(R.id.progress).ajax(cb);
 	        
 	}	
 	
 	public void readerCb(String url, XmlDom xml, AjaxStatus status) {
 		
-		showProgress(false);   
-	
 		if(xml != null){
 		
 			List<XmlDom> entries = xml.tags("entry");			
@@ -104,8 +98,6 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void auth_picasa(){
 		
-		showProgress(true);
-		
 		String url = "https://picasaweb.google.com/data/feed/api/user/default?alt=json";
 		
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
@@ -113,14 +105,12 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		cb.url(url).type(JSONObject.class).weakHandler(this, "picasaCb");  
 		cb.auth(this, AQuery.AUTH_PICASA, AQuery.ACTIVE_ACCOUNT);
   
-		aq.ajax(cb);
+		aq.progress(R.id.progress).ajax(cb);
 	        
 	}	
 	
 	public void picasaCb(String url, JSONObject jo, AjaxStatus status) {
 	
-		showProgress(false);
-		
 		showResult(jo);
 		
 		if(jo != null){
@@ -151,8 +141,6 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void auth_youtube(){
 		
-		showProgress(true);
-		
 		String url = "https://gdata.youtube.com/feeds/api/users/default/subscriptions?v=2&alt=json";
 		
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(); 
@@ -160,13 +148,12 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 		cb.auth(this, AQuery.AUTH_YOUTUBE, AQuery.ACTIVE_ACCOUNT);
   
-		aq.ajax(cb);
+		aq.progress(R.id.progress).ajax(cb);
 	        
 	}
 	
 	public void youtubeCb(String url, JSONObject jo, AjaxStatus status) {
 		
-		showProgress(false);
 		
 		if(jo != null){
 			
@@ -189,20 +176,17 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	private void auth_youtube2(String src){
 		
-		showProgress(true);
-		
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(); 
 		cb.url(src).type(JSONObject.class).weakHandler(this, "youtubeCb2");  
 		
 		cb.auth(this, AQuery.AUTH_YOUTUBE, AQuery.ACTIVE_ACCOUNT);
   
-		aq.ajax(cb);
+		aq.progress(R.id.progress).ajax(cb);
 	        
 	}
 	
 	public void youtubeCb2(String url, JSONObject jo, AjaxStatus status) {
 		
-		showProgress(false);
 		
 		if(jo != null){
 			
@@ -234,21 +218,18 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void auth_contacts(){
 		
-		showProgress(true);
 		
 		String url = "https://www.google.com/m8/feeds/contacts/default/full";
 		
 		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();  
 		cb.url(url).type(XmlDom.class).weakHandler(this, "contactsCb");  
 		cb.auth(this, AQuery.AUTH_CONTACTS, AQuery.ACTIVE_ACCOUNT);
-		aq.ajax(cb);
+		aq.progress(R.id.progress).ajax(cb);
 	        
 	}
 	
 	public void contactsCb(String url, XmlDom xml, AjaxStatus status) {
 		
-		showProgress(false);   
-	
 		if(xml != null){
 		
 			List<XmlDom> entries = xml.tags("entry");
@@ -272,8 +253,6 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	}
 	
 	public void stringCb(String url, String str, AjaxStatus status) {
-		
-		showProgress(false);   
 		
 		if(status.getCode() == 401){
 			showResult("Authenticate Error with Http Response 401");
