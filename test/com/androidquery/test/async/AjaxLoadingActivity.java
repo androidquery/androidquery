@@ -135,6 +135,13 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}
 	
+	public void async_progress(){
+	    
+        String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";                
+        aq.progress(R.id.progress).ajax(url, JSONObject.class, this, "jsonCb");
+           
+	}	
+	
 	public void async_advance(){
 	    
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";

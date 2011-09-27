@@ -105,12 +105,20 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_preload(){
 		
-		
 		String thumbnail = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";	
 		Bitmap preset = aq.getCachedImage(thumbnail);
 		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
 		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, false, false, 0, 0, preset, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
+		
+	}
+	
+	public void image_progress(){
+		
+		aq.id(R.id.image).clear();
+		
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, false, false);
 		
 	}
 
