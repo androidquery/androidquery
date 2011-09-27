@@ -8,11 +8,7 @@
         <item>Image Loading</item> 
         <item>Google Service (Beta)</item> 
         <item>XML Parsing</item>
-        
-          
         <item>AQuery Service (Beta)</item> 
-        
-        
         <item>Home @AndroidQuery</item>
         <item>Javadoc</item>              
     </string-array>
@@ -22,11 +18,7 @@
         <item>com.androidquery.test.IntentListActivity:image</item>
         <item>com.androidquery.test.IntentListActivity:auth</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
-        
-        
         <item>com.androidquery.test.IntentListActivity:service</item>
-        
-        
         <item>http://code.google.com/p/android-query/</item>
         <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html</item>       
     </string-array>
@@ -42,6 +34,7 @@
         <item>AjaxCallback</item>   
         <item>Http Request Headers</item>  
         <item>AjaxStatus</item>  
+        <item>Invalidate</item> 
         <item>Doc @ AndroidQuery</item>      
     </string-array>
   
@@ -56,6 +49,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_status</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_invalidate</item>  
         <item>http://code.google.com/p/android-query/wiki/AsyncAPI</item>    
     </string-array>
     
@@ -172,6 +166,7 @@
         <item>async_advance</item>
         <item>async_header</item>
         <item>async_status</item>
+        <item>async_invalidate</item>
         
         <item>image_simple</item>
         <item>image_cache</item>
@@ -238,6 +233,7 @@
         <item>Using AjaxCallback Directly</item>
         <item>Setting HTTP Headers for Ajax Requests</item>
         <item>Using AjaxStatus for meta data of request and HTTP response</item>
+        <item>Invalidate a response to avoid caching</item>
         
         <item>Asynchronous HTTP Image Load</item>
         <item>Async Image Load with Cache Control</item>

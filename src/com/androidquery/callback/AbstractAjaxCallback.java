@@ -306,6 +306,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			callback(url, result, status);
 		}
 		
+		filePut();
+		
 		AQUtility.debugNotify();
 	}
 	
@@ -430,7 +432,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		if(file == null || data == null) return;
 		
-		AQUtility.storeAsync(file, data, 1000);
+		AQUtility.storeAsync(file, data, 0);
 		
 	}
 	
@@ -447,12 +449,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		return file;
 	}
-	
-	/*
-	private static AjaxStatus makeStatus(String url, Date time, boolean refresh){
-		return new AjaxStatus(200, "OK", url, null, time, refresh);
-	}
-	*/
 	
 	
 	/**
@@ -620,7 +616,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			AQUtility.report(e);
 		}
 		
-		
+		/*
 		if(result != null && fileCache){
 			try{
 				filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
@@ -628,9 +624,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				AQUtility.report(e);
 			}
 		}
+		*/
+	}
+	
+	private void filePut(){
 		
-		
-		
+		if(result != null && fileCache){
+			
+			try{
+			
+				File file = AQUtility.getCacheFile(cacheDir, url);
+				if(!status.getInvalid()){				
+					filePut(url, result, file, status.getData());
+				}else{
+					if(file.exists()){
+						file.delete();
+					}
+				}
+				
+			}catch(Exception e){
+				AQUtility.report(e);
+			}
+		}
 	}
 	
 	private void network() throws IOException{

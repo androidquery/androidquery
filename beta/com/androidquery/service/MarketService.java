@@ -36,6 +36,10 @@ public class MarketService{
 	private int progress;
 	private long expire = 10 * 60 * 1000;
 	
+	private String version;
+	private boolean fetch;
+	private boolean completed;
+	
 	public MarketService(Activity act) {
 		this.act = act;
 		this.aq = new AQuery(act);
@@ -98,6 +102,8 @@ public class MarketService{
 		return pi;
 	}
 	
+	//09-27 19:58:58.324: WARN/AQuery(24142): {"update":1317120862937,"icon":"https:\/\/g1.gstatic.com\/android\/market\/com.androidquery\/hi-256-0-32ae6f723f990caab754ae5dfd5e3718b72aa3d3","app":"com.androidquery","fetch":true,"desc":null,"status":"1","locale":"en","code":17,"marketUrl":"https:\/\/market.android.com\/details?id=com.androidquery&hl=en","recent":"Added progress monitoring examples.","version":"0.13.5","name":"AndroidQuery Code Snippets","dialog":{"update":"Update","body":"Version:  0.13.5\n\nAdded progress monitoring examples.","title":"Update Notice","rate":"Review","skip":"Skip"},"published":null}
+
 	private String getHost(){
 		//return "http://192.168.1.222";
 		return "https://androidquery.appspot.com";
@@ -203,7 +209,7 @@ public class MarketService{
     
 	protected void showUpdateDialog(JSONObject jo){
 		
-		if(jo == null) return; 
+		if(jo == null || version != null) return; 
 		
 		JSONObject dia = jo.optJSONObject("dialog");
 		
@@ -226,7 +232,7 @@ public class MarketService{
         .setNegativeButton(update, handler)
         .create();
 		
-		handler.version = jo.optString("version", null);
+		version = jo.optString("version", null);
 		
 		dialog.show();
 		
@@ -246,44 +252,48 @@ public class MarketService{
 	
 	protected class Handler implements DialogInterface.OnClickListener{
         
-		private String version;
 		
-		public void marketCb(String url, JSONObject jo, AjaxStatus status) {
-			
-			marketCb(url, jo, status, false);
-			
-		}
-		
-		public void marketFetchedCb(String url, JSONObject jo, AjaxStatus status) {
-			
-			marketCb(url, jo, status, true);
-			
-		}
-		
-		private void marketCb(String url, JSONObject jo, AjaxStatus status, boolean fetched){
+		public void marketCb(String url, JSONObject jo, AjaxStatus status){
 			
 			if(act.isFinishing()) return;
 			
 			AQUtility.debug(jo);
 			
 			
-			if(jo != null && "1".equals(jo.optString("status"))){
+			if(jo != null){
 				
-				if(!fetched && jo.optBoolean("fetch", false)){
+				if("1".equals(jo.optString("status"))){
+				
+					if(!fetch && jo.optBoolean("fetch", false)){
+						
+						fetch = true;
+						status.invalidate();
+						
+						String marketUrl = jo.optString("marketUrl");						
+						AjaxCallback<String> cb = new AjaxCallback<String>();
+						cb.url(marketUrl).type(String.class).handler(this, "detailCb");				
+						aq.progress(progress).ajax(cb);
+						
+					}				
 					
-					String marketUrl = jo.optString("marketUrl");
+					if(jo.has("dialog")){
+						cb(url, jo, status);
+					}
 					
-					AjaxCallback<String> cb = new AjaxCallback<String>();
-					cb.url(marketUrl).type(String.class).handler(this, "detailCb");				
-					aq.progress(progress).ajax(cb);
-					
-				}else{					
-					callback(url, jo, status);
-					
+				}else{
+					status.invalidate();
 				}
 				
 			}else{
-				callback(url, jo, status);				
+				cb(url, jo, status);
+			}
+		}
+		
+		private void cb(String url, JSONObject jo, AjaxStatus status){
+			
+			if(!completed){			
+				completed = true;			
+				callback(url, jo, status);
 			}
 		}
 		
@@ -294,7 +304,7 @@ public class MarketService{
 				String qurl = getQueryUrl();
 				
 				AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-				cb.url(qurl).type(JSONObject.class).handler(this, "marketFetchedCb");
+				cb.url(qurl).type(JSONObject.class).handler(this, "marketCb");
 				cb.param("html", html);
 				
 				aq.progress(progress).ajax(cb);

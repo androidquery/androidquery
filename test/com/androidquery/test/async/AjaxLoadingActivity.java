@@ -202,6 +202,30 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         });
 	}
 	
+	public void async_invalidate(){
+		
+		String url = "http://androidquery.appspot.com/api/market";
+        
+        aq.progress(R.id.progress).ajax(url, JSONObject.class, 15 * 60000, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                
+            	if(json != null){
+            		if("1".equals(json.optString("status"))){
+            			//do something
+            		}else{
+            			//the request is a failure, don't cache it
+            			status.invalidate();
+            		}
+            		
+            	}
+            	
+            	showResult(json, status);
+            }
+        });
+	}
+	
 	public void jsonCb(String url, JSONObject json, AjaxStatus status) {
 		  	
         showResult(json, status);

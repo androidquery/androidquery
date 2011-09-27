@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.service.MarketService;
 import com.androidquery.util.AQUtility;
 import com.flurry.android.FlurryAgent;
 
@@ -52,8 +53,10 @@ public class IntentListActivity extends ListActivity {
 			forward();
 		}
 
-		AQUtility.debug("task root", this.isTaskRoot());
-		
+		if(isTaskRoot()){			
+			MarketService ms = new MarketService(this);
+			ms.checkVersion();
+		}
 	}
 	
 	public void onStart(){

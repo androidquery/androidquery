@@ -48,7 +48,7 @@ public class AjaxStatus {
 	private int source = NETWORK;
 	private long start = System.currentTimeMillis();
 	private boolean done;
-	
+	private boolean invalid;
 	
 	protected AjaxStatus source(int source){
 		this.source = source;
@@ -96,11 +96,18 @@ public class AjaxStatus {
 		return this;
 	}
 	
+	public AjaxStatus invalidate(){
+		this.invalid = true;
+		return this;
+	}
 	
 	protected boolean getDone() {
 		return done;
 	}
 	
+	protected boolean getInvalid() {
+		return invalid;
+	}
 	
 	/**
 	 * Gets the http response code.
