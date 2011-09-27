@@ -48,7 +48,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
             }
         };
         
-        cb.url(url).type(JSONObject.class).fileCache(true);
+        cb.url(url).type(JSONObject.class);
         aq.progress(R.id.progress).ajax(cb);
         
 	        

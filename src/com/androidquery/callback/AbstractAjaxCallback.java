@@ -283,7 +283,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	/**
 	 * Set the progress view (can be a progress bar or any view) to be shown (VISIBLE) and hide (GONE) when async is in progress.
 	 *
-	 * @param progress the progress view
+	 * @param view the progress view
 	 * @return self
 	 */
 	public K progress(View view){

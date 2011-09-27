@@ -12,15 +12,10 @@
 		android:layout_centerInParent="true"
 	/>
     
-    
     <ImageView
         android:id="@+id/tb"       
         android:layout_width="fill_parent"       
         android:layout_height="75dip"
         />
-        
-	
-	
-    
 
 </RelativeLayout>

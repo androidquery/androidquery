@@ -966,8 +966,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Register a callback method for when an item is selected. 
 	 *
-	 * @param handler The handler that has the public callback method.
-	 * @param method The method name of the callback.
+	 * @param listener The item selected listener.
 	 * @return self
 	 */
 	public T itemSelected(OnItemSelectedListener listener){
