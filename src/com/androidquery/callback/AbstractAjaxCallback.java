@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 - AndroidQuery.com (tinyeeliu@gmail.com)
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -49,6 +49,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -68,48 +69,48 @@ import com.androidquery.util.XmlDom;
  *
  */
 public abstract class AbstractAjaxCallback<T, K> implements Runnable{
-	
+
 	private static int NET_TIMEOUT = 30000;
 	private static String AGENT = null;
 	private static int NETWORK_POOL = 4;
-	
+
 	private Class<T> type;
 	private Reference<Object> whandler;
 	private Object handler;
 	private String callback;
 	private WeakReference<View> progress;
-	
+
 	private String url;
 	private Map<String, Object> params;
 	private Map<String, String> headers;
-	
+
 	private T result;
-	
+
 	private File cacheDir;
 	private AccountHandle ah;
-	
+
 	private AjaxStatus status;
-	
+
 	private boolean fileCache;
 	private boolean memCache;
 	private boolean refresh;
-	
+
 	private long expire;
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	private K self(){
 		return (K) this;
 	}
-	
-	private void clear(){		
+
+	private void clear(){
 		whandler = null;
 		result = null;
 		status = null;
 		handler = null;
 		progress = null;
 	}
-	
+
 	/**
 	 * Sets the timeout.
 	 *
@@ -118,7 +119,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	public static void setTimeout(int timeout){
 		NET_TIMEOUT = timeout;
 	}
-	
+
 	/**
 	 * Sets the agent.
 	 *
@@ -127,7 +128,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	public static void setAgent(String agent){
 		AGENT = agent;
 	}
-	
+
 	/**
 	 * Gets the ajax response type.
 	 *
@@ -151,9 +152,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.handler = null;
 		return self();
 	}
-	
+
 	/**
-	 * Set a callback handler. See weakHandler for handler objects, such as Activity, that should not be held from garbaged collected. 
+	 * Set a callback handler. See weakHandler for handler objects, such as Activity, that should not be held from garbaged collected.
 	 *
 	 * @param handler the handler
 	 * @param callback the callback
@@ -165,7 +166,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.whandler = null;
 		return self();
 	}
-	
+
 	/**
 	 * Url.
 	 *
@@ -176,12 +177,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.url = url;
 		return self();
 	}
-	
+
 	/**
 	 * Set the desired ajax response type. Type parameter is required otherwise the ajax callback will not occur.
-	 * 
+	 *
 	 * Current supported type: JSONObject.class, String.class, byte[].class, Bitmap.class, XmlDom.class
-	 * 
+	 *
 	 *
 	 * @param type the type
 	 * @return self
@@ -190,7 +191,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.type = type;
 		return self();
 	}
-	
+
 	/**
 	 * Set ajax request to be file cached.
 	 *
@@ -201,10 +202,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.fileCache = cache;
 		return self();
 	}
-	
+
 	/**
 	 * Indicate ajax request to be memcached. Note: The default ajax handler does not supply a memcache.
-	 * Subclasses such as BitmapAjaxCallback can provide their own memcache. 
+	 * Subclasses such as BitmapAjaxCallback can provide their own memcache.
 	 *
 	 * @param cache the cache
 	 * @return self
@@ -213,7 +214,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.memCache = cache;
 		return self();
 	}
-	
+
 	/**
 	 * Indicate the ajax request should ignore memcache and filecache.
 	 *
@@ -224,7 +225,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.refresh = refresh;
 		return self();
 	}
-	
+
 	/**
 	 * The expire duation for filecache. If a cached copy will be served if a cached file exists within current time minus expire duration.
 	 *
@@ -235,7 +236,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.expire = expire;
 		return self();
 	}
-	
+
 	/**
 	 * Set the header fields for the http request.
 	 *
@@ -250,11 +251,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		headers.put(name, value);
 		return self();
 	}
-	
+
 	/**
-	 * Set http POST params. If params are set, http POST method will be used. 
-	 * The UTF-8 encoded value.toString() will be sent with POST. 
-	 * 
+	 * Set http POST params. If params are set, http POST method will be used.
+	 * The UTF-8 encoded value.toString() will be sent with POST.
+	 *
 	 * Header field "Content-Type: application/x-www-form-urlencoded;charset=UTF-8" will be added if no Content-Type header field presents.
 	 *
 	 * @param name the name
@@ -268,7 +269,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		params.put(name, value);
 		return self();
 	}
-	
+
 	/**
 	 * Set the http POST params. See param(String name, Object value).
 	 *
@@ -279,7 +280,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.params = params;
 		return self();
 	}
-	
+
 	/**
 	 * Set the progress view (can be a progress bar or any view) to be shown (VISIBLE) and hide (GONE) when async is in progress.
 	 *
@@ -292,24 +293,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 		return self();
 	}
-	
-	private static final Class<?>[] DEFAULT_SIG = {String.class, Object.class, AjaxStatus.class};	
-	
+
+	private static final Class<?>[] DEFAULT_SIG = {String.class, Object.class, AjaxStatus.class};
+
 	private void callback(){
-		
+
 		showProgress(false);
-		
+
 		if(callback != null){
-			Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
-			AQUtility.invokeHandler(getHandler(), callback, true, AJAX_SIG, DEFAULT_SIG, url, result, status);			
-		}else{		
+			Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};
+			AQUtility.invokeHandler(getHandler(), callback, true, AJAX_SIG, DEFAULT_SIG, url, result, status);
+		}else{
 			callback(url, result, status);
 		}
-		
+
 		AQUtility.debugNotify();
 	}
-	
-	
+
+
 	/**
 	 * The callback method to be overwritten for subclasses.
 	 *
@@ -318,31 +319,31 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @param status the status
 	 */
 	public void callback(String url, T object, AjaxStatus status){
-		
+
 	}
-	
+
 	protected T fileGet(String url, File file, AjaxStatus status){
-		try {			
-			byte[] data = AQUtility.toBytes(new FileInputStream(file));			
+		try {
+			byte[] data = AQUtility.toBytes(new FileInputStream(file));
 			return transform(url, data, status);
 		} catch(Exception e) {
 			AQUtility.report(e);
 			return null;
 		}
 	}
-	
+
 	protected T datastoreGet(String url){
-		
+
 		return null;
-		
+
 	}
-	
+
 	protected void showProgress(boolean show){
-		
+
 		if(progress != null){
-			
+
 			View pb = progress.get();
-			if(pb != null){				
+			if(pb != null){
 				if(show){
 					pb.setTag(url);
 					pb.setVisibility(View.VISIBLE);
@@ -350,298 +351,311 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 					Object tag = pb.getTag();
 					if(tag == null || tag.equals(url)){
 						pb.setTag(null);
-						pb.setVisibility(View.GONE);						
+						pb.setVisibility(View.GONE);
 					}
 				}
 			}
 		}
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected T transform(String url, byte[] data, AjaxStatus status){
-				
+
 		if(data == null || type == null){
 			return null;
 		}
-		
+
 		if(type.equals(JSONObject.class)){
-			
+
 			JSONObject result = null;
-	    	
-	    	try {    		
+
+	    	try {
 	    		String str = new String(data, "UTF-8");
 				result = (JSONObject) new JSONTokener(str).nextValue();
-			} catch (Exception e) {	  		
+			} catch (Exception e) {
 				AQUtility.report(e);
 			}
 			return (T) result;
 		}
-		
+
+		if(type.equals(JSONArray.class)){
+
+			JSONArray result = null;
+
+	    	try {
+	    		String str = new String(data, "UTF-8");
+				result = (JSONArray) new JSONTokener(str).nextValue();
+			} catch (Exception e) {
+				AQUtility.report(e);
+			}
+			return (T) result;
+		}
+
 		if(type.equals(String.class)){
 			String result = null;
-	    	
-	    	try {    		
+
+	    	try {
 	    		result = new String(data, "UTF-8");
-			} catch (Exception e) {	  		
+			} catch (Exception e) {
 				AQUtility.report(e);
 			}
 			return (T) result;
 		}
-		
+
 		if(type.equals(XmlDom.class)){
-			
+
 			XmlDom result = null;
-			
-			try {    
+
+			try {
 				result = new XmlDom(data);
-			} catch (Exception e) {	  		
+			} catch (Exception e) {
 				AQUtility.report(e);
 			}
-			
-			return (T) result; 
+
+			return (T) result;
 		}
-		
-		
+
+
 		if(type.equals(byte[].class)){
 			return (T) data;
 		}
-		
-		if(type.equals(Bitmap.class)){			
+
+		if(type.equals(Bitmap.class)){
 			return (T) BitmapFactory.decodeByteArray(data, 0, data.length);
 		}
-		
+
 		return null;
 	}
-	
+
 	protected T memGet(String url){
 		return null;
 	}
-	
-	
+
+
 	protected void memPut(String url, T object){
 	}
-	
+
 	protected String getRefreshUrl(String url){
 		return url;
 	}
-	
+
 	protected void filePut(String url, T object, File file, byte[] data){
-		
+
 		if(file == null || data == null) return;
-		
+
 		AQUtility.storeAsync(file, data, 1000);
-		
+
 	}
-	
-	protected File accessFile(File cacheDir, String url){		
+
+	protected File accessFile(File cacheDir, String url){
 		File file = AQUtility.getExistedCacheByUrl(cacheDir, url);
-		
+
 		if(file != null && expire != 0){
 			long diff = System.currentTimeMillis() - file.lastModified();
 			if(diff > expire){
 				return null;
 			}
-			
+
 		}
-		
+
 		return file;
 	}
-	
+
 	private static AjaxStatus makeStatus(String url, Date time, boolean refresh){
 		return new AjaxStatus(200, "OK", url, null, time, refresh);
 	}
-	
+
 	/**
-	 * Starts the async process. 
+	 * Starts the async process.
 	 *
 	 * @param context the context
 	 */
 	public void async(Context context){
-		
+
 		showProgress(true);
-		
+
 		if(ah != null){
-			
+
 			if(ah.needToken()){
 				ah.async(this);
 				return;
 			}
-			
+
 			if(ah.getToken() == null){
 				status = new AjaxStatus(401, "Auth failed.", url, null, new Date(), true);
 				callback();
 				return;
 			}
 		}
-		
+
 		work(context, true);
-		
-	
+
+
 	}
-	
-	
+
+
 	protected void execute(){
-		AQUtility.getHandler();				
+		AQUtility.getHandler();
 		ExecutorService exe = getExecutor();
 		exe.execute(this);
 	}
-	
+
 	private void work(Context context, boolean async){
-		
+
 		T object = memGet(url);
-			
-		if(object != null){		
+
+		if(object != null){
 			result = object;
 			status = makeStatus(url, null, refresh);
 			callback();
 		}else{
-		
+
 			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
-			
-			if(async){			
-				execute();			
+
+			if(async){
+				execute();
 			}else{
 				backgroundWork();
 				afterWork();
 			}
 		}
 	}
-	
+
 	/**
 	 * Warning: BETA method and subject to change.
 	 *
 	 * @param context the context
 	 */
 	public void sync(Context context){
-		
+
 		work(context, false);
-		
+
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
 	public void run() {
-		
+
 		try{
-			
+
 			if(status == null){
-				
+
 				backgroundWork();
-			
+
 				if(status == null){
 					status = new AjaxStatus(-1, "OK", url, null, null, refresh);
 				}
-				
+
 				AQUtility.post(this);
-				
-				
+
+
 			}else{
-				
-				
+
+
 				afterWork();
 				clear();
 			}
-			
-				
-		
+
+
+
 		}catch(Exception e){
 			AQUtility.report(e);
 		}
-		
-		
+
+
 	}
-	
+
 	protected void background(){
-		
+
 	}
-	
-	
+
+
 	private void backgroundWork(){
-	
-		
+
+
 		background();
-		
+
 		if(!refresh){
-		
-			if(fileCache){		
-				
-				fileWork();			
+
+			if(fileCache){
+
+				fileWork();
 			}
-		
+
 		}
-		
-		
+
+
 		if(result == null){
-			datastoreWork();			
+			datastoreWork();
 		}
-		
+
 		if(result == null){
 			networkWork();
 		}
-		
-		
+
+
 	}
-	
+
 	private void fileWork(){
-		
+
 		File file = accessFile(cacheDir, url);
-				
+
 		//if file exist
 		if(file != null){
 			//convert
 			result = fileGet(url, file, status);
 			//if result is ok
-			if(result != null){				
+			if(result != null){
 				status = makeStatus(url, new Date(file.lastModified()), refresh);
 			}
 		}
 	}
-	
+
 	private void datastoreWork(){
-		
+
 		result = datastoreGet(url);
-		
-		if(result != null){		
+
+		if(result != null){
 			status = makeStatus(url, null, refresh);
 		}
 	}
-	
+
 	private void networkWork(){
-		
+
 		if(url == null) return;
-		
+
 		byte[] data = null;
-		
+
 		try{
-			
+
 			status = network();
-			
+
 			if(ah != null && (status.getCode() == 401 || status.getCode() == 403)){
-				AQUtility.debug("reauth needed!");				
+				AQUtility.debug("reauth needed!");
 				authToken(ah.getType(), ah.reauth());
 				status = network();
 			}
-			
-			
-			status.setRefresh(refresh);						
-			
+
+
+			status.setRefresh(refresh);
+
 			data = status.getData();
 		}catch(Exception e){
 			AQUtility.report(e);
 		}
-		
-		
+
+
 		try{
 			result = transform(url, data, status);
 		}catch(Exception e){
 			AQUtility.report(e);
 		}
-		
-		
+
+
 		if(result != null && fileCache){
 			try{
 				filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
@@ -649,226 +663,226 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				AQUtility.report(e);
 			}
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	private AjaxStatus network() throws IOException{
-		
+
 		String networkUrl = url;
 		if(refresh) networkUrl = getRefreshUrl(url);
-		
+
 		AjaxStatus status;
 		if(params == null){
-			status = httpGet(networkUrl, headers, true);						
+			status = httpGet(networkUrl, headers, true);
 		}else{
 			status = httpPost(networkUrl, headers, params);
 		}
-		
+
 		return status;
 	}
-	
-	
+
+
 	private void afterWork(){
-		
+
 		if(url != null && memCache){
 			memPut(url, result);
 		}
-		
+
 		callback();
-		
+
 	}
-	
-	
+
+
 	private static ExecutorService fetchExe;
 	private static ExecutorService getExecutor(){
-		
+
 		if(fetchExe == null){
-			fetchExe = Executors.newFixedThreadPool(NETWORK_POOL);			
+			fetchExe = Executors.newFixedThreadPool(NETWORK_POOL);
 		}
-		
+
 		return fetchExe;
 	}
-	
+
 	/**
 	 * Sets the simultaneous network threads limit. Highest limit is 8.
 	 *
 	 * @param limit the new network threads limit
 	 */
 	public static void setNetworkLimit(int limit){
-		
+
 		NETWORK_POOL = Math.max(1, Math.min(8, limit));
 		fetchExe = null;
 	}
-	
+
 	/**
 	 * Cancel ALL ajax tasks.
 	 */
-	
+
 	public static void cancel(){
-		
+
 		if(fetchExe != null){
 			fetchExe.shutdownNow();
 			fetchExe = null;
 		}
-		
+
 		BitmapAjaxCallback.clearTasks();
 	}
-	
+
 	private static String patchUrl(String url){
-		
+
 		url = url.replaceAll(" ", "%20");
 		return url;
 	}
-	
+
 	/*
 	private static AjaxStatus httpGet(String urlPath, Map<String, String> headers, boolean retry) throws IOException{
-				
+
 		AQUtility.debug("net", urlPath);
-		
+
 		URL url = new URL(patchUrl(urlPath));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-           
+
         connection.setUseCaches(false);
-        connection.setInstanceFollowRedirects(true);     
+        connection.setInstanceFollowRedirects(true);
         connection.setConnectTimeout(NET_TIMEOUT);
-        
+
         if(AGENT != null){
         	connection.addRequestProperty("User-Agent", AGENT);
         }
-        
+
         if(headers != null){
         	for(String name: headers.keySet()){
         		connection.addRequestProperty(name, headers.get(name));
         	}
         }
-        
+
         int code = connection.getResponseCode();
-       
+
         if(code == -1 && retry){
         	AQUtility.debug("code -1", urlPath);
         	return httpGet(urlPath, headers, false);
         }
-        
+
         if(code == 307 && retry){
         	String redirect = connection.getHeaderField("Location");
         	AQUtility.debug("redirect", redirect);
         	return httpGet(redirect, headers, false);
         }
-        
+
         byte[] data = null;
         String redirect = urlPath;
-        if(code == -1 || code < 200 || code >= 300){        	
+        if(code == -1 || code < 200 || code >= 300){
         	//throw new IOException();
         }else{
         	data = AQUtility.toBytes(connection.getInputStream());
-        	
+
         	//AQUtility.debug("length", data.length);
         	redirect = connection.getURL().toExternalForm();
         }
-        
+
         AQUtility.debug("response", code);
-        
+
         return new AjaxStatus(code, connection.getResponseMessage(), redirect, data, new Date(), false);
 	}
 	*/
-	
+
 	private static AjaxStatus httpGet(String url, Map<String, String> headers, boolean retry) throws IOException{
-		
+
 		AQUtility.debug("net", url);
 		url = patchUrl(url);
-		
+
 		HttpGet get = new HttpGet(url);
-		
+
 		return httpDo(get, url, headers);
-		
+
 	}
-	
+
 	private static AjaxStatus httpPost(String url, Map<String, String> headers, Map<String, Object> params) throws ClientProtocolException, IOException{
-		
+
 		AQUtility.debug("post", url);
-		
+
 		HttpPost post = new HttpPost(url);
-		
+
 		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-		
+
 		for(Map.Entry<String, Object> e: params.entrySet()){
 			Object value = e.getValue();
 			if(value != null){
 				//System.err.println(e.getKey() + "->" + value.toString());
 				pairs.add(new BasicNameValuePair(e.getKey(), value.toString()));
-				
+
 			}
 		}
-		
+
 		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
-		
+
 		if(headers != null  && !headers.containsKey("Content-Type")){
 			headers.put("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 		}
-		
+
 		post.setEntity(entity);
 		return httpDo(post, url, headers);
-		
-		
+
+
 	}
-	
+
 	private static AjaxStatus httpDo(HttpUriRequest hr, String url, Map<String, String> headers) throws ClientProtocolException, IOException{
-		
+
 		if(AGENT != null){
 			hr.addHeader("User-Agent", AGENT);
         }
-		
+
 		if(headers != null){
         	for(String name: headers.keySet()){
         		hr.addHeader(name, headers.get(name));
         	}
         }
-		
-		
+
+
 		HttpParams httpParams = new BasicHttpParams();
 		HttpConnectionParams.setConnectionTimeout(httpParams, NET_TIMEOUT);
 		HttpConnectionParams.setSoTimeout(httpParams, NET_TIMEOUT);
-		
+
 		DefaultHttpClient client = new DefaultHttpClient(httpParams);
-		
-		HttpContext context = new BasicHttpContext(); 	
+
+		HttpContext context = new BasicHttpContext();
 		HttpResponse response = client.execute(hr, context);
-		
-		
+
+
         byte[] data = null;
-        
+
         String redirect = url;
-        
+
         int code = response.getStatusLine().getStatusCode();
         String message = response.getStatusLine().getReasonPhrase();
-        
-        if(code == -1 || code < 200 || code >= 300){        	
+
+        if(code == -1 || code < 200 || code >= 300){
         	//throw new IOException();
         }else{
-        	
-        	HttpEntity entity = response.getEntity();				
+
+        	HttpEntity entity = response.getEntity();
 			InputStream is = entity.getContent();
-			
+
 			HttpHost currentHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
 	        redirect = currentHost.toURI() + currentReq.getURI();
-			
+
 			//AQUtility.debug("redirect", redirect);
-			
+
 			data = AQUtility.toBytes(is);
         }
-        
+
         AQUtility.debug("response", code);
-        
+
         AjaxStatus result = new AjaxStatus(code, message, redirect, data, new Date(), false);
 		result.setClient(client);
 		return result;
-			
-		
+
+
 	}
-	
+
 	/**
 	 * Set the authentication type of this request. This method requires API 5+.
 	 *
@@ -878,14 +892,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @return self
 	 */
 	public K auth(Activity act, String type, String account){
-		
-		if(android.os.Build.VERSION.SDK_INT >= 5){		
+
+		if(android.os.Build.VERSION.SDK_INT >= 5){
 			ah = new AccountHandle(act, type, account);
 		}
 		return self();
-		
+
 	}
-	
+
 
 	/**
 	 * Set the auth token directly. Note: Currently only support GoogleLogin auth.
@@ -900,8 +914,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 		return self();
 	}
-	
-	
+
+
 	/**
 	 * Gets the url.
 	 *
@@ -910,7 +924,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	public String getUrl(){
 		return url;
 	}
-	
+
 	/**
 	 * Gets the handler.
 	 *
@@ -931,8 +945,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return callback;
 	}
 
-	
-	
+
+
 }
 
 
