@@ -1,0 +1,13 @@
+	public void async_json_array(){
+		
+		String url = "http://androidquery.appspot.com/test/jsonarray.json";		
+		
+		aq.ajax(url, JSONArray.class, new AjaxCallback<JSONArray>(){
+			
+			public void callback(String url, JSONArray ja, AjaxStatus status) {
+				showResult(ja, status);
+			}
+			
+		});
+	        
+	}	

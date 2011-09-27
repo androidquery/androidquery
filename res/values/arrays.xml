@@ -25,8 +25,10 @@
   
   	<string-array name="async_names">
         <item>JSON</item>
-        <item>HTML/XML</item>   
+        <item>HTML/XML String</item>   
         <item>byte[]</item>  
+        <item>XML Dom</item>  
+        <item>JSON (Array)</item>
         <item>Http POST</item> 
         <item>Activity Method as Callback</item> 
         <item>Caching</item> 
@@ -42,6 +44,8 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_html</item>   
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
@@ -159,6 +163,8 @@
         <item>async_json</item>
         <item>async_html</item>   
         <item>async_bytes</item>  
+        <item>async_xml</item>
+        <item>async_json_array</item>
         <item>async_post</item> 
         <item>async_method_cb</item>  
         <item>async_cached</item>
@@ -226,6 +232,8 @@
         <item>Asynchronous HTTP Get JSON Object</item>
         <item>Asynchronous HTTP Get HTML/XML</item>   
         <item>Asynchronous HTTP Get as Bytes Array</item>
+        <item>Asynchronous HTTP Get XML Dom</item>   
+        <item>Asynchronous HTTP Get JSON Array</item>
         <item>Asynchronous HTTP Post</item> 
         <item>Use Activity Method as Callback</item> 
         <item>Asynchronous HTTP Get with Cache Control</item>

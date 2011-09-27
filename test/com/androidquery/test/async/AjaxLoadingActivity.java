@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.XmlDom;
 
 public class AjaxLoadingActivity extends RunSourceActivity {
 
@@ -88,6 +90,33 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}
 	
+	public void async_xml(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
+		
+		aq.progress(R.id.progress).ajax(url, XmlDom.class, new AjaxCallback<XmlDom>(){
+			
+			public void callback(String url, XmlDom xml, AjaxStatus status) {
+				showResult(xml, status);
+			}
+			
+		});
+	        
+	}
+	
+	public void async_json_array(){
+		
+		String url = "http://androidquery.appspot.com/test/jsonarray.json";		
+		
+		aq.progress(R.id.progress).ajax(url, JSONArray.class, new AjaxCallback<JSONArray>(){
+			
+			public void callback(String url, JSONArray ja, AjaxStatus status) {
+				showResult(ja, status);
+			}
+			
+		});
+	        
+	}	
 	
 	public void async_post(){
 		
