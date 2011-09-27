@@ -1,0 +1,8 @@
+	public void service_version_locale(){
+		
+		String locale = aq.id(R.id.spinner).getSelectedItem().toString();
+		
+		MarketService ms = new MarketService(this);
+		ms.locale(locale).force(true).progress(R.id.progress).checkVersion();
+	    
+	}

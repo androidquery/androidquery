@@ -222,8 +222,9 @@
         <item>xml_ajax</item>
         <item>xml_resource</item>
         
-        <item>service_version</item>
-        <item>service_version2</item>
+        <item>service_version_force</item>
+        <item>service_version_locale</item>
+        <item>service_version_auto</item>
     </string-array>
     
     <string-array name="source_title">

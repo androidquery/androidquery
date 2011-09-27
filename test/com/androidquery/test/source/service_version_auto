@@ -1,0 +1,6 @@
+	public void service_version_auto(){
+		
+		MarketService ms = new MarketService(this);
+		ms.checkVersion();
+	    
+	}	

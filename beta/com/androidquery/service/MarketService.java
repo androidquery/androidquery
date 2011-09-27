@@ -15,6 +15,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.view.View;
 
 import com.androidquery.AQuery;
@@ -32,6 +33,8 @@ public class MarketService{
 	private String rateUrl;
 	private String updateUrl;
 	private boolean force;
+	private int progress;
+	private long expire = 10 * 60 * 1000;
 	
 	public MarketService(Activity act) {
 		this.act = act;
@@ -57,9 +60,42 @@ public class MarketService{
 		return this;
 	}
 	
+	public MarketService progress(int id){
+		this.progress = id;
+		return this;
+	}
+	
 	public MarketService force(boolean force){
 		this.force = force;
 		return this;
+	}
+	
+	public MarketService expire(long expire){
+		this.expire = expire;
+		return this;
+	}
+	
+	private static ApplicationInfo ai;
+	private ApplicationInfo getApplicationInfo(){
+		
+		if(ai == null){
+			ai = act.getApplicationInfo();	
+		}
+		
+		return ai;
+	}
+	
+	private static PackageInfo pi;
+	private PackageInfo getPackageInfo(){
+		
+		if(pi == null){
+			try {
+				pi = act.getPackageManager().getPackageInfo(getAppId(), 0);
+			} catch (NameNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		return pi;
 	}
 	
 	private String getHost(){
@@ -68,36 +104,26 @@ public class MarketService{
 	}
 	
 	private String getQueryUrl(){
-		String url = getHost() + "/api/market?app=" + getAppId() + "&locale=" + locale;
+		String url = getHost() + "/api/market?app=" + getAppId() + "&locale=" + locale + "&version=" + getVersion() + "&code=" + getVersionCode();
 		return url;
 	}
 	
 	private String getAppId(){
-		ApplicationInfo info = act.getApplicationInfo();		
-		String appId = info.packageName;
-		return appId;
+		return getApplicationInfo().packageName;
 	}
 	
+	
 	private Drawable getAppIcon(){
-		Drawable d = act.getApplicationInfo().loadIcon(act.getPackageManager());
+		Drawable d = getApplicationInfo().loadIcon(act.getPackageManager());
 		return d;
 	}
 	
-	private String getVersion(){
-		
-		String appId = getAppId();
-		
-		String version = null;
-		
-		PackageInfo info;
-		try {
-			info = act.getPackageManager().getPackageInfo(appId, 0);
-			version = info.versionName;
-		} catch (NameNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		return version;
+	private String getVersion(){		
+		return getPackageInfo().versionName;		
+	}
+	
+	private int getVersionCode(){		
+		return getPackageInfo().versionCode;		
 	}
 	
 	
@@ -106,15 +132,13 @@ public class MarketService{
 		String url = getQueryUrl();
 		
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.url(url).type(JSONObject.class).handler(handler, "marketCb");
+		cb.url(url).type(JSONObject.class).handler(handler, "marketCb").fileCache(!force).expire(expire);
 		
-		aq.ajax(cb);
+		aq.progress(progress).ajax(cb);
 		
 	}
 	
 	
-	
-
     private static boolean openUrl(Activity act, String url) {
     
     	
@@ -141,19 +165,40 @@ public class MarketService{
     	
     	if(jo == null) return;
     	
-    	String latest = jo.optString("version", null);
-		String version = getVersion();
+    	String latestVer = jo.optString("version", null);
+		int latestCode = jo.optInt("code", 0);
 		
-		if(latest != null && version != null){
+		if(latestVer != null){
 			
-			AQUtility.debug("version", version + "->" + latest);
+			AQUtility.debug("version", getVersion() + "->" + latestVer + ":" + getVersionCode() + "->" + latestCode);
 			
-			if(force || !latest.equals(version)){
+			if(force || outdated(latestVer, latestCode)){
 				showUpdateDialog(jo);
 			}
 			
 		}
     	
+    }
+    
+    
+    private boolean outdated(String latestVer, int latestCode){
+    	
+    	String skip = getSkipVersion(act);
+    	if(latestVer.equals(skip)){
+    		AQUtility.debug("skip!");
+    		return false;
+    	}
+    	
+    	String version = getVersion();
+    	int code = getVersionCode();
+    	
+    	if(!version.equals(latestVer)){
+    		if(code < latestCode){
+    			return true;
+    		}
+    	}
+    	
+    	return false;
     }
     
 	protected void showUpdateDialog(JSONObject jo){
@@ -170,7 +215,9 @@ public class MarketService{
 		
 		Drawable icon = getAppIcon();
 		
-		Dialog dialog = new AlertDialog.Builder(act)
+		Context context = act;
+		
+		Dialog dialog = new AlertDialog.Builder(context)
         .setIcon(icon)
 		.setTitle(title)
         .setMessage(body)        
@@ -179,15 +226,28 @@ public class MarketService{
         .setNegativeButton(update, handler)
         .create();
 		
+		handler.version = jo.optString("version", null);
+		
 		dialog.show();
 		
 		return;
 		
 	}
     
+	private static final String SKIP_VERSION = "aqs.skip";
+	
+	private static void setSkipVersion(Context context, String version){
+		PreferenceManager.getDefaultSharedPreferences(context).edit().putString(SKIP_VERSION, version).commit();		
+	}
+
+	private static String getSkipVersion(Context context){
+		return PreferenceManager.getDefaultSharedPreferences(context).getString(SKIP_VERSION, null);
+	}
 	
 	protected class Handler implements DialogInterface.OnClickListener{
         
+		private String version;
+		
 		public void marketCb(String url, JSONObject jo, AjaxStatus status) {
 			
 			marketCb(url, jo, status, false);
@@ -202,7 +262,10 @@ public class MarketService{
 		
 		private void marketCb(String url, JSONObject jo, AjaxStatus status, boolean fetched){
 			
-			//AQUtility.debug(jo);
+			if(act.isFinishing()) return;
+			
+			AQUtility.debug(jo);
+			
 			
 			if(jo != null && "1".equals(jo.optString("status"))){
 				
@@ -212,7 +275,7 @@ public class MarketService{
 					
 					AjaxCallback<String> cb = new AjaxCallback<String>();
 					cb.url(marketUrl).type(String.class).handler(this, "detailCb");				
-					aq.ajax(cb);
+					aq.progress(progress).ajax(cb);
 					
 				}else{					
 					callback(url, jo, status);
@@ -234,15 +297,13 @@ public class MarketService{
 				cb.url(qurl).type(JSONObject.class).handler(this, "marketFetchedCb");
 				cb.param("html", html);
 				
-				aq.ajax(cb);
+				aq.progress(progress).ajax(cb);
 				
 			}
 			
 			
 		}
 		
-		
-
 
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
@@ -255,7 +316,7 @@ public class MarketService{
 					openUrl(act, updateUrl);
 					break;
 				case AlertDialog.BUTTON_NEUTRAL:
-				
+					setSkipVersion(act, version);
 					break;
 			}
 			

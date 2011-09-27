@@ -75,7 +75,6 @@ public class AccountHandle extends AsyncTask<String, String, Bundle> implements 
 	
 	private void auth(){
 		
-		AQUtility.debug("auth", email);
 		
 		if(email == null){
 			accountDialog();

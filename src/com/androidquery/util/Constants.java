@@ -30,6 +30,7 @@ public interface Constants {
 	public final int FADE_IN = -1;
 	public final float RATIO_PRESERVE = Float.MAX_VALUE;
 	public final String ACTIVE_ACCOUNT = "aq.account";
+	
 	public final String AUTH_READER = "reader";
 	public final String AUTH_PICASA = "lh2";
 	public final String AUTH_SPREADSHEETS = "wise";

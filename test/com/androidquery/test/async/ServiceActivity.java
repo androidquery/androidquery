@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -29,12 +30,18 @@ public class ServiceActivity extends RunSourceActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 	
+		PreferenceManager.getDefaultSharedPreferences(this).edit().putString("aqs.skip", null).commit();
+		
 		super.onCreate(savedInstanceState);
 		
 		type = getIntent().getStringExtra("type");
 			
 		if(type.equals("service_version_locale")){
-			aq.id(R.id.spinner).visible().itemSelected(this, "localeSelected");			
+			
+			
+			aq.id(R.id.spinner).visible().setSelection(1).itemSelected(this, "localeSelected");	
+			aq.id(R.id.go_run).gone();
+			showResult("Pick a locale. The update message is fetched from the 'Recent Changes' field of your Android Market's development console with the correponsing locale.", null);
 		}
 	}
 	
@@ -60,20 +67,9 @@ public class ServiceActivity extends RunSourceActivity {
 	}
 	
 	public void service_version_force(){
-	    		
-		showProgress(true);
-		
-		MarketService ms = new MarketService(this){
-			
-			@Override
-			protected void callback(String url, JSONObject jo, AjaxStatus status) {
-				showProgress(false);
-				super.callback(url, jo, status);
-			}
-			
-		};
-		
-		ms.force(true).checkVersion();
+	    
+		MarketService ms = new MarketService(this);
+		ms.force(true).progress(R.id.progress).checkVersion();
 	        
 	}	
 	
@@ -82,25 +78,15 @@ public class ServiceActivity extends RunSourceActivity {
 		String locale = aq.id(R.id.spinner).getSelectedItem().toString();
 		
 		MarketService ms = new MarketService(this);
-		ms.locale(locale).force(true).checkVersion();
-	      
+		ms.locale(locale).force(true).progress(R.id.progress).checkVersion();
+	    
+		//ms.locale(Locale.TRADITIONAL_CHINESE.toString()).force(true).progress(R.id.progress).checkVersion();
 	}
 	
 	public void service_version_auto(){
 		
-		showProgress(true);
-		
-		MarketService ms = new MarketService(this){
-			
-			@Override
-			protected void callback(String url, JSONObject jo, AjaxStatus status) {
-				showProgress(false);
-				super.callback(url, jo, status);
-			}
-			
-		};
-		
-		ms.checkVersion();
+		MarketService ms = new MarketService(this);
+		ms.progress(R.id.progress).checkVersion();
 	    
 		showResult("Nothing happends if current version is up to date.", null);
 		

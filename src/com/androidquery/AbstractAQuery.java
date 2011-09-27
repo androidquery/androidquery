@@ -963,6 +963,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 	}
 	
+	
+	
 	/**
 	 * Register a callback method for when an item is selected. 
 	 *
@@ -981,7 +983,22 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}	
 	
 	
-	
+	/**
+	 * Set selected item of an AdapterView.
+	 *
+	 * @param position The position of the item to be selected.
+	 * @return self
+	 */
+	public T setSelection(int position){
+		
+		if(view instanceof AdapterView){		
+			AdapterView<?> alv = (AdapterView<?>) view;
+			alv.setSelection(position);		
+		}
+		
+		return self();
+		
+	}	
 	
 	private static Class<?>[] ON_SCROLLED_STATE_SIG = {AbsListView.class, int.class};
 	

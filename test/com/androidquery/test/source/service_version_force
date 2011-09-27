@@ -1,0 +1,6 @@
+	public void service_version_force(){
+	    
+		MarketService ms = new MarketService(this);
+		ms.force(true).checkVersion();
+	        
+	}	

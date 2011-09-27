@@ -64,6 +64,7 @@ public class RunSourceActivity extends Activity {
 		
 	}
 	
+	/*
 	protected void showProgress(boolean show){
 		
 		aq.id(R.id.progress);
@@ -74,7 +75,7 @@ public class RunSourceActivity extends Activity {
 			aq.gone();
 		}
 		
-	}
+	}*/
 	
 	protected void showResult(JSONObject result){
 		showResult(result, null);
