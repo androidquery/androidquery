@@ -513,11 +513,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	
-	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Runnable#run()
+	/**
+	 * AQuert internal use. Do not call this method directly.
 	 */
+	
 	@Override
 	public void run() {
 		
@@ -525,6 +524,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			if(!status.getDone()){
 				backgroundWork();
+				status.done();
 				AQUtility.post(this);
 			}else{
 				afterWork();
@@ -578,8 +578,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			result = fileGet(url, file, status);
 			//if result is ok
 			if(result != null){				
-				//status = makeStatus(url, new Date(file.lastModified()), refresh);
-				status.source(AjaxStatus.FILE).time(new Date(file.lastModified())).done();
+				status.source(AjaxStatus.FILE).time(new Date(file.lastModified()));
 			}
 		}
 	}
@@ -589,8 +588,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		result = datastoreGet(url);
 		
 		if(result != null){		
-			//status = makeStatus(url, null, refresh);
-			status.source(AjaxStatus.DATASTORE).done();
+			status.source(AjaxStatus.DATASTORE);
 		}
 	}
 	
@@ -722,7 +720,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		for(Map.Entry<String, Object> e: params.entrySet()){
 			Object value = e.getValue();
 			if(value != null){
-				//System.err.println(e.getKey() + "->" + value.toString());
 				pairs.add(new BasicNameValuePair(e.getKey(), value.toString()));
 				
 			}
@@ -781,18 +778,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
 	        redirect = currentHost.toURI() + currentReq.getURI();
 			
-			//AQUtility.debug("redirect", redirect);
-			
 			data = AQUtility.toBytes(is);
         }
         
         AQUtility.debug("response", code);
         
-        /*
-        AjaxStatus result = new AjaxStatus(code, message, redirect, data, new Date(), false);
-		result.setClient(client);
-		return result;
-		*/
         status.code(code).message(message).redirect(redirect).time(new Date()).data(data).client(client).done();
 		
 	}

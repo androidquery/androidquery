@@ -236,7 +236,7 @@
         <item>Show Requests Progress</item>
         <item>Using AjaxCallback Directly</item>
         <item>Setting HTTP Headers for Ajax Requests</item>
-        <item>Using AjaxStatus</item>
+        <item>Using AjaxStatus for meta data of request and HTTP response</item>
         
         <item>Asynchronous HTTP Image Load</item>
         <item>Async Image Load with Cache Control</item>
