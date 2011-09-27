@@ -68,7 +68,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	private Context context;
 	
 	protected View view;
-	private ProgressBar progress;
+	private View progress;
 
 	private T create(View view){
 		
@@ -204,17 +204,28 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	
+	/**
+	 * Find the progress bar and show the progress for the next ajax/image request. 
+	 * Once ajax or image is called, current progress view is consumed.
+	 * Subsequent ajax/image calls won't show progress view unless progress is called again.
+	 *
+	 * If a file or network requests is required, the progress bar is set to be "VISIBLE".
+	 * Once the requests completes, progress bar is set to "GONE".
+	 *
+	 * @param id the id of the progress bar to be shown
+	 * @return self
+	 */
 	public T progress(int id){
-	
-		View pbar = findView(id);
-		if(pbar instanceof ProgressBar){
-			progress = (ProgressBar) pbar;
-		}
-		
+		progress = findView(id);		
 		return self();
 	}
 	
+	//dequeue the progress, each progress bar only used once per ajax request
+	private View dqProgress(){
+		View result = progress;
+		progress = null;
+		return result;
+	}
 	
 	/**
 	 * Set the text of a TextView.
@@ -462,8 +473,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T image(BitmapAjaxCallback callback){
 		
 		if(view instanceof ImageView || view instanceof TextView){			
-			callback.view(view).progress(progress).async(getContext());			
-		}
+			callback.view(view).progress(dqProgress()).async(getContext());			
+		} 
 		
 		return self();
 		
@@ -1254,7 +1265,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(AjaxCallback<K> callback){
 				
-		callback.progress(progress).async(getContext());
+		callback.progress(dqProgress()).async(getContext());
 		
 		return self();
 	}	

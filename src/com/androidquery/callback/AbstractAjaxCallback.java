@@ -77,7 +77,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private Reference<Object> whandler;
 	private Object handler;
 	private String callback;
-	private WeakReference<ProgressBar> pbar;
+	private WeakReference<View> progress;
 	
 	private String url;
 	private Map<String, Object> params;
@@ -107,7 +107,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		result = null;
 		status = null;
 		handler = null;
-		pbar = null;
+		progress = null;
 	}
 	
 	/**
@@ -281,14 +281,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	/**
-	 * Warning: BETA method and it's subjected to be changed.
+	 * Set the progress view (can be a progress bar or any view) to be shown (VISIBLE) and hide (GONE) when async is in progress.
 	 *
-	 * @param pbar the pbar
-	 * @return the k
+	 * @param progress the progress view
+	 * @return self
 	 */
-	public K progress(ProgressBar pbar){
-		if(pbar != null){
-			this.pbar = new WeakReference<ProgressBar>(pbar);
+	public K progress(View view){
+		if(view != null){
+			this.progress = new WeakReference<View>(view);
 		}
 		return self();
 	}
@@ -339,9 +339,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	protected void showProgress(boolean show){
 		
-		if(pbar != null){
+		if(progress != null){
 			
-			ProgressBar pb = pbar.get();
+			View pb = progress.get();
 			if(pb != null){				
 				if(show){
 					pb.setTag(url);
