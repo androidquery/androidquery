@@ -21,7 +21,7 @@
 	
 	<uses-sdk android:minSdkVersion="4"/>
 	
-    <application android:icon="@drawable/icon" android:label="@string/app_name" >
+    <application android:icon="@drawable/launch" android:label="@string/app_name" >
 
 		<activity android:name=".test.IntentListActivity">
             <intent-filter>

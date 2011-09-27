@@ -28,6 +28,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -524,9 +525,14 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private void setBitmap(String url, TextView tv, Bitmap bm, boolean isPreset){
 		
 		BitmapDrawable bd = null;
-		if(bm != null) bd = new BitmapDrawable(bm); 
-							
-		tv.setCompoundDrawablesWithIntrinsicBounds(bd, null, null, null);
+		if(bm != null){
+			bd = new BitmapDrawable(bm); 
+			Context context = tv.getContext();
+			bd.setBounds(0, 0, AQUtility.dip2pixel(context, bm.getWidth()), AQUtility.dip2pixel(context, bm.getHeight()));
+		}
+		
+		//tv.setCompoundDrawablesWithIntrinsicBounds(bd, null, null, null);		
+		tv.setCompoundDrawables(bd, null, null, null);
 		
 	}
 	

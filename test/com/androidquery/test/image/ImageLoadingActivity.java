@@ -209,8 +209,8 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	}
 	
 	public void image_button(){
-		
-		String tb = "http://www.vikispot.com/z/images/vikispot/android-w.png";	
+			
+		String tb = "http://androidquery.appspot.com/z/demo/button.png";
 		aq.id(R.id.button).image(tb);
 		
 	}
