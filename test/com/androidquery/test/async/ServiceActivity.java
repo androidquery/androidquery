@@ -69,7 +69,7 @@ public class ServiceActivity extends RunSourceActivity {
 	public void service_version_force(){
 	    
 		MarketService ms = new MarketService(this);
-		ms.force(true).progress(R.id.progress).checkVersion();
+		ms.locale(Locale.getDefault().toString()).force(true).progress(R.id.progress).checkVersion();
 	        
 	}	
 	

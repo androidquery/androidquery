@@ -46,7 +46,7 @@ import com.androidquery.util.BitmapCache;
 import com.androidquery.util.Constants;
 
 /**
- * The Class BitmapAjaxCallback.
+ * The callback handler for handling Aquery.image() methods.
  */
 public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxCallback>{
 

@@ -31,6 +31,8 @@ public class IntentListActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		
+		
+		
 		if(!init){
 			AQUtility.setDebug(true);
 			BitmapAjaxCallback.setPixelLimit(600 * 600);
@@ -50,6 +52,8 @@ public class IntentListActivity extends ListActivity {
 			forward();
 		}
 
+		AQUtility.debug("task root", this.isTaskRoot());
+		
 	}
 	
 	public void onStart(){

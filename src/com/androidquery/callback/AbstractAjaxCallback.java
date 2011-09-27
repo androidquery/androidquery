@@ -64,7 +64,7 @@ import com.androidquery.util.AccountHandle;
 import com.androidquery.util.XmlDom;
 
 /**
- * The Class AbstractAjaxCallback.
+ * The core class of ajax callback handler.
  *
  */
 public abstract class AbstractAjaxCallback<T, K> implements Runnable{
