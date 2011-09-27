@@ -448,9 +448,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return file;
 	}
 	
+	/*
 	private static AjaxStatus makeStatus(String url, Date time, boolean refresh){
 		return new AjaxStatus(200, "OK", url, null, time, refresh);
 	}
+	*/
+	
 	
 	/**
 	 * Starts the async process. 
@@ -458,6 +461,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @param context the context
 	 */
 	public void async(Context context){
+		
+		if(status == null){
+			status = new AjaxStatus();
+			status.redirect(url).refresh(refresh);
+		}
 		
 		showProgress(true);
 		
@@ -469,7 +477,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			}
 			
 			if(ah.getToken() == null){
-				status = new AjaxStatus(401, "Auth failed.", url, null, new Date(), true);
+				//status = new AjaxStatus(401, "Auth failed.", url, null, new Date(), true);
+				status.code(401).message("Auth failed.");
 				callback();
 				return;
 			}
@@ -493,31 +502,17 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 		if(object != null){		
 			result = object;
-			status = makeStatus(url, null, refresh);
+			status.source(AjaxStatus.MEMORY).done();
 			callback();
 		}else{
 		
-			if(fileCache) cacheDir = AQUtility.getCacheDir(context);
+			if(fileCache) cacheDir = AQUtility.getCacheDir(context);				
+			execute();			
 			
-			if(async){			
-				execute();			
-			}else{
-				backgroundWork();
-				afterWork();
-			}
 		}
 	}
 	
-	/**
-	 * Warning: BETA method and subject to change.
-	 *
-	 * @param context the context
-	 */
-	public void sync(Context context){
-		
-		work(context, false);
-		
-	}
+	
 	
 	
 	/* (non-Javadoc)
@@ -528,26 +523,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		try{
 			
-			if(status == null){
-				
+			if(!status.getDone()){
 				backgroundWork();
-			
-				if(status == null){
-					status = new AjaxStatus(-1, "OK", url, null, null, refresh);
-				}
-				
 				AQUtility.post(this);
-				
-				
 			}else{
-				
-				
 				afterWork();
 				clear();
 			}
 			
-				
-		
 		}catch(Exception e){
 			AQUtility.report(e);
 		}
@@ -567,8 +550,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		if(!refresh){
 		
-			if(fileCache){		
-				
+			if(fileCache){	
 				fileWork();			
 			}
 		
@@ -596,7 +578,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			result = fileGet(url, file, status);
 			//if result is ok
 			if(result != null){				
-				status = makeStatus(url, new Date(file.lastModified()), refresh);
+				//status = makeStatus(url, new Date(file.lastModified()), refresh);
+				status.source(AjaxStatus.FILE).time(new Date(file.lastModified())).done();
 			}
 		}
 	}
@@ -606,7 +589,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		result = datastoreGet(url);
 		
 		if(result != null){		
-			status = makeStatus(url, null, refresh);
+			//status = makeStatus(url, null, refresh);
+			status.source(AjaxStatus.DATASTORE).done();
 		}
 	}
 	
@@ -618,17 +602,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		try{
 			
-			status = network();
+			network();
 			
 			if(ah != null && (status.getCode() == 401 || status.getCode() == 403)){
 				AQUtility.debug("reauth needed!");				
 				authToken(ah.getType(), ah.reauth());
-				status = network();
+				network();
 			}
-			
-			
-			status.setRefresh(refresh);						
-			
+								
 			data = status.getData();
 		}catch(Exception e){
 			AQUtility.report(e);
@@ -654,19 +635,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	private AjaxStatus network() throws IOException{
+	private void network() throws IOException{
 		
 		String networkUrl = url;
 		if(refresh) networkUrl = getRefreshUrl(url);
 		
-		AjaxStatus status;
 		if(params == null){
-			status = httpGet(networkUrl, headers, true);						
+			httpGet(networkUrl, headers, status);						
 		}else{
-			status = httpPost(networkUrl, headers, params);
+			httpPost(networkUrl, headers, params, status);
 		}
-		
-		return status;
 	}
 	
 	
@@ -722,70 +700,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return url;
 	}
 	
-	/*
-	private static AjaxStatus httpGet(String urlPath, Map<String, String> headers, boolean retry) throws IOException{
-				
-		AQUtility.debug("net", urlPath);
-		
-		URL url = new URL(patchUrl(urlPath));
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-           
-        connection.setUseCaches(false);
-        connection.setInstanceFollowRedirects(true);     
-        connection.setConnectTimeout(NET_TIMEOUT);
-        
-        if(AGENT != null){
-        	connection.addRequestProperty("User-Agent", AGENT);
-        }
-        
-        if(headers != null){
-        	for(String name: headers.keySet()){
-        		connection.addRequestProperty(name, headers.get(name));
-        	}
-        }
-        
-        int code = connection.getResponseCode();
-       
-        if(code == -1 && retry){
-        	AQUtility.debug("code -1", urlPath);
-        	return httpGet(urlPath, headers, false);
-        }
-        
-        if(code == 307 && retry){
-        	String redirect = connection.getHeaderField("Location");
-        	AQUtility.debug("redirect", redirect);
-        	return httpGet(redirect, headers, false);
-        }
-        
-        byte[] data = null;
-        String redirect = urlPath;
-        if(code == -1 || code < 200 || code >= 300){        	
-        	//throw new IOException();
-        }else{
-        	data = AQUtility.toBytes(connection.getInputStream());
-        	
-        	//AQUtility.debug("length", data.length);
-        	redirect = connection.getURL().toExternalForm();
-        }
-        
-        AQUtility.debug("response", code);
-        
-        return new AjaxStatus(code, connection.getResponseMessage(), redirect, data, new Date(), false);
-	}
-	*/
-	
-	private static AjaxStatus httpGet(String url, Map<String, String> headers, boolean retry) throws IOException{
+	private static void httpGet(String url, Map<String, String> headers, AjaxStatus status) throws IOException{
 		
 		AQUtility.debug("net", url);
 		url = patchUrl(url);
 		
 		HttpGet get = new HttpGet(url);
 		
-		return httpDo(get, url, headers);
+		httpDo(get, url, headers, status);
 		
 	}
 	
-	private static AjaxStatus httpPost(String url, Map<String, String> headers, Map<String, Object> params) throws ClientProtocolException, IOException{
+	private static void httpPost(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
 		
 		AQUtility.debug("post", url);
 		
@@ -809,12 +735,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 		
 		post.setEntity(entity);
-		return httpDo(post, url, headers);
+		httpDo(post, url, headers, status);
 		
 		
 	}
 	
-	private static AjaxStatus httpDo(HttpUriRequest hr, String url, Map<String, String> headers) throws ClientProtocolException, IOException{
+	private static void httpDo(HttpUriRequest hr, String url, Map<String, String> headers, AjaxStatus status) throws ClientProtocolException, IOException{
 		
 		if(AGENT != null){
 			hr.addHeader("User-Agent", AGENT);
@@ -862,10 +788,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         
         AQUtility.debug("response", code);
         
+        /*
         AjaxStatus result = new AjaxStatus(code, message, redirect, data, new Date(), false);
 		result.setClient(client);
 		return result;
-			
+		*/
+        status.code(code).message(message).redirect(redirect).time(new Date()).data(data).client(client).done();
 		
 	}
 	

@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
+import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
 import com.flurry.android.FlurryAgent;
@@ -76,6 +77,10 @@ public class RunSourceActivity extends Activity {
 	}
 	
 	protected void showResult(JSONObject result){
+		showResult(result, null);
+	}
+	
+	protected void showResult(JSONObject result, AjaxStatus status){
 		
 		String str = null;
 		
@@ -88,12 +93,26 @@ public class RunSourceActivity extends Activity {
 			}
 		}
 		
+		showMeta(status);
 		
 		aq.id(R.id.result).visible().text(str);
 		
 	}
 	
-	protected void showResult(JSONArray result){
+	private static String[] SOURCE = {"", "NETWORK", "DATASTORE", "FILE", "MEMORY"};
+	protected void showMeta(AjaxStatus status){
+		if(status != null){
+			String meta = "Source:" + SOURCE[status.getSource()] + "\nResponse Code:" + status.getCode() + "\nDuration:" + status.getDuration() + "ms";
+			if(status.getCode() != 200){
+				meta = meta + "\nMessage:" + status.getMessage();
+			}
+			showTextResult(meta);
+		}
+	}
+	
+	
+	
+	protected void showResult(JSONArray result, AjaxStatus status){
 		
 		String str = null;
 		
@@ -106,6 +125,7 @@ public class RunSourceActivity extends Activity {
 			}
 		}
 		
+		showMeta(status);
 		
 		aq.id(R.id.result).visible().text(str);
 		
@@ -116,19 +136,21 @@ public class RunSourceActivity extends Activity {
 		aq.id(R.id.text_result).visible().text(result + "");
 	}
 	
-	protected void showResult(XmlDom xml){
-		
-		aq.id(R.id.result).visible().text(xml.toString(2));
+	protected void showResult(XmlDom xml, AjaxStatus status){
+		showMeta(status);
+		if(xml != null){
+			aq.id(R.id.result).visible().text(xml.toString(2));
+		}
 	}
 	
-	protected void showResult(Object result){
-		
+	protected void showResult(Object result, AjaxStatus status){
+		showMeta(status);
 		aq.id(R.id.result).visible().text(result + "");
 	}
 	
 	protected void showResult(int code, Object msg){
 		
-		showResult(code + ":" + msg);
+		showResult(code + ":" + msg, null);
 	}
 	
 	private static Map<String, String> titleMap;

@@ -1,8 +1,10 @@
 package com.androidquery.test.async;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import android.os.Bundle;
@@ -43,7 +45,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                  
-                showResult(json);
+                showResult(json, status);
                
             }
         };
@@ -63,7 +65,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        @Override
 	        public void callback(String url, String html, AjaxStatus status) {
 	             
-	        	showResult(html);
+	        	showResult(html, status);
 	        }
 		        
 		});
@@ -80,7 +82,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        @Override
 	        public void callback(String url, byte[] object, AjaxStatus status) {
 	        	
-	        	showResult("bytes array length:" + object.length);
+	        	showResult("bytes array length:" + object.length, status);
 	        }
 		});
 	        
@@ -99,7 +101,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                 
-                showResult(json);
+                showResult(json, status);
                
             }
         });
@@ -128,7 +130,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	             
 	        	showProgress(false);
 	        	
-	        	showResult(html);
+	        	showResult(html, status);
 	        }
 		        
 		});
@@ -168,14 +170,46 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}	
 	
+	public void async_status(){
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+        aq.progress(R.id.progress).ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                
+            	int source = status.getSource();
+            	int responseCode = status.getCode();
+            	long duration = status.getDuration();
+            	Date fetchedTime = status.getTime();
+            	String message = status.getMessage();
+            	String redirect = status.getRedirect();
+            	DefaultHttpClient client = status.getClient();
+            	
+            	Map<String, Object> map = new HashMap<String, Object>();
+            	map.put("source", source);
+            	map.put("response code", responseCode);
+            	map.put("duration", duration);
+            	map.put("object fetched time", fetchedTime);
+            	map.put("message", message);
+            	map.put("redirect", redirect);
+            	map.put("client", client);
+            	
+            	showResult(map, status);
+            	
+            }
+        });
+	}
+	
 	public void jsonCb(String url, JSONObject json, AjaxStatus status) {
 		  	
-        showResult(json);
+        showResult(json, status);
 	}
 	
 	public void stringCb(String url, String str, AjaxStatus status) {
 		 	
-        showResult(str);
+        showResult(str, status);
 	}
 	
 }

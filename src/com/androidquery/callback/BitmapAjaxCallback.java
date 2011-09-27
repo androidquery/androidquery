@@ -705,7 +705,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		if(bm != null){		
 			v.setTag(url);
 			//showBitmap(url, v, bm);
-			callback(url, bm, new AjaxStatus(200, "OK", url, null, null, true));
+			callback(url, bm, new AjaxStatus().source(AjaxStatus.MEMORY).done());
 			return;
 		}
 		

@@ -52,7 +52,7 @@ public class XmlActivity extends RunSourceActivity {
 	
 	public void picasaCb(String url, XmlDom xml, AjaxStatus status){
 		
-		showResult(xml);		
+		showResult(xml, status);		
 		if(xml == null) return;
 
 		List<XmlDom> entries = xml.tags("entry");
@@ -84,7 +84,7 @@ public class XmlActivity extends RunSourceActivity {
 		String code1 = xml.tag("entry", "name", "snippet1").text();
 		
 		showTextResult(code1);		
-		showResult(xml);
+		showResult(xml, null);
 		
 	}
 	

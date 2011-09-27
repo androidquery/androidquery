@@ -20,34 +20,111 @@ import java.util.Date;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
+/**
+ * AjaxStatus contains meta information of an AjaxCallback callback.
+ */
 public class AjaxStatus {
 
-	private int code;
-	private String message;
+	/** Source NETWORK. */
+	public static final int NETWORK = 1;
+	
+	/** Source DATASTORE. */
+	public static final int DATASTORE = 2;
+	
+	/** Source FILE. */
+	public static final int FILE = 3;
+	
+	/** Source MEMORY. */
+	public static final int MEMORY = 4;
+	
+	private int code = 200;
+	private String message = "OK";
 	private String redirect;
 	private byte[] data;
-	private Date time;
+	private Date time = new Date();
 	private boolean refresh;
 	private DefaultHttpClient client;
+	private long duration;
+	private int source = NETWORK;
+	private long start = System.currentTimeMillis();
+	private boolean done;
 	
-	public AjaxStatus(int code, String message, String redirect, byte[] data, Date time, boolean refresh){
+	
+	protected AjaxStatus source(int source){
+		this.source = source;
+		return this;
+	}
+	
+	protected AjaxStatus code(int code){
 		this.code = code;
+		return this;
+	}
+	
+	protected AjaxStatus message(String message){
 		this.message = message;
+		return this;
+	}
+	
+	protected AjaxStatus redirect(String redirect){
 		this.redirect = redirect;
-		this.data = data;
+		return this;
+	}
+	
+	protected AjaxStatus time(Date time){
 		this.time = time;
+		return this;
+	}
+	
+	protected AjaxStatus refresh(boolean refresh){
+		this.refresh = refresh;
+		return this;
+	}
+	
+	protected AjaxStatus client(DefaultHttpClient client){
+		this.client = client;
+		return this;
+	}
+	
+	protected AjaxStatus done(){
+		this.duration = System.currentTimeMillis() - start;
+		this.done = true;
+		return this;
+	}
+	
+	protected AjaxStatus data(byte[] data){
+		this.data = data;
+		return this;
 	}
 	
 	
+	protected boolean getDone() {
+		return done;
+	}
 	
+	
+	/**
+	 * Gets the http response code.
+	 *
+	 * @return code
+	 */
 	public int getCode() {
 		return code;
 	}
 
+	/**
+	 * Gets the http response message.
+	 *
+	 * @return message
+	 */
 	public String getMessage() {
 		return message;
 	}
 
+	/**
+	 * Gets the redirected url. Returns original url if no redirection.
+	 *
+	 * @return redirect url
+	 */
 	public String getRedirect() {
 		return redirect;
 	}
@@ -56,28 +133,50 @@ public class AjaxStatus {
 		return data;
 	}
 	
+	/**
+	 * Gets the object fetched time. Returns original fetch time when url is file cached.
+	 *
+	 * @return original fetch time
+	 */
 	public Date getTime(){
 		return time;
 	}
 
+	/**
+	 * Gets the refresh param.
+	 *
+	 * @return refresh
+	 */
 	public boolean getRefresh() {
 		return refresh;
 	}
 	
-	protected void setRefresh(boolean refresh) {
-		this.refresh = refresh;
-	}
-
-
-
-	public void setClient(DefaultHttpClient client) {
-		this.client = client;
-	}
-
-
-
+	/**
+	 * Gets the http client used to fetch the url. User can access other resources like response headers and cookies.
+	 * Returns null if object is cached (source is not AjaxStatus.NETWORK).
+	 *
+	 * @return http client
+	 */
 	public DefaultHttpClient getClient() {
 		return client;
+	}
+
+	/**
+	 * Gets the duration of the ajax request in millseconds.
+	 *
+	 * @return duration
+	 */
+	public long getDuration() {
+		return duration;
+	}
+
+	/**
+	 * Gets the source type. Can be AjaxStatus.NETWORK, AjaxStatus.DATASTORE, AjaxStatus.FILE, or AjaxStatus.MEMORY.
+	 *
+	 * @return source
+	 */
+	public int getSource() {
+		return source;
 	}
 	
 }

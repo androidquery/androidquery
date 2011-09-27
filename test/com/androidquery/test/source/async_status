@@ -1,0 +1,11 @@
+public void callback(String url, JSONObject json, AjaxStatus status) {
+    
+	int source = status.getSource();
+	int responseCode = status.getCode();
+	long duration = status.getDuration();
+	Date fetchedTime = status.getTime();
+	String message = status.getMessage();
+	String redirect = status.getRedirect();
+	DefaultHttpClient client = status.getClient();
+	
+}

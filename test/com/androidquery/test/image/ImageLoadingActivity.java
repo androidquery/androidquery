@@ -168,6 +168,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
                 iv.setImageBitmap(bm);
                 iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
 	                
+                showMeta(status);
 	        }
 		        
 		});
@@ -189,6 +190,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	                iv.setImageBitmap(bm);
 	                iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
 		                
+	                showMeta(status);
 		        }
 			        
 			});
@@ -234,7 +236,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		File file = aq.getCachedFile(imageUrl);
 		
 		if(file != null){
-			showResult("File:" + file + " Length:" + file.length());
+			showResult("File:" + file + " Length:" + file.length(), null);
 		}
 		
 	}
@@ -245,7 +247,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		Bitmap bm = aq.getCachedImage(imageUrl);
 		
 		if(bm != null){
-			showResult("Dimension:" + bm.getWidth() + "x" + bm.getHeight());
+			showResult("Dimension:" + bm.getWidth() + "x" + bm.getHeight(), null);
 		}
 		
 	}

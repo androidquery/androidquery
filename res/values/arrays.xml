@@ -41,6 +41,7 @@
         <item>Progress</item> 
         <item>AjaxCallback</item>   
         <item>Http Request Headers</item>  
+        <item>AjaxStatus</item>  
         <item>Doc @ AndroidQuery</item>      
     </string-array>
   
@@ -54,6 +55,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_status</item>  
         <item>http://code.google.com/p/android-query/wiki/AsyncAPI</item>    
     </string-array>
     
@@ -169,6 +171,7 @@
         <item>async_progress</item>
         <item>async_advance</item>
         <item>async_header</item>
+        <item>async_status</item>
         
         <item>image_simple</item>
         <item>image_cache</item>
@@ -233,6 +236,7 @@
         <item>Show Requests Progress</item>
         <item>Using AjaxCallback Directly</item>
         <item>Setting HTTP Headers for Ajax Requests</item>
+        <item>Using AjaxStatus</item>
         
         <item>Asynchronous HTTP Image Load</item>
         <item>Async Image Load with Cache Control</item>

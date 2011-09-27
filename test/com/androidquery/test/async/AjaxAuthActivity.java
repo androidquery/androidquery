@@ -92,7 +92,9 @@ public class AjaxAuthActivity extends RunSourceActivity {
 			showTextResult(titles);			
 		}
 		
-		showResult(xml);
+		AQUtility.debug("status:" + status);
+		
+		showResult(xml, status);
 	}
 	
 	
@@ -193,7 +195,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 			JSONArray entries = jo.optJSONObject("feed").optJSONArray("entry");
 			
 			if(entries.length() > 0){	
-				showResult(entries);
+				showResult(entries, status);
 				JSONArray tbs = entries.optJSONObject(0).optJSONObject("media$group").optJSONArray("media$thumbnail");
 				
 				for(int i = 0; i < tbs.length(); i++){
@@ -244,7 +246,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 			
 		}
 		
-		showResult(xml);
+		showResult(xml, status);
 	}
 	
 	
@@ -255,9 +257,9 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	public void stringCb(String url, String str, AjaxStatus status) {
 		
 		if(status.getCode() == 401){
-			showResult("Authenticate Error with Http Response 401");
+			showResult("Authenticate Error with Http Response 401", status);
 		}else{		
-			showResult(str);
+			showResult(str, status);
 		}
 		
 	}

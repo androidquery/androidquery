@@ -102,7 +102,7 @@ public class ServiceActivity extends RunSourceActivity {
 		
 		ms.checkVersion();
 	    
-		showResult("Nothing happends if current version is up to date.");
+		showResult("Nothing happends if current version is up to date.", null);
 		
 	}	
 	
@@ -110,7 +110,7 @@ public class ServiceActivity extends RunSourceActivity {
 	
 	public void stringCb(String url, String html, AjaxStatus status){
 		
-		showResult(html);
+		showResult(html, status);
 		
 	}
 	
