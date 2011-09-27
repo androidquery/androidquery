@@ -631,20 +631,27 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		if(result != null && fileCache){
 			
-			try{
+			byte[] data = status.getData();
 			
-				File file = AQUtility.getCacheFile(cacheDir, url);
-				if(!status.getInvalid()){				
-					filePut(url, result, file, status.getData());
-				}else{
-					if(file.exists()){
-						file.delete();
-					}
-				}
+			try{
+				if(data != null && status.getSource() == AjaxStatus.NETWORK){
 				
+					File file = AQUtility.getCacheFile(cacheDir, url);
+					if(!status.getInvalid()){				
+						//AQUtility.debug("file put", url);
+						filePut(url, result, file, data);
+					}else{
+						if(file.exists()){
+							file.delete();
+						}
+					}
+					
+				}
 			}catch(Exception e){
 				AQUtility.report(e);
 			}
+			
+			status.data(null);
 		}
 	}
 	

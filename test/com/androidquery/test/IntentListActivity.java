@@ -55,7 +55,7 @@ public class IntentListActivity extends ListActivity {
 
 		if(isTaskRoot()){			
 			MarketService ms = new MarketService(this);
-			ms.checkVersion();
+			ms.expire(1).checkVersion();
 		}
 	}
 	
