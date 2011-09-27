@@ -49,6 +49,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -374,6 +375,19 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    	try {    		
 	    		String str = new String(data, "UTF-8");
 				result = (JSONObject) new JSONTokener(str).nextValue();
+			} catch (Exception e) {	  		
+				AQUtility.report(e);
+			}
+			return (T) result;
+		}
+		
+		if(type.equals(JSONArray.class)){
+			
+			JSONArray result = null;
+	    	
+	    	try {    		
+	    		String str = new String(data, "UTF-8");
+				result = (JSONArray) new JSONTokener(str).nextValue();
 			} catch (Exception e) {	  		
 				AQUtility.report(e);
 			}

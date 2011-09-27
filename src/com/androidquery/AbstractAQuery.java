@@ -1468,6 +1468,21 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * Delete any cached file for the url.
+	 *
+	 * @param url 
+	 * @return self
+	 */
+	public T invalidate(String url){
+		
+		File file = getCachedFile(url);
+		file.delete();
+		
+		return self();
+	}
+	
+	
+	/**
 	 * Return bitmap cached by image requests. Returns null if url is not cached.
 	 *
 	 * @param url 
