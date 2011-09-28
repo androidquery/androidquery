@@ -29,43 +29,60 @@ public class AdhocActivity extends RunSourceActivity {
 	
 		super.onCreate(savedInstanceState);
 		
-		work();	
+		try{
+			work();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	private void work(){
 		
 		AQUtility.debug("adhoc");
 		
-		aq.id(R.id.button).animate(R.anim.slide_in_left);
+		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
+		//aq.id(R.id.image).width(200).image(url);
 		
+		Bitmap bm = aq.getCachedImage(url);
+		debug("ori", bm);
 		
-		/*
-		ApplicationInfo ai = this.getApplicationInfo();
+		ImageView iv = aq.id(R.id.image).width(200).getImageView();
 		
-		check("has code", ApplicationInfo.FLAG_HAS_CODE);
-		check("debug", ApplicationInfo.FLAG_DEBUGGABLE);
-		check("test only", ApplicationInfo.FLAG_TEST_ONLY);
+		iv.setDrawingCacheEnabled(true);
+		iv.setImageBitmap(bm);
 		
-		AQUtility.debug("sourceDir", ai.publicSourceDir);
-		AQUtility.debug("dataDir", ai.dataDir);
-		AQUtility.debug("enabled", ai.enabled);
-		*/
-	}
-	
-	private void check(String name, int mask){
-		ApplicationInfo ai = this.getApplicationInfo();
-		AQUtility.debug(name, ai.flags & mask);
+		Bitmap dc = iv.getDrawingCache();
 		
+		debug("dc", dc);
 		
 	}
 	
-	
+	/*
 	protected int getContainer(){
 		return R.layout.adhoc_activity;
 	}
+	*/
+	private void debug(String name, Bitmap bm){
+		if(bm == null){
+			AQUtility.debug(name, bm);
+			return;
+		}
+		AQUtility.debug(name, bm.getWidth() + ":" + bm.getHeight());
+	}
+	
 	
 	@Override
 	protected void runSource(){
+		
+		
+		ImageView iv = aq.id(R.id.image).getImageView();
+		
+		Bitmap bm = iv.getDrawingCache();
+		
+		debug("dc2", bm);
+		
+		
+		iv.setImageBitmap(bm);
 		
 	}
 	
