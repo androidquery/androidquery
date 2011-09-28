@@ -83,7 +83,7 @@ public class MarketService{
 	private ApplicationInfo getApplicationInfo(){
 		
 		if(ai == null){
-			ai = act.getApplicationInfo();	
+			ai = act.getApplicationInfo();			
 		}
 		
 		return ai;
@@ -95,6 +95,7 @@ public class MarketService{
 		if(pi == null){
 			try {
 				pi = act.getPackageManager().getPackageInfo(getAppId(), 0);
+				
 			} catch (NameNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -102,11 +103,10 @@ public class MarketService{
 		return pi;
 	}
 	
-	//09-27 19:58:58.324: WARN/AQuery(24142): {"update":1317120862937,"icon":"https:\/\/g1.gstatic.com\/android\/market\/com.androidquery\/hi-256-0-32ae6f723f990caab754ae5dfd5e3718b72aa3d3","app":"com.androidquery","fetch":true,"desc":null,"status":"1","locale":"en","code":17,"marketUrl":"https:\/\/market.android.com\/details?id=com.androidquery&hl=en","recent":"Added progress monitoring examples.","version":"0.13.5","name":"AndroidQuery Code Snippets","dialog":{"update":"Update","body":"Version:  0.13.5\n\nAdded progress monitoring examples.","title":"Update Notice","rate":"Review","skip":"Skip"},"published":null}
-
+	
 	private String getHost(){
-		return "http://192.168.1.222";
-		//return "https://androidquery.appspot.com";
+		//return "http://192.168.1.222";
+		return "https://androidquery.appspot.com";
 	}
 	
 	private String getQueryUrl(){
@@ -252,7 +252,6 @@ public class MarketService{
 	
 	protected class Handler implements DialogInterface.OnClickListener{
         
-		
 		public void marketCb(String url, JSONObject jo, AjaxStatus status){
 			
 			if(act.isFinishing()) return;
@@ -264,12 +263,13 @@ public class MarketService{
 				
 				if("1".equals(jo.optString("status"))){
 				
-					if(!fetch && jo.optBoolean("fetch", false)){
+					if(!fetch && jo.optBoolean("fetch", false) && status.getSource() == AjaxStatus.NETWORK){
 						
 						fetch = true;
-						status.invalidate();
+						//status.invalidate();
 						
-						String marketUrl = jo.optString("marketUrl");						
+						String marketUrl = jo.optString("marketUrl", null);
+						
 						AjaxCallback<String> cb = new AjaxCallback<String>();
 						cb.url(marketUrl).type(String.class).handler(this, "detailCb");				
 						aq.progress(progress).ajax(cb);

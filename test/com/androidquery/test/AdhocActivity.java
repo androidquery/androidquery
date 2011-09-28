@@ -3,6 +3,7 @@ package com.androidquery.test;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -33,9 +34,21 @@ public class AdhocActivity extends RunSourceActivity {
 		
 		AQUtility.debug("adhoc");
 		
-		MarketService aqs = new MarketService(this);
+		ApplicationInfo ai = this.getApplicationInfo();
 		
-		aqs.checkVersion();
+		check("has code", ApplicationInfo.FLAG_HAS_CODE);
+		check("debug", ApplicationInfo.FLAG_DEBUGGABLE);
+		check("test only", ApplicationInfo.FLAG_TEST_ONLY);
+		
+		AQUtility.debug("sourceDir", ai.publicSourceDir);
+		AQUtility.debug("dataDir", ai.dataDir);
+		AQUtility.debug("enabled", ai.enabled);
+	}
+	
+	private void check(String name, int mask){
+		ApplicationInfo ai = this.getApplicationInfo();
+		AQUtility.debug(name, ai.flags & mask);
+		
 		
 	}
 	

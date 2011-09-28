@@ -32,8 +32,6 @@ public class IntentListActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		
-		
-		
 		if(!init){
 			AQUtility.setDebug(true);
 			BitmapAjaxCallback.setPixelLimit(600 * 600);
@@ -53,10 +51,12 @@ public class IntentListActivity extends ListActivity {
 			forward();
 		}
 
-		if(isTaskRoot()){			
+		
+		if(isTaskRoot() && TestUtility.isTestDevice(this)){			
 			MarketService ms = new MarketService(this);
 			ms.expire(1).checkVersion();
 		}
+		
 	}
 	
 	public void onStart(){
@@ -128,6 +128,12 @@ public class IntentListActivity extends ListActivity {
 				list.add(makeActivity(vs[0], name, vs[1]));
 			}
 			
+			
+		}
+		
+		if(type == null && TestUtility.isTestDevice(this)){
+			
+			list.add(makeActivity("com.androidquery.test.AdhocActivity", "Ad Hoc Debug", ""));
 			
 		}
 		

@@ -36,13 +36,13 @@ public class ServiceActivity extends RunSourceActivity {
 		
 		type = getIntent().getStringExtra("type");
 			
-		if(type.equals("service_version_locale")){
-			
-			
+		if(type.equals("service_version_locale")){			
 			aq.id(R.id.spinner).visible().setSelection(1).itemSelected(this, "localeSelected");	
 			aq.id(R.id.go_run).gone();
-			showResult("Pick a locale. The update message is fetched from the 'Recent Changes' field of your Android Market's development console with the correponsing locale.", null);
 		}
+		
+		showResult("The update message is fetched from the 'Recent Changes' field of your Android Market's development console with the correponsing locale.", null);
+		
 	}
 	
 	
