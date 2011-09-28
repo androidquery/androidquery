@@ -323,8 +323,8 @@
     
     <string-array name="locales">
         <item>en</item>
-        <item>zh-TW</item>
-        <item>zh-CN</item>
+        <item>zh_TW</item>
+        <item>zh_CN</item>
         <item>fr</item>
         <item>de</item>
         <item>it</item>

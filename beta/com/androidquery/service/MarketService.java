@@ -177,6 +177,7 @@ public class MarketService{
 		if(latestVer != null){
 			
 			AQUtility.debug("version", getVersion() + "->" + latestVer + ":" + getVersionCode() + "->" + latestCode);
+			AQUtility.debug("outdated", outdated(latestVer, latestCode));
 			
 			if(force || outdated(latestVer, latestCode)){
 				showUpdateDialog(jo);
@@ -199,7 +200,7 @@ public class MarketService{
     	int code = getVersionCode();
     	
     	if(!version.equals(latestVer)){
-    		if(code < latestCode){
+    		if(code <= latestCode){
     			return true;
     		}
     	}

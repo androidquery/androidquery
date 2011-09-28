@@ -80,7 +80,6 @@ public class ServiceActivity extends RunSourceActivity {
 		MarketService ms = new MarketService(this);
 		ms.locale(locale).force(true).progress(R.id.progress).checkVersion();
 	    
-		//ms.locale(Locale.TRADITIONAL_CHINESE.toString()).force(true).progress(R.id.progress).checkVersion();
 	}
 	
 	public void service_version_auto(){

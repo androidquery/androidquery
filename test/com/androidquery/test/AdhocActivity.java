@@ -1,5 +1,7 @@
 package com.androidquery.test;
 
+import java.util.Locale;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -33,6 +35,8 @@ public class AdhocActivity extends RunSourceActivity {
 	private void work(){
 		
 		AQUtility.debug("adhoc");
+		
+		AQUtility.debug(Locale.SIMPLIFIED_CHINESE.toString());
 		
 		ApplicationInfo ai = this.getApplicationInfo();
 		
