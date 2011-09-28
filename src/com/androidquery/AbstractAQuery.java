@@ -871,18 +871,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T clicked(Object handler, String method){
-		
-		/*
-		if(view != null){			
-			
-			Common common = new Common().forward(handler, method, true, ON_CLICK_SIG);
-			view.setOnClickListener(common);
-			
-		}
-		
-		return self();
-		*/
-		
+	
 		Common common = new Common().forward(handler, method, true, ON_CLICK_SIG);
 		return clicked(common);
 		
@@ -914,19 +903,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T itemClicked(Object handler, String method){
-		
-		/*
-		if(view instanceof AdapterView){
-		
-			AdapterView<?> av = (AdapterView<?>) view;
-			
-			Common common = new Common().forward(handler, method, true, ON_ITEM_CLICK_SIG);
-			av.setOnItemClickListener(common);
-			
-		}
-		
-		return self();
-		*/
 		
 		Common common = new Common().forward(handler, method, true, ON_ITEM_SIG);
 		return itemClicked(common);
