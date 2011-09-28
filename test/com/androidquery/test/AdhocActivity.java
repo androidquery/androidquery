@@ -36,8 +36,10 @@ public class AdhocActivity extends RunSourceActivity {
 		
 		AQUtility.debug("adhoc");
 		
-		AQUtility.debug(Locale.SIMPLIFIED_CHINESE.toString());
+		aq.id(R.id.button).animate(R.anim.slide_in_left);
 		
+		
+		/*
 		ApplicationInfo ai = this.getApplicationInfo();
 		
 		check("has code", ApplicationInfo.FLAG_HAS_CODE);
@@ -47,6 +49,7 @@ public class AdhocActivity extends RunSourceActivity {
 		AQUtility.debug("sourceDir", ai.publicSourceDir);
 		AQUtility.debug("dataDir", ai.dataDir);
 		AQUtility.debug("enabled", ai.enabled);
+		*/
 	}
 	
 	private void check(String name, int mask){
