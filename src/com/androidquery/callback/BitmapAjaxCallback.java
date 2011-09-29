@@ -311,15 +311,13 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	@Override
 	public final void callback(String url, Bitmap bm, AjaxStatus status) {
 		
-		//AQUtility.debug("bjcb", url);
-		
-		showProgress(false);
-		
 		View firstView = v.get();
-		
-		checkCb(this, url, firstView, bm, status);
-		
 		WeakHashMap<View, BitmapAjaxCallback> ivs = queueMap.remove(url);
+		
+		//check if view queue already contains first view 
+		if(ivs == null || !ivs.containsKey(firstView)){
+			checkCb(this, url, firstView, bm, status);
+		}
 		
 		if(ivs != null){
 		
@@ -348,6 +346,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			
 		}
 		
+		showProgress(false);
 		completed = true;
 	}
 	
@@ -715,6 +714,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			addQueue(url, v);			
 			super.async(v.getContext());
 		}else{	
+			showProgress(true);			
 			addQueue(url, v);
 		}
 	}
