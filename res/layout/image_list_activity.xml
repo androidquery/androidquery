@@ -19,6 +19,7 @@
 	/>
 	
 	<ScrollView 
+		android:id="@+id/code_area"
 		android:layout_width="fill_parent"
 		android:layout_height="200dip"
 		android:layout_margin="10dip"

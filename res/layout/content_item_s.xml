@@ -12,6 +12,7 @@
 		android:gravity="center"
 		android:textSize="12sp"	
 		android:layout_margin="30dip"
+		android:visibility="gone"
 	/>
     
     
