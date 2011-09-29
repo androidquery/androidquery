@@ -34,6 +34,7 @@ public class IntentListActivity extends ListActivity {
 		
 		if(!init){
 			AQUtility.setDebug(true);
+			AQUtility.setCacheDir(null);
 			BitmapAjaxCallback.setPixelLimit(600 * 600);
 			init = true;
 		}

@@ -12,13 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;
+import com.androidquery.util.AQUtility;
 
-public class ImageLoadingListActivity extends RunSourceActivity {
+public class ImageLoadingList3Activity extends RunSourceActivity {
 
 	
 	@Override
@@ -30,13 +33,13 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 	}
 	
 	protected int getContainer(){
-		return R.layout.image_list_activity;
+		return R.layout.image_list_activity3;
 	}
 	
 	public void async_json(){
 	    
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0&rsz=8";        
-        aq.progress(R.id.progress).ajax(url, JSONObject.class, this, "renderNews");
+        aq.progress(R.id.progress).ajax(url, JSONObject.class, 0, this, "renderNews");
 	        
 	}
 	
@@ -59,31 +62,60 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 		if(ja == null) return;
 		
 		List<JSONObject> items = new ArrayList<JSONObject>();
-		addItems(ja, items);
-		addItems(ja, items);
-		addItems(ja, items);
-		addItems(ja, items);
+		for(int i = 0; i < 10; i++){
+			addItems(ja, items);
+		}
 		
 		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
 			
 			@Override
-			public View getView(int position, View view, ViewGroup parent) {
+			public View getView(int position, View convertView, ViewGroup parent) {
 				
+				ViewHolder holder;
+				
+				if(convertView == null){
+					holder = new ViewHolder();
+                 
+					//convertView = mInflater.inflate(R.layout.photoitem, null);
+					convertView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.content_item_s, null);
+					 
+					holder.imageview = (ImageView) convertView.findViewById(R.id.tb);
+	                holder.progress = (ProgressBar) convertView.findViewById(R.id.progress);
+	
+	                convertView.setTag(holder);
+	            }else{
+	            	holder = (ViewHolder) convertView.getTag();
+	            }
+				
+				/*
 				if(view == null){
 					view = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.content_item_s, null);
 				}
+				*/
+				
 				
 				JSONObject jo = getItem(position);
 				
+				AQuery aq = new AQuery(convertView);
+				aq.id(R.id.name).text(jo.optString("titleNoFormatting", "No Title"));
+				aq.id(R.id.meta).text(jo.optString("publisher", ""));
+				
+				String tb = jo.optJSONObject("image").optString("tbUrl");
+				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, 0, 1.0f);
+				
+				//AQUtility.debug("iv", aq.id(R.id.tb).getView());
+				//AQUtility.debug("pb", aq.id(R.id.progress).getView());
+				
+				/*
 				AQuery aq = new AQuery(view);
 				aq.id(R.id.name).text(jo.optString("titleNoFormatting", "No Title"));
 				aq.id(R.id.meta).text(jo.optString("publisher", ""));
 				
 				String tb = jo.optJSONObject("image").optString("tbUrl");
 				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, AQuery.FADE_IN, 1.0f);
+				*/
 				
-				
-				return view;
+				return convertView;
 				
 			}
 		};
@@ -92,6 +124,10 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 		
 	}
 	
+	class ViewHolder {
+        ImageView imageview;
+        ProgressBar progress;
+	}
 	
 	@Override
 	protected void runSource(){
@@ -99,9 +135,7 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 		//AQUtility.invokeHandler(this, type, false, null);
 	}
 	
-	public void image_simple(){
-		
-	}
+	
 	
 	
 }

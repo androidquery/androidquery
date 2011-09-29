@@ -5,6 +5,7 @@ import java.io.File;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
@@ -291,4 +292,18 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		showTextResult("File cache cleared");
 	}
 	
+	public void image_cache_dir(){
+		
+		File ext = Environment.getExternalStorageDirectory();
+		File cacheDir = new File(ext, "myapp");
+		
+		AQUtility.setCacheDir(cacheDir);
+		
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		aq.cache(url, 0);
+		
+		File file = AQUtility.getCacheFile(AQUtility.getCacheDir(this), url);
+		
+		showTextResult(file.getAbsolutePath());
+	}
 }

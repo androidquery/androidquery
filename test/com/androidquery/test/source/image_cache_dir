@@ -1,0 +1,8 @@
+	public void image_cache_dir(){
+		
+		File ext = Environment.getExternalStorageDirectory();
+		File cacheDir = new File(ext, "myapp");
+		
+		AQUtility.setCacheDir(cacheDir);
+		
+	}
