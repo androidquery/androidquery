@@ -58,7 +58,13 @@ public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 			if(old != null){
 				pixels -= pixels(old);
 			}			
+			
+			//AQUtility.debug("put", key);
+		}else{
+			//AQUtility.debug("reject", px + ":" + bm.getWidth() + ":" + bm.getHeight() + ":" + key);
 		}
+		
+		
 		
 		return old;
 	}
@@ -71,7 +77,7 @@ public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 			pixels -= pixels(old);
 		}
 		
-		//AQUtility.debug("remove pixels", size() + ":" + pixels);
+		//AQUtility.debug("remove pixels", key + ":" + size() + ":" + pixels);
 		
 		return old;
 	}

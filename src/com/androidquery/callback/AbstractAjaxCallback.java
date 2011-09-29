@@ -588,6 +588,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			result = fileGet(url, file, status);
 			//if result is ok
 			if(result != null){				
+				//AQUtility.debug("file", url);
 				status.source(AjaxStatus.FILE).time(new Date(file.lastModified()));
 			}
 		}

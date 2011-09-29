@@ -75,6 +75,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		type(Bitmap.class).memCache(true).fileCache(true);
 	}
 	
+	
+	
 	/**
 	 * Set the target Image view.
 	 *
@@ -466,14 +468,14 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		if(bm == null) return;
 		
-		int width = bm.getWidth();
+		int pixels = bm.getWidth() * bm.getHeight();
 		
 		Map<String, Bitmap> cache = null;
 		
-		if(width > 50){
-			cache = getBImgCache();
-		}else{
+		if(pixels <= 2500){
 			cache = getSImgCache();
+		}else{
+			cache = getBImgCache();
 		}
 		
 		cache.put(getKey(url, targetWidth), bm);
@@ -703,10 +705,12 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		Bitmap bm = memGet(url, targetWidth);
 		if(bm != null){		
 			v.setTag(url);
-			//showBitmap(url, v, bm);
 			callback(url, bm, new AjaxStatus().source(AjaxStatus.MEMORY).done());
+			//AQUtility.debug("mem", url);
 			return;
 		}
+		
+		AQUtility.debug(getBImgCache().size());
 		
 		presetBitmap(url, v);
 		
