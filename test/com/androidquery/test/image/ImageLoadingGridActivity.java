@@ -40,13 +40,6 @@ public class ImageLoadingGridActivity extends RunSourceActivity {
 	        
 	}
 	
-	public View inflate(Context context, int id){
-		
-		View view = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(id,null);
-		return view;
-		
-	}
-	
 	private void addItems(JSONArray ja, List<JSONObject> items){
 		for(int i = 0 ; i < ja.length(); i++){
 			JSONObject jo = ja.optJSONObject(i);
@@ -76,7 +69,7 @@ public class ImageLoadingGridActivity extends RunSourceActivity {
 			public View getView(int position, View view, ViewGroup parent) {
 				
 				if(view == null){
-					view = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.grid_item, null);
+					view = getLayoutInflater().inflate(R.layout.grid_item, null);
 				}
 				
 				JSONObject jo = getItem(position);

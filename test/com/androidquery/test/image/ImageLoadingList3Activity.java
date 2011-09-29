@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -75,48 +76,25 @@ public class ImageLoadingList3Activity extends RunSourceActivity {
 				
 				if(convertView == null){
 					holder = new ViewHolder();
-                 
-					//convertView = mInflater.inflate(R.layout.photoitem, null);
-					convertView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.content_item_s, null);
-					 
+					convertView = getLayoutInflater().inflate(R.layout.content_item_s, null);
 					holder.imageview = (ImageView) convertView.findViewById(R.id.tb);
 	                holder.progress = (ProgressBar) convertView.findViewById(R.id.progress);
-	
+	                holder.name = (TextView) convertView.findViewById(R.id.name);
+	                holder.meta = (TextView) convertView.findViewById(R.id.meta);
 	                convertView.setTag(holder);
 	            }else{
 	            	holder = (ViewHolder) convertView.getTag();
 	            }
 				
-				/*
-				if(view == null){
-					view = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.content_item_s, null);
-				}
-				*/
-				
-				
 				JSONObject jo = getItem(position);
+				String tb = jo.optJSONObject("image").optString("tbUrl");
 				
 				AQuery aq = new AQuery(convertView);
-				aq.id(R.id.name).text(jo.optString("titleNoFormatting", "No Title"));
-				aq.id(R.id.meta).text(jo.optString("publisher", ""));
-				
-				String tb = jo.optJSONObject("image").optString("tbUrl");
-				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, 0, 1.0f);
-				
-				//AQUtility.debug("iv", aq.id(R.id.tb).getView());
-				//AQUtility.debug("pb", aq.id(R.id.progress).getView());
-				
-				/*
-				AQuery aq = new AQuery(view);
-				aq.id(R.id.name).text(jo.optString("titleNoFormatting", "No Title"));
-				aq.id(R.id.meta).text(jo.optString("publisher", ""));
-				
-				String tb = jo.optJSONObject("image").optString("tbUrl");
-				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, AQuery.FADE_IN, 1.0f);
-				*/
+				aq.id(holder.name).text(jo.optString("titleNoFormatting", "No Title"));
+				aq.id(holder.meta).text(jo.optString("publisher", ""));
+				aq.id(holder.imageview).progress(holder.progress).image(tb, true, true, 0, 0, null, 0, 1.0f);
 				
 				return convertView;
-				
 			}
 		};
 		
@@ -127,6 +105,8 @@ public class ImageLoadingList3Activity extends RunSourceActivity {
 	class ViewHolder {
         ImageView imageview;
         ProgressBar progress;
+        TextView name;
+        TextView meta;
 	}
 	
 	@Override

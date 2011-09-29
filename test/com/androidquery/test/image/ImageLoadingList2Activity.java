@@ -52,7 +52,7 @@ public class ImageLoadingList2Activity extends RunSourceActivity {
 			public View getView(int position, View convertView, ViewGroup parent) {
 				
 				if(convertView == null){
-					convertView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.content_item_s2, null);
+					convertView = getLayoutInflater().inflate(R.layout.content_item_s2, null);
 				}
 				
 				String url = getItem(position);

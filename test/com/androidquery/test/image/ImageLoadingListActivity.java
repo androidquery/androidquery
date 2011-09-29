@@ -70,7 +70,7 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 			public View getView(int position, View view, ViewGroup parent) {
 				
 				if(view == null){
-					view = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.content_item_s, null);
+					view = getLayoutInflater().inflate(R.layout.content_item_s, null);
 				}
 				
 				JSONObject jo = getItem(position);

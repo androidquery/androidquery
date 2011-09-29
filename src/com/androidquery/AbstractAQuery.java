@@ -196,6 +196,18 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * Points the current operating view to the specified view.
+	 *
+	 * @param id the id
+	 * @return self
+	 */
+	public T id(View view){
+		this.view = view;	
+		progress = null;
+		return self();
+	}
+	
+	/**
 	 * Find the first view with first id, under that view, find again with 2nd id, etc...
 	 *
 	 * @param path The id path.
@@ -220,6 +232,24 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T progress(int id){
 		progress = findView(id);		
+		return self();
+	}
+	
+	
+	/**
+	 * Find the progress bar and show the progress for the next ajax/image request. 
+	 * Once ajax or image is called, current progress view is consumed.
+	 * Subsequent ajax/image calls won't show progress view unless progress is called again.
+	 *
+	 * If a file or network requests is required, the progress bar is set to be "VISIBLE".
+	 * Once the requests completes, progress bar is set to "GONE".
+	 *
+	 * @param view the progress bar to be shown
+	 * @return self
+	 */
+	
+	public T progress(View view){
+		progress = view;		
 		return self();
 	}
 	

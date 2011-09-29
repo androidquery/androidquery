@@ -1,0 +1,30 @@
+		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
+			
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				
+				ViewHolder holder;
+				
+				if(convertView == null){
+					holder = new ViewHolder();
+					convertView = getLayoutInflater().inflate(R.layout.content_item_s, null);
+					holder.imageview = (ImageView) convertView.findViewById(R.id.tb);
+	                holder.progress = (ProgressBar) convertView.findViewById(R.id.progress);
+	                holder.name = (TextView) convertView.findViewById(R.id.name);
+	                holder.meta = (TextView) convertView.findViewById(R.id.meta);
+	                convertView.setTag(holder);
+	            }else{
+	            	holder = (ViewHolder) convertView.getTag();
+	            }
+				
+				JSONObject jo = getItem(position);
+				String tb = jo.optJSONObject("image").optString("tbUrl");
+				
+				AQuery aq = new AQuery(convertView);
+				aq.id(holder.name).text(jo.optString("titleNoFormatting", "No Title"));
+				aq.id(holder.meta).text(jo.optString("publisher", ""));
+				aq.id(holder.imageview).progress(holder.progress).image(tb, true, true, 0, 0, null, 0, 1.0f);
+				
+				return convertView;
+			}
+		};
