@@ -251,7 +251,7 @@ public class AQUtility {
 		getHandler().postDelayed(run, delay);
 	}
 	
-	public static String getMD5Hex(String str){
+	private static String getMD5Hex(String str){
 		byte[] data = getMD5(str.getBytes());
 		
 		BigInteger bi = new BigInteger(data).abs();
@@ -361,17 +361,19 @@ public class AQUtility {
 	
 	private static File cacheDir;
 	
-	public static File getCacheDir(Context context){		
-	
+	public static File getCacheDir(Context context){			
 		if(cacheDir == null){
 			cacheDir = new File(context.getCacheDir(), "aquery");
-			makeDir(cacheDir);
+			cacheDir.mkdirs();
 		}		
 		return cacheDir;
 	}
 	
-	private static void makeDir(File dir){		
-		dir.mkdirs();
+	public static void setCacheDir(File dir){
+		cacheDir = dir;
+		if(cacheDir != null){
+			cacheDir.mkdirs();
+		}
 	}
 	
 	
