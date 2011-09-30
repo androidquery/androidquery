@@ -22,22 +22,11 @@ import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 
-public class ImageLoadingList3Activity extends RunSourceActivity {
+public class ImageLoadingList3Activity extends ImageLoadingListActivity {
 
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
 	
-		super.onCreate(savedInstanceState);
-		
-		async_json();	
-	}
-	
-	protected int getContainer(){
-		return R.layout.image_list_activity3;
-	}
-	
-	public void async_json(){
+	public void work(){
 	    
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0&rsz=8";        
         aq.progress(R.id.progress).ajax(url, JSONObject.class, 0, this, "renderNews");

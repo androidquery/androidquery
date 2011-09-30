@@ -30,7 +30,7 @@ import com.androidquery.test.TQuery;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
 
-public class ImageLoadingList4Activity extends RunSourceActivity {
+public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 
 	
 	@Override
@@ -38,22 +38,18 @@ public class ImageLoadingList4Activity extends RunSourceActivity {
 	
 		super.onCreate(savedInstanceState);
 		
-		aq.id(R.id.code_area).gone();
 		
-		//AQUtility.cleanCache(AQUtility.getCacheDir(this), 0, 0);
+			
+	}
+	
+	
+	
+	public void work(){
+	    
+		
 		AQUtility.cleanCacheAsync(this, 0, 0);
 		BitmapAjaxCallback.clearCache();
 		
-		async_json();	
-	}
-	
-	protected int getContainer(){
-		return R.layout.image_list_activity;
-	}
-	
-	public void async_json(){
-	    
-        //String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0&rsz=8";        
         String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=48";
 		aq.progress(R.id.progress).ajax(url, XmlDom.class, this, "renderPhotos");
 	     
@@ -95,13 +91,6 @@ public class ImageLoadingList4Activity extends RunSourceActivity {
 		photo.title = title;
 		photo.author = author;
 		
-	
-		
-		AQUtility.debug("url", url);
-		AQUtility.debug("tb", tb);
-		AQUtility.debug("title", title);
-		AQUtility.debug("author", author);
-		
 		return photo;
 	}
 	
@@ -119,7 +108,6 @@ public class ImageLoadingList4Activity extends RunSourceActivity {
 	
 		ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.photo_item, entries){
 			
-			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				
 				if(convertView == null){
@@ -135,35 +123,26 @@ public class ImageLoadingList4Activity extends RunSourceActivity {
 				
 				String tbUrl = photo.tb;
 				
-				Bitmap ph = aq.getCachedImage(R.drawable.image_ph);
+				Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
 				
 				if(aq.shouldDelay(convertView, parent, tbUrl, 10.0f)){
-					aq.id(R.id.tb).image(ph, 0.75f);
+					aq.id(R.id.tb).image(placeholder, 0.75f);
 				}else{
-					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, ph, 0, 0.75f);
+					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0.75f);
 				}
 				
 				return convertView;
 				
 			}
 			
-			@Override
-			public boolean hasStableIds(){
-				return true;
-			}
+			
 		};
 		
 		aq.id(R.id.list).adapter(aa);
 		
 	}
 	
-	
-	@Override
-	protected void runSource(){
 		
-		//AQUtility.invokeHandler(this, type, false, null);
-	}
-	
 	class Photo{
 		
 		String tb;

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.SlidingDrawer;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -27,14 +28,14 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 	
 		super.onCreate(savedInstanceState);
 		
-		async_json();	
+		work();	
 	}
 	
 	protected int getContainer(){
 		return R.layout.image_list_activity;
 	}
 	
-	public void async_json(){
+	public void work(){
 	    
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0&rsz=8";        
         aq.progress(R.id.progress).ajax(url, JSONObject.class, this, "renderNews");
@@ -100,8 +101,16 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 		//AQUtility.invokeHandler(this, type, false, null);
 	}
 	
-	public void image_simple(){
+	@Override
+	public void onBackPressed(){
 		
+		SlidingDrawer sd = (SlidingDrawer) findViewById(R.id.slidingDrawer);
+		if(sd.isOpened()){
+			sd.animateClose();
+			return;
+		}else{
+			super.onBackPressed();
+		}
 	}
 	
 	

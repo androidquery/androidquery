@@ -22,22 +22,10 @@ import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 
-public class ImageLoadingList2Activity extends RunSourceActivity {
+public class ImageLoadingList2Activity extends ImageLoadingListActivity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
 	
-		super.onCreate(savedInstanceState);		
-	
-		render();
-	}
-	
-	protected int getContainer(){
-		return R.layout.image_list_activity2;
-	}
-	
-	
-	public void render() {
+	public void work() {
 	
 		List<String> items = new ArrayList<String>();
 		
@@ -72,11 +60,6 @@ public class ImageLoadingList2Activity extends RunSourceActivity {
 	}
 	
 	
-	@Override
-	protected void runSource(){
-		
-		//AQUtility.invokeHandler(this, type, false, null);
-	}
 	
 	
 	
