@@ -55,7 +55,7 @@
 	            android:layout_height="wrap_content"
 	            android:text="View Code"/>
 	        
-	        
+	        <!--  
 	        <ScrollView 
 				android:id="@+id/code_area"
 				android:layout_width="fill_parent"
@@ -63,11 +63,12 @@
 				android:layout_margin="0dip"
 				android:background="#eeeeee"
 			>
-			
+			-->
 				<HorizontalScrollView 
+					android:id="@+id/code_area"
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent"
-					
+					android:background="#eeeeee"
 				> 
 					
 					<TextView  
@@ -82,8 +83,9 @@
 				
 				
 				</HorizontalScrollView>
-			
-			</ScrollView>    
+			<!--  
+			</ScrollView>
+			-->    
 	 </SlidingDrawer>
 
 </FrameLayout>
