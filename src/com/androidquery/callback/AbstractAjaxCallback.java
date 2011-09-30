@@ -585,7 +585,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			result = fileGet(url, file, status);
 			//if result is ok
 			if(result != null){				
-				//AQUtility.debug("file", url);
 				status.source(AjaxStatus.FILE).time(new Date(file.lastModified()));
 			}
 		}
@@ -628,15 +627,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			AQUtility.report(e);
 		}
 		
-		/*
-		if(result != null && fileCache){
-			try{
-				filePut(url, result, AQUtility.getCacheFile(cacheDir, url), data);
-			}catch(Exception e){
-				AQUtility.report(e);
-			}
-		}
-		*/
+		
 	}
 	
 	private void filePut(){
@@ -653,6 +644,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 						//AQUtility.debug("file put", url);
 						filePut(url, result, file, data);
 					}else{
+						//AQUtility.debug("file delete", url);
 						if(file.exists()){
 							file.delete();
 						}

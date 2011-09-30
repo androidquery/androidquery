@@ -164,7 +164,6 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 				lastScroll = now;
 			}else if(diff > 0 && dur > 100){
 				
-				//AQUtility.debug("vel", diff + "/" + dur);
 				velocity = ((float) diff / (float) dur) * 1000;
 				//AQUtility.debug("vel", velocity + "(" + diff + "/" + dur + ")");
 				
@@ -209,9 +208,6 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 			invoke(view, scrollState);
 		}
 		
-		//AQUtility.debug("scroll", scrollState);
-		
-
 		
 		if(scrollState == OnScrollListener.SCROLL_STATE_IDLE){
 			
@@ -270,9 +266,12 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	
 	public static boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
 		
+		if(url == null) return false;
+		
 		int state = OnScrollListener.SCROLL_STATE_IDLE;
 		float vel = 0;
 		Common sl = null;
+		
 		
 		if(BitmapAjaxCallback.getMemoryCached(url, 0) == null && AQUtility.getExistedCacheByUrl(parent.getContext(), url) == null){
 			
@@ -295,10 +294,14 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 					vel = sl.getVelocity();
 				}
 			}
+			
+		}else{
+			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
+			return false;
 		}
 		
 		
-		if(state == OnScrollListener.SCROLL_STATE_FLING && vel > velocity){			
+		if(state == OnScrollListener.SCROLL_STATE_FLING && vel >= velocity){			
 			if(convertView.getTag(AQuery.TAG_SCROLL_LISTENER) == null && sl != null){
 				sl.addSkip();
 			}
