@@ -134,7 +134,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	/**
 	 * Set the bitmap. This bitmap will be shown immediately with aspect ratio. 
 	 *
-	 * @param preset the preset
+	 * @param bm 
 	 * @return self
 	 */
 	public BitmapAjaxCallback bitmap(Bitmap bm){

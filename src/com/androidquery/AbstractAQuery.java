@@ -1603,7 +1603,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param animId Id of the desired animation.
 	 * @return self
 	 * 
-	 * @author marcosbeirigo, aquery
 	 */
 	public T animate(int animId){
 		return animate(animId, null);
@@ -1615,7 +1614,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param listener The listener to recieve notifications from the animation on its events.
 	 * @return self
 	 * 
-	 * @author marcosbeirigo, aquery
 	 * 
 	 */
 	public T animate(int animId, AnimationListener listener){
@@ -1629,7 +1627,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param anim The desired animation.
 	 * @return self
 	 * 
-	 * @author marcosbeirigo, aquery
 	 */
 	public T animate(Animation anim){
 		if(view != null && anim != null){
