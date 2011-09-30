@@ -339,7 +339,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		if(v == null || cb == null) return;
 		
-		if(url.equals(v.getTag())){			
+		if(url.equals(v.getTag(AQuery.TAG_URL))){			
 			if(v instanceof ImageView){
 				cb.callback(url, (ImageView) v, bm, status);
 			}else{
@@ -506,8 +506,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	private void presetBitmap(String url, View v){
 		
-		if(!url.equals(v.getTag()) || preset != null){			
-			v.setTag(url);
+		if(!url.equals(v.getTag(AQuery.TAG_URL)) || preset != null){			
+			v.setTag(AQuery.TAG_URL, url);
 			setBitmap(url, v, preset, true, false);			
 		}
 		
@@ -532,7 +532,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			bd.setBounds(0, 0, AQUtility.dip2pixel(context, bm.getWidth()), AQUtility.dip2pixel(context, bm.getHeight()));
 		}
 		
-		//tv.setCompoundDrawablesWithIntrinsicBounds(bd, null, null, null);		
 		tv.setCompoundDrawables(bd, null, null, null);
 		
 	}
@@ -685,9 +684,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return ratio > 0 && getWidth(iv) <= 0;
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.androidquery.callback.AbstractAjaxCallback#async(android.content.Context)
-	 */
+	
 	@Override
 	public void async(Context context){
 		
@@ -704,13 +701,12 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		Bitmap bm = memGet(url, targetWidth);
 		if(bm != null){		
-			v.setTag(url);
+			v.setTag(AQuery.TAG_URL, url);
 			callback(url, bm, new AjaxStatus().source(AjaxStatus.MEMORY).done());
 			//AQUtility.debug("mem", url);
 			return;
 		}
 		
-		AQUtility.debug(getBImgCache().size());
 		
 		presetBitmap(url, v);
 		

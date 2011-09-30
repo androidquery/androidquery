@@ -60,6 +60,7 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.androidquery.AQuery;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.AccountHandle;
 import com.androidquery.util.XmlDom;
@@ -347,12 +348,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			View pb = progress.get();
 			if(pb != null){				
 				if(show){
-					pb.setTag(url);
+					pb.setTag(AQuery.TAG_URL, url);
 					pb.setVisibility(View.VISIBLE);
 				}else{
-					Object tag = pb.getTag();
+					Object tag = pb.getTag(AQuery.TAG_URL);
 					if(tag == null || tag.equals(url)){
-						pb.setTag(null);
+						pb.setTag(AQuery.TAG_URL, null);
 						pb.setVisibility(View.GONE);						
 					}
 				}

@@ -1157,12 +1157,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			if(view instanceof ImageView){
 				ImageView iv = ((ImageView) view);
 				iv.setImageBitmap(null);
-				iv.setTag(null);
+				iv.setTag(AQuery.TAG_URL, null);
 			}else if(view instanceof WebView){
 				WebView wv = ((WebView) view);
 				wv.stopLoading();
 				wv.clearView();
-				wv.setTag(null);
+				wv.setTag(AQuery.TAG_URL, null);
 			}else if(view instanceof TextView){
 				TextView tv = ((TextView) view);
 				tv.setText("");

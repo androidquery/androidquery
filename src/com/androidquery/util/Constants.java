@@ -18,29 +18,33 @@ package com.androidquery.util;
 
 public interface Constants {
 
-	public final int LAYER_TYPE_SOFTWARE = 1;
-	public final int LAYER_TYPE_HARDWARE = 2;
-	public final int FLAG_HARDWARE_ACCELERATED = 0x01000000;
-	public final int FLAG_ACTIVITY_NO_ANIMATION = 0x00010000;
-	public final int OVER_SCROLL_ALWAYS = 0;
-	public final int OVER_SCROLL_IF_CONTENT_SCROLLS = 1;
-	public final int OVER_SCROLL_NEVER = 2;
-	public final int INVISIBLE = -1;
-	public final int GONE = -2;
-	public final int FADE_IN = -1;
-	public final float RATIO_PRESERVE = Float.MAX_VALUE;
-	public final String ACTIVE_ACCOUNT = "aq.account";
+	public static final int LAYER_TYPE_SOFTWARE = 1;
+	public static final int LAYER_TYPE_HARDWARE = 2;
+	public static final int FLAG_HARDWARE_ACCELERATED = 0x01000000;
+	public static final int FLAG_ACTIVITY_NO_ANIMATION = 0x00010000;
+	public static final int OVER_SCROLL_ALWAYS = 0;
+	public static final int OVER_SCROLL_IF_CONTENT_SCROLLS = 1;
+	public static final int OVER_SCROLL_NEVER = 2;
+	public static final int INVISIBLE = -1;
+	public static final int GONE = -2;
+	public static final int FADE_IN = -1;
 	
-	public final String AUTH_READER = "reader";
-	public final String AUTH_PICASA = "lh2";
-	public final String AUTH_SPREADSHEETS = "wise";
-	public final String AUTH_YOUTUBE = "youtube";
-	public final String AUTH_ANALYTICS = "analytics";
-	public final String AUTH_BLOGGER = "blogger";
-	public final String AUTH_CALENDAR = "cl";
-	public final String AUTH_BUZZ = "buzz";
-	public final String AUTH_CONTACTS = "cp";
-	public final String AUTH_FINANCE = "finance";
-	public final String AUTH_MAPS = "local";
+	public static final int TAG_URL = 0x40FF0001;
+	public static final int TAG_SCROLL_STATE = 0x40FF0002;
+	
+	public static final float RATIO_PRESERVE = Float.MAX_VALUE;
+	public static final String ACTIVE_ACCOUNT = "aq.account";
+	
+	public static final String AUTH_READER = "reader";
+	public static final String AUTH_PICASA = "lh2";
+	public static final String AUTH_SPREADSHEETS = "wise";
+	public static final String AUTH_YOUTUBE = "youtube";
+	public static final String AUTH_ANALYTICS = "analytics";
+	public static final String AUTH_BLOGGER = "blogger";
+	public static final String AUTH_CALENDAR = "cl";
+	public static final String AUTH_BUZZ = "buzz";
+	public static final String AUTH_CONTACTS = "cp";
+	public static final String AUTH_FINANCE = "finance";
+	public static final String AUTH_MAPS = "local";
 
 }
