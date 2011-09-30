@@ -389,6 +389,10 @@ public class AQUtility {
 		return hash;
 	}
 	
+	public static File getExistedCacheByUrl(Context context, String url){
+		return getExistedCacheByUrl(getCacheDir(context), url);
+	}
+	
 	public static File getCacheFile(File dir, String url){
 		String name = getCacheFileName(url);
 		File file = makeCacheFile(dir, name);

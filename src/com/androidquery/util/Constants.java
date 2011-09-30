@@ -30,7 +30,7 @@ public interface Constants {
 	public static final int FADE_IN = -1;
 	
 	public static final int TAG_URL = 0x40FF0001;
-	public static final int TAG_SCROLL_STATE = 0x40FF0002;
+	public static final int TAG_SCROLL_LISTENER = 0x40FF0002;
 	
 	public static final float RATIO_PRESERVE = Float.MAX_VALUE;
 	public static final String ACTIVE_ACCOUNT = "aq.account";

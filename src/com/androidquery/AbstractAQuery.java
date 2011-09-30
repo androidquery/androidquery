@@ -29,6 +29,7 @@ import android.text.Editable;
 import android.text.Spanned;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.animation.Animation;
@@ -36,6 +37,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -574,6 +576,21 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	}
 	
+	/**
+	 * Set the image of an ImageView from a file with a custom callback.
+	 *
+	 * @param bm The image bitmap.
+	 * @param ratio The desired aspect ratio of the imageview. Ratio is height / width, or AQuery.RATIO_PRESERVE to preserve the original aspect ratio of the image.
+	 *
+	 * @return self
+	 * 
+	 */
+	public T image(Bitmap bm, float ratio){
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.ratio(ratio).bitmap(bm);
+		return image(cb);
+	}
+	
 	
 	/**
 	 * Set a view to be transparent.
@@ -762,6 +779,20 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		Object result = null;
 		if(view != null){
 			result = view.getTag();
+		}
+		return result;
+	}
+	
+	/**
+	 * Gets the tag of the view.
+	 * @param id the id
+	 * 
+	 * @return tag
+	 */
+	public Object getTag(int id){
+		Object result = null;
+		if(view != null){
+			result = view.getTag(id);
 		}
 		return result;
 	}
@@ -1021,11 +1052,36 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T scrolledBottom(Object handler, String method){
 		
 		if(view instanceof AbsListView){
+			setScrollListener().forward(handler, method, true, ON_SCROLLED_STATE_SIG);
+		}
 		
-			AbsListView lv = (AbsListView) view;
-			Common common = new Common().forward(handler, method, true, ON_SCROLLED_STATE_SIG);
+		return self();
+	}
+	
+	private Common setScrollListener(){
+		
+		AbsListView lv = (AbsListView) view;
+		
+		Common common = (Common) lv.getTag(AQuery.TAG_SCROLL_LISTENER);
+		if(common == null){
+			common = new Common();
 			lv.setOnScrollListener(common);
-			
+			lv.setTag(AQuery.TAG_SCROLL_LISTENER, common);
+		}
+		
+		return common;
+	}
+	
+	/**
+	 * Register an on scroll listener to a list view, grid view (or any AbsListView).
+	 * 
+	 * @param listener 
+	 * @return self
+	 */
+	public T scrolled(OnScrollListener listener){
+		
+		if(view instanceof AbsListView){
+			setScrollListener().forward(listener);
 		}
 		
 		return self();
@@ -1521,6 +1577,24 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Return cached bitmap with a resourceId. Returns null if url is not cached.
+	 *
+	 * Use this method instead of BitmapFactory.decodeResource(getResources(), resId) for caching.
+	 * 
+	 * @param resId 
+	 * 
+	 * @return Bitmap
+	 */
+	public Bitmap getCachedImage(int resId){		
+		return BitmapAjaxCallback.getMemoryCached(getContext(), resId);
+	}
+	
+	
+	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
+		return Common.shouldDelay(convertView, parent, url, velocity);
 	}
 	
 	

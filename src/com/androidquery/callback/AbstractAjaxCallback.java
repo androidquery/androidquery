@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,7 +56,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import com.androidquery.AQuery;
 import com.androidquery.util.AQUtility;
@@ -488,7 +485,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			}
 			
 			if(ah.getToken() == null){
-				//status = new AjaxStatus(401, "Auth failed.", url, null, new Date(), true);
 				status.code(401).message("Auth failed.");
 				callback();
 				return;
@@ -496,15 +492,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 		
 		work(context, true);
-		
 	
 	}
 	
 	
 	protected void execute(){
-		AQUtility.getHandler();				
-		ExecutorService exe = getExecutor();
+		
+		ExecutorService exe = getExecutor();	
 		exe.execute(this);
+		
 	}
 	
 	private void work(Context context, boolean async){
@@ -677,7 +673,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(refresh) networkUrl = getRefreshUrl(url);
 		
 		if(params == null){
-			httpGet(networkUrl, headers, status);						
+			httpGet(networkUrl, headers, status);	
 		}else{
 			httpPost(networkUrl, headers, params, status);
 		}

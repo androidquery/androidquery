@@ -8,8 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListAdapter;
 
+import com.androidquery.AQuery;
 import com.androidquery.AbstractAQuery;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.Common;
 
 public class TQuery extends AbstractAQuery<TQuery>{
 
@@ -21,53 +24,50 @@ public class TQuery extends AbstractAQuery<TQuery>{
 		super(view);
 	}
 	
-	public int getScrollState(ViewGroup view){
+	
+	public static boolean shouldLoad(View convertView, ViewGroup parent, String url){
 		
-		Integer result = null;
+		int state = OnScrollListener.SCROLL_STATE_IDLE;
+		float vel = 0;
+		Common sl = null;
 		
-		if(view instanceof AbsListView){
+		if(BitmapAjaxCallback.getMemoryCached(url, 0) == null && AQUtility.getExistedCacheByUrl(parent.getContext(), url) == null){
 			
-			result = (Integer) view.getTag();
-			
-			if(result == null){
-			
-				AbsListView lv = (AbsListView) view;
+			if(parent instanceof AbsListView){
 				
-				if(lv.getAdapter() instanceof BaseAdapter){
+				sl = (Common) parent.getTag(AQuery.TAG_SCROLL_LISTENER);
 				
-					lv.setOnScrollListener(new OnScrollListener() {
-						
-						@Override
-						public void onScrollStateChanged(AbsListView view, int scrollState) {
-							
-							//AQUtility.debug("set", scrollState);
-							
-							view.setTag(scrollState);
-							
-							if(scrollState == OnScrollListener.SCROLL_STATE_IDLE){
-								ListAdapter la = view.getAdapter();
-								if(la instanceof BaseAdapter){
-									BaseAdapter ba = (BaseAdapter) la;
-									ba.notifyDataSetChanged();
-								}
-							}
-							
-						}
-						
-						@Override
-						public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-							// TODO Auto-generated method stub
-							
-						}
-					});
+				if(sl == null){
 				
+					AbsListView lv = (AbsListView) parent;
+					
+					if(lv.getAdapter() instanceof BaseAdapter){	
+						sl = new Common();
+						lv.setOnScrollListener(sl);
+						lv.setTag(AQuery.TAG_SCROLL_LISTENER, sl);				
+					}
+					
+				}else{
+					state = sl.getScrollState();
+					vel = sl.getVelocity();
 				}
 			}
 		}
 		
-		if(result == null) return OnScrollListener.SCROLL_STATE_IDLE;
 		
-		return result; 
+		if(state == OnScrollListener.SCROLL_STATE_FLING && vel > 10){			
+			if(convertView.getTag(AQuery.TAG_SCROLL_LISTENER) == null && sl != null){
+				sl.addSkip();
+			}
+			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, url);
+			return false;
+		}else{
+			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
+			return true;
+		}
+		
+		
 	}
+	
 	
 }

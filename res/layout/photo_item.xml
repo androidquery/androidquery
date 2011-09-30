@@ -15,10 +15,9 @@
 		android:visibility="gone"
 	/>
     
-    
     <ImageView
         android:id="@+id/tb"       
-        android:layout_width="75dip"       
+        android:layout_width="100dip"       
         android:layout_height="75dip"
         />
         

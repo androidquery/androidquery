@@ -1,5 +1,6 @@
 package com.androidquery.test.image;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,13 +10,16 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView.ScaleType;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -36,8 +40,8 @@ public class ImageLoadingList4Activity extends RunSourceActivity {
 		
 		aq.id(R.id.code_area).gone();
 		
-		AQUtility.cleanCacheAsync(this, 0, 0);
 		//AQUtility.cleanCache(AQUtility.getCacheDir(this), 0, 0);
+		AQUtility.cleanCacheAsync(this, 0, 0);
 		BitmapAjaxCallback.clearCache();
 		
 		async_json();	
@@ -50,9 +54,10 @@ public class ImageLoadingList4Activity extends RunSourceActivity {
 	public void async_json(){
 	    
         //String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0&rsz=8";        
-        String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=24";
+        String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=48";
 		aq.progress(R.id.progress).ajax(url, XmlDom.class, this, "renderPhotos");
-	        
+	     
+		
 	}
 	
 	private List<Photo> convertAll(XmlDom xml){
@@ -82,12 +87,15 @@ public class ImageLoadingList4Activity extends RunSourceActivity {
 			//tb = tbs.get(tbs.size() - 1).attr("url");
 		}
 		
+		tb = tb.replaceAll("https:", "http:");
 		
 		Photo photo = new Photo();
 		photo.url = url;
 		photo.tb = tb;
 		photo.title = title;
 		photo.author = author;
+		
+	
 		
 		AQUtility.debug("url", url);
 		AQUtility.debug("tb", tb);
@@ -97,69 +105,51 @@ public class ImageLoadingList4Activity extends RunSourceActivity {
 		return photo;
 	}
 	
+	public void scrolledBottom(AbsListView view, int scrollState){
+		
+		Toast toast = Toast.makeText(this, "ScrolledBottom", Toast.LENGTH_SHORT);
+		toast.show();
+	}
 	
 	public void renderPhotos(String url, XmlDom xml, AjaxStatus status) {
 	
 		if(xml == null) return;
 		
 		List<Photo> entries = convertAll(xml);
-		
-		
-		ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.content_item_s, entries){
+	
+		ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.photo_item, entries){
 			
 			@Override
-			public View getView(int position, View view, ViewGroup parent) {
+			public View getView(int position, View convertView, ViewGroup parent) {
 				
-				AQUtility.time("gv");
-				
-				if(view == null){
-					view = getLayoutInflater().inflate(R.layout.content_item_s, null);
+				if(convertView == null){
+					convertView = getLayoutInflater().inflate(R.layout.photo_item, parent, false);
 				}
 				
 				Photo photo = getItem(position);
 				
-				//AQuery aq = new AQuery(view);
-				TQuery aq = new TQuery(view);
-				
-				
+				AQuery aq = new AQuery(convertView);
 				
 				aq.id(R.id.name).text(photo.title);
 				aq.id(R.id.meta).text(photo.author);
 				
-				String tb = photo.tb;
+				String tbUrl = photo.tb;
 				
-				int state = aq.getScrollState(parent);
-				//AQUtility.debug("state", state);
+				Bitmap ph = aq.getCachedImage(R.drawable.image_ph);
 				
-				aq.id(R.id.tb);
-				
-				
-				
-				Bitmap ph = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.image_ph);
-				
-				
-				/*
-				Bitmap ph = null;
-				
-				if(state != OnScrollListener.SCROLL_STATE_FLING){
-					aq.image(tb, true, true, 0, 0, ph, 0, 1.0f);
+				if(aq.shouldDelay(convertView, parent, tbUrl, 10.0f)){
+					aq.id(R.id.tb).image(ph, 0.75f);
 				}else{
-					
-					
-					Bitmap bm = BitmapAjaxCallback.getMemoryCached(tb, 0);
-					if(bm != null){
-						aq.image(tb, true, true, 0, 0, ph, 0, 1.0f);						
-					}else{											
-						aq.clear().image(ph).getImageView().setScaleType(ScaleType.FIT_XY);
-					}
-				}*/
+					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, ph, 0, 0.75f);
+				}
 				
-				aq.image(R.drawable.image_ph);
+				return convertView;
 				
-				AQUtility.timeEnd("gv", 0);
-				
-				return view;
-				
+			}
+			
+			@Override
+			public boolean hasStableIds(){
+				return true;
 			}
 		};
 		

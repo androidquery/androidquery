@@ -20,6 +20,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.androidquery.service.MarketService;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.Constants;
 
 public class AdhocActivity extends RunSourceActivity {
 
@@ -36,6 +37,8 @@ public class AdhocActivity extends RunSourceActivity {
 		}
 	}
 	
+	private static int AQ_URL = 0x40FFFFFF;
+	
 	private void work(){
 		
 		AQUtility.debug("adhoc");
@@ -48,12 +51,9 @@ public class AdhocActivity extends RunSourceActivity {
 		
 		ImageView iv = aq.id(R.id.image).width(200).getImageView();
 		
-		iv.setDrawingCacheEnabled(true);
-		iv.setImageBitmap(bm);
+		iv.setTag(AQ_URL, "hello");
 		
-		Bitmap dc = iv.getDrawingCache();
-		
-		debug("dc", dc);
+		AQUtility.debug(iv.getTag(AQ_URL));
 		
 	}
 	

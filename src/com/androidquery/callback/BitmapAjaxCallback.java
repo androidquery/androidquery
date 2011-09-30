@@ -28,7 +28,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -43,7 +42,6 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.BitmapCache;
-import com.androidquery.util.Constants;
 
 /**
  * The callback handler for handling Aquery.image() methods.
@@ -64,6 +62,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private int targetWidth;
 	private int fallback;
 	private File imageFile;
+	private Bitmap bm;
 	private int animation;
 	private Bitmap preset;
 	private float ratio;
@@ -72,7 +71,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 * Instantiates a new bitmap ajax callback.
 	 */
 	public BitmapAjaxCallback(){
-		type(Bitmap.class).memCache(true).fileCache(true);
+		type(Bitmap.class).memCache(true).fileCache(true).url("");
 	}
 	
 	
@@ -129,6 +128,17 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	public BitmapAjaxCallback preset(Bitmap preset){
 		
 		this.preset = preset;
+		return this;
+	}
+	
+	/**
+	 * Set the bitmap. This bitmap will be shown immediately with aspect ratio. 
+	 *
+	 * @param preset the preset
+	 * @return self
+	 */
+	public BitmapAjaxCallback bitmap(Bitmap bm){
+		this.bm = bm;
 		return this;
 	}
 	
@@ -297,6 +307,22 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return bm;
 	}
 	
+	public static Bitmap getMemoryCached(Context context, int resId){
+		
+		String key = Integer.toString(resId);			
+		Bitmap bm = memGet(key, 0);
+		
+		if(bm == null){
+			bm = BitmapFactory.decodeResource(context.getResources(), resId);
+			
+			if(bm != null){
+				memPut(key, 0, bm);
+			}
+		}
+		
+		return bm;
+	}
+	
 	private static Bitmap empty;
 	private static Bitmap empty(){
 		
@@ -307,9 +333,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return empty;
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.androidquery.callback.AbstractAjaxCallback#callback(java.lang.String, java.lang.Object, com.androidquery.callback.AjaxStatus)
-	 */
+	
 	@Override
 	public final void callback(String url, Bitmap bm, AjaxStatus status) {
 		
@@ -425,7 +449,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	@Override
-	protected Bitmap memGet(String url){			
+	protected Bitmap memGet(String url){	
+		if(bm != null) return bm;
 		return memGet(url, targetWidth);
 	}
 	
@@ -463,8 +488,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return url + "#" + targetWidth;
 	}
 	
-	@Override
-	protected void memPut(String url, Bitmap bm){
+	private static void memPut(String url, int targetWidth, Bitmap bm){
 		
 		if(bm == null) return;
 		
@@ -480,6 +504,12 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		cache.put(getKey(url, targetWidth), bm);
 		
+	}
+	
+	
+	@Override
+	protected void memPut(String url, Bitmap bm){
+		memPut(url, targetWidth, bm);
 	}
 	
 	private void showBitmap(String url, View iv, Bitmap bm){
@@ -507,8 +537,14 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private void presetBitmap(String url, View v){
 		
 		if(!url.equals(v.getTag(AQuery.TAG_URL)) || preset != null){			
+			
 			v.setTag(AQuery.TAG_URL, url);
-			setBitmap(url, v, preset, true, false);			
+			
+			if(preset != null && AQUtility.getExistedCacheByUrl(v.getContext(), url) == null){
+				setBitmap(url, v, preset, true, false);			
+			}else{
+				setBitmap(url, v, null, true, false);
+			}
 		}
 		
 	}
@@ -688,6 +724,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	@Override
 	public void async(Context context){
 		
+		
+		
 		String url = getUrl();		
 		
 		View v = this.v.get();
@@ -707,16 +745,17 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			return;
 		}
 		
-		
 		presetBitmap(url, v);
 		
 		if(!queueMap.containsKey(url)){
-			addQueue(url, v);			
+			addQueue(url, v);	
 			super.async(v.getContext());
 		}else{	
 			showProgress(true);			
 			addQueue(url, v);
 		}
+		
+		
 	}
 	
 
@@ -745,7 +784,5 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 	}
-	
-	
-	
+
 }
