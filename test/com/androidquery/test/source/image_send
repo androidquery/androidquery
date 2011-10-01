@@ -1,0 +1,12 @@
+	public void image_send(){
+		
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";		
+		File file = aq.makeCachedFile(url, "android.png");
+		
+		if(file != null){		
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("image/jpeg");
+			intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+			startActivityForResult(Intent.createChooser(intent, "Share via:"), SEND_REQUEST);
+		}
+	}

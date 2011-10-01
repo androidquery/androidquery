@@ -303,43 +303,19 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	}
 	
 	private static final int SEND_REQUEST = 12;
-	private File tempfile;
 	
-	public void image_send() throws IOException{
+	public void image_send(){
 		
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";		
+		File file = aq.makeCachedFile(url, "android.png");
 		
-		File cached = aq.getCachedFile(url);
-		
-		File ext = Environment.getExternalStorageDirectory();
-		File tempDir = new File(ext, "myapp");
-		tempDir.mkdirs();
-		
-		File file = new File(tempDir, "hello.png");
-		file.createNewFile();
-		
-		FileInputStream fis = new FileInputStream(cached);
-		FileOutputStream fos = new FileOutputStream(file);
-		
-		AQUtility.copy(fis, fos);
-		
-		fis.close();
-		fos.close();
-		
-		Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.setType("image/jpeg");
-		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-		startActivityForResult(Intent.createChooser(intent, "Share via:"), SEND_REQUEST);
-		
-		tempfile = file;
-	}
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-		
-		if(tempfile != null){
-			tempfile.delete();
-			tempfile = null;
+		if(file != null){		
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("image/jpeg");
+			intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+			startActivityForResult(Intent.createChooser(intent, "Share via:"), SEND_REQUEST);
 		}
 	}
+	
+	
 }
