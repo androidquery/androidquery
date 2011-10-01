@@ -125,10 +125,10 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 				
 				Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
 				
-				if(aq.shouldDelay(convertView, parent, tbUrl, 10.0f)){
-					aq.id(R.id.tb).image(placeholder, 0.75f);
+				if(aq.shouldDelay(convertView, parent, tbUrl, 0)){
+					aq.id(R.id.tb).image(placeholder);
 				}else{
-					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0.75f);
+					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0);
 				}
 				
 				return convertView;

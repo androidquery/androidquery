@@ -1607,7 +1607,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * 
 	 * If the url resource is cached (in memory or file), this method will returns true. Otherwise, the method returns
 	 * true of the list is scrolling above the specified velocity. Velocity is measured in items/seconds. 
-	 * Velocity of 0 implies delay=true during fling. A velocity of 10.0f is a suitable value if there are 5 items on display.
+	 * Velocity of 0 implies always delay during fling.
 	 * 
 	 * 
 	 * 
@@ -1617,10 +1617,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *			
 	 *			...
 	 *			
-	 *			if(aq.shouldDelay(convertView, parent, tbUrl, 10.0f)){
-	 *				aq.id(R.id.tb).image(placeholder, 0.75f);
+	 *			if(aq.shouldDelay(convertView, parent, tbUrl, 0)){
+	 *				aq.id(R.id.tb).image(placeholder);
 	 *			}else{
-	 *				aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0.75f);
+	 *				aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0);
 	 *			}
 	 *			
 	 *			...
