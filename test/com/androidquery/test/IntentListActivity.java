@@ -39,6 +39,7 @@ public class IntentListActivity extends ListActivity {
 			BitmapAjaxCallback.setCacheLimit(100);
 			BitmapAjaxCallback.setMaxPixelLimit(5000000);
 			init = true;
+			ErrorReporter.installReporter(getApplicationContext());
 		}
 		
 		super.onCreate(savedInstanceState);

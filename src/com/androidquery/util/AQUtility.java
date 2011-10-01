@@ -34,6 +34,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -470,14 +471,24 @@ public class AQUtility {
 			
 			if(testCleanNeeded(files, triggerSize)){
 				cleanCache(files, targetSize);
-			}else{
-				AQUtility.debug("clean not required");
 			}
 			
-		
+			File temp = getTempDir();
+			if(temp != null && temp.exists()){
+				cleanCache(temp.listFiles(), 0);
+			}
 		}catch(Exception e){
 			AQUtility.report(e);
 		}
+	}
+	
+	public static File getTempDir(){
+		File ext = Environment.getExternalStorageDirectory();
+		AQUtility.debug("ext", ext);
+		File tempDir = new File(ext, "aquery/temp");		
+		tempDir.mkdirs();
+		if(!tempDir.exists()) return null;
+		return tempDir;
 	}
 	
 	private static boolean testCleanNeeded(File[] files, long triggerSize){

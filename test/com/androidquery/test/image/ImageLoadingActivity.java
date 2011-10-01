@@ -1,9 +1,15 @@
 package com.androidquery.test.image;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.ViewGroup.LayoutParams;
@@ -30,10 +36,11 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		if("image_access_file".equals(type) || "image_access_memory".equals(type)){
 			image_simple();
 		}else if("image_file".equals(type) || "image_file_custom".equals(type)){
-			//image_down();			
-			load("http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg");
+			aq.cache("http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg", 0);
 		}else if("image_preload".equals(type)){
-			image_prepreload();
+			String small = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";		
+			aq.cache(small, 0);
+			aq.id(R.id.image).width(250).height(250).image(0).visible();
 		}else if("image_ratio".equals(type)){
 			aq.id(R.id.image).width(250);
 		}else if("image_pre_cache".equals(type)){
@@ -42,7 +49,10 @@ public class ImageLoadingActivity extends RunSourceActivity {
 			aq.id(R.id.button).visible();
 			aq.id(R.id.go_run).gone();
 			image_button();
+		}else if("image_send".equals(type)){
+			aq.cache("http://www.vikispot.com/z/images/vikispot/android-w.png", 0);
 		}
+			
 			
 		
 			
@@ -87,22 +97,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 	}
 	
-	public void image_prepreload(){
-		
-		String small = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_s.jpg";		
-		load(small);
-		
-		//aq.id(R.id.image).width(LayoutParams.FILL_PARENT);
-		
-		
-		aq.id(R.id.image).width(250).height(250).image(0).visible();
-		
-	}
 	
-	private void load(String url){
-		//aq.id(R.id.hidden).image(url);
-		aq.cache(url, 0);
-	}
 	
 	public void image_preload(){
 		
@@ -305,5 +300,46 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		File file = AQUtility.getCacheFile(AQUtility.getCacheDir(this), url);
 		
 		showTextResult(file.getAbsolutePath());
+	}
+	
+	private static final int SEND_REQUEST = 12;
+	private File tempfile;
+	
+	public void image_send() throws IOException{
+		
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		
+		File cached = aq.getCachedFile(url);
+		
+		File ext = Environment.getExternalStorageDirectory();
+		File tempDir = new File(ext, "myapp");
+		tempDir.mkdirs();
+		
+		File file = new File(tempDir, "hello.png");
+		file.createNewFile();
+		
+		FileInputStream fis = new FileInputStream(cached);
+		FileOutputStream fos = new FileOutputStream(file);
+		
+		AQUtility.copy(fis, fos);
+		
+		fis.close();
+		fos.close();
+		
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("image/jpeg");
+		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+		startActivityForResult(Intent.createChooser(intent, "Share via:"), SEND_REQUEST);
+		
+		tempfile = file;
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		
+		if(tempfile != null){
+			tempfile.delete();
+			tempfile = null;
+		}
 	}
 }

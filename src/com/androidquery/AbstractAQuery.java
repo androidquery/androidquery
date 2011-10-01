@@ -17,6 +17,8 @@
 package com.androidquery;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
@@ -1592,9 +1594,114 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return BitmapAjaxCallback.getMemoryCached(getContext(), resId);
 	}
 	
+	/**
+	 * Determines if a list view item should delay loading a url resource because the list view is scrolling very fast.
+	 * The primary purpose of this method is to skip loading remote resources (such as images) over the internet 
+	 * until the list stop flinging and the user is confusing on the displaying items.
+	 *
+	 * If the scrolling stops and there are delayed items displaying, the getView method will be called again to force
+	 * the delayed items to be redrawn. During redraw, this method will always return false, thus allowing a particular 
+	 * resource to be loaded.
+	 *
+	 * Designed to be used inside getView(int position, View convertView, ViewGroup parent) of an adapter.
+	 * 
+	 * If the url resource is cached (in memory or file), this method will returns true. Otherwise, the method returns
+	 * true of the list is scrolling above the specified velocity. Velocity is measured in items/seconds. 
+	 * Velocity of 0 implies delay=true during fling. A velocity of 10.0f is a suitable value if there are 5 items on display.
+	 * 
+	 * 
+	 * 
+	 * Example usage:
+	 * 
+	 * 		public View getView(int position, View convertView, ViewGroup parent) {
+	 *			
+	 *			...
+	 *			
+	 *			if(aq.shouldDelay(convertView, parent, tbUrl, 10.0f)){
+	 *				aq.id(R.id.tb).image(placeholder, 0.75f);
+	 *			}else{
+	 *				aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0.75f);
+	 *			}
+	 *			
+	 *			...
+	 *			
+	 *		}
+	 * 
+	 * 
+	 * NOTE: 
+	 * 
+	 * This method uses the setOnScrollListener() method and will override any previously non-aquery assigned scroll listener.
+	 * If a scrolled listener is required, use the aquery method scrolled(OnScrollListener listener) to set the listener
+	 * instead of directly calling setOnScrollListener().
+	 * 
+	 * 
+	 * @param convertView the list item view
+	 * @param parent the parent input of getView
+	 * @param url the content url to be checked if cached and is available immediately
+	 * @param velocity the trigger velocity
+	 * 
+	 * @return Bitmap
+	 */
 	
 	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
 		return Common.shouldDelay(convertView, parent, url, velocity);
+	}
+	
+	/**
+	 * Create a temporary file on EXTERNAL storage (sdcard) that holds the cached content of the url.
+	 * Returns null if url is not cached, or the system cannot create such file (sdcard is absent, such as in emulator).
+	 * 
+	 * The returned file is accessable to all apps, therefore it is ideal for sharing content (such as photo) via the intent mechanism.
+	 * 
+	 * Example Usage:
+	 *	Intent intent = new Intent(Intent.ACTION_SEND);
+	 *	intent.setType("image/jpeg");
+	 *	intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+	 *  startActivityForResult(Intent.createChooser(intent, "Share via:"), 0);
+	 * 
+	 * The temp file will be deleted when AQUtility.cleanCacheAsync is invoked, or the file can be explicitly deleted after use.
+	 * 
+	 * @param url The url of the desired cached content.
+	 * @param filename The desired file name, which might be used by other apps to describe the content, such as an email attachment.
+	 * @return temp file
+	 * 
+	 */
+	
+	public File makeCachedFile(String url, String filename){
+		
+		File file = null;
+		
+		try{
+		
+			File cached = getCachedFile(url);
+			
+			if(cached != null){
+			
+				File temp = AQUtility.getTempDir();
+				
+				if(temp != null){
+				
+					file = new File(temp, filename);
+					file.createNewFile();
+					
+					FileInputStream fis = new FileInputStream(cached);
+					FileOutputStream fos = new FileOutputStream(file);
+					
+					try{
+						AQUtility.copy(fis, fos);
+					}finally{
+						fis.close();
+						fos.close();
+					}
+					
+				}
+			}
+		
+		}catch(Exception e){
+			AQUtility.report(e);
+		}
+		
+		return file;
 	}
 	
 	

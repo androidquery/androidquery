@@ -23,10 +23,10 @@ import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
+import com.androidquery.TQuery;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.test.RunSourceActivity;
-import com.androidquery.test.TQuery;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
 
