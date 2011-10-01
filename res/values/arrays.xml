@@ -75,6 +75,7 @@
         <item>List Items (Aspect Ratio)</item>               
         <item>List Items (ViewHolder Pattern)</item>  
         <item>List Items (Delay Load During Fling)</item>  
+        <item>List Items (Options)</item>  
         
         <item>Grid Items</item>  
         
@@ -123,6 +124,7 @@
         <item>com.androidquery.test.image.ImageLoadingList2Activity:image_list2</item>
         <item>com.androidquery.test.image.ImageLoadingList3Activity:image_list3</item>
         <item>com.androidquery.test.image.ImageLoadingList4Activity:image_list4</item>
+        <item>com.androidquery.test.image.ImageLoadingListOptionsActivity:image_options</item>
         
         <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid</item>
         
@@ -203,6 +205,7 @@
         <item>image_list2</item>
         <item>image_list3</item>
         <item>image_list4</item>
+        <item>image_options</item>
         
         <item>image_grid</item>
         
@@ -276,7 +279,8 @@
         <item>Loading Image in List View Items</item>   
         <item>Loading Image in List View with Aspect Ratio</item> 
         <item>Loading Image in List View Items with ViewHolder Pattern</item>  
-        <item>Delay Loading Images in Fast Scrolling List</item>    
+        <item>Delay Loading Images in Fast Scrolling List</item> 
+        <item>List Item Image Options Demo</item>    
         
         <item>Loading Image in Grid View with Aspect Ratio</item>   
         
