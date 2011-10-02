@@ -53,39 +53,70 @@
 	            android:id="@id/handle"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="View Code"/>
+	            android:text="Set Options"/>
 	        
-	        <!--  
-	        <ScrollView 
+	        
+			<ScrollView 
 				android:id="@+id/code_area"
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
-				android:layout_margin="0dip"
 				android:background="#eeeeee"
-			>
-			-->
-				<HorizontalScrollView 
-					android:id="@+id/code_area"
-					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"
-					android:background="#eeeeee"
-				> 
+			> 
+				<LinearLayout 
+					xmlns:android="http://schemas.android.com/apk/res/android" 
+				    android:orientation="vertical"
+				    android:layout_width="fill_parent"
+				    android:layout_height="fill_parent"
+				    >
+				
+					<CheckBox  
+						android:id="@+id/preset_cb"
+					    android:layout_width="wrap_content" 
+					    android:layout_height="wrap_content" 
+					    android:text="Preset"
+					/>
 					
-					<TextView  
-						android:id="@+id/code"
-						android:padding="5dip"
-					    android:layout_width="fill_parent" 
-					    android:layout_height="fill_parent" 
-					    android:text="Code Here"
-					    android:scrollbars="horizontal|vertical"
-					    
+					<CheckBox  
+						android:id="@+id/ratio_cb"
+					    android:layout_width="wrap_content" 
+					    android:layout_height="wrap_content" 
+					    android:text="Aspect Ratio"
+					/>
+					
+					<CheckBox  
+						android:id="@+id/animation_cb"
+					    android:layout_width="wrap_content" 
+					    android:layout_height="wrap_content" 
+					    android:text="Animation"
+					/>
+					
+					<CheckBox  
+						android:id="@+id/delay_cb"
+					    android:layout_width="wrap_content" 
+					    android:layout_height="wrap_content" 
+					    android:text="Delay Draw"
+					    android:checked="true"
+					/>
+					
+					<CheckBox  
+						android:id="@+id/progress_cb"
+					    android:layout_width="wrap_content" 
+					    android:layout_height="wrap_content" 
+					    android:text="Progress"
+					    android:checked="true"
+					/>
+					
+					<CheckBox  
+						android:id="@+id/memcache_cb"
+					    android:layout_width="wrap_content" 
+					    android:layout_height="wrap_content" 
+					    android:text="Mem Cache"
+					    android:checked="true"
 					/>
 				
-				
-				</HorizontalScrollView>
-			<!--  
+				</LinearLayout>
 			</ScrollView>
-			-->    
+			   
 	 </SlidingDrawer>
 
 </FrameLayout>

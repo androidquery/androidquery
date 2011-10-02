@@ -17,8 +17,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.SlidingDrawer;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView.ScaleType;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
@@ -46,15 +48,80 @@ public class ImageLoadingListOptionsActivity extends ImageLoadingListActivity {
 	
 	public void work(){
 	    
+		updateOptions();
+		
+		SlidingDrawer sd = (SlidingDrawer) findViewById(R.id.slidingDrawer);
+		sd.setOnDrawerCloseListener(new OnDrawerCloseListener() {
+			
+			@Override
+			public void onDrawerClosed() {
+				updateOptions();
+			}
+		});
+		
+	}
+	
+	private void ajax(){
 		
 		AQUtility.cleanCacheAsync(this, 0, 0);
 		BitmapAjaxCallback.clearCache();
 		
+		aq.id(R.id.list).adapter(null);
+		
         String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=48";
 		aq.progress(R.id.progress).ajax(url, XmlDom.class, this, "renderPhotos");
 	     
-		
 	}
+	
+	private Bitmap preset;
+	private float ratio;
+	private int animation;
+	private boolean delay;
+	private boolean progress;
+	private boolean memcache = true;
+	
+	private void updateOptions(){
+		
+		if(aq.id(R.id.preset_cb).isChecked()){
+			preset = aq.getCachedImage(R.drawable.image_ph);
+		}else{
+			preset = null;
+		}
+		
+		if(aq.id(R.id.ratio_cb).isChecked()){
+			ratio = 0.75f;
+		}else{
+			ratio = 0;
+		}
+		
+		if(aq.id(R.id.animation_cb).isChecked()){
+			animation = AQuery.FADE_IN;
+		}else{
+			animation = 0;
+		}
+
+		if(aq.id(R.id.delay_cb).isChecked()){
+			delay = true;
+		}else{
+			delay = false;
+		}
+		
+		if(aq.id(R.id.progress_cb).isChecked()){
+			progress = true;
+		}else{
+			progress = false;
+		}
+		
+		if(aq.id(R.id.memcache_cb).isChecked()){
+			memcache = true;
+		}else{
+			memcache = false;
+		}
+		
+		ajax();
+			
+	}
+	
 	
 	private List<Photo> convertAll(XmlDom xml){
 		
@@ -123,12 +190,19 @@ public class ImageLoadingListOptionsActivity extends ImageLoadingListActivity {
 				
 				String tbUrl = photo.tb;
 				
-				Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
+				//Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
 				
-				if(aq.shouldDelay(convertView, parent, tbUrl, 0)){
-					aq.id(R.id.tb).image(placeholder);
+				if(delay && aq.shouldDelay(convertView, parent, tbUrl, 0)){
+					aq.id(R.id.tb).image(preset, ratio);
 				}else{
-					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0);
+					
+					aq.id(R.id.tb);
+					
+					if(progress){
+						aq.progress(R.id.pbar);
+					}
+					
+					aq.image(tbUrl, memcache, true, 0, 0, preset, animation, ratio);
 				}
 				
 				return convertView;
