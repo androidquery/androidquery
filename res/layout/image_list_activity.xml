@@ -55,37 +55,27 @@
 	            android:layout_height="wrap_content"
 	            android:text="View Code"/>
 	        
-	        <!--  
-	        <ScrollView 
+	       
+			<HorizontalScrollView 
 				android:id="@+id/code_area"
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
-				android:layout_margin="0dip"
 				android:background="#eeeeee"
-			>
-			-->
-				<HorizontalScrollView 
-					android:id="@+id/code_area"
-					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"
-					android:background="#eeeeee"
-				> 
-					
-					<TextView  
-						android:id="@+id/code"
-						android:padding="5dip"
-					    android:layout_width="fill_parent" 
-					    android:layout_height="fill_parent" 
-					    android:text="Code Here"
-					    android:scrollbars="horizontal|vertical"
-					    
-					/>
+			> 
 				
-				
-				</HorizontalScrollView>
-			<!--  
-			</ScrollView>
-			-->    
+				<TextView  
+					android:id="@+id/code"
+					android:padding="5dip"
+				    android:layout_width="fill_parent" 
+				    android:layout_height="fill_parent" 
+				    android:text="Code Here"
+				    android:scrollbars="horizontal|vertical"
+				    
+				/>
+			
+			
+			</HorizontalScrollView>
+			   
 	 </SlidingDrawer>
 
 </FrameLayout>

@@ -5,38 +5,32 @@
     android:layout_height="75dip" 
     >
     
-    <ProgressBar 		
-		android:layout_width="15dip"       
-        android:layout_height="15dip"
-		android:id="@+id/pbar" 
-		android:textSize="12sp"	
-		android:layout_marginTop="30dip"
-		android:layout_marginBottom="30dip"
-		android:layout_marginLeft="42dip"
-		android:layout_marginRight="43dip"
-		android:visibility="gone"
-	/>
-	
-	<!--  
-	<ProgressBar 
-		android:id="@+id/pbar" 
-		android:layout_gravity="center_horizontal"
-		android:layout_width="20dip"      
-	   	android:layout_height="20dip"
-	   	android:layout_centerInParent="true"
-	   	android:layout_margin="10dip"
-	/> 
-    -->
-    <ImageView
-        android:id="@+id/tb"       
-        android:layout_width="100dip"       
-        android:layout_height="75dip"
-        android:scaleType="centerCrop"
-        />
+    <RelativeLayout
+    	android:id="@+id/tb_block" 
+    	android:layout_width="100dip"       
+	    android:layout_height="75dip"
+    >
+    
+	    <ProgressBar 		
+			android:id="@+id/pbar" 
+			android:layout_width="20dip"      
+	   		android:layout_height="20dip"
+			android:visibility="gone"
+			android:layout_centerInParent="true"
+		/>
+		
+	    <ImageView
+	        android:id="@+id/tb"       
+	        android:layout_width="100dip"       
+	        android:layout_height="75dip"
+	        android:scaleType="centerCrop"
+	        />
+        
+    </RelativeLayout>
         
 	<TextView 
 		android:id="@+id/name" 
-		android:layout_toRightOf="@id/tb"
+		android:layout_toRightOf="@id/tb_block"
 		android:layout_width="fill_parent" android:layout_height="wrap_content" 		
 		android:text="Europe's Leaders Fear Libya Could Become Next Afghanistan" 
 		android:paddingLeft="6dip"
@@ -51,7 +45,7 @@
 	
 	<TextView 		
 		android:id="@+id/meta"			
-		android:layout_toRightOf="@id/tb"
+		android:layout_toRightOf="@id/tb_block"
 		android:layout_below="@id/name"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"

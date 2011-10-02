@@ -519,6 +519,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 	}
 	
+	protected boolean cacheAvailable(Context context){
+		return fileCache && AQUtility.getExistedCacheByUrl(context, url) != null;
+	}
+	
 	
 	/**
 	 * AQuert internal use. Do not call this method directly.

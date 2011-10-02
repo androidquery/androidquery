@@ -540,7 +540,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			
 			v.setTag(AQuery.TAG_URL, url);
 			
-			if(preset != null && AQUtility.getExistedCacheByUrl(v.getContext(), url) == null){
+			if(preset != null && !cacheAvailable(v.getContext())){
 				setBitmap(url, v, preset, true, false);			
 			}else{
 				setBitmap(url, v, null, true, false);
@@ -548,6 +548,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 	}
+	
+	
+	
 	
 	private void setBitmap(String url, View v, Bitmap bm, boolean isPreset, boolean async){
 		

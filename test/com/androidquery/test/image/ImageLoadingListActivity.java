@@ -105,7 +105,7 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 	public void onBackPressed(){
 		
 		SlidingDrawer sd = (SlidingDrawer) findViewById(R.id.slidingDrawer);
-		if(sd.isOpened()){
+		if(sd != null && sd.isOpened()){
 			sd.animateClose();
 			return;
 		}else{

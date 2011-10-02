@@ -190,18 +190,21 @@ public class ImageLoadingListOptionsActivity extends ImageLoadingListActivity {
 				
 				String tbUrl = photo.tb;
 				
-				//Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
+				aq.id(R.id.tb);
 				
 				if(delay && aq.shouldDelay(convertView, parent, tbUrl, 0)){
-					aq.id(R.id.tb).image(preset, ratio);
+					if(preset != null){
+						aq.image(preset, ratio);
+					}else{
+						aq.invisible();					
+						if(progress){
+							aq.id(R.id.pbar).visible();
+						}
+					}
 				}else{
-					
-					aq.id(R.id.tb);
-					
 					if(progress){
 						aq.progress(R.id.pbar);
 					}
-					
 					aq.image(tbUrl, memcache, true, 0, 0, preset, animation, ratio);
 				}
 				

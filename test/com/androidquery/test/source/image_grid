@@ -1,20 +1,30 @@
-		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.grid_item, items){
+		ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.photo_item, entries){
 			
-			@Override
-			public View getView(int position, View view, ViewGroup parent) {
+			public View getView(int position, View convertView, ViewGroup parent) {
 				
-				if(view == null){
-					view = getLayoutInflater().inflate(R.layout.grid_item, null);
+				if(convertView == null){
+					convertView = getLayoutInflater().inflate(R.layout.photo_item, parent, false);
 				}
 				
-				JSONObject jo = getItem(position);
+				Photo photo = getItem(position);
 				
-				AQuery aq = new AQuery(view);
+				AQuery aq = new AQuery(convertView);
 				
-				String tb = jo.optJSONObject("image").optString("tbUrl");
-				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, AQuery.FADE_IN, 1.0f);
+				aq.id(R.id.name).text(photo.title);
+				aq.id(R.id.meta).text(photo.author);
 				
-				return view;
+				String tbUrl = photo.tb;
+				
+				Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
+				
+				if(aq.shouldDelay(convertView, parent, tbUrl, 10.0f)){
+					aq.id(R.id.tb).image(placeholder, 0.75f);
+				}else{
+					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0.75f);
+				}
+				
+				return convertView;
 				
 			}
+			
 		};

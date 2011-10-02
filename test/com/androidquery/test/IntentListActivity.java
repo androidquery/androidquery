@@ -114,17 +114,9 @@ public class IntentListActivity extends ListActivity {
 		String[] names = getResources().getStringArray(ids[0]);
 		String[] values = getResources().getStringArray(ids[1]);
 		
-		//AQUtility.debug("count", names.length);
-		
-		
 		for(int i = 0; i < names.length; i++){
 			String name = names[i];
 			String value = values[i];
-			
-			AQUtility.debug("name", name);
-			AQUtility.debug("value", values[i]);
-			
-			
 			if(value.startsWith("http")){
 				list.add(new ActivityItem(null, name, value));
 			}else{
@@ -198,8 +190,6 @@ public class IntentListActivity extends ListActivity {
 		
 		Intent intent = new Intent(this, cls);
 		intent.putExtra("type", type);
-		
-		AQUtility.debug("start", cls + ":" + type);
 		
 		startActivity(intent);
 	}

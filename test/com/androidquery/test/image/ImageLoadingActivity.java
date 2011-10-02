@@ -71,7 +71,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	public void image_simple(){
 		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
-		aq.id(R.id.image).image(url);
+		aq.id(R.id.image).progress(R.id.progress).image(url);
 		
 	}
 	
@@ -80,7 +80,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		boolean memCache = false;
 		boolean fileCache = true;
 
-		aq.id(R.id.image).image("http://www.vikispot.com/z/images/vikispot/android-w.png", memCache, fileCache);
+		aq.id(R.id.image).progress(R.id.progress).image("http://www.vikispot.com/z/images/vikispot/android-w.png", memCache, fileCache);
 	}
 	
 	public void image_down(){
@@ -121,7 +121,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	public void image_animation(){
 	
 		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";					
-		aq.id(R.id.image).image(imageUrl, true, true, 0, 0, null, AQuery.FADE_IN);
+		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 0, 0, null, AQuery.FADE_IN);
 		
 	}
 	
@@ -129,7 +129,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	public void image_animation2(){
 		
 		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";		
-		aq.id(R.id.image).image(imageUrl, true, true, 0, 0, null, R.anim.slide_in_left);
+		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 0, 0, null, R.anim.slide_in_left);
 		
 	}
 	
@@ -156,7 +156,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		final int tint = 0x77AA0000;
 
-		aq.id(R.id.image).visible().image(imageUrl, true, true, 0, 0, new BitmapAjaxCallback(){
+		aq.id(R.id.image).progress(R.id.progress).visible().image(imageUrl, true, true, 0, 0, new BitmapAjaxCallback(){
 
 	        @Override
 	        public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
@@ -178,7 +178,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		if(file != null){
 			
-			aq.id(R.id.image).visible().image(file, true, 300, new BitmapAjaxCallback(){
+			aq.id(R.id.image).progress(R.id.progress).visible().image(file, true, 300, new BitmapAjaxCallback(){
 
 		        @Override
 		        public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
