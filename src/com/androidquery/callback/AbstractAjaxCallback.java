@@ -87,7 +87,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private File cacheDir;
 	private AccountHandle ah;
 	
-	private AjaxStatus status;
+	protected AjaxStatus status;
 	
 	private boolean fileCache;
 	private boolean memCache;

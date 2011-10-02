@@ -95,7 +95,7 @@ public class ImageLoadingListOptionsActivity extends ImageLoadingListActivity {
 		}
 		
 		if(aq.id(R.id.animation_cb).isChecked()){
-			animation = AQuery.FADE_IN;
+			animation = AQuery.FADE_IN_NETWORK;
 		}else{
 			animation = 0;
 		}
@@ -196,8 +196,9 @@ public class ImageLoadingListOptionsActivity extends ImageLoadingListActivity {
 					if(preset != null){
 						aq.image(preset, ratio);
 					}else{
-						aq.invisible();					
+						aq.clear();					
 						if(progress){
+							aq.invisible();
 							aq.id(R.id.pbar).visible();
 						}
 					}

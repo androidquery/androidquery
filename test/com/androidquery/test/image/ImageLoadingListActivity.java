@@ -82,7 +82,7 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 				aq.id(R.id.meta).text(jo.optString("publisher", ""));
 				
 				String tb = jo.optJSONObject("image").optString("tbUrl");
-				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, AQuery.FADE_IN, 1.0f);
+				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, AQuery.FADE_IN_NETWORK, 1.0f);
 				
 				
 				return view;

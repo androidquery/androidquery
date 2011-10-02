@@ -105,7 +105,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		Bitmap preset = aq.getCachedImage(thumbnail);
 		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
-		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, false, false, 0, 0, preset, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
+		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, false, false, 0, 0, preset, 0, AQuery.RATIO_PRESERVE);
 		
 	}
 	

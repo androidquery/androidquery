@@ -610,7 +610,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		iv.setImageBitmap(bm);
 		
 		if(animation != 0 && preset == null){			
-			animate(iv, bm, animation);
+			animate(iv, bm, animation, status);
 		}
 	}
 	
@@ -699,22 +699,26 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
     }
 	
 	
-	private static void animate(ImageView iv, Bitmap bm, int animId){
+	private static void animate(ImageView iv, Bitmap bm, int animId, AjaxStatus status){
+		
+		if(bm == null || status == null) return;
 		
 		Animation animation = null;
 		
-		
-		if(animId == AQuery.FADE_IN){
+		if(animId == AQuery.FADE_IN || (animId == AQuery.FADE_IN_NETWORK && status.getSource() == AjaxStatus.NETWORK)){
+			
 			animation = new AlphaAnimation(0, 1);
 			animation.setInterpolator(new DecelerateInterpolator()); 
 			animation.setDuration(500);
-		}else{
+			
+		}else if(animId > 0){
 			animation = AnimationUtils.loadAnimation(iv.getContext(), animId);
 		}
 		
-		animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());		
-		iv.startAnimation(animation);
-		
+		if(animation != null){
+			animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());		
+			iv.startAnimation(animation);
+		}
 	}
 	
 	private static boolean needAsyncRatio(float ratio, ImageView iv){
@@ -726,7 +730,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	@Override
 	public void async(Context context){
-		
 		
 		
 		String url = getUrl();		
@@ -743,7 +746,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		Bitmap bm = memGet(url, targetWidth);
 		if(bm != null){		
 			v.setTag(AQuery.TAG_URL, url);
-			callback(url, bm, new AjaxStatus().source(AjaxStatus.MEMORY).done());
+			status = new AjaxStatus().source(AjaxStatus.MEMORY).done();
+			callback(url, bm, status);
 			//AQUtility.debug("mem", url);
 			return;
 		}
