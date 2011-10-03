@@ -27,21 +27,21 @@ import java.util.WeakHashMap;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.BitmapCache;
+import com.androidquery.util.RatioDrawable;
 
 /**
  * The callback handler for handling Aquery.image() methods.
@@ -351,6 +351,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			
 			for(View view: set){
 				BitmapAjaxCallback cb = ivs.get(view);
+				cb.status = status;				
 				checkCb(cb, url, view, bm, status);
 			}
 		
@@ -358,12 +359,12 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-	private boolean completed;
 	private void checkCb(BitmapAjaxCallback cb, String url, View v, Bitmap bm, AjaxStatus status){
 		
 		if(v == null || cb == null) return;
 		
 		if(url.equals(v.getTag(AQuery.TAG_URL))){			
+		
 			if(v instanceof ImageView){
 				cb.callback(url, (ImageView) v, bm, status);
 			}else{
@@ -373,7 +374,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 		showProgress(false);
-		completed = true;
 	}
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
@@ -449,8 +449,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	@Override
-	protected Bitmap memGet(String url){	
+	protected Bitmap memGet(String url){		
 		if(bm != null) return bm;
+		if(!memCache) return null;
 		return memGet(url, targetWidth);
 	}
 	
@@ -530,7 +531,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 		
-		setBitmap(url, iv, bm, false, false);
+		setBitmap(url, iv, bm, false);
 		
 	}
 	
@@ -541,9 +542,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			v.setTag(AQuery.TAG_URL, url);
 			
 			if(preset != null && !cacheAvailable(v.getContext())){
-				setBitmap(url, v, preset, true, false);			
+				setBitmap(url, v, preset, true);			
 			}else{
-				setBitmap(url, v, null, true, false);
+				setBitmap(url, v, null, true);
 			}
 		}
 		
@@ -552,17 +553,17 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	
 	
-	private void setBitmap(String url, View v, Bitmap bm, boolean isPreset, boolean async){
+	private void setBitmap(String url, View v, Bitmap bm, boolean isPreset){
 		
 		if(v instanceof ImageView){
-			setBitmap(url, (ImageView) v, bm, isPreset, async);
+			setBitmap2(url, (ImageView) v, bm, isPreset);
 		}else if(v instanceof TextView){
-			setBitmap(url, (TextView) v, bm, isPreset);
+			setBitmap2(url, (TextView) v, bm, isPreset);
 		}
 		
 	}
 	
-	private void setBitmap(String url, TextView tv, Bitmap bm, boolean isPreset){
+	private void setBitmap2(String url, TextView tv, Bitmap bm, boolean isPreset){
 		
 		BitmapDrawable bd = null;
 		if(bm != null){
@@ -575,159 +576,73 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-	private void setBitmap(final String url, final ImageView iv, final Bitmap bm, final boolean isPreset, boolean async){
+	private static final int FADE_DUR = 300;
+	
+	private void setBitmap2(String url, ImageView iv, Bitmap bm, boolean isPreset){
 		
-		if(bm != null && needAsyncRatio(ratio, iv)){
-			
-			if(!async){
-				
-				AQUtility.debug("async image", bm);
-				
-				AQUtility.postDelayed(new Runnable() {
-					
-					@Override
-					public void run() {
-						
-						if(!completed || !isPreset){						
-							setBitmap(url, iv, bm, isPreset, true);
-						}
-					}
-				}, 100);
-				
-			}else{
-				AQUtility.debug("skip set not rendered");
-			}
-			
-			
+		if(bm == null){
+			iv.setImageBitmap(null);
 			return;
 		}
 		
+		if(isPreset){
+			iv.setImageDrawable(makeDrawable(iv, bm));
+			return;
+		}
+		
+		animate(iv, bm);
+		
+	}
+
+	private Drawable makeDrawable(ImageView iv, Bitmap bm){
+		
+		BitmapDrawable bd = null;
 		
 		if(ratio > 0){
-			setRatio(iv, bm, ratio);
+			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio);
+		}else{
+			bd = new BitmapDrawable(iv.getResources(), bm);
 		}
 		
-		iv.setImageBitmap(bm);
+		return bd;
 		
-		if(animation != 0 && preset == null){			
-			animate(iv, bm, animation, status);
-		}
 	}
 	
-	private static int getWidth(ImageView iv){
+	private void animate(ImageView iv, Bitmap bm){
 		
-		int vw = iv.getWidth();		
+		if(status == null) return;
 		
-		if(vw <= 0){
-			LayoutParams lp = iv.getLayoutParams();
-			if(lp != null){
-				vw = lp.width;
+		Drawable d = makeDrawable(iv, bm);
+		Animation anim = null;
+		
+		if(animation == AQuery.FADE_IN || (animation == AQuery.FADE_IN_NETWORK && status.getSource() == AjaxStatus.NETWORK)){
+			
+			if(preset == null){
+				anim = new AlphaAnimation(0, 1);
+				anim.setInterpolator(new DecelerateInterpolator()); 
+				anim.setDuration(FADE_DUR);
+			}else{
+				
+				Drawable pd = makeDrawable(iv, preset);
+				Drawable[] ds = new Drawable[]{pd, d};
+				TransitionDrawable td = new TransitionDrawable(ds);
+				td.setCrossFadeEnabled(true);				
+				td.startTransition(FADE_DUR);
+				d = td;
 			}
-		}
-		
-		
-		return vw;
-		
-	}
-	
-	
-	private static void setRatio(ImageView iv, Bitmap bm, float ratio){
-		
-		int vw = getWidth(iv);
-		
-		if(vw <= 0){		
-			return;
-		}
-		
-		float r = ratio;
-		
-		if(bm != null && ratio == AQuery.RATIO_PRESERVE){
-			r = ((float) bm.getHeight()) / ((float) bm.getWidth());
-		}
-		
-		int vh = (int) (vw * r);
-		
-		LayoutParams lp = iv.getLayoutParams();
-		lp.height = vh;
-		iv.setLayoutParams(lp);
-		
-		Matrix m = null;
-		if(bm != null){
-			m = makeMatrix(bm.getWidth(), bm.getHeight(), vw, vh);					
-		}
-		iv.setScaleType(ScaleType.MATRIX);
-		iv.setImageMatrix(m);
-	}
-	
-    private static Matrix makeMatrix(int dwidth, int dheight, int vwidth, int vheight){
-    	
-    	if(dwidth <= 0 || dheight <= 0 || vwidth <= 0 || vheight <= 0) return null;
-    		
-        float scale;
-        float dx = 0, dy = 0;
-        
-        Matrix m = new Matrix();
-        
-        if (dwidth * vheight >= vwidth * dheight) {
-        	//if image is super wider
-			scale = (float) vheight / (float) dheight;
-			dx = (vwidth - dwidth * scale) * 0.5f;
-		} else {
-			//if image is taller
-			scale = (float) vwidth / (float) dwidth;	
-			float sy = getYOffset(dwidth, dheight);
+		}else if(animation > 0){
+			anim = AnimationUtils.loadAnimation(iv.getContext(), animation);
 			
-			dy = (vheight - dheight * scale) * sy;
-		}
-        
-        m.setScale(scale, scale);
-        m.postTranslate(dx, dy);
-    	
-    	return m;
-    	
-    }
-	
-    private static float getYOffset(int vwidth, int vheight){
-    	
-    	float ratio = (float) vheight / (float) vwidth;
-    	
-    	ratio = Math.min(1.5f, ratio);
-    	ratio = Math.max(1, ratio);
-    	
-    	return  0.25f + ((1.5f - ratio) / 2.0f);
-    	
-    }
-	
-	
-	private static void animate(ImageView iv, Bitmap bm, int animId, AjaxStatus status){
-		
-		if(bm == null || status == null) return;
-		
-		Animation animation = null;
-		
-		if(animId == AQuery.FADE_IN || (animId == AQuery.FADE_IN_NETWORK && status.getSource() == AjaxStatus.NETWORK)){
-			
-			animation = new AlphaAnimation(0, 1);
-			animation.setInterpolator(new DecelerateInterpolator()); 
-			animation.setDuration(500);
-			
-		}else if(animId > 0){
-			animation = AnimationUtils.loadAnimation(iv.getContext(), animId);
 		}
 		
-		if(animation != null){
-			animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());		
-			iv.startAnimation(animation);
+		iv.setImageDrawable(d);
+		
+		if(anim != null){
+			anim.setStartTime(AnimationUtils.currentAnimationTimeMillis());		
+			iv.startAnimation(anim);
 		}
 	}
-	
-	private static boolean needAsyncRatio(float ratio, ImageView iv){
-		
-		if(iv == null) return false;
-		return ratio > 0 && getWidth(iv) <= 0;
-	}
-	
-	
+
 	@Override
 	public void async(Context context){
 		
@@ -738,12 +653,11 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		if(url == null){
 			showProgress(false);
-			setBitmap(url, v, null, false, false);
+			setBitmap(url, v, null, false);
 			return;
 		}
 		
-		
-		Bitmap bm = memGet(url, targetWidth);
+		Bitmap bm = memGet(url);
 		if(bm != null){		
 			v.setTag(AQuery.TAG_URL, url);
 			status = new AjaxStatus().source(AjaxStatus.MEMORY).done();
