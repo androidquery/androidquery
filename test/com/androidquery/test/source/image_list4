@@ -1,30 +1,30 @@
-		ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.photo_item, entries){
-			
-			public View getView(int position, View convertView, ViewGroup parent) {
-				
-				if(convertView == null){
-					convertView = getLayoutInflater().inflate(R.layout.photo_item, parent, false);
-				}
-				
-				Photo photo = getItem(position);
-				
-				AQuery aq = new AQuery(convertView);
-				
-				aq.id(R.id.name).text(photo.title);
-				aq.id(R.id.meta).text(photo.author);
-				
-				String tbUrl = photo.tb;
-				
-				Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
-				
-				if(aq.shouldDelay(convertView, parent, tbUrl, 10.0f)){
-					aq.id(R.id.tb).image(placeholder, 0.75f);
-				}else{
-					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0.75f);
-				}
-				
-				return convertView;
-				
-			}
-			
-		};
+ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.photo_item, entries){
+	
+	public View getView(int position, View convertView, ViewGroup parent) {
+		
+		if(convertView == null){
+			convertView = getLayoutInflater().inflate(R.layout.photo_item, parent, false);
+		}
+		
+		Photo photo = getItem(position);
+		
+		AQuery aq = new AQuery(convertView);
+		
+		aq.id(R.id.name).text(photo.title);
+		aq.id(R.id.meta).text(photo.author);
+		
+		String tbUrl = photo.tb;
+		
+		Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
+		
+		if(aq.shouldDelay(convertView, parent, tbUrl, 0)){
+			aq.id(R.id.tb).image(placeholder, 0.75f);
+		}else{
+			aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0.75f);
+		}
+		
+		return convertView;
+		
+	}
+	
+};

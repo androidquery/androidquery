@@ -9,7 +9,10 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
@@ -118,10 +121,14 @@ public class IntentListActivity extends ListActivity {
 			String name = names[i];
 			String value = values[i];
 			if(value.startsWith("http")){
-				list.add(new ActivityItem(null, name, value));
+				list.add(new ActivityItem(null, name, value, null));
 			}else{
 				String[] vs = value.split(":");
-				list.add(makeActivity(vs[0], name, vs[1]));
+				String meta = null;
+				if(vs.length > 2){
+					meta = vs[2];
+				}
+				list.add(makeActivity(vs[0], name, vs[1], meta));
 			}
 			
 			
@@ -129,15 +136,43 @@ public class IntentListActivity extends ListActivity {
 		
 		if(type == null && TestUtility.isTestDevice(this)){
 			
-			list.add(makeActivity("com.androidquery.test.AdhocActivity", "Ad Hoc Debug", ""));
+			list.add(makeActivity("com.androidquery.test.AdhocActivity", "Ad Hoc Debug", "", null));
 			
 		}
 		
 		
-		return new ArrayAdapter<ActivityItem>(this, R.layout.list_item, list);
+		ArrayAdapter<ActivityItem> result = new ArrayAdapter<ActivityItem>(this, R.layout.list_item, list){
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				
+				if(convertView == null){
+					convertView = getLayoutInflater().inflate(R.layout.list_item, null);
+				}
+				
+				ActivityItem ai = (ActivityItem) getItem(position);
+				AQuery aq = new AQuery(convertView);
+				
+				String text = ai.getName();
+				String meta = ai.getMeta();
+				
+				if(meta != null){
+					text += "   <small><small><font color=\"red\">" + meta + "</font></small></small>";
+				}
+				
+				Spanned span = Html.fromHtml(text);
+				
+				aq.id(R.id.name).text(span);
+				//aq.id(R.id.meta).text(ai.getMeta());
+				
+				return convertView;
+			}
+		};
+		
+		
+		return result;
 	}
 	
-	private ActivityItem makeActivity(String cls, String name, String type){
+	private ActivityItem makeActivity(String cls, String name, String type, String meta){
 		
 		Class c = null;
 		
@@ -148,7 +183,7 @@ public class IntentListActivity extends ListActivity {
 			e.printStackTrace();
 		}
 		
-		return new ActivityItem(c, name, type);
+		return new ActivityItem(c, name, type, meta);
 	}
 	
 	

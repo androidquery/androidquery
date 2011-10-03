@@ -33,7 +33,7 @@ public class TQuery extends AbstractAQuery<TQuery>{
 	}
 	
 	
-	public File makeCachedFile(String url, String filename){
+	public File makeSharableFile(String url, String filename){
 		
 		File file = null;
 		

@@ -69,15 +69,15 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
 			
 			@Override
-			public View getView(int position, View view, ViewGroup parent) {
+			public View getView(int position, View convertView, ViewGroup parent) {
 				
-				if(view == null){
-					view = getLayoutInflater().inflate(R.layout.content_item_s, null);
+				if(convertView == null){
+					convertView = getLayoutInflater().inflate(R.layout.content_item_s, null);
 				}
 				
 				JSONObject jo = getItem(position);
 				
-				AQuery aq = new AQuery(view);
+				AQuery aq = new AQuery(convertView);
 				aq.id(R.id.name).text(jo.optString("titleNoFormatting", "No Title"));
 				aq.id(R.id.meta).text(jo.optString("publisher", ""));
 				
@@ -85,7 +85,7 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 				aq.id(R.id.tb).progress(R.id.progress).image(tb, true, true, 0, 0, null, AQuery.FADE_IN_NETWORK, 1.0f);
 				
 				
-				return view;
+				return convertView;
 				
 			}
 		};

@@ -1,25 +1,25 @@
-		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
-			
-			public View getView(int position, View convertView, ViewGroup parent) {
-				
-				ViewHolder holder;
-				
-				if(convertView == null){					
-					convertView = getLayoutInflater().inflate(R.layout.content_item_s, null);
-					holder = new ViewHolder();
-					holder.imageview = (ImageView) convertView.findViewById(R.id.tb);
-	                holder.progress = (ProgressBar) convertView.findViewById(R.id.progress);
-	                convertView.setTag(holder);
-	            }else{
-	            	holder = (ViewHolder) convertView.getTag();
-	            }
-				
-				JSONObject jo = getItem(position);
-				String tb = jo.optJSONObject("image").optString("tbUrl");
-				
-				AQuery aq = new AQuery(convertView);
-				aq.id(holder.imageview).progress(holder.progress).image(tb, true, true, 0, 0, null, 0, 1.0f);
-				
-				return convertView;
-			}
-		};
+ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
+	
+	public View getView(int position, View convertView, ViewGroup parent) {
+		
+		ViewHolder holder;
+		
+		if(convertView == null){					
+			convertView = getLayoutInflater().inflate(R.layout.content_item_s, null);
+			holder = new ViewHolder();
+			holder.imageview = (ImageView) convertView.findViewById(R.id.tb);
+			holder.progress = (ProgressBar) convertView.findViewById(R.id.progress);
+			convertView.setTag(holder);
+		}else{
+			holder = (ViewHolder) convertView.getTag();
+		}
+		
+		JSONObject jo = getItem(position);
+		String tb = jo.optJSONObject("image").optString("tbUrl");
+		
+		AQuery aq = new AQuery(convertView);
+		aq.id(holder.imageview).progress(holder.progress).image(tb, true, true, 0, 0, null, 0, 1.0f);
+		
+		return convertView;
+	}
+};

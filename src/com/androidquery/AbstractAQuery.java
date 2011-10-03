@@ -1609,10 +1609,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * true of the list is scrolling above the specified velocity. Velocity is measured in items/seconds. 
 	 * Velocity of 0 implies always delay during fling.
 	 * 
-	 * 
-	 * 
+	 * <br>
+	 * <br>
 	 * Example usage:
-	 * 
+	 * <pre>
 	 * 		public View getView(int position, View convertView, ViewGroup parent) {
 	 *			
 	 *			...
@@ -1626,10 +1626,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *			...
 	 *			
 	 *		}
+	 * </pre>
 	 * 
-	 * 
+	 * <br>
 	 * NOTE: 
 	 * 
+	 * <br>
 	 * This method uses the setOnScrollListener() method and will override any previously non-aquery assigned scroll listener.
 	 * If a scrolled listener is required, use the aquery method scrolled(OnScrollListener listener) to set the listener
 	 * instead of directly calling setOnScrollListener().
@@ -1653,12 +1655,18 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * 
 	 * The returned file is accessable to all apps, therefore it is ideal for sharing content (such as photo) via the intent mechanism.
 	 * 
+	 * <br>
+	 * <br>
 	 * Example Usage:
+	 * 
+	 * <pre>
 	 *	Intent intent = new Intent(Intent.ACTION_SEND);
 	 *	intent.setType("image/jpeg");
 	 *	intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-	 *  startActivityForResult(Intent.createChooser(intent, "Share via:"), 0);
+	 *	startActivityForResult(Intent.createChooser(intent, "Share via:"), 0);
+	 * </pre>
 	 * 
+	 * <br>
 	 * The temp file will be deleted when AQUtility.cleanCacheAsync is invoked, or the file can be explicitly deleted after use.
 	 * 
 	 * @param url The url of the desired cached content.
@@ -1667,7 +1675,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * 
 	 */
 	
-	public File makeCachedFile(String url, String filename){
+	public File makeSharedFile(String url, String filename){
 		
 		File file = null;
 		

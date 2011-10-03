@@ -6,19 +6,19 @@
     <string-array name="top_names">
         <item>Async Network</item>
         <item>Image Loading</item> 
-        <item>Google Service (Beta)</item> 
+        <item>Google Service</item> 
         <item>XML Parsing</item>
-        <item>AQuery Service (Beta)</item> 
+        <item>AQuery Service</item> 
         <item>Home @AndroidQuery</item>
         <item>Javadoc</item>              
     </string-array>
     
     <string-array name="top_values">
-        <item>com.androidquery.test.IntentListActivity:async</item>
-        <item>com.androidquery.test.IntentListActivity:image</item>
-        <item>com.androidquery.test.IntentListActivity:auth</item>
+        <item>com.androidquery.test.IntentListActivity:async:new</item>
+        <item>com.androidquery.test.IntentListActivity:image:new</item>
+        <item>com.androidquery.test.IntentListActivity:auth:new</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
-        <item>com.androidquery.test.IntentListActivity:service</item>
+        <item>com.androidquery.test.IntentListActivity:service:beta</item>
         <item>http://code.google.com/p/android-query/</item>
         <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html</item>       
     </string-array>
@@ -52,8 +52,8 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_status</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_invalidate</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_status:new</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_invalidate:new</item>  
         <item>http://code.google.com/p/android-query/wiki/AsyncAPI</item>    
     </string-array>
     
@@ -122,11 +122,11 @@
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
         <item>com.androidquery.test.image.ImageLoadingList2Activity:image_list2</item>
-        <item>com.androidquery.test.image.ImageLoadingList3Activity:image_list3</item>
-        <item>com.androidquery.test.image.ImageLoadingList4Activity:image_list4</item>
-        <item>com.androidquery.test.image.ImageLoadingListOptionsActivity:image_options</item>
+        <item>com.androidquery.test.image.ImageLoadingList3Activity:image_list3:new</item>
+        <item>com.androidquery.test.image.ImageLoadingList4Activity:image_list4:new</item>
+        <item>com.androidquery.test.image.ImageLoadingListOptionsActivity:image_options:new</item>
         
-        <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid</item>
+        <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid:new</item>
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_button</item>
         
@@ -147,9 +147,9 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_clear_mem</item> 
         <item>com.androidquery.test.image.ImageLoadingActivity:image_clear_disk</item>    
         
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_cache_dir</item>   
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_cache_dir:new</item>   
         
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_send</item>   
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_send:new</item>   
         
         <item>http://code.google.com/p/android-query/wiki/ImageLoading</item>
     </string-array>

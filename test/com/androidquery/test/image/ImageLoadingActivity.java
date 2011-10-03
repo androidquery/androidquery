@@ -307,7 +307,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	public void image_send(){
 		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";		
-		File file = aq.makeCachedFile(url, "android.png");
+		File file = aq.makeSharedFile(url, "android.png");
 		
 		if(file != null){		
 			Intent intent = new Intent(Intent.ACTION_SEND);
