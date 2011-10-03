@@ -40,6 +40,8 @@ public class RatioDrawable extends BitmapDrawable{
 	private float ratio;
 	private WeakReference<ImageView> ref;
 	private boolean adjusted;
+	private Matrix m;
+	private int w;
 	
 	public RatioDrawable(Resources res, Bitmap bm, ImageView iv, float ratio){
 		super(res, bm);
@@ -66,12 +68,13 @@ public class RatioDrawable extends BitmapDrawable{
 		
 		int th = targetHeight(dw, dh, vw);
 		
-		Matrix m = makeMatrix(dw, dh, vw, th);	
-		Paint p = getPaint();
+		Matrix m = getMatrix(dw, dh, vw, th);	
 		
-		canvas.drawBitmap(getBitmap(), m, p);
+		if(m != null){
+			canvas.drawBitmap(getBitmap(), m, getPaint());
+		}
 		
-		if(th > vh && !adjusted){
+		if(th != vh && !adjusted){
 			
 			AQUtility.debug("adj", vh + "->" + th);
 			
@@ -94,29 +97,34 @@ public class RatioDrawable extends BitmapDrawable{
 		return (int) (vw * r);
 	}
 	
-    private static Matrix makeMatrix(int dwidth, int dheight, int vwidth, int vheight){
+    private Matrix getMatrix(int dwidth, int dheight, int vwidth, int vheight){
     	
     	if(dwidth <= 0 || dheight <= 0 || vwidth <= 0 || vheight <= 0) return null;
     		
-        float scale;
-        float dx = 0, dy = 0;
-        
-        Matrix m = new Matrix();
-        
-        if (dwidth * vheight >= vwidth * dheight) {
-        	//if image is super wider
-			scale = (float) vheight / (float) dheight;
-			dx = (vwidth - dwidth * scale) * 0.5f;
-		} else {
-			//if image is taller
-			scale = (float) vwidth / (float) dwidth;	
-			float sy = getYOffset(dwidth, dheight);
-			
-			dy = (vheight - dheight * scale) * sy;
-		}
-        
-        m.setScale(scale, scale);
-        m.postTranslate(dx, dy);
+    	if(m == null || dwidth != w){
+    	
+	        float scale;
+	        float dx = 0, dy = 0;
+	        
+	        m = new Matrix();
+	        
+	        if (dwidth * vheight >= vwidth * dheight) {
+	        	//if image is super wider
+				scale = (float) vheight / (float) dheight;
+				dx = (vwidth - dwidth * scale) * 0.5f;
+			} else {
+				//if image is taller
+				scale = (float) vwidth / (float) dwidth;	
+				float sy = getYOffset(dwidth, dheight);
+				
+				dy = (vheight - dheight * scale) * sy;
+			}
+	        
+	        m.setScale(scale, scale);
+	        m.postTranslate(dx, dy);
+	        
+	        w = dwidth;
+    	}
     	
     	return m;
     	
