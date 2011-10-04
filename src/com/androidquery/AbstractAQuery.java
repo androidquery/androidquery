@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.lang.reflect.Constructor;
+import java.nio.channels.FileChannel;
 import java.util.Map;
 
 import android.app.Activity;
@@ -1692,15 +1693,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 					file = new File(temp, filename);
 					file.createNewFile();
 					
-					FileInputStream fis = new FileInputStream(cached);
-					FileOutputStream fos = new FileOutputStream(file);
-					
-					try{
-						AQUtility.copy(fis, fos);
-					}finally{
-						fis.close();
-						fos.close();
-					}
+				    FileChannel ic = new FileInputStream(cached).getChannel();
+				    FileChannel oc = new FileOutputStream(file).getChannel();
+				    try{
+				    	ic.transferTo(0, ic.size(), oc);
+				    }finally{
+				        if(ic != null) ic.close();
+				        if(oc != null) oc.close();
+				    }
 					
 				}
 			}
