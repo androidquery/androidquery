@@ -1518,5 +1518,26 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		return self();
 	}
-	
+
+	/**
+	 * Trigger click event
+	 * @return
+	 * @see View#performClick()
+	 */
+	public T click(){
+		if(view != null)
+			view.performClick();
+		return self();
+	}
+
+	/**
+	 * Trigger long click event
+	 * @return
+	 * @see View#performClick()
+	 */
+	public T longClick(){
+		if(view != null)
+			view.performLongClick();
+		return self();
+	}
 }
