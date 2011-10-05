@@ -37,6 +37,7 @@ public class TQuery extends AbstractAQuery<TQuery>{
 	
 	public void dismissDialogs(Activity act){
 		
+		/*
 		Window win = act.getWindow();
 		
 		AQUtility.debug("window", act.getWindow());
@@ -51,6 +52,7 @@ public class TQuery extends AbstractAQuery<TQuery>{
 		
 		View code2 = id(R.id.code).getView();
 		AQUtility.debug("code2 view", code2);
+		*/
 	}
 	
 	
