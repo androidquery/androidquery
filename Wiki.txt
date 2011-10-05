@@ -1,3 +1,5 @@
+Try push.
+
 public void asyncHtml(){
 	
 //fetch Google's homepage in html
