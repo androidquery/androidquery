@@ -1,4 +1,4 @@
-Test auto push 4.
+Test auto push 5.
 
 public void asyncHtml(){
 	
