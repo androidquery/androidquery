@@ -1716,6 +1716,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Starts an animation on the view.
 	 * 
+	 * <br>
 	 * contributed by: marcosbeirigo
 	 * 
 	 * @param animId Id of the desired animation.
@@ -1729,6 +1730,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Starts an animation on the view.
 	 * 
+	 * <br>
 	 * contributed by: marcosbeirigo
 	 * 
 	 * @param animId Id of the desired animation.
@@ -1746,6 +1748,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Starts an animation on the view.
 	 * 
+	 * <br>
 	 * contributed by: marcosbeirigo
 	 * 
 	 * @param anim The desired animation.
@@ -1762,7 +1765,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Trigger click event
 	 * 
-	 * contributed by: marcosbeirigo
+	 * <br>
+	 * contributed by: neocoin
 	 * 
 	 * @return
 	 * @see View#performClick()
@@ -1777,6 +1781,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Trigger long click event
 	 * 
+	 * <br>
 	 * contributed by: neocoin
 	 * 
 	 * @return
