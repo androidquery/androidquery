@@ -1768,8 +1768,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @see View#performClick()
 	 */
 	public T click(){
-		if(view != null)
+		if(view != null){
 			view.performClick();
+		}
 		return self();
 	}
 
@@ -1782,8 +1783,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @see View#performClick()
 	 */
 	public T longClick(){
-		if(view != null)
+		if(view != null){
 			view.performLongClick();
+		}
 		return self();
 	}
 	
