@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.AbsListView.OnScrollListener;
@@ -33,41 +35,22 @@ public class TQuery extends AbstractAQuery<TQuery>{
 	}
 	
 	
-	public File makeSharableFile(String url, String filename){
+	public void dismissDialogs(Activity act){
 		
-		File file = null;
+		Window win = act.getWindow();
 		
-		try{
+		AQUtility.debug("window", act.getWindow());
+		WindowManager wm = act.getWindowManager();
 		
-			File cached = getCachedFile(url);
-			
-			if(cached != null){
-			
-				File temp = AQUtility.getTempDir();
-				
-				if(temp != null){
-				
-					file = new File(temp, filename);
-					file.createNewFile();
-					
-					FileInputStream fis = new FileInputStream(cached);
-					FileOutputStream fos = new FileOutputStream(file);
-					
-					try{
-						AQUtility.copy(fis, fos);
-					}finally{
-						fis.close();
-						fos.close();
-					}
-					
-				}
-			}
 		
-		}catch(Exception e){
-			AQUtility.report(e);
-		}
+		View view = win.findViewById(android.R.id.message);
+		AQUtility.debug("dia view", view);
 		
-		return file;
+		View code = win.findViewById(R.id.code);
+		AQUtility.debug("code view", code);
+		
+		View code2 = id(R.id.code).getView();
+		AQUtility.debug("code2 view", code2);
 	}
 	
 	

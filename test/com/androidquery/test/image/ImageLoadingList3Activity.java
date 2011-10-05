@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxStatus;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 
@@ -65,7 +66,7 @@ public class ImageLoadingList3Activity extends ImageLoadingListActivity {
 				
 				if(convertView == null){
 					holder = new ViewHolder();
-					convertView = getLayoutInflater().inflate(R.layout.content_item_s, null);
+					convertView = getLayoutInflater().inflate(R.layout.content_item_s, parent, false);
 					holder.imageview = (ImageView) convertView.findViewById(R.id.tb);
 	                holder.progress = (ProgressBar) convertView.findViewById(R.id.progress);
 	                holder.name = (TextView) convertView.findViewById(R.id.name);
@@ -82,6 +83,13 @@ public class ImageLoadingList3Activity extends ImageLoadingListActivity {
 				aq.id(holder.name).text(jo.optString("titleNoFormatting", "No Title"));
 				aq.id(holder.meta).text(jo.optString("publisher", ""));
 				aq.id(holder.imageview).progress(holder.progress).image(tb, true, true, 0, 0, null, 0, 1.0f);
+				
+				/*
+				aq.id(R.id.tb).progress(R.id.progress);
+				BitmapAjaxCallback cb = new BitmapAjaxCallback();
+				cb.url(tb).ratio(AQuery.RATIO_PRESERVE);
+				aq.image(cb);
+				*/
 				
 				return convertView;
 			}

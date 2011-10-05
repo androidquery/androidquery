@@ -3,7 +3,9 @@ package com.androidquery.service;
 import java.util.Locale;
 
 import org.json.JSONObject;
+import org.xml.sax.XMLReader;
 
+import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,8 +17,16 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.Html;
+import android.text.Html.TagHandler;
 import android.view.View;
+import android.view.WindowManager.LayoutParams;
+import android.webkit.WebView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.AbstractAQuery;
@@ -220,9 +230,14 @@ public class MarketService{
 		String body = dia.optString("body", jo.optString("recent", "N/A"));
 		String title = dia.optString("title", "Update Available");
 		
+		body = "<div class=\"doc-whatsnew-container\"><p>What's in this version:</p><ol><li>Added list delay draw examples.</li><li>Added set cache directory example.</li><li>Added share image example.</li></ol></div>";
+		
+		body += "<small><small>check via AndroidQuery</small></small>";
+		
 		Drawable icon = getAppIcon();
 		
 		Context context = act;
+		
 		
 		Dialog dialog = new AlertDialog.Builder(context)
         .setIcon(icon)
@@ -233,14 +248,30 @@ public class MarketService{
         .setNegativeButton(update, handler)
         .create();
 		
+		
 		version = jo.optString("version", null);
 		
 		dialog.show();
+		
+		resetBody(dialog, body);
 		
 		return;
 		
 	}
     
+	private void resetBody(Dialog dialog, String body){
+		
+		try{
+			TextView messageView = (TextView) dialog.findViewById(R.id.message);
+			if(messageView != null){
+				messageView.setText(Html.fromHtml(body, null, handler));
+			}
+		}catch(Exception e){
+			AQUtility.report(e);
+		}
+	}
+	
+	
 	private static final String SKIP_VERSION = "aqs.skip";
 	
 	private static void setSkipVersion(Context context, String version){
@@ -251,7 +282,7 @@ public class MarketService{
 		return PreferenceManager.getDefaultSharedPreferences(context).getString(SKIP_VERSION, null);
 	}
 	
-	protected class Handler implements DialogInterface.OnClickListener{
+	protected class Handler implements DialogInterface.OnClickListener, TagHandler{
         
 		public void marketCb(String url, JSONObject jo, AjaxStatus status){
 			
@@ -333,6 +364,22 @@ public class MarketService{
 			
 			
 			
+		}
+
+		
+		@Override
+		public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+			
+			AQUtility.debug("unknown", tag);
+			if("li".equals(tag)){
+				
+				if(opening){
+				}else{
+					output.append("\n");
+				}
+				
+				
+			}
 		}
 		
     }

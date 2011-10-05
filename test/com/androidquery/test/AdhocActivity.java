@@ -76,84 +76,9 @@ public class AdhocActivity extends RunSourceActivity {
 		
 		Bitmap bm = aq.getCachedImage(R.drawable.image_ph);
 		
-		Bitmap bm2 = aq.getCachedImage(imageUrl);
-		
-		ImageView iv = aq.id(R.id.image).width(200).getImageView();
-		
-		RatioDrawable rd = new RatioDrawable(getResources(), bm, iv, 1.0f);
-		
-		RatioDrawable rd2 = new RatioDrawable(getResources(), bm2, iv, 1.0f);
-		
-		//iv.setImageDrawable(rd);
 		BitmapDrawable bd = new BitmapDrawable(bm);
-		BitmapDrawable bd2 = new BitmapDrawable(aq.getCachedImage(R.drawable.image_missing));
-		
-		Drawable[] bds = new Drawable[]{rd, rd2};
-		
-		TransitionDrawable td = new TransitionDrawable(bds);
-		td.setCrossFadeEnabled(true);
-		iv.setImageDrawable(td);
-		td.startTransition(250);
-		
-		//aq.id(R.id.image).clear().image(imageUrl, false, false, 0, 0, ph, AQuery.FADE_IN, 1.0f);
-		
-		
-		
-		/*
-		ImageView iv = aq.id(R.id.image).getImageView();
-		
-		Bitmap bm = aq.getCachedImage(R.drawable.image_ph);
-		Bitmap bm2 = aq.getCachedImage(R.drawable.image_missing);
-		
-		BitmapDrawable bd = new BitmapDrawable(bm);
-		BitmapDrawable bd2 = new BitmapDrawable(bm2);
-		
-		Drawable[] bds = new Drawable[]{bd, bd2};
-		
-		TransitionDrawable td = new TransitionDrawable(bds);
-		td.setCrossFadeEnabled(true);
-		
-		iv.setImageDrawable(td);
-		
-		td.startTransition(500);
-		*/
-	}
 	
-    private static Matrix makeMatrix(int dwidth, int dheight, int vwidth, int vheight){
-    	
-    	if(dwidth <= 0 || dheight <= 0 || vwidth <= 0 || vheight <= 0) return null;
-    		
-        float scale;
-        float dx = 0, dy = 0;
-        
-        Matrix m = new Matrix();
-        
-        if (dwidth * vheight >= vwidth * dheight) {
-        	//if image is super wider
-			scale = (float) vheight / (float) dheight;
-			dx = (vwidth - dwidth * scale) * 0.5f;
-		} else {
-			//if image is taller
-			scale = (float) vwidth / (float) dwidth;	
-			float sy = getYOffset(dwidth, dheight);
-			
-			dy = (vheight - dheight * scale) * sy;
-		}
-        
-        m.setScale(scale, scale);
-        m.postTranslate(dx, dy);
-    	
-    	return m;
-    	
-    }
-    private static float getYOffset(int vwidth, int vheight){
-    	
-    	float ratio = (float) vheight / (float) vwidth;
-    	
-    	ratio = Math.min(1.5f, ratio);
-    	ratio = Math.max(1, ratio);
-    	
-    	return  0.25f + ((1.5f - ratio) / 2.0f);
-    	
-    }
+		aq.getImageView().setImageDrawable(bd);
+	}
+
 }

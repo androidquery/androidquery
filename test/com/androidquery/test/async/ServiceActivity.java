@@ -16,6 +16,7 @@ import android.widget.Spinner;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
+import com.androidquery.TQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.service.MarketService;
@@ -42,6 +43,7 @@ public class ServiceActivity extends RunSourceActivity {
 		}
 		
 		showResult("The update message is fetched from the 'Recent Changes' field of your Android Market's development console with the correponsing locale.", null);
+		
 		
 	}
 	
@@ -99,4 +101,14 @@ public class ServiceActivity extends RunSourceActivity {
 		
 	}
 	
+	/*
+	@Override
+	public void onDestroy(){
+		
+		TQuery tq = new TQuery(this);
+		tq.dismissDialogs(this);
+		
+		super.onDestroy();
+	}
+	*/
 }

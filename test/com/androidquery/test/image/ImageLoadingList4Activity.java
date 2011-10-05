@@ -106,6 +106,24 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 		
 		List<Photo> entries = convertAll(xml);
 	
+		//aq.id(R.id.list).scrolled(new OnScrollListener(){...});
+		
+		/*
+		aq.id(R.id.list).scrolled(new OnScrollListener() {
+			
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				//AQUtility.debug("onScrollStateChanged");
+			}
+			
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				//AQUtility.debug("onScroll");
+			}
+		});
+		*/
+		
 		ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.photo_item, entries){
 			
 			public View getView(int position, View convertView, ViewGroup parent) {
