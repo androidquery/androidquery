@@ -101,14 +101,14 @@ public class ServiceActivity extends RunSourceActivity {
 		
 	}
 	
-	/*
+	
 	@Override
 	public void onDestroy(){
 		
 		TQuery tq = new TQuery(this);
-		tq.dismissDialogs(this);
+		tq.dismissDialogs();
 		
 		super.onDestroy();
 	}
-	*/
+	
 }

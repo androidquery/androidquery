@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
@@ -34,8 +36,28 @@ public class TQuery extends AbstractAQuery<TQuery>{
 		super(view);
 	}
 	
+	private static WeakReference<Dialog> diaRef;
 	
-	public void dismissDialogs(Activity act){
+	public void showDialog(Dialog dialog){
+		
+		dismissDialogs();
+		
+		diaRef = new WeakReference<Dialog>(dialog);
+		dialog.show();
+	}
+	
+	
+	
+	public void dismissDialogs(){
+		
+		if(diaRef != null){
+			Dialog d = diaRef.get();
+			if(d != null && d.isShowing()){
+				d.dismiss();
+			}
+			diaRef = null;
+		}
+		
 		
 		/*
 		Window win = act.getWindow();

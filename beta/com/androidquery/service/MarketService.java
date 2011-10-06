@@ -23,6 +23,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.Html.TagHandler;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.AbstractAQuery;
+import com.androidquery.TQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
@@ -37,7 +39,7 @@ import com.androidquery.util.AQUtility;
 public class MarketService{
 
 	private Activity act;
-	private AQuery aq;
+	private TQuery aq;
 	private Handler handler;
 	private String locale;
 	private String rateUrl;
@@ -52,7 +54,7 @@ public class MarketService{
 	
 	public MarketService(Activity act) {
 		this.act = act;
-		this.aq = new AQuery(act);
+		this.aq = new TQuery(act);
 		this.handler = new Handler();
 		this.locale = Locale.getDefault().toString();
 		this.rateUrl = getMarketUrl();
@@ -238,27 +240,69 @@ public class MarketService{
 		
 		Context context = act;
 		
+		WebView wv = new WebView(act);				
+		wv.loadData("", "text/html", "utf-8");
+		wv.setBackgroundColor(0);
 		
-		Dialog dialog = new AlertDialog.Builder(context)
+		
+		AlertDialog dialog = new AlertDialog.Builder(context)
         .setIcon(icon)
 		.setTitle(title)
-        .setMessage(body)        
+		.setMessage(body)
 		.setPositiveButton(rate, handler)
         .setNeutralButton(skip, handler)
         .setNegativeButton(update, handler)
         .create();
 		
+		dialog.setView(wv, 10, 10, 10, 10);
 		
 		version = jo.optString("version", null);
 		
-		dialog.show();
+		aq.showDialog(dialog);
 		
-		resetBody(dialog, body);
+		TextView messageView = getMessageView(dialog);
+		if(messageView != null){			
+			updateMessage(messageView, wv, body);
+		}
+		
 		
 		return;
 		
 	}
+	
+	private void updateMessage(TextView messageView, WebView wv, String body){
+		
+		try{
+		
+			int color = messageView.getTextColors().getDefaultColor();
+			color = color & 0xffffff;
+			
+			messageView.setVisibility(View.GONE);
+			
+			AQUtility.debug("hex", Integer.toHexString(color));
+			
+			String wbody = "<div style=\"color:#" +  Integer.toHexString(color) + ";\">" + body + "</div>"; 
+			
+			wv.loadData(wbody, "text/html", "utf-8");
+			wv.setBackgroundColor(0);
+			
+		}catch(Exception e){
+			AQUtility.report(e);
+		}
+		
+	}
+	
     
+	private TextView getMessageView(Dialog dialog){
+		try{
+			TextView messageView = (TextView) dialog.findViewById(R.id.message);
+			return messageView;
+		}catch(Exception e){
+			AQUtility.report(e);
+			return null;
+		}
+	}
+	
 	private void resetBody(Dialog dialog, String body){
 		
 		try{
@@ -281,6 +325,8 @@ public class MarketService{
 	private static String getSkipVersion(Context context){
 		return PreferenceManager.getDefaultSharedPreferences(context).getString(SKIP_VERSION, null);
 	}
+	
+	private static final String BULLET = "•";
 	
 	protected class Handler implements DialogInterface.OnClickListener, TagHandler{
         
@@ -367,6 +413,7 @@ public class MarketService{
 		}
 
 		
+		
 		@Override
 		public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
 			
@@ -374,6 +421,9 @@ public class MarketService{
 			if("li".equals(tag)){
 				
 				if(opening){
+					output.append("  ");
+					output.append(BULLET);
+					output.append("  ");
 				}else{
 					output.append("\n");
 				}
