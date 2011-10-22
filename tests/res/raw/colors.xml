@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+	<!-- This is a comment -->
+
+	<aquery:color name="imageholder">#f7f7f7</aquery:color>
+
+	<drawable name="bgcolor">#ffffff</drawable>	
+	<drawable name="red">#cc0000</drawable>
+	
+	<drawable name="imageholder">#f7f7f7</drawable>	
+	
+	<color name="selected">#A8C7F5</color>	
+	<color name="transdark">#aa000000</color>
+	<color name="transparent">#ccffffff</color>
+	<color name="disabled">#80000000</color>
+	<color name="red">#cc0000</color>
+	<color name="green">#44cc44</color>
+	<color name="black">#000000</color>
+	<color name="grey">#aaaaaa</color>	
+	<color name="pink">#FF7D70</color>
+	
+	<color name="white">#ffffff</color>
+	
+	<entry>
+		<color name="white">#ffffff</color>
+	
+	</entry>
+	
+	<script>
+		<![CDATA[
+		function matchwo(a,b)
+		{
+		if (a < b && a < 0) then
+		  {
+		  return 1;
+		  }
+		else
+		  {
+		  return 0;
+		  }
+		}
+		]]>
+	</script>	
+	
+</resources>

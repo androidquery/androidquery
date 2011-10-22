@@ -548,12 +548,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	@Override
 	public void run() {
 		
+		AQUtility.debug("running!", status.getDone());
+		
 		try{
 			
 			if(!status.getDone()){
 				backgroundWork();
-				status.done();
-				AQUtility.post(this);
+				if(status.getDone()){
+					AQUtility.post(this);
+				}
 			}else{
 				afterWork();
 				clear();
@@ -628,23 +631,19 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		try{
 			
-			/*
-			if(ah != null){
-				ah.applyToken(this);
-			}
-			*/
 			network();
 			
 			if(ah != null && ah.expired(status.getCode())){
 				AQUtility.debug("reauth needed!");	
 				if(ah.reauth(this)){
-					//ah.applyToken(this);
 					network();
+				}else{
+					//skip work until reauth and retry					
+					return;
 				}
 			}
 			
-			
-								
+			status.done();								
 			data = status.getData();
 		}catch(Exception e){
 			AQUtility.report(e);
@@ -885,7 +884,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         
         AQUtility.debug("response", code);
         
-        status.code(code).message(message).redirect(redirect).time(new Date()).data(data).client(client).done();
+        status.code(code).message(message).redirect(redirect).time(new Date()).data(data).client(client);
 		
 	}
 	

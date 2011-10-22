@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.androidquery"
+      android:versionCode="23"
+      android:versionName="0.15.3">
+
+
+	<uses-permission android:name="android.permission.INTERNET" /> 
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	
+	<uses-permission android:name="android.permission.GET_ACCOUNTS" />	
+	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
+	
+	<!--  
+	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />		
+	-->
+	
+	
+	<uses-sdk android:minSdkVersion="7"/>
+	
+	
+	<application android:icon="@drawable/launch" android:label="@string/app_name">
+	
+	<!--  
+    <application android:icon="@drawable/launch" android:label="@string/app_name" android:hardwareAccelerated="true">
+	-->
+		<activity android:name=".test.IntentListActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+		<activity android:name=".test.AdhocActivity" android:theme="@style/android:Theme.Light"></activity>	
+		<activity android:name=".test.AdhocActivity2" android:theme="@style/android:Theme.Light"></activity>			
+		<activity android:name=".test.async.AjaxLoadingActivity" android:theme="@style/android:Theme.Light"></activity>		
+		<activity android:name=".test.image.ImageLoadingActivity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.image.ImageLoadingListActivity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.image.ImageLoadingList2Activity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.image.ImageLoadingList3Activity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.image.ImageLoadingList4Activity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.image.ImageLoadingListOptionsActivity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.image.ImageLoadingGridActivity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.image.ImageLoadingAspectRatioActivity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.async.AjaxAuthActivity" android:theme="@style/android:Theme.Light"></activity>	
+		<activity android:name=".test.async.XmlActivity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.async.ServiceActivity"></activity>
+    </application>
+</manifest>
