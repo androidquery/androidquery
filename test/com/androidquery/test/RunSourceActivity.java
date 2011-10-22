@@ -17,7 +17,6 @@ import com.androidquery.R;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
-import com.flurry.android.FlurryAgent;
 
 public class RunSourceActivity extends Activity {
 
@@ -222,5 +221,13 @@ public class RunSourceActivity extends Activity {
 	public void onStop(){
 	   super.onStop();
 	   TestUtility.flurryStop(this);
+	}
+	
+	@Override
+	public void onDestroy(){
+		
+		aq.dismiss();
+		
+		super.onDestroy();
 	}
 }

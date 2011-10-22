@@ -1,28 +1,17 @@
 package com.androidquery.test.async;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.Spinner;
 
-import com.androidquery.AQuery;
 import com.androidquery.R;
-import com.androidquery.TQuery;
-import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.service.MarketService;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
-import com.androidquery.util.XmlDom;
 
 public class ServiceActivity extends RunSourceActivity {
 
@@ -105,8 +94,7 @@ public class ServiceActivity extends RunSourceActivity {
 	@Override
 	public void onDestroy(){
 		
-		TQuery tq = new TQuery(this);
-		tq.dismissDialogs();
+		aq.dismiss();
 		
 		super.onDestroy();
 	}

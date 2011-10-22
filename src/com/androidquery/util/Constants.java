@@ -18,6 +18,8 @@ package com.androidquery.util;
 
 public interface Constants {
 
+	public static final String VERSION = "0.15.3";
+	
 	public static final int LAYER_TYPE_SOFTWARE = 1;
 	public static final int LAYER_TYPE_HARDWARE = 2;
 	public static final int FLAG_HARDWARE_ACCELERATED = 0x01000000;
@@ -36,16 +38,16 @@ public interface Constants {
 	public static final float RATIO_PRESERVE = Float.MAX_VALUE;
 	public static final String ACTIVE_ACCOUNT = "aq.account";
 	
-	public static final String AUTH_READER = "reader";
-	public static final String AUTH_PICASA = "lh2";
-	public static final String AUTH_SPREADSHEETS = "wise";
-	public static final String AUTH_YOUTUBE = "youtube";
-	public static final String AUTH_ANALYTICS = "analytics";
-	public static final String AUTH_BLOGGER = "blogger";
-	public static final String AUTH_CALENDAR = "cl";
-	public static final String AUTH_BUZZ = "buzz";
-	public static final String AUTH_CONTACTS = "cp";
-	public static final String AUTH_FINANCE = "finance";
-	public static final String AUTH_MAPS = "local";
+	public static final String AUTH_READER = "g.reader";
+	public static final String AUTH_PICASA = "g.lh2";
+	public static final String AUTH_SPREADSHEETS = "g.wise";
+	public static final String AUTH_YOUTUBE = "g.youtube";
+	public static final String AUTH_ANALYTICS = "g.analytics";
+	public static final String AUTH_BLOGGER = "g.blogger";
+	public static final String AUTH_CALENDAR = "g.cl";
+	public static final String AUTH_BUZZ = "g.buzz";
+	public static final String AUTH_CONTACTS = "g.cp";
+	public static final String AUTH_FINANCE = "g.finance";
+	public static final String AUTH_MAPS = "g.local";
 
 }

@@ -6,7 +6,7 @@
     <string-array name="top_names">
         <item>Async Network</item>
         <item>Image Loading</item> 
-        <item>Google Service</item> 
+        <item>Authentication</item> 
         <item>XML Parsing</item>
         <item>AQuery Service</item> 
         <item>Home @AndroidQuery</item>
@@ -14,9 +14,9 @@
     </string-array>
     
     <string-array name="top_values">
-        <item>com.androidquery.test.IntentListActivity:async:new</item>
-        <item>com.androidquery.test.IntentListActivity:image:new</item>
-        <item>com.androidquery.test.IntentListActivity:auth:new</item>
+        <item>com.androidquery.test.IntentListActivity:async</item>
+        <item>com.androidquery.test.IntentListActivity:image</item>
+        <item>com.androidquery.test.IntentListActivity:auth:updated</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
         <item>com.androidquery.test.IntentListActivity:service:beta</item>
         <item>http://code.google.com/p/android-query/</item>
@@ -52,8 +52,8 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_status:new</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_invalidate:new</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_status</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_invalidate</item>  
         <item>http://code.google.com/p/android-query/wiki/AsyncAPI</item>    
     </string-array>
     
@@ -122,11 +122,11 @@
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
         <item>com.androidquery.test.image.ImageLoadingList2Activity:image_list2</item>
-        <item>com.androidquery.test.image.ImageLoadingList3Activity:image_list3:new</item>
-        <item>com.androidquery.test.image.ImageLoadingList4Activity:image_list4:new</item>
-        <item>com.androidquery.test.image.ImageLoadingListOptionsActivity:image_options:new</item>
+        <item>com.androidquery.test.image.ImageLoadingList3Activity:image_list3</item>
+        <item>com.androidquery.test.image.ImageLoadingList4Activity:image_list4</item>
+        <item>com.androidquery.test.image.ImageLoadingListOptionsActivity:image_options</item>
         
-        <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid:new</item>
+        <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid</item>
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_button</item>
         
@@ -147,29 +147,35 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_clear_mem</item> 
         <item>com.androidquery.test.image.ImageLoadingActivity:image_clear_disk</item>    
         
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_cache_dir:new</item>   
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_cache_dir</item>   
         
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_send:new</item>   
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_send</item>   
         
         <item>http://code.google.com/p/android-query/wiki/ImageLoading</item>
     </string-array>
     
   	<string-array name="auth_names">
+  		<item>Facebook</item>  
+  		<item>Twitter</item>  
         <item>Google Reader (Pick Account)</item>  
         <item>Google Reader (Active Account)</item>  
         <item>Google Reader (Specific Account)</item>    
         <item>Picasa</item> 
         <item>YouTube</item> 
         <item>Contacts</item>    
+        <item>Parallel Requests</item>    
     </string-array>
   
   	<string-array name="auth_values">
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:beta</item> 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:beta</item> 
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_pick_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_last_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_specific_account</item>
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_picasa</item>
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_youtube</item>
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_contacts</item>
+        <item>com.androidquery.test.async.AjaxAuthActivity:auth_parallel</item>
     </string-array>    
     
     <string-array name="source_keys">
@@ -231,6 +237,8 @@
         <item>image_cache_dir</item>
         <item>image_send</item>      
               
+        <item>auth_facebook</item> 
+        <item>auth_twitter</item>       
         <item>auth_pick_account</item>  
         <item>auth_last_account</item>      
         <item>auth_specific_account</item> 
@@ -239,6 +247,7 @@
         <item>auth_youtube</item>
         <item>auth_contacts</item>
         
+        <item>auth_parallel</item>
         
         <item>xml_ajax</item>
         <item>xml_resource</item>
@@ -306,13 +315,20 @@
               
         <item>Send and Share Image</item>      
            
+        <item>Facebook Auth - Get User Feed</item> 
+        <item>Twitter Auth - Get User Feed</item>    
+           
         <item>Google Reader (user select account, if multiple)</item> 
         <item>Google Reader (remember last selected account, pick if first uses)</item> 
         <item>Google Reader (app manage and specify account)</item>    
         
+        
+        
         <item>Picasa Example - Get list of user albums.</item> 
         <item>YouTube Example - Get user subscriptions.</item> 
         <item>Google Contacts Example - Get list of contacts.</item>
+        
+        <item>Parallel Requests</item>
         
         <item>Ajax Request with XmlDom Type - Get a list of featured images on Picasa.</item>
         <item>Parse XML Resource in Raw Resource Folder</item>
@@ -366,8 +382,6 @@
         <item>sv</item>
         <item>no</item>
         <item>da</item>
-        <item>hi</item>
-        <item>iw</item>
         <item>fi</item>
     </string-array>
     

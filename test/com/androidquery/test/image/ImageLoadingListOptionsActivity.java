@@ -1,34 +1,22 @@
 package com.androidquery.test.image;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.SlidingDrawer;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.ImageView.ScaleType;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
-import com.androidquery.TQuery;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
-import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
 
@@ -206,7 +194,7 @@ public class ImageLoadingListOptionsActivity extends ImageLoadingListActivity {
 					if(progress){
 						aq.progress(R.id.pbar);
 					}
-					aq.image(tbUrl, memcache, true, 0, 0, preset, animation, ratio);
+					aq.image(tbUrl, memcache, true, 0, R.drawable.image_missing, preset, animation, ratio);
 				}
 				
 				return convertView;

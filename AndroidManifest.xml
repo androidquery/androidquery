@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.androidquery"
-      android:versionCode="20"
-      android:versionName="0.14.10">
+      android:versionCode="23"
+      android:versionName="0.15.3">
 
 
 	<uses-permission android:name="android.permission.INTERNET" /> 
@@ -20,10 +20,14 @@
 	-->
 	
 	
-	<uses-sdk android:minSdkVersion="4"/>
+	<uses-sdk android:minSdkVersion="7"/>
 	
-    <application android:icon="@drawable/launch" android:label="@string/app_name" >
-
+	
+	<application android:icon="@drawable/launch" android:label="@string/app_name">
+	
+	<!--  
+    <application android:icon="@drawable/launch" android:label="@string/app_name" android:hardwareAccelerated="true">
+	-->
 		<activity android:name=".test.IntentListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +35,8 @@
             </intent-filter>
         </activity>
 
-		<activity android:name=".test.AdhocActivity" android:theme="@style/android:Theme.Light"></activity>				
+		<activity android:name=".test.AdhocActivity" android:theme="@style/android:Theme.Light"></activity>	
+		<activity android:name=".test.AdhocActivity2" android:theme="@style/android:Theme.Light"></activity>			
 		<activity android:name=".test.async.AjaxLoadingActivity" android:theme="@style/android:Theme.Light"></activity>		
 		<activity android:name=".test.image.ImageLoadingActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.image.ImageLoadingListActivity" android:theme="@style/android:Theme.Light"></activity>
@@ -43,6 +48,6 @@
 		<activity android:name=".test.image.ImageLoadingAspectRatioActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.async.AjaxAuthActivity" android:theme="@style/android:Theme.Light"></activity>	
 		<activity android:name=".test.async.XmlActivity" android:theme="@style/android:Theme.Light"></activity>
-		<activity android:name=".test.async.ServiceActivity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.async.ServiceActivity"></activity>
     </application>
 </manifest>

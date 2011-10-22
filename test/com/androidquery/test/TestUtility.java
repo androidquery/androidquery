@@ -2,12 +2,12 @@ package com.androidquery.test;
 
 import java.util.UUID;
 
-import com.flurry.android.FlurryAgent;
-
 import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.widget.Toast;
+
+import com.flurry.android.FlurryAgent;
 
 
 public class TestUtility {

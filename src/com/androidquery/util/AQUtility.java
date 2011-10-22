@@ -484,7 +484,6 @@ public class AQUtility {
 	
 	public static File getTempDir(){
 		File ext = Environment.getExternalStorageDirectory();
-		AQUtility.debug("ext", ext);
 		File tempDir = new File(ext, "aquery/temp");		
 		tempDir.mkdirs();
 		if(!tempDir.exists()) return null;

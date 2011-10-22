@@ -233,7 +233,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	
 	public void async_invalidate(){
 		
-		String url = "http://androidquery.appspot.com/api/market";
+		String url = "http://androidquery.appspot.com/test/invalid.json";
         
         aq.progress(R.id.progress).ajax(url, JSONObject.class, 15 * 60000, new AjaxCallback<JSONObject>() {
 

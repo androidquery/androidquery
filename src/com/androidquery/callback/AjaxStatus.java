@@ -50,6 +50,14 @@ public class AjaxStatus {
 	private boolean done;
 	private boolean invalid;
 	
+	public AjaxStatus(){		
+	}
+	
+	public AjaxStatus(int code, String message){
+		this.code = code;
+		this.message = message;
+	}
+	
 	protected AjaxStatus source(int source){
 		this.source = source;
 		return this;

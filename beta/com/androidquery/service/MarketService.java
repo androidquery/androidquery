@@ -8,30 +8,22 @@ import org.xml.sax.XMLReader;
 import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Html.TagHandler;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager.LayoutParams;
-import android.webkit.WebView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
-import com.androidquery.AbstractAQuery;
-import com.androidquery.TQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
@@ -39,7 +31,7 @@ import com.androidquery.util.AQUtility;
 public class MarketService{
 
 	private Activity act;
-	private TQuery aq;
+	private AQuery aq;
 	private Handler handler;
 	private String locale;
 	private String rateUrl;
@@ -54,7 +46,7 @@ public class MarketService{
 	
 	public MarketService(Activity act) {
 		this.act = act;
-		this.aq = new TQuery(act);
+		this.aq = new AQuery(act);
 		this.handler = new Handler();
 		this.locale = Locale.getDefault().toString();
 		this.rateUrl = getMarketUrl();
@@ -157,6 +149,7 @@ public class MarketService{
 	}
 	
 	
+	
     private static boolean openUrl(Activity act, String url) {
     
     	
@@ -183,19 +176,17 @@ public class MarketService{
     	
     	if(jo == null) return;
     	
-    	String latestVer = jo.optString("version", null);
+    	String latestVer = jo.optString("version", "0");
 		int latestCode = jo.optInt("code", 0);
 		
-		if(latestVer != null){
-			
-			AQUtility.debug("version", getVersion() + "->" + latestVer + ":" + getVersionCode() + "->" + latestCode);
-			AQUtility.debug("outdated", outdated(latestVer, latestCode));
-			
-			if(force || outdated(latestVer, latestCode)){
-				showUpdateDialog(jo);
-			}
-			
+		AQUtility.debug("version", getVersion() + "->" + latestVer + ":" + getVersionCode() + "->" + latestCode);
+		AQUtility.debug("outdated", outdated(latestVer, latestCode));
+		
+		if(force || outdated(latestVer, latestCode)){
+			showUpdateDialog(jo);
 		}
+		
+		
     	
     }
     
@@ -203,8 +194,8 @@ public class MarketService{
     private boolean outdated(String latestVer, int latestCode){
     	
     	String skip = getSkipVersion(act);
+    	
     	if(latestVer.equals(skip)){
-    		AQUtility.debug("skip!");
     		return false;
     	}
     	
@@ -224,107 +215,126 @@ public class MarketService{
 		
 		if(jo == null || version != null) return; 
 		
+		if(!isActive()) return;
+		
 		JSONObject dia = jo.optJSONObject("dialog");
 		
 		String update = dia.optString("update", "Update");
 		String skip = dia.optString("skip", "Skip");
 		String rate = dia.optString("rate", "Rate");
-		String body = dia.optString("body", jo.optString("recent", "N/A"));
+		String message = dia.optString("body", "");
+		String body = dia.optString("wbody", "");
 		String title = dia.optString("title", "Update Available");
 		
-		body = "<div class=\"doc-whatsnew-container\"><p>What's in this version:</p><ol><li>Added list delay draw examples.</li><li>Added set cache directory example.</li><li>Added share image example.</li></ol></div>";
+		AQUtility.debug("wbody", body);
 		
-		body += "<small><small>check via AndroidQuery</small></small>";
+		
+		version = jo.optString("version", null);
 		
 		Drawable icon = getAppIcon();
 		
 		Context context = act;
 		
-		WebView wv = new WebView(act);				
-		wv.loadData("", "text/html", "utf-8");
-		wv.setBackgroundColor(0);
+		//getDialogStyle(act);
 		
 		
-		AlertDialog dialog = new AlertDialog.Builder(context)
+		final AlertDialog dialog = new AlertDialog.Builder(context)
         .setIcon(icon)
 		.setTitle(title)
-		.setMessage(body)
+		//.setMessage(message)
 		.setPositiveButton(rate, handler)
         .setNeutralButton(skip, handler)
         .setNegativeButton(update, handler)
         .create();
 		
-		dialog.setView(wv, 10, 10, 10, 10);
-		
-		version = jo.optString("version", null);
-		
-		aq.showDialog(dialog);
-		
-		TextView messageView = getMessageView(dialog);
-		if(messageView != null){			
-			updateMessage(messageView, wv, body);
+		/*
+		if(color == null || rec == null){			
+			dialog.setMessage(message);			
+			aq.show(dialog);
+		}else{
+			WebView wv = new WebView(act);	
+			aq.id(wv).setLayerType11(AQuery.LAYER_TYPE_SOFTWARE, null);			
+			String wbody = patchWBody(body, color);		
+			
+			wv.setBackgroundColor(0);
+			int margin = Math.max(10, Math.min(20, rec.left));
+			
+			//dialog.setView(wv, margin, margin, margin, margin); 
+			dialog.setMessage(Html.fromHtml(patchBody(body), null, handler));
+			
+			
+			
+
+			wv.loadDataWithBaseURL(null, wbody, "text/html", "utf-8", null);
 		}
+		*/
+		//AQUtility.debug("method finished", System.currentTimeMillis());
+		
+		dialog.setMessage(Html.fromHtml(patchBody(body), null, handler));
+		
+		aq.show(dialog);
 		
 		
 		return;
 		
 	}
+
 	
-	private void updateMessage(TextView messageView, WebView wv, String body){
-		
-		try{
-		
-			int color = messageView.getTextColors().getDefaultColor();
-			color = color & 0xffffff;
-			
-			messageView.setVisibility(View.GONE);
-			
-			AQUtility.debug("hex", Integer.toHexString(color));
-			
-			String wbody = "<div style=\"color:#" +  Integer.toHexString(color) + ";\">" + body + "</div>"; 
-			
-			wv.loadData(wbody, "text/html", "utf-8");
-			wv.setBackgroundColor(0);
-			
-		}catch(Exception e){
-			AQUtility.report(e);
-		}
-		
+	private static String patchWBody(String body, int color){
+		String wbody = "<html><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"><div style=\"color:#" +  Integer.toHexString(color) + ";\">" + body + "</div></html>"; 
+		return wbody;
 	}
-	
     
-	private TextView getMessageView(Dialog dialog){
-		try{
-			TextView messageView = (TextView) dialog.findViewById(R.id.message);
-			return messageView;
-		}catch(Exception e){
-			AQUtility.report(e);
-			return null;
-		}
+	private static String patchBody(String body){
+		return "<small>" + body + "</small>";
 	}
 	
-	private void resetBody(Dialog dialog, String body){
+	private static Integer color;
+	private static Rect rec;
+	
+	private static void getDialogStyle(Activity act){
 		
-		try{
-			TextView messageView = (TextView) dialog.findViewById(R.id.message);
-			if(messageView != null){
-				messageView.setText(Html.fromHtml(body, null, handler));
+		if(color == null){
+			
+			AlertDialog dialog = new AlertDialog.Builder(act).setMessage(" ").create();
+			
+			dialog.show();
+			dialog.hide();
+			
+			TextView tv = (TextView) dialog.findViewById(R.id.message);
+			
+			if(tv != null){
+				int c = tv.getTextColors().getDefaultColor();
+				c = c & 0xffffff;
+				color = c;	
+				rec = new Rect(tv.getPaddingLeft(), tv.getPaddingTop(), tv.getPaddingRight(), tv.getPaddingBottom());				
 			}
-		}catch(Exception e){
-			AQUtility.report(e);
+			
+			dialog.dismiss();
+			
 		}
+		
+		
 	}
-	
 	
 	private static final String SKIP_VERSION = "aqs.skip";
 	
 	private static void setSkipVersion(Context context, String version){
+	
 		PreferenceManager.getDefaultSharedPreferences(context).edit().putString(SKIP_VERSION, version).commit();		
 	}
 
 	private static String getSkipVersion(Context context){
 		return PreferenceManager.getDefaultSharedPreferences(context).getString(SKIP_VERSION, null);
 	}
+	
+	private boolean isActive(){
+		
+		if(act.isFinishing()) return false;
+		
+		return true;
+	}
+	
 	
 	private static final String BULLET = "•";
 	
@@ -336,15 +346,17 @@ public class MarketService{
 			
 			AQUtility.debug(jo);
 			
-			
 			if(jo != null){
 				
 				if("1".equals(jo.optString("status"))){
 				
+					if(jo.has("dialog")){
+						cb(url, jo, status);
+					}
+					
 					if(!fetch && jo.optBoolean("fetch", false) && status.getSource() == AjaxStatus.NETWORK){
 						
 						fetch = true;
-						//status.invalidate();
 						
 						String marketUrl = jo.optString("marketUrl", null);
 						
@@ -352,11 +364,7 @@ public class MarketService{
 						cb.url(marketUrl).type(String.class).handler(this, "detailCb");				
 						aq.progress(progress).ajax(cb);
 						
-					}				
-					
-					if(jo.has("dialog")){
-						cb(url, jo, status);
-					}
+					}		
 					
 				}else{
 					status.invalidate();
@@ -371,6 +379,7 @@ public class MarketService{
 			
 			if(!completed){			
 				completed = true;			
+				progress = 0;
 				callback(url, jo, status);
 			}
 		}
@@ -417,7 +426,6 @@ public class MarketService{
 		@Override
 		public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
 			
-			AQUtility.debug("unknown", tag);
 			if("li".equals(tag)){
 				
 				if(opening){

@@ -3,8 +3,9 @@ package com.androidquery.test;
 import android.os.Bundle;
 
 import com.androidquery.R;
+import com.androidquery.util.AQUtility;
 
-public class AdhocActivity extends RunSourceActivity {
+public class AdhocActivity2 extends RunSourceActivity{
 
 	
 	@Override
@@ -12,7 +13,7 @@ public class AdhocActivity extends RunSourceActivity {
 	
 		super.onCreate(savedInstanceState);
 		
-		
+		work();
 	}
 	
 	
@@ -24,20 +25,14 @@ public class AdhocActivity extends RunSourceActivity {
 	
 	
 	protected int getContainer(){
-		return R.layout.adhoc_activity;
+		return R.layout.adhoc_activity2;
 	}
 	
 	@Override
 	protected void runSource(){
 		
-		try{
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		AQUtility.debug("ad hoc2");
 		
 	}
 	
-	
-
 }

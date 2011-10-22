@@ -1,7 +1,6 @@
 package com.androidquery.test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import android.app.Activity;
@@ -21,7 +20,6 @@ import com.androidquery.R;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.service.MarketService;
 import com.androidquery.util.AQUtility;
-import com.flurry.android.FlurryAgent;
 
 public class IntentListActivity extends ListActivity {
 
@@ -59,9 +57,9 @@ public class IntentListActivity extends ListActivity {
 		}
 
 		
-		if(isTaskRoot() && TestUtility.isTestDevice(this)){			
+		if(isTaskRoot()){			
 			MarketService ms = new MarketService(this);
-			ms.expire(1).checkVersion();
+			ms.checkVersion();
 		}
 		
 	}
@@ -137,7 +135,7 @@ public class IntentListActivity extends ListActivity {
 		if(type == null && TestUtility.isTestDevice(this)){
 			
 			list.add(makeActivity("com.androidquery.test.AdhocActivity", "Ad Hoc Debug", "", null));
-			
+			list.add(makeActivity("com.androidquery.test.AdhocActivity2", "Ad Hoc Debug2", "", null));
 		}
 		
 		
@@ -215,6 +213,14 @@ public class IntentListActivity extends ListActivity {
     		return false;
     	}
     }
+    
+	@Override
+	public void onDestroy(){
+		
+		aq.dismiss();
+		
+		super.onDestroy();
+	}
 	
 	
 	

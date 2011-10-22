@@ -7,9 +7,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
+import com.androidquery.auth.FacebookHandle;
+import com.androidquery.auth.GoogleHandle;
+import com.androidquery.auth.TwitterHandle;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;
@@ -35,6 +41,56 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		AQUtility.debug("run", type);
 		
 		AQUtility.invokeHandler(this, type, false, null);
+	}
+
+	
+	private void storeToken(String key, String token){
+		PreferenceManager.getDefaultSharedPreferences(this).edit().putString(key, token).commit();	
+	}
+	
+	private static String APP_ID = "251003261612555";
+	public void auth_facebook(){
+		
+		CookieSyncManager.createInstance(this);
+		CookieManager.getInstance().removeAllCookie();		
+		storeToken("aq.fb.token", null);
+		
+		FacebookHandle handle = new FacebookHandle(this, APP_ID);
+		
+		String url = "https://graph.facebook.com/me/feed";
+		aq.auth(handle).progress(R.id.progress).ajax(url, JSONObject.class, this, "facebookCb");
+		
+	}
+	
+	public void facebookCb(String url, JSONObject jo, AjaxStatus status){
+		
+		showResult(jo, status);
+		
+	}
+	
+	private static String CONSUMER_KEY = "x5l8Ax1RSo8T4GjSMYiG8g";
+	private static String CONSUMER_SECRET = "8p46vY3H2sk7hnbTAQF0JqLe8J9xtsssGlxVAWdoySg";
+	
+	public void auth_twitter(){
+		
+		CookieSyncManager.createInstance(this);
+		CookieManager.getInstance().removeAllCookie();		
+		storeToken("aq.tw.token", null);
+		storeToken("aq.tw.secret", null);
+		
+		
+		TwitterHandle handle = new TwitterHandle(this, CONSUMER_KEY, CONSUMER_SECRET);
+		
+		String url = "http://twitter.com/statuses/mentions.json";
+		aq.auth(handle).progress(R.id.progress).ajax(url, JSONArray.class, this, "twitterCb");
+		
+		
+	}
+	
+	public void twitterCb(String url, JSONArray ja, AjaxStatus status){
+		
+		showResult(ja, status);
+		
 	}
 	
 	public void auth_pick_account(){
@@ -230,6 +286,49 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	        
 	}
 	
+	public void auth_parallel(){
+		
+		String url1 = "https://picasaweb.google.com/data/feed/api/user/default";
+		String url2 = "https://picasaweb.google.com/data/feed/api/user/default?alt=json";
+		
+		GoogleHandle gh = new GoogleHandle(this, AQuery.AUTH_PICASA, null);
+		
+		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();
+  
+		cb.url(url1).type(XmlDom.class).weakHandler(this, "pcb1");  
+		cb.auth(gh);
+		
+		AjaxCallback<JSONObject> cb2 = new AjaxCallback<JSONObject>();
+		  
+		cb2.url(url2).type(JSONObject.class).weakHandler(this, "pcb2");  
+		cb2.auth(gh);
+		
+		cb.async(this);
+		cb2.async(this);
+		
+		//aq.progress(R.id.progress).ajax(cb);
+	        
+	}
+	
+	public void pcb1(String url, XmlDom xml, AjaxStatus status){
+		
+		String result = "Result 1:\n";
+		
+		if(xml != null){			
+			result += xml.toString();
+			result = result.substring(0, Math.min(100, result.length())) + " ... ";
+		}
+		
+		this.showTextResult(result);
+		
+	}
+	
+	public void pcb2(String url, JSONObject jo, AjaxStatus status){
+		
+		this.showResult("Result 2:\n" + jo, null);
+		
+	}
+	
 	public void contactsCb(String url, XmlDom xml, AjaxStatus status) {
 		
 		if(xml != null){
@@ -264,5 +363,11 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 	}
 
-	
+	@Override
+	public void onDestroy(){
+		
+		aq.dismiss();
+		
+		super.onDestroy();
+	}
 }

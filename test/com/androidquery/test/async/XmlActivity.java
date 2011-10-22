@@ -1,21 +1,14 @@
 package com.androidquery.test.async;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
 import android.os.Bundle;
 
-import com.androidquery.AQuery;
 import com.androidquery.R;
-import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;

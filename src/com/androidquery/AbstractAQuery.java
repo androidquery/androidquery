@@ -19,11 +19,13 @@ package com.androidquery;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.nio.channels.FileChannel;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
@@ -57,6 +59,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.androidquery.auth.AccountHandle;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
@@ -77,6 +80,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	protected View view;
 	private View progress;
+	private AccountHandle ah;
 
 	private T create(View view){
 		
@@ -264,6 +268,19 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		progress = null;
 		return result;
 	}
+	
+	public T auth(AccountHandle handle){
+		ah = handle;
+		return self();
+	}
+	
+	//dequeue the account handle
+	private AccountHandle dqAccount(){
+		AccountHandle result = ah;
+		ah = null;
+		return result;
+	}
+	
 	
 	/**
 	 * Set the text of a TextView.
@@ -1349,7 +1366,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public <K> T ajax(AjaxCallback<K> callback){
 				
-		callback.progress(dqProgress()).async(getContext());
+		callback.progress(dqProgress()).auth(dqAccount()).async(getContext());
 		
 		return self();
 	}	
@@ -1792,6 +1809,41 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			view.performLongClick();
 		}
 		return self();
+	}
+	
+	
+	private static WeakReference<Dialog> diaRef;
+	
+	public T show(Dialog dialog){
+		
+		if(diaRef != null && diaRef.get() != dialog){
+			dismiss();
+		}
+		
+		try{
+			dialog.show();
+			diaRef = new WeakReference<Dialog>(dialog);
+		}catch(Exception e){			
+		}
+		
+		return self();
+	}
+	
+	public T dismiss(){
+		
+		if(diaRef != null){
+			Dialog d = diaRef.get();
+			if(d != null && d.isShowing()){
+				try{
+					d.dismiss();
+				}catch(Exception e){					
+				}
+			}
+			diaRef = null;
+		}
+		
+		return self();
+		
 	}
 	
 }

@@ -14,9 +14,11 @@
  * the License.
  */
 
-package com.androidquery.util;
+package com.androidquery.auth;
 
 import java.io.IOException;
+
+import org.apache.http.HttpRequest;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -34,46 +36,38 @@ import android.preference.PreferenceManager;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AbstractAjaxCallback;
+import com.androidquery.util.AQUtility;
 
 /**
  * AQuery internal use only. Handle account, account manager related tasks.
  * 
  */
 
-public class AccountHandle extends AsyncTask<String, String, Bundle> implements DialogInterface.OnClickListener, OnCancelListener{
+public class GoogleHandle extends AccountHandle implements DialogInterface.OnClickListener, OnCancelListener{
 
 	private AccountManager am;
 	private Account acc;
-	private String token;
 	private String type;
 	private Activity act;
 	private String email;
 	private Account[] accs;
-	private AbstractAjaxCallback<?, ?> cb;	
+	private String token;
 	
-	public AccountHandle(Activity act, String type, String email){
+	public GoogleHandle(Activity act, String type, String email){
 	
 		if(AQuery.ACTIVE_ACCOUNT.equals(email)){
 			email = getActiveAccount(act);
 		}
 		
 		this.act = act;
-		this.type = type;
+		this.type = type.substring(2);
 		this.email = email;
 		this.am = AccountManager.get(act);
 		
 	}
 	
-	public void async(AbstractAjaxCallback<?, ?> cb){		
-		this.cb = cb;
-		auth();
-	}
 	
-	public boolean needToken(){
-		return cb == null;
-	}
-	
-	private void auth(){
+	protected void auth(){
 		
 		
 		if(email == null){
@@ -95,8 +89,7 @@ public class AccountHandle extends AsyncTask<String, String, Bundle> implements 
 	}
 	
 	
-	public String reauth(){
-		
+	public boolean reauth(AbstractAjaxCallback<?, ?> cb){
 		
 		am.invalidateAuthToken(acc.type, token);
 		
@@ -108,7 +101,7 @@ public class AccountHandle extends AsyncTask<String, String, Bundle> implements 
 			token = null;
 		} 
 		
-		return token;
+		return token != null;
 		
 	}
 	
@@ -133,7 +126,9 @@ public class AccountHandle extends AsyncTask<String, String, Bundle> implements 
 	        }
 	        builder.setItems(names, this);
 	        builder.setOnCancelListener(this);
-	        builder.create().show();
+	        
+	        AlertDialog dialog = builder.create();//.show();
+	        new AQuery(act).show(dialog);
         }
 	}
 	
@@ -159,65 +154,71 @@ public class AccountHandle extends AsyncTask<String, String, Bundle> implements 
 		
 		this.acc = account;
 		
-		execute();
-		
+		Task task = new Task();
+		task.execute();
 	}
 	
-	@Override
-	protected Bundle doInBackground(String... params) {
-
-		AccountManagerFuture<Bundle> future = am.getAuthToken(acc, type, null, act, null, null);
-		
-		Bundle bundle = null;
-		
-		try {
-			bundle = future.getResult();
-		} catch (OperationCanceledException e) {
-		} catch (AuthenticatorException e) {
-			AQUtility.report(e);
-		} catch (IOException e) {
-			AQUtility.report(e);
+	private class Task extends AsyncTask<String, String, Bundle>{
+	
+		@Override
+		protected Bundle doInBackground(String... params) {
+	
+			AccountManagerFuture<Bundle> future = am.getAuthToken(acc, type, null, act, null, null);
+			
+			Bundle bundle = null;
+			
+			try {
+				bundle = future.getResult();
+			} catch (OperationCanceledException e) {
+			} catch (AuthenticatorException e) {
+				AQUtility.report(e);
+			} catch (IOException e) {
+				AQUtility.report(e);
+			}
+			
+			return bundle;
 		}
 		
-		return bundle;
+		
+		@Override
+		protected void onPostExecute(Bundle bundle) {
+			
+			if(bundle != null && bundle.containsKey(AccountManager.KEY_AUTHTOKEN)) {
+	          	token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+	          	AQUtility.debug("stored auth", token);        	
+	          	success(act);
+			}else{
+	        	failure(act);
+	        }
+			
+		}
+	
+		
+	
 	}
 	
-	private void startCb(){
-		
-		cb.authToken(type, token);
-		cb.async(act);
-		
-		act = null;
-		accs = null;
-		cb = null;
-	}
-	
-	public String getToken(){
-		return token;
+
+	@Override
+	public void onCancel(DialogInterface dialog) {		
+		failure(act);
 	}
 	
 	@Override
-	protected void onPostExecute(Bundle bundle) {
-		
-		if(bundle != null && bundle.containsKey(AccountManager.KEY_AUTHTOKEN)) {
-          	token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-          	AQUtility.debug("stored auth", token);        	
-        }
-		
-		startCb();
-        
-		return;
+	public boolean expired(int code) {
+		return code == 401 || code == 403;
 	}
+	
+	@Override
+	public void applyToken(AbstractAjaxCallback<?, ?> cb, HttpRequest request) {
+		//cb.authToken(type, token);	
+		//cb.header("Authorization", "GoogleLogin auth=" + getToken());
+		request.addHeader("Authorization", "GoogleLogin auth=" + token);
+	}
+
 
 	@Override
-	public void onCancel(DialogInterface dialog) {
-		
-		startCb();
+	public boolean authenticated() {
+		return token != null;
 	}
-	
-	
-	
-
-	
 	
 }
