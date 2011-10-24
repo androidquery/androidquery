@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.lang.reflect.Constructor;
 import java.nio.channels.FileChannel;
 import java.util.Map;
+import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
@@ -1492,6 +1493,31 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		return ajax(url, params, type, cb);
 		
+	}
+	
+	/**
+	 * Ajax call with various callback data types.
+	 *
+	 * The handler signature must be (String url, <K> object, AjaxStatus status)
+	 *
+	 * @param url url
+	 * @param type data type
+	 * @param handler the handler object with the callback method to be called
+	 * @param callback callback method name
+	 * @param headerParams header paramaters
+	 * @return self
+	 */
+	
+	public <K> T ajax(String url, Class<K> type, Object handler, String callback, Map<String, String> headerParams) {
+
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.url(url).type(type).weakHandler(handler, callback);
+
+		Set<String> keySet = headerParams.keySet();
+		for (String key : keySet) {
+			cb.header(key, headerParams.get(key));
+		}
+		return ajax(cb);
 	}
 	
 	/**
