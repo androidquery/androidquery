@@ -1543,8 +1543,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T invalidate(String url){
 		
+	
 		File file = getCachedFile(url);
-		file.delete();
+		if (file != null)
+			file.delete();
 		
 		return self();
 	}
