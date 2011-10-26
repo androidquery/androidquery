@@ -281,6 +281,23 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * Set the text of a TextView with localized formatted string
+	 * from application's package's default string table
+	 *
+	 * @param resid the resid
+	 * @return self
+	 * @see Context#getString(int, Object...)
+	 */
+	public T text(int resid, Object... formatArgs) {
+		Context context = getContext();
+		if (context != null) {
+			CharSequence text = context.getString(resid, formatArgs);
+			text(text);
+		}
+		return self();
+	}
+	
+	/**
 	 * Set the text of a TextView.
 	 *
 	 * @param text the text
