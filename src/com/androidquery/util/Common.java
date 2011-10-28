@@ -283,11 +283,9 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 				
 					AbsListView lv = (AbsListView) parent;
 					
-					if(lv.getAdapter() instanceof BaseAdapter){	
-						sl = new Common();
-						lv.setOnScrollListener(sl);
-						lv.setTag(AQuery.TAG_SCROLL_LISTENER, sl);				
-					}
+					sl = new Common();
+					lv.setOnScrollListener(sl);
+					lv.setTag(AQuery.TAG_SCROLL_LISTENER, sl);				
 					
 				}else{
 					state = sl.getScrollState();
