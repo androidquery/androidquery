@@ -21,7 +21,7 @@
 	<color name="grey">#aaaaaa</color>	
 	<color name="pink">#FF7D70</color>
 	
-	<color name="white">#ffffff</color>
+	<resources name="white"></resources>
 	
 	<entry>
 		<color name="white">#ffffff</color>

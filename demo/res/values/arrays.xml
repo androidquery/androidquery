@@ -14,8 +14,8 @@
     </string-array>
     
     <string-array name="top_values">
-        <item>com.androidquery.test.IntentListActivity:async</item>
-        <item>com.androidquery.test.IntentListActivity:image</item>
+        <item>com.androidquery.test.IntentListActivity:async:updated</item>
+        <item>com.androidquery.test.IntentListActivity:image:updated</item>
         <item>com.androidquery.test.IntentListActivity:auth:updated</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
         <item>com.androidquery.test.IntentListActivity:service:beta</item>
@@ -35,7 +35,9 @@
         <item>Progress</item> 
         <item>AjaxCallback</item>   
         <item>Http Request Headers</item>  
+        <item>Encoding</item> 
         <item>AjaxStatus</item>  
+        <item>Error Handling</item> 
         <item>Invalidate</item> 
         <item>Doc @ AndroidQuery</item>      
     </string-array>
@@ -52,7 +54,9 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_encoding:new</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_status</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_error:updated</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_invalidate</item>  
         <item>http://code.google.com/p/android-query/wiki/AsyncAPI</item>    
     </string-array>
@@ -71,6 +75,8 @@
         <item>Aspect Ratio (Dynamic)</item>          
         <item>Aspect Ratio (Fixed)</item>  
         
+        <item>Image Zoom (WebView)</item>    
+            
         <item>List Items</item>  
         <item>List Items (Aspect Ratio)</item>               
         <item>List Items (ViewHolder Pattern)</item>  
@@ -79,7 +85,6 @@
         
         <item>Grid Items</item>  
         
-        <item>Button with Icon</item>  
         
         <item>Custom Callback</item>        
         <item>File (Async)</item>
@@ -119,6 +124,8 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_ratio</item>
         <item>com.androidquery.test.image.ImageLoadingAspectRatioActivity:image_ratio_fixed</item>
         
+        <item>com.androidquery.test.image.ImageZoomActivity:image_zoom:beta</item>
+        
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
         <item>com.androidquery.test.image.ImageLoadingList2Activity:image_list2</item>
@@ -128,7 +135,6 @@
         
         <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid</item>
         
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_button</item>
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
@@ -163,7 +169,8 @@
         <item>Picasa</item> 
         <item>YouTube</item> 
         <item>Contacts</item>    
-        <item>Parallel Requests</item>    
+        <item>Parallel Requests</item>  
+        <item>Unauth</item>   
     </string-array>
   
   	<string-array name="auth_values">
@@ -176,6 +183,7 @@
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_youtube</item>
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_contacts</item>
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_parallel</item>
+        <item>com.androidquery.test.async.AjaxAuthActivity:auth_unauth</item>
     </string-array>    
     
     <string-array name="source_keys">
@@ -191,7 +199,9 @@
         <item>async_progress</item>
         <item>async_advance</item>
         <item>async_header</item>
+        <item>async_encoding</item>
         <item>async_status</item>
+        <item>async_error</item>
         <item>async_invalidate</item>
         
         <item>image_simple</item>
@@ -206,7 +216,8 @@
         
         <item>image_ratio</item>
         <item>image_ratio_fixed</item>
-        
+        <item>image_zoom</item>
+            
         <item>image_list</item>
         <item>image_list2</item>
         <item>image_list3</item>
@@ -215,7 +226,6 @@
         
         <item>image_grid</item>
         
-        <item>image_button</item>
         
         <item>image_custom</item>
         <item>image_file</item>
@@ -248,6 +258,7 @@
         <item>auth_contacts</item>
         
         <item>auth_parallel</item>
+        <item>auth_unauth</item>
         
         <item>xml_ajax</item>
         <item>xml_resource</item>
@@ -269,7 +280,9 @@
         <item>Show Requests Progress</item>
         <item>Using AjaxCallback Directly</item>
         <item>Setting HTTP Headers for Ajax Requests</item>
+        <item>Setting Encoding other than UTF-8</item>
         <item>Using AjaxStatus for meta data of request and HTTP response</item>
+        <item>Handle Error</item>
         <item>Invalidate a response to avoid caching</item>
         
         <item>Asynchronous HTTP Image Load</item>
@@ -285,6 +298,8 @@
         <item>Preserve Image Aspect Ratio Dynamically</item>
         <item>Predefined Image Aspect Ratio</item>
         
+        <item>Zoom enables image with WebView</item>
+        
         <item>Loading Image in List View Items</item>   
         <item>Loading Image in List View with Aspect Ratio</item> 
         <item>Loading Image in List View Items with ViewHolder Pattern</item>  
@@ -293,7 +308,6 @@
         
         <item>Loading Image in Grid View with Aspect Ratio</item>   
         
-        <item>Loading Remote Button Icon as Left Drawable</item>   
         
         <item>Async Image Load with Custom Callback</item>
         <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>
@@ -329,6 +343,7 @@
         <item>Google Contacts Example - Get list of contacts.</item>
         
         <item>Parallel Requests</item>
+        <item>Clear authorization data</item>
         
         <item>Ajax Request with XmlDom Type - Get a list of featured images on Picasa.</item>
         <item>Parse XML Resource in Raw Resource Folder</item>

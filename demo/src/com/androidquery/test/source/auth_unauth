@@ -1,0 +1,9 @@
+	public void auth_unauth(){
+		
+		FacebookHandle fh = new FacebookHandle(this, APP_ID, "read_stream");
+		fh.unauth();
+		
+		TwitterHandle th = new TwitterHandle(this, CONSUMER_KEY, CONSUMER_SECRET);
+		th.unauth();
+		
+	}

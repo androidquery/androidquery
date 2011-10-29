@@ -114,11 +114,13 @@ public class MarketService{
 	}
 	
 	private String getQueryUrl(){
-		String url = getHost() + "/api/market?app=" + getAppId() + "&locale=" + locale + "&version=" + getVersion() + "&code=" + getVersionCode() + "&aq=" + AQuery.VERSION;
+		String appId = getAppId();		
+		String url = getHost() + "/api/market?app=" + appId + "&locale=" + locale + "&version=" + getVersion() + "&code=" + getVersionCode() + "&aq=" + AQuery.VERSION;
 		return url;
 	}
 	
 	private String getAppId(){
+		
 		return getApplicationInfo().packageName;
 	}
 	

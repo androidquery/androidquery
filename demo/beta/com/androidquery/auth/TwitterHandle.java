@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -56,23 +58,20 @@ public class TwitterHandle extends AccountHandle{
 
 	private void dismiss(){
 		if(dialog != null){
-			dialog.dismiss();
+			new AQuery(act).dismiss(dialog);
 			dialog = null;
 		}
 	}
 	
 	private void show(){
 		if(dialog != null){
-			try{
-				new AQuery(act).show(dialog);
-			}catch(Exception e){				
-			}
+			new AQuery(act).show(dialog);
 		}
 	}
 	
 	private void failure(){
 		dismiss();
-		failure(act);
+		failure(act, 401, "cancel");
 	}
 	
 	protected void auth() {
@@ -192,10 +191,9 @@ public class TwitterHandle extends AccountHandle{
 	
 	private class TwWebViewClient extends WebViewClient {
 		
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			
-            if(url.startsWith(CALLBACK_URI)) {
+		
+		private boolean checkDone(String url){
+			if(url.startsWith(CALLBACK_URI)) {
             	
             	String verf = extract(url, "oauth_verifier");
             	      
@@ -214,13 +212,20 @@ public class TwitterHandle extends AccountHandle{
 		}
 		
 		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			
+            return checkDone(url);
+		}
+		
+		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			
-
 			AQUtility.debug("started", url);
 			
-			super.onPageStarted(view, url, favicon);
-			
+			if(checkDone(url)){
+			}else{
+				super.onPageStarted(view, url, favicon);
+			}
 			
 		}
 		
@@ -238,10 +243,6 @@ public class TwitterHandle extends AccountHandle{
 			failure();
 		}
 		
-		@Override
-		public void onTooManyRedirects(WebView view, Message cancelMsg, Message continueMsg) {
-			failure();
-		}
 		
 	}
 
@@ -286,5 +287,16 @@ public class TwitterHandle extends AccountHandle{
 		return token != null && secret != null;
 	}
 
+	@Override
+	public void unauth(){
+		
+		token = null;
+		secret = null;
+		
+		CookieSyncManager.createInstance(act);
+		CookieManager.getInstance().removeAllCookie();		
+		
+		storeToken(TW_TOKEN, null, TW_SECRET, null);
+	}
 	
 }

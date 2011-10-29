@@ -44,16 +44,10 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	}
 
 	
-	private void storeToken(String key, String token){
-		PreferenceManager.getDefaultSharedPreferences(this).edit().putString(key, token).commit();	
-	}
 	
 	private static String APP_ID = "251003261612555";
 	public void auth_facebook(){
 		
-		CookieSyncManager.createInstance(this);
-		CookieManager.getInstance().removeAllCookie();		
-		storeToken("aq.fb.token", null);
 		
 		FacebookHandle handle = new FacebookHandle(this, APP_ID, "read_stream");
 		
@@ -72,12 +66,6 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	private static String CONSUMER_SECRET = "8p46vY3H2sk7hnbTAQF0JqLe8J9xtsssGlxVAWdoySg";
 	
 	public void auth_twitter(){
-		
-		CookieSyncManager.createInstance(this);
-		CookieManager.getInstance().removeAllCookie();		
-		storeToken("aq.tw.token", null);
-		storeToken("aq.tw.secret", null);
-		
 		
 		TwitterHandle handle = new TwitterHandle(this, CONSUMER_KEY, CONSUMER_SECRET);
 		
@@ -346,6 +334,18 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		}
 		
 		showResult(xml, status);
+	}
+	
+	public void auth_unauth(){
+		
+		FacebookHandle fh = new FacebookHandle(this, APP_ID, "read_stream");
+		fh.unauth();
+		
+		TwitterHandle th = new TwitterHandle(this, CONSUMER_KEY, CONSUMER_SECRET);
+		th.unauth();
+		
+		showResult("Auth data cleared", null);
+		
 	}
 	
 	

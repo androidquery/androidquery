@@ -36,22 +36,20 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		super(AQueryTestActivity.class);
     }
 	
-	/*
 	
-	//Test: public T image(int resid)
+	
 	@UiThreadTest
-	public void testImage1() {
+	public void testImageResourceId() {
 		
 		aq.id(R.id.image).image(R.drawable.icon);
         
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
 		
     }
 	
 	
-	//Test: public T image(int resid)
 	@UiThreadTest
-	public void testImage2() {
+	public void testImageDrawable() {
 		
 		Drawable d = getActivity().getResources().getDrawable(R.drawable.icon);
 		
@@ -59,13 +57,12 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		aq.id(R.id.image).image(d);
         
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
 		
     }
 	
-	//Test: public T image(Bitmap bm)
 	@UiThreadTest
-	public void testImage3() {
+	public void testImageBitmap() {
 		
 		Bitmap bm = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.icon);
 		
@@ -73,17 +70,12 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		aq.id(R.id.image).image(bm);
         
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
 		
     }
 	
 	
-	
-	
-	//@UiThreadTest
-	
-	//Test: public T image(String url)	
-	public void testImage4() {
+	public void testImageBasicUrl() {
 		
 		clearCache();
 		
@@ -97,35 +89,38 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		waitAsync(2000);
 		
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
 		
 		Bitmap bm = aq.getCachedImage(ICON_URL);
 		
 		assertNotNull(bm);
 		
+		File file = aq.getCachedFile(ICON_URL);
+		assertNotNull(file);
+		
     }
 	
-	public void testImage4a() {
+	public void testImageNotSetBeforeNetwork() {
 		
 		clearCache();
+		aq.id(R.id.image);
 		
 		AQUtility.post(new Runnable() {
 			
 			@Override
 			public void run() {
-				aq.id(R.id.code).image(ICON_URL);
+				aq.image(ICON_URL);
 			}
 		});
 		
-		//assertNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), false);
 		
 		Bitmap bm = aq.getCachedImage(ICON_URL);		
 		assertNull(bm);
 		
     }
 	
-	//Test: public T image(String url, boolean memCache, boolean fileCache)	
-	public void testImage5() {
+	public void testImageNoCache() {
 		
 		clearCache();
 		
@@ -139,15 +134,18 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		waitAsync(2000);
 		
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
 		
 		Bitmap bm = aq.getCachedImage(ICON_URL);		
 		assertNull(bm);
 		
+		File file = aq.getCachedFile(ICON_URL);
+		assertNull(file);
+		
     }
 	
 	//Test: public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId)
-	public void testImage6() {
+	public void testImageDownSample() {
 		
 		clearCache();
 		
@@ -161,14 +159,16 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		waitAsync(2000);
 		
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
 		
 		Bitmap bm = aq.getCachedImage(LAND_URL, 200);		
 		assertNotNull(bm);
 		
+		assertTrue(bm.getWidth() < 400);
+		
     }
 	
-	public void testImage6a() {
+	public void testImageFallback() {
 		
 		clearCache();
 		
@@ -182,13 +182,29 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		waitAsync(2000);
 		
-		assertNotNull(aq.getImageView().getDrawable());
-		
-		
-		
+		assertLoaded(aq.getImageView(), true);
     }
 	
-	public void testImage6b() {
+	private void assertLoaded(ImageView imageview, boolean loaded){
+		
+		Drawable d = imageview.getDrawable();
+		
+		int width = 0;
+		
+		if(d != null){
+			width = d.getIntrinsicWidth();
+		}
+		
+		
+		if(loaded){
+			assertTrue(width > 0);
+		}else{
+			assertTrue(width <= 0);
+		}
+		
+	}
+	
+	public void testImageFetchFailed() {
 		
 		clearCache();
 		
@@ -203,12 +219,12 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		waitAsync(2000);
 		
 		
-		
+		assertLoaded(aq.getImageView(), false);
 		
     }	
 	
 	//Test: public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId)
-	public void testImage7() {
+	public void testImagePreset() {
 		
 		clearCache();
 		
@@ -219,9 +235,8 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 			@Override
 			public void run() {
 				
-							
 				aq.id(R.id.image).image(ICON_URL, true, true, 0, 0, thumb, 0);
-				assertNotNull(aq.getImageView().getDrawable());
+				assertLoaded(aq.getImageView(), true);
 			}
 		});
 		
@@ -233,8 +248,7 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
     }	
 	
-	//Test: public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId)
-	public void testImage7a() {
+	public void testImageAnimation() {
 		
 		clearCache();
 		
@@ -256,8 +270,7 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
     }	
 	
-	//Test: public T image(BitmapAjaxCallback callback)
-	public void testImage8() {
+	public void testImageByCallback() {
 		
 		clearCache();
 		
@@ -278,7 +291,7 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		waitAsync(2000);
 		
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
 		
 		
 		Bitmap bm = aq.getCachedImage(ICON_URL);		
@@ -286,8 +299,7 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
     }	
 	
-	//Test: public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int resId, BitmapAjaxCallback callback)
-	public void testImage9() {
+	public void testImageByCallback2() {
 		
 		clearCache();
 		
@@ -313,7 +325,7 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		waitAsync(2000);
 		
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
 		
 		
 		Bitmap bm = aq.getCachedImage(ICON_URL);		
@@ -333,7 +345,7 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		waitAsync(2000);
 		
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
 		
 		waitSec();
 		
@@ -342,8 +354,7 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		assertNotNull(file);
 	}
 	
-	//Test: public T image(File file, int targetWidth)
-	public void testImage10() {
+	public void testImageFileDownsample() {
 		
 		clearCache();
 		
@@ -358,12 +369,13 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 			}
 		});
 		
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
+	
+		assertTrue(aq.getImageView().getDrawable().getIntrinsicWidth() < 400);
 		
     }	
 	
-	//Test: public T image(File file, boolean memCache, int targetWidth, BitmapAjaxCallback callback)
-	public void testImage11() {
+	public void testImageFileWithCallback() {
 		
 		clearCache();
 		
@@ -378,18 +390,18 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 					@Override
 					protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
 						iv.setImageBitmap(bm);
+						assertNotNull(bm);
 					}
 				});
 			}
 		});
 		
-		assertNotNull(aq.getImageView().getDrawable());
+		assertLoaded(aq.getImageView(), true);
 		
     }	
 	
 	
-	//Test: public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio)
-	public void testImage12() {
+	public void testImageRatio() {
 		
 		clearCache();
 		
@@ -405,11 +417,11 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		waitAsync(2000);
 		
+		assertLoaded(aq.getImageView(), true);
 		Bitmap bm = aq.getCachedImage(ICON_URL);		
 		assertNotNull(bm);
 		
     }	
+
 	
-	
-	*/
 }

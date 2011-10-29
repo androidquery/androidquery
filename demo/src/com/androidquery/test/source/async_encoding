@@ -1,0 +1,10 @@
+	public void async_encoding(){
+		
+		String url = "http://www.kyotojp.com/limousine-big5.html";
+		
+		AjaxCallback<String> cb = new AjaxCallback<String>();
+		cb.url(url).type(String.class).encoding("Big5").weakHandler(this, "encodingCb");
+		
+		aq.ajax(cb);
+		
+	}

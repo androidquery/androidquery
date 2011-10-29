@@ -11,12 +11,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.androidquery.AQuery;
 import com.androidquery.WebDialog;
 import com.androidquery.callback.AbstractAjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
 
 public class FacebookHandle extends AccountHandle{
@@ -26,6 +29,7 @@ public class FacebookHandle extends AccountHandle{
 	private WebDialog dialog;
 	private String token;
 	private String permissions;
+	private String message;
 
 	private static final String OAUTH_ENDPOINT = "https://graph.facebook.com/oauth/authorize";	
 	private static final String REDIRECT_URI = "https://www.facebook.com/connect/login_success.html";
@@ -36,33 +40,40 @@ public class FacebookHandle extends AccountHandle{
 	
 	//private static final String DISPLAY_STRING = "touch";
 
+	private boolean first;
+	
 	public FacebookHandle(Activity act, String appId, String permissions) {
 		this.appId = appId;
 		this.act = act;
 		this.permissions = permissions;
 		token = fetchToken();
+		first = token == null;
 	}
 
+    public void setLoadingMessage(String message){
+    	this.message = message;
+    }
+    
+    public void setLoadingMessage(int resId){
+    	this.message = act.getString(resId);
+    }
 
 	private void dismiss(){
 		if(dialog != null){
-			dialog.dismiss();
+			new AQuery(act).dismiss(dialog);
 			dialog = null;
 		}
 	}
 	
 	private void show(){
-		if(dialog != null){
-			try{
-				new AQuery(act).show(dialog);
-			}catch(Exception e){				
-			}
+		if(dialog != null){		
+			new AQuery(act).show(dialog);
 		}
 	}
 	
 	private void failure(){
 		dismiss();
-		failure(act);
+		failure(act, AjaxStatus.AUTH_ERROR, "cancel");
 	}
 	
 	
@@ -80,11 +91,15 @@ public class FacebookHandle extends AccountHandle{
 		
 		FbWebViewClient client = new FbWebViewClient();
 		
-		dialog = new WebDialog(act, url, client);		
+		dialog = new WebDialog(act, url, client);	
+		dialog.setLoadingMessage(message);
 		dialog.setOnCancelListener(client);
 		
 		show();
-		dialog.hide();
+		
+		if(!first || token != null){
+			dialog.hide();
+		}
 		
 	}
 	
@@ -101,10 +116,7 @@ public class FacebookHandle extends AccountHandle{
 
 	private class FbWebViewClient extends WebViewClient implements OnCancelListener {
 		
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			
-			AQUtility.debug("return url: " + url);
+		private boolean checkDone(String url){
 			
 			if(url.startsWith(REDIRECT_URI)) {
 				
@@ -133,17 +145,29 @@ public class FacebookHandle extends AccountHandle{
 				failure();
 				return true;
 			} 
+			
 			return false;
+		}
+		
+		
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			
+			AQUtility.debug("return url: " + url);
+			
+			return checkDone(url);
+			
 		}
 		
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			
-
 			AQUtility.debug("started", url);
 			
-			super.onPageStarted(view, url, favicon);
-			
+			if(checkDone(url)){
+			}else{			
+				super.onPageStarted(view, url, favicon);
+			}
 			
 		}
 		
@@ -151,6 +175,10 @@ public class FacebookHandle extends AccountHandle{
 		public void onPageFinished(WebView view, String url) {
 			AQUtility.debug("finished", url);
 			super.onPageFinished(view, url);
+			
+			//if(dialog != null){
+			//	dialog.showProgress(false);
+			//}
 			
 			show();
 		}
@@ -161,10 +189,6 @@ public class FacebookHandle extends AccountHandle{
 			failure();
 		}
 		
-		@Override
-		public void onTooManyRedirects(WebView view, Message cancelMsg, Message continueMsg) {
-			failure();
-		}
 
 		@Override
 		public void onCancel(DialogInterface dialog) {
@@ -254,7 +278,7 @@ public class FacebookHandle extends AccountHandle{
 
 	
 	@Override
-	public String applyToken(String url){
+	public String getNetworkUrl(String url){
 
 		if(url.indexOf('?') == -1){
 			url = url + "?";
@@ -265,10 +289,26 @@ public class FacebookHandle extends AccountHandle{
 		url = url + "access_token=" + token;
 		return url;
 	}
+	
+	@Override
+	public String getCacheUrl(String url){
+		return getNetworkUrl(url);
+	}
 
 
 	@Override
 	public boolean authenticated() {
 		return token != null;
 	}
+	
+	@Override
+	public void unauth(){
+		
+		token = null;
+		
+		CookieSyncManager.createInstance(act);
+		CookieManager.getInstance().removeAllCookie();	
+		storeToken(null);
+	}
+	
 }

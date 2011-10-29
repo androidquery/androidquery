@@ -35,7 +35,7 @@ public class ImageLoadingList2Activity extends ImageLoadingListActivity {
 				
 				AQuery aq = new AQuery(convertView);
 				
-				aq.id(R.id.tb).progress(R.id.pbar).image(url, true, true, 0, 0, null, 0, 1.5f);
+				aq.id(R.id.tb).progress(R.id.pbar).image(url, true, true, 0, 0, null, 0, AQuery.RATIO_PRESERVE);
 				
 				return convertView;
 				

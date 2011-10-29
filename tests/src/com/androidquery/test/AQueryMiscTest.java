@@ -30,7 +30,7 @@ public class AQueryMiscTest extends AbstractTest<AQueryTestActivity> {
 
 	public void testTempFile() {
 		
-		/*
+		
 		clearCache();
 		
 		AQUtility.post(new Runnable() {
@@ -65,6 +65,6 @@ public class AQueryMiscTest extends AbstractTest<AQueryTestActivity> {
 		
 		File ghost = aq.getCachedFile("http://www.abc.com");
 		assertNull(ghost);
-		*/
+		
     }
 }

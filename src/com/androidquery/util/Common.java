@@ -154,6 +154,8 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	@Override
 	public void onScroll(AbsListView view, int first, int visibleItemCount, int totalItemCount) {
 		
+		checkScrolledBottom(view, scrollState);
+		
 		if(scrollState == OnScrollListener.SCROLL_STATE_FLING){
 			
 			long now = System.currentTimeMillis();	
@@ -165,7 +167,6 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 			}else if(diff > 0 && dur > 100){
 				
 				velocity = ((float) diff / (float) dur) * 1000;
-				//AQUtility.debug("vel", velocity + "(" + diff + "/" + dur + ")");
 				
 				lastPosition = first;
 				lastScroll = now;
@@ -195,19 +196,24 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		this.osl = listener;
 	}
 	
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	private void checkScrolledBottom(AbsListView view, int scrollState){
 		
 		int cc = view.getCount();
-		int first = view.getFirstVisiblePosition();
 		int last = view.getLastVisiblePosition();
-		
-		this.scrollState = scrollState;
 		
 		if(scrollState == OnScrollListener.SCROLL_STATE_IDLE && cc == last + 1){
 			invoke(view, scrollState);
 		}
+	}
+	
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		
+		checkScrolledBottom(view, scrollState);
+		
+		int first = view.getFirstVisiblePosition();
+		
+		this.scrollState = scrollState;
 		
 		if(scrollState == OnScrollListener.SCROLL_STATE_IDLE){
 			
@@ -234,6 +240,56 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	}
 
 
+
+	
+	public static boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
+		
+		if(url == null) return false;
+		
+		int state = OnScrollListener.SCROLL_STATE_IDLE;
+		float vel = 0;
+		Common sl = null;
+		
+		
+		if(BitmapAjaxCallback.getMemoryCached(url, 0) == null && AQUtility.getExistedCacheByUrl(parent.getContext(), url) == null){
+			
+			if(parent instanceof AbsListView){
+				
+				sl = (Common) parent.getTag(AQuery.TAG_SCROLL_LISTENER);
+				
+				if(sl == null){
+				
+					AbsListView lv = (AbsListView) parent;
+					sl = new Common();
+					lv.setOnScrollListener(sl);
+					lv.setTag(AQuery.TAG_SCROLL_LISTENER, sl);				
+				
+				}else{
+					state = sl.getScrollState();
+					vel = sl.getVelocity();
+				}
+			}
+			
+		}else{
+			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
+			return false;
+		}
+		
+		
+		if(state == OnScrollListener.SCROLL_STATE_FLING && vel >= velocity){			
+			if(convertView.getTag(AQuery.TAG_SCROLL_LISTENER) == null && sl != null){
+				sl.addSkip();
+			}
+			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, url);
+			return true;
+		}else{
+			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
+			return false;
+		}
+		
+		
+	}
+	
 	@Override
 	public void afterTextChanged(Editable s) {
 		
@@ -263,56 +319,4 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	public void onNothingSelected(AdapterView<?> arg0) {
 		
 	}
-	
-	public static boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
-		
-		if(url == null) return false;
-		
-		int state = OnScrollListener.SCROLL_STATE_IDLE;
-		float vel = 0;
-		Common sl = null;
-		
-		
-		if(BitmapAjaxCallback.getMemoryCached(url, 0) == null && AQUtility.getExistedCacheByUrl(parent.getContext(), url) == null){
-			
-			if(parent instanceof AbsListView){
-				
-				sl = (Common) parent.getTag(AQuery.TAG_SCROLL_LISTENER);
-				
-				if(sl == null){
-				
-					AbsListView lv = (AbsListView) parent;
-					
-					if(lv.getAdapter() instanceof BaseAdapter){	
-						sl = new Common();
-						lv.setOnScrollListener(sl);
-						lv.setTag(AQuery.TAG_SCROLL_LISTENER, sl);				
-					}
-					
-				}else{
-					state = sl.getScrollState();
-					vel = sl.getVelocity();
-				}
-			}
-			
-		}else{
-			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
-			return false;
-		}
-		
-		
-		if(state == OnScrollListener.SCROLL_STATE_FLING && vel >= velocity){			
-			if(convertView.getTag(AQuery.TAG_SCROLL_LISTENER) == null && sl != null){
-				sl.addSkip();
-			}
-			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, url);
-			return true;
-		}else{
-			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
-			return false;
-		}
-		
-		
-	}
-	
 }

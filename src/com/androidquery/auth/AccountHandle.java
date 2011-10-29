@@ -29,7 +29,6 @@ public abstract class AccountHandle {
 	public abstract boolean authenticated();
 	
 	protected void success(Context context){
-		failed = false;
 		callback(context);
 	}
 	
@@ -46,14 +45,17 @@ public abstract class AccountHandle {
 		
 	}
 	
-	private boolean failed;
-	protected void failure(Context context){		
-		failed = true;
-		callback(context);
-	}
-	
-	public boolean failed(){
-		return failed;
+	protected synchronized void failure(Context context, int code, String message){		
+		
+		if(callbacks != null){
+			
+			for(AbstractAjaxCallback<?, ?> cb: callbacks){
+				cb.failure(code, message);
+			}
+			
+			callbacks = null;
+		}
+		
 	}
 	
 	
@@ -66,9 +68,15 @@ public abstract class AccountHandle {
 	public void applyToken(AbstractAjaxCallback<?, ?> cb, HttpRequest request){		
 	}
 	
-	public String applyToken(String url){
+	public String getNetworkUrl(String url){
 		return url;
 	}
 	
+	public String getCacheUrl(String url){
+		return url;
+	}
+	
+	public void unauth(){		
+	}
 	
 }

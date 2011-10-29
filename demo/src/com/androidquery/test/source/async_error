@@ -1,0 +1,31 @@
+	public void async_error(){
+		
+		String url = "http://www.google.com";
+        
+        aq.progress(R.id.progress).ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                
+            	if(json != null) return;
+            	
+            	switch(status.getCode()){
+            	
+            		case AjaxStatus.TRANSFORM_ERROR:
+            			showResult("unable to transform result to JSONObject", status);
+            			break;
+            		case AjaxStatus.NETWORK_ERROR:
+            			showResult("network error without response from server", status);
+            			break;
+            		case AjaxStatus.AUTH_ERROR:
+            			showResult("authentication error", status);
+            			break;
+            		default:
+            			showResult("other errors", status);
+            			break;
+            	}
+            	
+            }
+        });
+	}
+	

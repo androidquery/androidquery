@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.androidquery"
-      android:versionCode="23"
-      android:versionName="0.15.3">
+      android:versionCode="25"
+      android:versionName="0.15.5">
 
 
 	<uses-permission android:name="android.permission.INTERNET" /> 
@@ -46,6 +46,7 @@
 		<activity android:name=".test.image.ImageLoadingListOptionsActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.image.ImageLoadingGridActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.image.ImageLoadingAspectRatioActivity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.image.ImageZoomActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
 		<activity android:name=".test.async.AjaxAuthActivity" android:theme="@style/android:Theme.Light"></activity>	
 		<activity android:name=".test.async.XmlActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.async.ServiceActivity"></activity>

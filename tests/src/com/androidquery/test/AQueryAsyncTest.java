@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.androidquery.AQuery;
+import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
@@ -49,20 +50,22 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	
 	private void checkStatus(AjaxStatus status){
 		
+		AQUtility.debug("redirect", status.getRedirect());
+		AQUtility.debug("time", status.getTime());
+		AQUtility.debug("response", status.getCode());
+		
 		assertNotNull(status);
 		
 		assertNotNull(status.getRedirect());
 		
-		if(status.getSource() == AjaxStatus.NETWORK){
+		if(result != null && status.getSource() == AjaxStatus.NETWORK){
 			assertNotNull(status.getClient());
 		}
 		
 		assertNotNull(status.getTime());
 		assertNotNull(status.getMessage());
 		
-		AQUtility.debug("redirect", status.getRedirect());
-		AQUtility.debug("time", status.getTime());
-		AQUtility.debug("response", status.getCode());
+		
 		
 		
 	}
@@ -70,7 +73,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 
 	
 	//Test: public <K> T ajax(AjaxCallback<K> callback)
-	public void testAjax1() {
+	public void testAjaxAdvance() {
 		
 		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
         
@@ -98,7 +101,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
     }
 	
 	//Test: public <K> T ajax(String url, Class<K> type, AjaxCallback<K> callback)
-	public void testAjax2() {
+	public void testAjaxCallback() {
 		
 		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
         
@@ -126,7 +129,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
     }
 	
 	//Test: public <K> T ajax(String url, Class<K> type, Object handler, String callback)
-	public void testAjax3() {
+	public void testAjaxHandler() {
 		
 		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
         
@@ -142,7 +145,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
     }
 	
 	//Test: <K> T ajax(String url, Map<String, Object> params, Class<K> type, AjaxCallback<K> callback)
-	public void testAjax4(){
+	public void testAjaxPost(){
 		
         String url = "http://search.twitter.com/search.json";
 		
@@ -168,7 +171,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	}
 	
 	//Test: public <K> T ajax(String url, Map<String, Object> params, Class<K> type, Object handler, String callback)
-	public void testAjax5(){
+	public void testAjaxPostHandler(){
 		
         String url = "http://search.twitter.com/search.json";
 		
@@ -186,7 +189,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	}
 	
 	//Test: public <K> T ajax(String url, Class<K> type, long expire, AjaxCallback<K> callback)
-	public void testAjax6() {
+	public void testAjaxCache() {
 		
 		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
         
@@ -211,10 +214,15 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNotNull(jo);       
         assertNotNull(jo.opt("responseData"));
         
+       
+		File cached = aq.getCachedFile(url);
+		assertTrue(cached.exists());
+		assertTrue(cached.length() > 100);
+		
     }
 	
 	//Test: public <K> T ajax(String url, Class<K> type, long expire, Object handler, String callback)
-	public void testAjax7() {
+	public void testAjaxCacheHandler() {
 		
 		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
         
@@ -317,4 +325,85 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
 		
 	}
+	
+	public void testTransformError(){
+		
+		
+		String url = "http://www.google.com";
+        
+        aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                
+            	done(url, json, status);
+            	
+            }
+        });
+		
+        waitAsync();
+        
+        assertNull(result);
+        assertEquals(AjaxStatus.TRANSFORM_ERROR, status.getCode());
+		
+	}
+	
+	public void test404Error(){
+		
+		
+		String url = "http://androidquery.appspot.com/test/fake";
+        
+        aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                
+            	done(url, json, status);
+            	
+            }
+        });
+		
+        waitAsync();
+        
+        assertNull(result);
+        assertEquals(404, status.getCode());
+		
+	}
+	
+	
+	public void testNetworkError(){
+		
+		
+		String url = "httpd://wrongschema";
+        
+        aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                
+            	done(url, json, status);
+            	
+            }
+        });
+		
+        waitAsync();
+        
+        assertNull(result);
+        assertEquals(AjaxStatus.NETWORK_ERROR, status.getCode());
+		
+	}
+	
+	public void testInvalidate(){
+		
+		testAjaxCache();
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        aq.invalidate(url);
+		
+        File cached = aq.getCachedFile(url);
+        assertNull(cached);
+        
+		
+	}
+	
 }

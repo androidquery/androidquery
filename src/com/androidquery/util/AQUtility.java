@@ -167,8 +167,6 @@ public class AQUtility {
 	
 	private static Object invokeMethod(Object handler, String callback, boolean fallback, Class<?>[] cls, Class<?>[] cls2, Object... params) throws Exception{
 		
-		//AQUtility.debug("invoke", handler + ":" + callback);
-		
 		if(handler == null || callback == null) return null;
 		
 		Method method = null;
@@ -226,12 +224,19 @@ public class AQUtility {
 	
 	public static void ensureUIThread(){
     	
+    	if(!isUIThread()){
+    		AQUtility.report(new IllegalStateException("Not UI Thread"));
+    	}
+    	
+    }
+	
+	public static boolean isUIThread(){
+    	
     	long uiId = Looper.getMainLooper().getThread().getId();
     	long cId = Thread.currentThread().getId();
     	
-    	if(uiId != cId){
-    		AQUtility.report(new IllegalStateException("Not UI Thread"));
-    	}
+    	return uiId == cId;
+    	
     	
     }
 	

@@ -36,6 +36,7 @@ import android.preference.PreferenceManager;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AbstractAjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
 
 /**
@@ -66,9 +67,8 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 		
 	}
 	
-	
+	@Override
 	protected void auth(){
-		
 		
 		if(email == null){
 			accountDialog();
@@ -77,11 +77,7 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 	        for(int i = 0; i < accounts.length; i++) {
 	        	Account account = accounts[i];
 	            if(email.equals(account.name)) {
-	            	AQUtility.debug("account match");
-	            	
 	            	auth(account);
-	            	
-	            	
 	            	return;
 	            }
 	        }
@@ -185,10 +181,10 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 			
 			if(bundle != null && bundle.containsKey(AccountManager.KEY_AUTHTOKEN)) {
 	          	token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-	          	AQUtility.debug("stored auth", token);        	
+	          	//AQUtility.debug("stored auth", token);        	
 	          	success(act);
 			}else{
-	        	failure(act);
+	        	failure(act, AjaxStatus.AUTH_ERROR, "rejected");
 	        }
 			
 		}
@@ -200,7 +196,7 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 
 	@Override
 	public void onCancel(DialogInterface dialog) {		
-		failure(act);
+		failure(act, AjaxStatus.AUTH_ERROR, "cancel");
 	}
 	
 	@Override
@@ -210,9 +206,15 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 	
 	@Override
 	public void applyToken(AbstractAjaxCallback<?, ?> cb, HttpRequest request) {
-		//cb.authToken(type, token);	
-		//cb.header("Authorization", "GoogleLogin auth=" + getToken());
+		
+		//AQUtility.debug("apply token", token);
+		
 		request.addHeader("Authorization", "GoogleLogin auth=" + token);
+	}
+
+	@Override
+	public String getCacheUrl(String url){
+		return url + "#" + token;
 	}
 
 

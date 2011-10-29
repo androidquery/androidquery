@@ -199,6 +199,23 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}	
 	
+	public void async_encoding(){
+		
+		String url = "http://www.kyotojp.com/limousine-big5.html";
+		
+		AjaxCallback<String> cb = new AjaxCallback<String>();
+		cb.url(url).type(String.class).encoding("Big5").weakHandler(this, "encodingCb");
+		
+		aq.progress(R.id.progress).ajax(cb);
+		
+	}
+	
+	public void encodingCb(String url, String html, AjaxStatus status){
+		
+		showResult(html, status);
+		
+	}
+	
 	public void async_status(){
 		
 		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
@@ -226,6 +243,37 @@ public class AjaxLoadingActivity extends RunSourceActivity {
             	map.put("client", client);
             	
             	showResult(map, status);
+            	
+            }
+        });
+	}
+	
+	public void async_error(){
+		
+		String url = "http://www.google.com";
+        
+        aq.progress(R.id.progress).ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                
+            	if(json != null) return;
+            	
+            	switch(status.getCode()){
+            	
+            		case AjaxStatus.TRANSFORM_ERROR:
+            			showResult("unable to transform result to JSONObject", status);
+            			break;
+            		case AjaxStatus.NETWORK_ERROR:
+            			showResult("network error without response from server", status);
+            			break;
+            		case AjaxStatus.AUTH_ERROR:
+            			showResult("authentication error", status);
+            			break;
+            		default:
+            			showResult("other errors", status);
+            			break;
+            	}
             	
             }
         });

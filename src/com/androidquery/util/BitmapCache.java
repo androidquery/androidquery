@@ -52,7 +52,7 @@ public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 		Bitmap old = null;
 		
 		int px = pixels(bm);
-		if(px < maxPixels){
+		if(px <= maxPixels){
 			pixels += px;
 			old = super.put(key, bm);
 			if(old != null){
@@ -68,6 +68,7 @@ public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 		
 		return old;
 	}
+	
 	
 	@Override
 	public Bitmap remove(Object key){
