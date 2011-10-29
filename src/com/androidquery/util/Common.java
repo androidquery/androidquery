@@ -260,10 +260,11 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 				if(sl == null){
 				
 					AbsListView lv = (AbsListView) parent;
+
 					sl = new Common();
 					lv.setOnScrollListener(sl);
 					lv.setTag(AQuery.TAG_SCROLL_LISTENER, sl);				
-				
+					
 				}else{
 					state = sl.getScrollState();
 					vel = sl.getVelocity();
