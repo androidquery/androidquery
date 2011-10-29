@@ -230,7 +230,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Points the current operating view to the specified view.
 	 *
-	 * @param id the id
+	 * @param view
 	 * @return self
 	 */
 	public T id(View view){
@@ -659,7 +659,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
-	 * Set the image of an ImageView from a file with a custom callback.
+	 * Set the image of an ImageView from a file with aspect ratio.
 	 *
 	 * @param bm The image bitmap.
 	 * @param ratio The desired aspect ratio of the imageview. Ratio is height / width, or AQuery.RATIO_PRESERVE to preserve the original aspect ratio of the image.
@@ -1931,7 +1931,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * <br>
 	 * contributed by: neocoin
 	 * 
-	 * @return
+	 * @return self
+	 * 
 	 * @see View#performClick()
 	 */
 	public T click(){
@@ -1947,7 +1948,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * <br>
 	 * contributed by: neocoin
 	 * 
-	 * @return
+	 * @return self
+	 * 
 	 * @see View#performClick()
 	 */
 	public T longClick(){
