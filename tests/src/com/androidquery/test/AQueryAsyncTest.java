@@ -207,7 +207,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 			
         aq.ajax(url, JSONObject.class, 15 * 60 * 1000, cb);
         
-        waitAsync();
+        waitAsync(2000);
         
         JSONObject jo = (JSONObject) result;
         
