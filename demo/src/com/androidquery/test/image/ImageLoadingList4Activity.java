@@ -112,6 +112,8 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 		});
 		*/
 		
+		listAq = new AQuery(this);
+		
 		ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.photo_item, entries){
 			
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -122,7 +124,7 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 				
 				Photo photo = getItem(position);
 				
-				AQuery aq = new AQuery(convertView);
+				AQuery aq = listAq.recycle(convertView);
 				
 				aq.id(R.id.name).text(photo.title);
 				aq.id(R.id.meta).text(photo.author);

@@ -191,7 +191,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T recycle(View root){
 		this.root = root;
-		this.view = null;
+		this.view = root;
 		this.act = null;
 		this.progress = null;
 		this.ah = null;
@@ -341,26 +341,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	/**
-	 * Set the text of a TextView.
-	 *
-	 * @param text the text
-	 * @return self
-	 */
-	public T text(CharSequence text, boolean gone){
-			
-		if(view instanceof TextView){			
-			TextView tv = (TextView) view;
-			tv.setText(text);
-			if(gone && (text == null || text.length() == 0)){
-				tv.setVisibility(View.GONE);
-			}else{
-				tv.setVisibility(View.VISIBLE);
-			}
-		}
-				
-		return self();
-	}
+
 	
 	/**
 	 * Set the text of a TextView.

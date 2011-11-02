@@ -34,7 +34,7 @@ public class TQuery extends AbstractAQuery<TQuery>{
     	
     	WebView wv = (WebView) view;
     	
-    	boolean done = setupWebview(wv, url);
+    	boolean done = false;//setupWebview(wv, url);
     	
     	if(!done){
     		wv.loadData("<html></html>", "text/html", "utf-8");
@@ -68,8 +68,7 @@ public class TQuery extends AbstractAQuery<TQuery>{
     		@Override
     		public void onPageFinished(WebView view, String u) {
     			
-    			if(view.getTag(AQuery.TAG_URL) == null && pv != null){
-    				//aq.id(R.id.progress).gone();
+    			if(view.getTag(AQuery.TAG_URL) == null && pv != null){  				
     				pv.setVisibility(View.GONE);
     			}
     			
@@ -77,9 +76,8 @@ public class TQuery extends AbstractAQuery<TQuery>{
     		
     		@Override
     		public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-    			//aq.id(R.id.progress).gone();
+    			
     			if(pv != null){
-    				//aq.id(R.id.progress).gone();
     				pv.setVisibility(View.GONE);
     			}
     		}
@@ -89,6 +87,9 @@ public class TQuery extends AbstractAQuery<TQuery>{
     	
     }
     
+    //11-01 19:38:42.823: W/AQuery(3429): <html><meta name="viewport" content="target-densitydpi=device-dpi,initial-scale=1, minimum-scale=1,user-scalable=1"><body style="margin:0px;padding:0px;"><div style="vertical-align:middle;text-align:center;display:table-cell;width:854px;height:686px;"><img height="686" src="http://photos-h.ak.fbcdn.net/hphotos-ak-ash4/297103_211318432274011_127037124035476_528812_1631110115_n.jpg" /></div></body></html>
+
+    
     private boolean setupWebview(WebView wv, String url){
     	
     	int width = wv.getWidth();
@@ -97,6 +98,12 @@ public class TQuery extends AbstractAQuery<TQuery>{
     	wv.setInitialScale(100);
     	
     	if(width <= 0 || height <= 0 || url == null) return false;
+    	
+    	AQUtility.debug("webview", width + "x" + height);
+    	
+    	View parent = (View) wv.getParent();
+    	AQUtility.debug("parent", parent.getWidth() + "x" + parent.getHeight());
+    	
     	
     	String meta = "<meta name=\"viewport\" content=\"target-densitydpi=device-dpi,initial-scale=1, minimum-scale=1,user-scalable=1\">";    	
     	String body = "<body style=\"margin:0px;padding:0px;\"><div style=\"vertical-align:middle;text-align:center;display:table-cell;width:@widthpx;height:@heightpx;\"><img @dim src=\"@src\" /></div></body>";

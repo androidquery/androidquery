@@ -1,3 +1,5 @@
+listAq = new AQuery(this);
+
 ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
 	
 	@Override
@@ -9,7 +11,7 @@ ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.conten
 		
 		JSONObject jo = getItem(position);
 		
-		AQuery aq = new AQuery(convertView);
+		AQuery aq = listAq.recycle(convertView);
 		aq.id(R.id.name).text(jo.optString("titleNoFormatting", "No Title"));
 		aq.id(R.id.meta).text(jo.optString("publisher", ""));
 		
