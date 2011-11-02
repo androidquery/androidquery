@@ -683,7 +683,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			network();
 			
 			if(ah != null && ah.expired(status.getCode()) && !reauth){
-				AQUtility.debug("reauth needed");	
+				AQUtility.debug("reauth needed", status.getMessage());	
 				reauth = true;
 				if(ah.reauth(this)){
 					network();
