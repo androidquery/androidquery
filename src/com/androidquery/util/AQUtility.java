@@ -283,7 +283,7 @@ public class AQUtility {
 
 	}
 	
-    private static final int IO_BUFFER_SIZE = 4 * 1024;
+    private static final int IO_BUFFER_SIZE = 1024;
 
     public static void copy(InputStream in, OutputStream out) throws IOException {
         byte[] b = new byte[IO_BUFFER_SIZE];
