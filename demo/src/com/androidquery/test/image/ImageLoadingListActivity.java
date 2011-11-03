@@ -19,6 +19,7 @@ import com.androidquery.test.RunSourceActivity;
 
 public class ImageLoadingListActivity extends RunSourceActivity {
 
+	protected AQuery listAq;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,8 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 		addItems(ja, items);
 		addItems(ja, items);
 		
+		listAq = new AQuery(this);
+		
 		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
 			
 			@Override
@@ -74,7 +77,7 @@ public class ImageLoadingListActivity extends RunSourceActivity {
 				
 				JSONObject jo = getItem(position);
 				
-				AQuery aq = new AQuery(convertView);
+				AQuery aq = listAq.recycle(convertView);
 				aq.id(R.id.name).text(jo.optString("titleNoFormatting", "No Title"));
 				aq.id(R.id.meta).text(jo.optString("publisher", ""));
 				

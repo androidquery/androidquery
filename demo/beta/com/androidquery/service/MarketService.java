@@ -43,6 +43,11 @@ public class MarketService{
 	private String version;
 	private boolean fetch;
 	private boolean completed;
+	private int level = REVISION;
+	
+	public static final int REVISION = 0;
+	public static final int MINOR = 1;
+	public static final int MAJOR = 2;
 	
 	public MarketService(Activity act) {
 		this.act = act;
@@ -55,6 +60,11 @@ public class MarketService{
 	
 	public MarketService rateUrl(String url){
 		this.rateUrl = url;
+		return this;
+	}
+	
+	public MarketService level(int level){
+		this.level = level;
 		return this;
 	}
 	
@@ -170,8 +180,7 @@ public class MarketService{
     }
     
     private String getMarketUrl(){
-    	return "market://details?id=" + getAppId();
-    	
+    	return "market://details?id=" + getAppId(); 	
     }
     
     protected void callback(String url, JSONObject jo, AjaxStatus status){
@@ -206,12 +215,50 @@ public class MarketService{
     	
     	if(!version.equals(latestVer)){
     		if(code <= latestCode){
-    			return true;
+    			//return true;
+    			return requireUpdate(version, latestVer, level);
     		}
     	}
     	
     	return false;
     }
+    
+    private boolean requireUpdate(String existVer, String latestVer, int level){
+    	
+    	if(existVer.equals(latestVer)) return false;
+    	
+    	try{
+    	
+	    	String[] evs = existVer.split("\\.");
+	    	String[] lvs = latestVer.split("\\.");
+	    	
+	    	if(evs.length < 3 || lvs.length < 3) return true;
+	    	
+	    	switch(level){
+	    		case REVISION:
+	    			if(!evs[evs.length - 1].equals(lvs[lvs.length - 1])){
+	    				return true;
+	    			}
+	    		case MINOR:
+	    			if(!evs[evs.length - 2].equals(lvs[lvs.length - 2])){
+	    				return true;
+	    			}
+	    		case MAJOR:
+	    			if(!evs[evs.length - 3].equals(lvs[lvs.length - 3])){
+	    				return true;
+	    			}
+	    			return false;
+	    		default:
+	    			return true;
+	    	}
+    	
+    	}catch(Exception e){
+    		AQUtility.report(e);
+    		return true;
+    	}
+    	
+    }
+    
     
 	protected void showUpdateDialog(JSONObject jo){
 		

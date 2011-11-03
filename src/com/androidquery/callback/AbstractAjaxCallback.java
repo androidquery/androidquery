@@ -16,6 +16,7 @@
 
 package com.androidquery.callback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -68,6 +69,7 @@ import com.androidquery.AQuery;
 import com.androidquery.auth.AccountHandle;
 import com.androidquery.auth.GoogleHandle;
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.PredefinedBAOS;
 import com.androidquery.util.XmlDom;
 
 /**
@@ -683,7 +685,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			network();
 			
 			if(ah != null && ah.expired(status.getCode()) && !reauth){
-				AQUtility.debug("reauth needed");	
+				AQUtility.debug("reauth needed", status.getMessage());	
 				reauth = true;
 				if(ah.reauth(this)){
 					network();
@@ -931,13 +933,21 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         }else{
         	
         	HttpEntity entity = response.getEntity();				
-			InputStream is = entity.getContent();
+			//InputStream is = entity.getContent();
 			
 			HttpHost currentHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
 	        redirect = currentHost.toURI() + currentReq.getURI();
 			
-			data = AQUtility.toBytes(is);
+			//data = AQUtility.toBytes(is);
+	        
+	        int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
+	        
+	        //ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
+	        PredefinedBAOS baos = new PredefinedBAOS(size);
+	        entity.writeTo(baos);
+	        
+	        data = baos.toByteArray();
         }
         
         AQUtility.debug("response", code);

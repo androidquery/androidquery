@@ -22,6 +22,8 @@ public class ImageLoadingList2Activity extends ImageLoadingListActivity {
 		items.add("http://farm4.static.flickr.com/3008/2636284089_3a4383e9a4.jpg");
 		items.add("http://farm3.static.flickr.com/2113/2263237656_e40b912b46.jpg");
 		
+		listAq = new AQuery(this);
+		
 		ArrayAdapter<String> aa = new ArrayAdapter<String>(this, R.layout.content_item_s, items){
 			
 			@Override
@@ -33,7 +35,7 @@ public class ImageLoadingList2Activity extends ImageLoadingListActivity {
 				
 				String url = getItem(position);
 				
-				AQuery aq = new AQuery(convertView);
+				AQuery aq = listAq.recycle(convertView);
 				
 				aq.id(R.id.tb).progress(R.id.pbar).image(url, true, true, 0, 0, null, 0, AQuery.RATIO_PRESERVE);
 				

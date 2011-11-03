@@ -1,3 +1,5 @@
+listAq = new AQuery(this);
+
 ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
 	
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -17,7 +19,7 @@ ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.conten
 		JSONObject jo = getItem(position);
 		String tb = jo.optJSONObject("image").optString("tbUrl");
 		
-		AQuery aq = new AQuery(convertView);
+		AQuery aq = listAq.recycle(convertView);
 		aq.id(holder.imageview).progress(holder.progress).image(tb, true, true, 0, 0, null, 0, 1.0f);
 		
 		return convertView;

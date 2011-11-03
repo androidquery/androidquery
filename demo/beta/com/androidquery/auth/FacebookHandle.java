@@ -134,6 +134,7 @@ public class FacebookHandle extends AccountHandle{
 				if(token != null){
 					dismiss();
 					storeToken(token);
+					first = false;
 					success(act);
 				}else{
 					failure();

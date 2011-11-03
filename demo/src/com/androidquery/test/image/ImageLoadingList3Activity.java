@@ -51,12 +51,17 @@ public class ImageLoadingList3Activity extends ImageLoadingListActivity {
 			addItems(ja, items);
 		}
 		
+		
+		listAq = new AQuery(this);
+		
 		ArrayAdapter<JSONObject> aa = new ArrayAdapter<JSONObject>(this, R.layout.content_item_s, items){
 			
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				
 				ViewHolder holder;
+				
+				
 				
 				if(convertView == null){
 					holder = new ViewHolder();
@@ -73,7 +78,7 @@ public class ImageLoadingList3Activity extends ImageLoadingListActivity {
 				JSONObject jo = getItem(position);
 				String tb = jo.optJSONObject("image").optString("tbUrl");
 				
-				AQuery aq = new AQuery(convertView);
+				AQuery aq = listAq.recycle(convertView);
 				aq.id(holder.name).text(jo.optString("titleNoFormatting", "No Title"));
 				aq.id(holder.meta).text(jo.optString("publisher", ""));
 				aq.id(holder.imageview).progress(holder.progress).image(tb, true, true, 0, 0, null, 0, 1.0f);
