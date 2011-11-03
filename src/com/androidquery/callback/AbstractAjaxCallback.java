@@ -16,6 +16,7 @@
 
 package com.androidquery.callback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -931,13 +932,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         }else{
         	
         	HttpEntity entity = response.getEntity();				
-			InputStream is = entity.getContent();
+			//InputStream is = entity.getContent();
 			
 			HttpHost currentHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
 	        redirect = currentHost.toURI() + currentReq.getURI();
 			
-			data = AQUtility.toBytes(is);
+			//data = AQUtility.toBytes(is);
+	        
+	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        entity.writeTo(baos);
+	        
+	        data = baos.toByteArray();
         }
         
         AQUtility.debug("response", code);
