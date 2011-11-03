@@ -106,7 +106,7 @@ public class TQuery extends AbstractAQuery<TQuery>{
     	
     	
     	String meta = "<meta name=\"viewport\" content=\"target-densitydpi=device-dpi,initial-scale=1, minimum-scale=1,user-scalable=1\">";    	
-    	String body = "<body style=\"margin:0px;padding:0px;\"><div style=\"vertical-align:middle;text-align:center;display:table-cell;width:@widthpx;height:@heightpx;\"><img @dim src=\"@src\" /></div></body>";
+    	String body = "<body style=\"margin:0px;padding:0px;background:black;\"><div style=\"vertical-align:middle;text-align:center;display:table-cell;width:@widthpx;height:@heightpx;\"><img @dim src=\"@src\" /></div></body>";
     	
     	body = body.replaceAll("@width", width + "").replaceAll("@height", height + "").replaceAll("@src", url);
     	
