@@ -69,6 +69,7 @@ import com.androidquery.AQuery;
 import com.androidquery.auth.AccountHandle;
 import com.androidquery.auth.GoogleHandle;
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.PredefinedBAOS;
 import com.androidquery.util.XmlDom;
 
 /**
@@ -940,7 +941,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			//data = AQUtility.toBytes(is);
 	        
-	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
+	        
+	        //ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
+	        PredefinedBAOS baos = new PredefinedBAOS(size);
 	        entity.writeTo(baos);
 	        
 	        data = baos.toByteArray();
