@@ -27,12 +27,8 @@ public abstract class AccountHandle {
 	
 	
 	public abstract boolean authenticated();
-	
-	protected void success(Context context){
-		callback(context);
-	}
-	
-	private synchronized void callback(Context context){
+
+	protected synchronized void success(Context context){
 		
 		if(callbacks != null){
 			

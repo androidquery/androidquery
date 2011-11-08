@@ -222,5 +222,7 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 	public boolean authenticated() {
 		return token != null;
 	}
+
+	
 	
 }
