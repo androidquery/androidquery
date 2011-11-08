@@ -540,6 +540,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(ah != null){
 			
 			if(!ah.authenticated()){
+				AQUtility.debug("auth needed", url);
 				ah.auth(this);
 				return;
 			}
