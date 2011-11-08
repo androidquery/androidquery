@@ -49,10 +49,11 @@ public class WebDialog extends Dialog {
         
     	super.onCreate(savedInstanceState);
    
+    	
     	RelativeLayout layout = new RelativeLayout(getContext());
-        
-        setupWebView(layout);
-        
+        layout.setBackgroundColor(0xFFFFFFFF);
+    	
+        setupWebView(layout);        
         setupProgress(layout);
         
         
