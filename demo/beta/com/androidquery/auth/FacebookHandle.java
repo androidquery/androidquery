@@ -6,6 +6,7 @@ import java.net.URL;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -46,7 +47,10 @@ public class FacebookHandle extends AccountHandle{
 		this.appId = appId;
 		this.act = act;
 		this.permissions = permissions;
-		token = fetchToken();
+		
+		if(permissions.equals(fetchPermission())){
+			token = fetchToken();
+		}		
 		first = token == null;
 	}
 
@@ -104,13 +108,19 @@ public class FacebookHandle extends AccountHandle{
 	}
 	
 	private static final String FB_TOKEN = "aq.fb.token";
+	private static final String FB_PERMISSION = "aq.fb.permission";
 	
 	private String fetchToken(){
 		return PreferenceManager.getDefaultSharedPreferences(act).getString(FB_TOKEN, null);	
 	}
 	
-	private void storeToken(String token){
-		PreferenceManager.getDefaultSharedPreferences(act).edit().putString(FB_TOKEN, token).commit();	
+	private String fetchPermission(){
+		return PreferenceManager.getDefaultSharedPreferences(act).getString(FB_PERMISSION, null);	
+	}
+	
+	private void storeToken(String token, String permission){
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(act).edit();
+		editor.putString(FB_TOKEN, token).putString(FB_PERMISSION, permission).commit();	
 	}
 	
 
@@ -133,7 +143,7 @@ public class FacebookHandle extends AccountHandle{
 				
 				if(token != null){
 					dismiss();
-					storeToken(token);
+					storeToken(token, permissions);
 					first = false;
 					success(act);
 				}else{
@@ -264,7 +274,7 @@ public class FacebookHandle extends AccountHandle{
 	public boolean reauth(final AbstractAjaxCallback<?, ?> cb) {
 		
 		token = null;
-		storeToken(null);
+		storeToken(null, null);
 		
 		AQUtility.post(new Runnable() {
 			
@@ -309,7 +319,7 @@ public class FacebookHandle extends AccountHandle{
 		
 		CookieSyncManager.createInstance(act);
 		CookieManager.getInstance().removeAllCookie();	
-		storeToken(null);
+		storeToken(null, null);
 	}
 	
 }

@@ -114,8 +114,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private void clear(){		
 		whandler = null;
-		result = null;
-		status = null;
 		handler = null;
 		progress = null;
 	}
@@ -952,7 +950,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         }
         
         AQUtility.debug("response", code);
-        
+        /*
+        AQUtility.debug("response", url);
+        if(data != null){
+        	AQUtility.debug("response", data.length);
+        }
+        */
         status.code(code).message(message).redirect(redirect).time(new Date()).data(data).client(client);
 		
 	}
@@ -1013,6 +1016,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private static int lastStatus = 200;
 	protected static int getLastStatus(){
 		return lastStatus;
+	}
+	
+	
+	public T getResult(){
+		return result;
+	}
+	
+	public AjaxStatus getStatus(){
+		return status;
 	}
 	
 }

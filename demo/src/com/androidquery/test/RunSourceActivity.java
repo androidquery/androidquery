@@ -184,17 +184,6 @@ public class RunSourceActivity extends Activity {
 		
 		return source;
 		
-		
-		/*
-		String name = getIntent().getStringExtra("type");
-		
-		if(sourceMap == null){
-			sourceMap = loadMap();			
-		}
-		
-		return sourceMap.get(name);
-		
-		*/
 	}
 	
 	

@@ -1637,6 +1637,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 	}
 	
+	public <K> T sync(AjaxCallback<K> callback){
+		ajax(callback);
+		callback.block();
+		return self();
+	}
+	
+	
+	
 	/**
 	 * Cache the url to file cache without any callback.
 	 *

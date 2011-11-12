@@ -1,8 +1,11 @@
 package com.androidquery;
 
+import java.io.InputStream;
+
 import com.androidquery.util.AQUtility;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Picture;
@@ -22,39 +25,81 @@ public class TQuery extends AbstractAQuery<TQuery>{
 		super(view);
 	}
 	
-
+	
+	private String getSource(Context context){
+		
+		String source = null;
+		
+		try{
+		
+			InputStream is = context.getClassLoader().getResourceAsStream("com/androidquery/web_image.html");			
+			if(is != null){
+				source = new String(AQUtility.toBytes(is));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return source;
+		
+	}
+	
+	
     public TQuery webImage(String url){
     	
     	if(!(view instanceof WebView)){
     		return this;
     	}
     	
+    	WebView wv = (WebView) view;
+    	
+    	
+    	
+    	if(url.equals(wv.getTag(AQuery.TAG_URL))){
+    		return this;
+    	}
+    	
+    	wv.setTag(AQuery.TAG_URL, url);
+    	
     	final View pv = progress;
     	progress = null;
     	
-    	WebView wv = (WebView) view;
     	
-    	boolean done = false;//setupWebview(wv, url);
-    	
-    	if(!done){
-    		wv.loadData("<html></html>", "text/html", "utf-8");
-    		wv.setBackgroundColor(Color.parseColor("#000000"));
-    		
-    		wv.setTag(AQuery.TAG_URL, url);
-    		
-    		wv.setPictureListener(new PictureListener() {
+		wv.loadData("<html></html>", "text/html", "utf-8");
+		wv.setBackgroundColor(Color.parseColor("#000000"));
+		
+		//state, "init", "fetch"
+		wv.setTag(AQuery.TAG_LAYOUT, "init");
+		
+		wv.setPictureListener(new PictureListener() {
+			
+			//private int lastWidth;
+			
+			@Override
+			public void onNewPicture(WebView view, Picture picture) {
 				
-				@Override
-				public void onNewPicture(WebView view, Picture picture) {
-					
-					String url = (String) view.getTag(AQuery.TAG_URL);
-					view.setTag(AQuery.TAG_URL, null);
+				String url = (String) view.getTag(AQuery.TAG_URL);
+				String state = (String) view.getTag(AQuery.TAG_LAYOUT);
+				
+				AQUtility.debug("pic fin", view.getTag(AQuery.TAG_LAYOUT));
+				AQUtility.debug("width", view.getWidth());
+				
+				//int width = view.getWidth();
+				
+				if("init".equals(state)){
+					view.setTag(AQuery.TAG_LAYOUT, "fetch");
+					//lastWidth = width;
+					setupWebview(view, url);					
+				}else if("fetch".equals(state)){
+    				view.setVisibility(View.VISIBLE);
 					view.setPictureListener(null);
-					setupWebview(view, url);
 				}
-			});
+				
+			}
+			
+			
+		});
     		
-    	}
     	
     	//aq.id(R.id.progress).visible();
     	if(pv != null){
@@ -66,10 +111,15 @@ public class TQuery extends AbstractAQuery<TQuery>{
     		
     		
     		@Override
-    		public void onPageFinished(WebView view, String u) {
+    		public void onPageFinished(WebView view, String url) {
     			
-    			if(view.getTag(AQuery.TAG_URL) == null && pv != null){  				
-    				pv.setVisibility(View.GONE);
+    			AQUtility.debug("fin", view.getTag(AQuery.TAG_LAYOUT));
+    			
+    			if(("fetch".equals(view.getTag(AQuery.TAG_LAYOUT)))){
+    				if(pv != null){
+    					pv.setVisibility(View.GONE);
+    				}
+    				view.setWebViewClient(null);
     			}
     			
     		}
@@ -104,28 +154,26 @@ public class TQuery extends AbstractAQuery<TQuery>{
     	View parent = (View) wv.getParent();
     	AQUtility.debug("parent", parent.getWidth() + "x" + parent.getHeight());
     	
-    	
-    	String meta = "<meta name=\"viewport\" content=\"target-densitydpi=device-dpi,initial-scale=1, minimum-scale=1,user-scalable=1\">";    	
-    	String body = "<body style=\"margin:0px;padding:0px;background:black;\"><div style=\"vertical-align:middle;text-align:center;display:table-cell;width:@widthpx;height:@heightpx;\"><img @dim src=\"@src\" /></div></body>";
-    	
-    	body = body.replaceAll("@width", width + "").replaceAll("@height", height + "").replaceAll("@src", url);
+    	String html = getSource(wv.getContext());
+    	html = html.replaceAll("@width", width + "").replaceAll("@height", height + "").replaceAll("@src", url);
     	
     	String dim;
-    	if(width < height){
-    		dim = "width=\"" + width + "\"";
+    	
+    	boolean landscape = width >= height;
+    	
+    	if(!landscape){
+    		dim = "width:" + width + "px;";
     	}else{
-    		dim = "height=\"" + height + "\"";
+    		dim = "height:" + height + "px;";
     	}
+    	html = html.replaceAll("@dim", dim).replaceAll("@scape", landscape + "");	
     	
-    	body = body.replaceAll("@dim", dim);
-    	
-    	String html = "<html>" + meta + body + "</html>";
-    			
-    	AQUtility.debug(html);
+    	//AQUtility.debug(html);
     	
     	WebSettings ws = wv.getSettings();
     	ws.setSupportZoom(true);
     	ws.setBuiltInZoomControls(true);
+    	ws.setJavaScriptEnabled(true);
     	
     	wv.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
     	

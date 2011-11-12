@@ -250,9 +250,8 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		float vel = 0;
 		Common sl = null;
 		
-		
 		if(BitmapAjaxCallback.getMemoryCached(url, 0) == null && AQUtility.getExistedCacheByUrl(parent.getContext(), url) == null){
-			
+		//if(BitmapAjaxCallback.getMemoryCached(url, 0) == null){	
 			if(parent instanceof AbsListView){
 				
 				sl = (Common) parent.getTag(AQuery.TAG_SCROLL_LISTENER);

@@ -442,6 +442,7 @@ public class AQUtility {
 	}
 	
 	public static void cleanCacheAsync(Context context){
+		
 		long triggerSize = 3000000;
 		long targetSize = 2000000;	
 		cleanCacheAsync(context, triggerSize, targetSize);

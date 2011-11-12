@@ -1,0 +1,54 @@
+<html>
+<meta name="viewport" content="target-densitydpi=device-dpi, initial-scale=1, minimum-scale=1, user-scalable=1">
+
+<body style="background:black; margin: 0px; padding: 0px;">
+
+	<div id="box" style="vertical-align: middle; text-align: center; display: table-cell;width:@widthpx;height:@heightpx;">
+		<img id="img" src="@src" style="@dim"/>
+	</div>
+	
+	<script>
+	
+	var scape = @scape;	
+	window.onresize = resize;
+	
+	function resize(){
+		
+	 	var w = window.innerWidth;
+	 	var h = window.innerHeight;
+		
+	 	if(w == 0) return;
+	 	
+	 	var landscape = w > h;
+	 	
+	 	var box = document.getElementById("box");
+	 	
+	 	if(scape != landscape){
+		
+	 		scape = landscape;
+	 		
+		 	box.style.width = w;
+		 	box.style.height = h;
+			
+			var img = document.getElementById("img");	
+			
+			if(!landscape){
+		 		img.style.width = w;
+		 		img.style.height = '';
+			}else{
+				img.style.width = '';
+				img.style.height = h;
+			}
+			
+		 	
+		}
+	 	
+	}
+	
+	</script>
+	
+</body>
+
+
+
+</html>

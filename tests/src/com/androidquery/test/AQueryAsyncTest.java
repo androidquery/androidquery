@@ -14,6 +14,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.test.ActivityInstrumentationTestCase2;
@@ -405,5 +406,23 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
 		
 	}
+	
+	public void testWaitBlock() {
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();		
+		cb.url(url).type(JSONObject.class);		
+        
+		aq.sync(cb);
+        
+		String u = cb.getUrl();
+        JSONObject jo = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        assertNotNull(jo);       
+        assertNotNull(jo.opt("responseData"));
+        checkStatus(status);
+    }
 	
 }

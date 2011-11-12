@@ -49,12 +49,23 @@ public class ImageZoomActivity extends Activity {
     private void initView(){
     
     	String url = "http://farm4.static.flickr.com/3531/3769416703_b76406f9de.jpg";
+    	//String url = "http://192.168.1.222/test/test.htm";
     	
     	aq.id(R.id.text).text("Try pinch zoom with finger.");
     	
     	TQuery aq = new TQuery(this);
     	aq.id(R.id.web).progress(R.id.progress).webImage(url);
-    
+    	
+    	/*
+    	WebView wv = aq.id(R.id.web).getWebView();
+    	
+    	WebSettings ws = wv.getSettings();
+    	ws.setJavaScriptEnabled(true);
+    	ws.setSupportZoom(true);
+    	ws.setBuiltInZoomControls(true);
+    	
+    	wv.loadUrl(url);
+    	*/
     }
    
     
