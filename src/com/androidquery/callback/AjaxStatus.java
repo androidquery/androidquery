@@ -54,6 +54,7 @@ public class AjaxStatus {
 	private long start = System.currentTimeMillis();
 	private boolean done;
 	private boolean invalid;
+	private boolean reauth;
 	
 	public AjaxStatus(){		
 	}
@@ -93,6 +94,11 @@ public class AjaxStatus {
 		return this;
 	}
 	
+	protected AjaxStatus reauth(boolean reauth){
+		this.reauth = reauth;
+		return this;
+	}
+	
 	protected AjaxStatus client(DefaultHttpClient client){
 		this.client = client;
 		return this;
@@ -101,8 +107,10 @@ public class AjaxStatus {
 	protected AjaxStatus done(){
 		this.duration = System.currentTimeMillis() - start;
 		this.done = true;
+		this.reauth = false;
 		return this;
 	}
+	
 	
 	protected AjaxStatus data(byte[] data){
 		this.data = data;
@@ -116,6 +124,10 @@ public class AjaxStatus {
 	
 	protected boolean getDone() {
 		return done;
+	}
+	
+	protected boolean getReauth() {
+		return reauth;
 	}
 	
 	protected boolean getInvalid() {
