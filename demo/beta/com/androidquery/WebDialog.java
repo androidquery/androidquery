@@ -34,7 +34,8 @@ public class WebDialog extends Dialog {
 	private String message;
     
     public WebDialog(Context context, String url, WebViewClient client) {
-        super(context, R.style.Theme_Light_NoTitleBar);
+        //super(context, R.style.Theme_Light_NoTitleBar);
+    	super(context, R.style.Theme_NoTitleBar);
         this.url = url;
         this.client = client;
         
