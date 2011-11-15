@@ -18,7 +18,7 @@
         <item>com.androidquery.test.IntentListActivity:image:updated</item>
         <item>com.androidquery.test.IntentListActivity:auth:updated</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
-        <item>com.androidquery.test.IntentListActivity:service:beta</item>
+        <item>com.androidquery.test.IntentListActivity:service:preview</item>
         <item>http://code.google.com/p/android-query/</item>
         <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html</item>       
     </string-array>
@@ -124,7 +124,7 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_ratio</item>
         <item>com.androidquery.test.image.ImageLoadingAspectRatioActivity:image_ratio_fixed</item>
         
-        <item>com.androidquery.test.image.ImageZoomActivity:image_zoom:beta</item>
+        <item>com.androidquery.test.image.ImageZoomActivity:image_zoom:preview</item>
         
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
@@ -174,8 +174,8 @@
     </string-array>
   
   	<string-array name="auth_values">
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:beta</item> 
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:beta</item> 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:preview</item> 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:preview</item> 
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_pick_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_last_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_specific_account</item>

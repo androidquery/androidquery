@@ -19,9 +19,11 @@ public class AdhocActivity extends RunSourceActivity {
 	
 	private void work(){
 		
+		String url = "https://graph.facebook.com/oauth/authorize?type=user_agent&redirect_uri=https://www.facebook.com/connect/login_success.html&scope=read_stream,read_friendlists,manage_friendlists,manage_notifications,publish_stream,publish_checkins,offline_access,user_photos,user_likes,user_groups,friends_photos&client_id=251003261612555";
+		
 		//runSource();
 		WebView wv = aq.id(R.id.web).getWebView();
-		wv.loadUrl("http://m.facebook.com");
+		wv.loadUrl(url);
 	}
 	
 	

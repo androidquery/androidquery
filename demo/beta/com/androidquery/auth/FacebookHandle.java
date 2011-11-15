@@ -2,6 +2,9 @@ package com.androidquery.auth;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -48,11 +51,43 @@ public class FacebookHandle extends AccountHandle{
 		this.act = act;
 		this.permissions = permissions;
 		
+		/*
 		if(permissions.equals(fetchPermission())){
 			token = fetchToken();
-		}		
+		}*/
+		
+		if(permissionOk(permissions, fetchPermission())){
+			token = fetchToken();
+		}
+		
 		first = token == null;
 	}
+	
+	
+	private boolean permissionOk(String permissions, String old){
+		
+		if(permissions == null) return true;
+		if(old == null) return false;
+		
+		String[] splits = old.split("[,\\s]+");
+		Set<String> oldSet = new HashSet<String>(Arrays.asList(splits));
+		
+		splits = permissions.split("[,\\s]+");
+		
+		AQUtility.debug("old", oldSet);
+		AQUtility.debug("new", Arrays.asList(splits));
+		
+		for(int i = 0; i < splits.length; i++){
+			if(!oldSet.contains(splits[i])){
+				AQUtility.debug("perm mismatch");
+				return false;
+			}
+		}
+		
+		return true;
+		
+	}
+	
 
     public void setLoadingMessage(String message){
     	this.message = message;
@@ -99,12 +134,20 @@ public class FacebookHandle extends AccountHandle{
 		dialog.setLoadingMessage(message);
 		dialog.setOnCancelListener(client);
 		
+		dialog.show();
+		
 		show();
 		
 		if(!first || token != null){
+			
+			AQUtility.debug("auth hide");
 			dialog.hide();
+			
 		}
 		
+		dialog.load();
+		
+		AQUtility.debug("auth started");
 	}
 	
 	private static final String FB_TOKEN = "aq.fb.token";
@@ -184,14 +227,11 @@ public class FacebookHandle extends AccountHandle{
 		
 		@Override
 		public void onPageFinished(WebView view, String url) {
-			AQUtility.debug("finished", url);
-			super.onPageFinished(view, url);
 			
-			//if(dialog != null){
-			//	dialog.showProgress(false);
-			//}
-			
+			super.onPageFinished(view, url);			
 			show();
+			
+			AQUtility.debug("finished", url);
 		}
 		
 		
@@ -272,6 +312,8 @@ public class FacebookHandle extends AccountHandle{
 
 	@Override
 	public boolean reauth(final AbstractAjaxCallback<?, ?> cb) {
+		
+		AQUtility.debug("reauth requested");
 		
 		token = null;
 		storeToken(null, null);

@@ -46,10 +46,13 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	
 	private static String APP_ID = "251003261612555";
+	private static String PERMISSIONS = "read_stream,read_friendlists,manage_friendlists,manage_notifications,publish_stream,publish_checkins,offline_access,user_photos,user_likes,user_groups,friends_photos";
+	
+	
 	public void auth_facebook(){
 		
 		
-		FacebookHandle handle = new FacebookHandle(this, APP_ID, "read_stream");
+		FacebookHandle handle = new FacebookHandle(this, APP_ID, PERMISSIONS);
 		
 		String url = "https://graph.facebook.com/me/feed";
 		aq.auth(handle).progress(R.id.progress).ajax(url, JSONObject.class, this, "facebookCb");

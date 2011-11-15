@@ -7,6 +7,7 @@ import com.androidquery.util.AQUtility;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Picture;
 import android.view.View;
@@ -44,6 +45,16 @@ public class TQuery extends AbstractAQuery<TQuery>{
 		
 	}
 	
+	private static final String PREF_FILE = "WebViewSettings";
+	private static final String DOUBLE_TAP_TOAST_COUNT = "double_tap_toast_count";
+
+	private static void fixWebviewTip(Context context){
+		SharedPreferences prefs = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
+		if (prefs.getInt(DOUBLE_TAP_TOAST_COUNT, 1) > 0) {
+		    prefs.edit().putInt(DOUBLE_TAP_TOAST_COUNT, 0).commit();
+		}
+	}
+	
 	
     public TQuery webImage(String url){
     	
@@ -52,8 +63,6 @@ public class TQuery extends AbstractAQuery<TQuery>{
     	}
     	
     	WebView wv = (WebView) view;
-    	
-    	
     	
     	if(url.equals(wv.getTag(AQuery.TAG_URL))){
     		return this;
@@ -64,6 +73,7 @@ public class TQuery extends AbstractAQuery<TQuery>{
     	final View pv = progress;
     	progress = null;
     	
+    	fixWebviewTip(wv.getContext());
     	
 		wv.loadData("<html></html>", "text/html", "utf-8");
 		wv.setBackgroundColor(Color.parseColor("#000000"));
@@ -130,6 +140,7 @@ public class TQuery extends AbstractAQuery<TQuery>{
     			if(pv != null){
     				pv.setVisibility(View.GONE);
     			}
+    			
     		}
     	});
     	

@@ -425,4 +425,23 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         checkStatus(status);
     }
 	
+	
+	public void testWaitNullUrlCacheBlock() {
+		
+        String url = null;
+		
+		AjaxCallback<String> cb = new AjaxCallback<String>();
+		cb.url(url).type(String.class).fileCache(true).expire(15 * 60 * 1000);
+
+		aq.sync(cb);
+
+		String res = cb.getResult();
+		AjaxStatus status = cb.getStatus();
+		
+		assertNull(res);
+		assertNotNull(status);
+		assertEquals(AjaxStatus.NETWORK_ERROR, status.getCode());
+		
+    }
+	
 }

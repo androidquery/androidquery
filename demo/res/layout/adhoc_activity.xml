@@ -14,26 +14,6 @@
 	    android:id="@+id/web"
 	    />
 	
-	<LinearLayout 
-	    android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-	    android:layout_centerInParent="true"
-	>
-	    
-	    <ProgressBar 
-	        android:layout_width="30dip"
-			android:layout_height="30dip"
-	        />
-	    
-	    <TextView 
-	        android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft="5dip"
-			android:text="Connecting Facebook"
-			android:layout_gravity="center_vertical"
-	        />
-	    
-	</LinearLayout>
 	
 	
 </RelativeLayout>
