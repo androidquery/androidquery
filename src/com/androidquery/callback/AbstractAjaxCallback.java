@@ -352,7 +352,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	private boolean blocked;
-	public void block() throws IllegalStateException{
+	public void block(){
 		
 		if(AQUtility.isUIThread()){
 			throw new IllegalStateException("Cannot block UI thread.");
@@ -363,7 +363,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		try{
 			synchronized(this){
 				blocked = true;
-				this.wait();
+				//wait at most the network timeout plus 5 seconds, this guarantee thread will never be blocked forever
+				this.wait(NET_TIMEOUT + 5000);
 			}
 		}catch(Exception e){			
 		}
@@ -505,7 +506,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	protected File accessFile(File cacheDir, String url){		
+	protected File accessFile(File cacheDir, String url){	
+		
+		
 		File file = AQUtility.getExistedCacheByUrl(cacheDir, url);
 		
 		if(file != null && expire != 0){
@@ -593,34 +596,31 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	public void run() {
 		
 		
-		try{
+		if(!status.getDone()){
 			
-			if(!status.getDone()){
-				backgroundWork();
-				
-				if(status.getDone()){
-					AQUtility.post(this);
-				}
-			}else{
-				afterWork();
-				clear();
+			try{			
+				backgroundWork();			
+			}catch(Throwable e){
+				AQUtility.report(e);
+				status.code(AjaxStatus.NETWORK_ERROR).done();
 			}
 			
-		}catch(Exception e){
-			AQUtility.report(e);
+			if(!status.getReauth()){
+				//if doesn't need to reauth
+				AQUtility.post(this);
+			}
+		}else{
+			afterWork();
+			clear();
 		}
+			
 		
 		
-	}
-	
-	protected void background(){
 		
 	}
-	
 	
 	private void backgroundWork(){
 	
-		background();
 		
 		if(!refresh){
 		
@@ -649,7 +649,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private void fileWork(){
 		
-		//File file = accessFile(cacheDir, url);
 		File file = accessFile(cacheDir, getCacheUrl());
 				
 		//if file exist
@@ -668,14 +667,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		result = datastoreGet(url);
 		
 		if(result != null){		
-			status.source(AjaxStatus.DATASTORE);
+			status.source(AjaxStatus.DATASTORE).done();
 		}
 	}
 	
 	private boolean reauth;
 	private void networkWork(){
 		
-		if(url == null) return;
+		if(url == null){
+			status.code(AjaxStatus.NETWORK_ERROR).done();
+			return;
+		}
+		
 		
 		byte[] data = null;
 		
@@ -689,7 +692,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				if(ah.reauth(this)){
 					network();
 				}else{
-					//skip work until reauth and retry					
+					status.reauth(true);				
 					return;
 				}
 			}
