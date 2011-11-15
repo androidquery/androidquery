@@ -400,6 +400,7 @@ public class AQUtility {
 	}
 	
 	public static File getCacheFile(File dir, String url){
+		if(url == null) return null;
 		String name = getCacheFileName(url);
 		File file = makeCacheFile(dir, name);
 		return file;
