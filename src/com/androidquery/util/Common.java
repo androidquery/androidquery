@@ -226,7 +226,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	            for(int i = 0; i < count; i++) {
 	                View convertView = (View) view.getChildAt(i);
 	                if(convertView.getTag(AQuery.TAG_SCROLL_LISTENER) != null){
-	                	la.getView(first + i, convertView, view);
+	                	la.getView(first + i, convertView, view);	                	
 	                	convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
 	                }
 	            }
@@ -240,8 +240,52 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	}
 
 
-
+	public static boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
+		
+		if(url == null) return false;
+		
+		int state = OnScrollListener.SCROLL_STATE_IDLE;
+		float vel = 0;
+		Common sl = (Common) parent.getTag(AQuery.TAG_SCROLL_LISTENER);
+		if(sl != null){
+			state = sl.getScrollState();
+			vel = sl.getVelocity();
+		}
+		
+		boolean moving = state == OnScrollListener.SCROLL_STATE_FLING && vel >= velocity;
+		
+		if(!moving){
+			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
+			return false;
+		}
+		
+		boolean miss = BitmapAjaxCallback.getMemoryCached(url, 0) == null && AQUtility.getExistedCacheByUrl(parent.getContext(), url) == null;
+		
+		if(!miss){
+			return false;
+		}
+		
+		if(sl == null && parent instanceof AbsListView){
+		
+			AbsListView lv = (AbsListView) parent;
+			sl = new Common();
+			lv.setOnScrollListener(sl);
+			lv.setTag(AQuery.TAG_SCROLL_LISTENER, sl);				
+			
+		}
+				
+		if(sl != null){
+			sl.addSkip();
+			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, url);
+			return true;
+		}
+		
+		return false;
+		
+		
+	}
 	
+	/*
 	public static boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
 		
 		if(url == null) return false;
@@ -289,6 +333,8 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		
 		
 	}
+	
+	*/
 	
 	@Override
 	public void afterTextChanged(Editable s) {
