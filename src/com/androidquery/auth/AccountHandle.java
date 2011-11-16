@@ -57,7 +57,7 @@ public abstract class AccountHandle {
 	
 	protected abstract void auth();
 	
-	public abstract boolean expired(int code);
+	public abstract boolean expired(AbstractAjaxCallback<?, ?> cb, int code);
 	
 	public abstract boolean reauth(AbstractAjaxCallback<?, ?> cb);
 	

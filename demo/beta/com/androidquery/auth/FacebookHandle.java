@@ -305,7 +305,13 @@ public class FacebookHandle extends AccountHandle{
 
 	
 	@Override
-	public boolean expired(int code) {
+	public boolean expired(AbstractAjaxCallback<?, ?> cb, int code) {
+		
+		String url = cb.getUrl();
+		
+		if(code == 403 && url.endsWith("/feed")){
+			return false;
+		}
 		
 		return code == 400 || code == 401 || code == 403;
 	}
