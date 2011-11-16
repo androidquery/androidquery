@@ -83,7 +83,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected View progress;
 	protected AccountHandle ah;
 
-	private T create(View view){
+	protected T create(View view){
 		
 		T result = null;
 		
@@ -404,6 +404,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;
+			iv.setTag(AQuery.TAG_URL, null);
 			if(resid == 0){
 				iv.setImageBitmap(null);
 			}else{				
@@ -427,6 +428,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;
+			iv.setTag(AQuery.TAG_URL, null);
 			iv.setImageDrawable(drawable);
 		}
 		
@@ -445,6 +447,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;
+			iv.setTag(AQuery.TAG_URL, null);
 			iv.setImageBitmap(bm);
 		}
 		

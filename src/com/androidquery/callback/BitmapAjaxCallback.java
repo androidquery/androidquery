@@ -36,7 +36,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.util.AQUtility;
@@ -544,6 +543,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	private void presetBitmap(String url, ImageView v){
 		
+		
 		if(!url.equals(v.getTag(AQuery.TAG_URL)) || preset != null){			
 			
 			v.setTag(AQuery.TAG_URL, url);
@@ -551,6 +551,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			if(preset != null && !cacheAvailable(v.getContext())){
 				setBitmap(url, v, preset, true);			
 			}else{
+				
 				setBitmap(url, v, null, true);
 			}
 		}
@@ -563,7 +564,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private void setBitmap(String url, ImageView iv, Bitmap bm, boolean isPreset){
 		
 		if(bm == null){
-			iv.setImageBitmap(null);
+			iv.setImageDrawable(null);
 			return;
 		}
 		

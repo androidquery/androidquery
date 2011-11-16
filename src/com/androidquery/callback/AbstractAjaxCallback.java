@@ -16,11 +16,9 @@
 
 package com.androidquery.callback;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -953,12 +951,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         }
         
         AQUtility.debug("response", code);
-        /*
-        AQUtility.debug("response", url);
         if(data != null){
-        	AQUtility.debug("response", data.length);
+        	AQUtility.debug(data.length, url);
         }
-        */
+        
         status.code(code).message(message).redirect(redirect).time(new Date()).data(data).client(client);
 		
 	}
