@@ -1751,6 +1751,23 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * 
+	 * See shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck).
+	 * File check is true by default.
+	 * 
+	 * @param convertView the list item view
+	 * @param parent the parent input of getView
+	 * @param url the content url to be checked if cached and is available immediately
+	 * @param velocity the trigger velocity
+	 * 
+	 * @return Bitmap
+	 */
+	
+	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
+		return Common.shouldDelay(convertView, parent, url, velocity, true);
+	}
+	
+	/**
 	 * Determines if a list view item should delay loading a url resource because the list view is scrolling very fast.
 	 * The primary purpose of this method is to skip loading remote resources (such as images) over the internet 
 	 * until the list stop flinging and the user is confusing on the displaying items.
@@ -1761,9 +1778,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *
 	 * Designed to be used inside getView(int position, View convertView, ViewGroup parent) of an adapter.
 	 * 
-	 * If the url resource is cached (in memory or file), this method will returns true. Otherwise, the method returns
+	 * If the url resource is cached, in memory or file, this method will returns true. Otherwise, the method returns
 	 * true of the list is scrolling above the specified velocity. Velocity is measured in items/seconds. 
 	 * Velocity of 0 implies always delay during fling.
+	 * 
+	 * If fileCheck is false, only memory is checked. This only applies to image resources.
 	 * 
 	 * <br>
 	 * <br>
@@ -1797,13 +1816,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param parent the parent input of getView
 	 * @param url the content url to be checked if cached and is available immediately
 	 * @param velocity the trigger velocity
+	 * @param fileCheck fileCheck
 	 * 
 	 * @return Bitmap
 	 */
-	
-	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
-		return Common.shouldDelay(convertView, parent, url, velocity, true);
-	}
 	
 	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck){
 		return Common.shouldDelay(convertView, parent, url, velocity, fileCheck);
