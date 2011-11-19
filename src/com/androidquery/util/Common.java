@@ -239,7 +239,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	}
 
 
-	public static boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
+	public static boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck){
 		
 		if(url == null) return false;
 		
@@ -258,9 +258,10 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 			return false;
 		}
 		
-		boolean miss = BitmapAjaxCallback.getMemoryCached(url, 0) == null && AQUtility.getExistedCacheByUrl(parent.getContext(), url) == null;
+		boolean hit = BitmapAjaxCallback.getMemoryCached(url, 0) != null || (fileCheck && AQUtility.getExistedCacheByUrl(parent.getContext(), url) != null);
+		//boolean miss = BitmapAjaxCallback.getMemoryCached(url, 0) == null;
 		
-		if(!miss){
+		if(hit){
 			return false;
 		}
 		

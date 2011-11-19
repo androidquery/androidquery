@@ -1802,7 +1802,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	
 	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
-		return Common.shouldDelay(convertView, parent, url, velocity);
+		return Common.shouldDelay(convertView, parent, url, velocity, true);
+	}
+	
+	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck){
+		return Common.shouldDelay(convertView, parent, url, velocity, fileCheck);
 	}
 	
 	/**
