@@ -604,8 +604,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		Drawable d = makeDrawable(iv, bm, ratio);
 		Animation anim = null;
 		
-		if(animation == AQuery.FADE_IN || (animation == AQuery.FADE_IN_NETWORK && source == AjaxStatus.NETWORK)){
-			
+		if(fadeIn(animation, source)){	
 			if(preset == null){
 				anim = new AlphaAnimation(0, 1);
 				anim.setInterpolator(new DecelerateInterpolator()); 
@@ -630,6 +629,21 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			anim.setStartTime(AnimationUtils.currentAnimationTimeMillis());		
 			iv.startAnimation(anim);
 		}
+	}
+	
+	private static boolean fadeIn(int animation, int source){
+		
+		switch(animation){
+			case AQuery.FADE_IN:
+				return true;
+			case AQuery.FADE_IN_FILE:
+				if(source == AjaxStatus.FILE) return true;		
+			case AQuery.FADE_IN_NETWORK:
+				if(source == AjaxStatus.NETWORK) return true;
+			default:
+				return false;
+		}
+		
 	}
 
 	/**
