@@ -118,6 +118,7 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		Bitmap bm = aq.getCachedImage(ICON_URL);		
 		assertNull(bm);
 		
+		waitAsync(2000);
     }
 	
 	public void testImageNoCache() {

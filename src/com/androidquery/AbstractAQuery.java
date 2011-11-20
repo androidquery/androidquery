@@ -192,7 +192,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T recycle(View root){
 		this.root = root;
 		this.view = root;
-		this.act = null;
 		this.progress = null;
 		this.ah = null;
 		this.context = null;

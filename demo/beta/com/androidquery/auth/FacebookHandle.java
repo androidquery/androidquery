@@ -309,6 +309,10 @@ public class FacebookHandle extends AccountHandle{
 		
 		String url = cb.getUrl();
 		
+		if(code == 400 && url.endsWith("/likes")){
+			return false;
+		}
+		
 		if(code == 403 && url.endsWith("/feed")){
 			return false;
 		}
