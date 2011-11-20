@@ -259,7 +259,6 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		}
 		
 		boolean hit = BitmapAjaxCallback.getMemoryCached(url, 0) != null || (fileCheck && AQUtility.getExistedCacheByUrl(parent.getContext(), url) != null);
-		//boolean miss = BitmapAjaxCallback.getMemoryCached(url, 0) == null;
 		
 		if(hit){
 			return false;

@@ -74,22 +74,6 @@ public class AQUtility {
 	}
 	
 	
-	public static void debugWait(){
-		
-		if(!debug) return;
-		
-		if(wait == null) wait = new Object();
-		
-		synchronized(wait) {
-			
-			try {
-				wait.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
 	
 	public static void debugNotify(){
 		
