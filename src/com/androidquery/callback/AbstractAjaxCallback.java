@@ -85,7 +85,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private Object handler;
 	private String callback;
 	private WeakReference<View> progress;
-	private WeakReference<Context> context;
 	
 	private String url;
 	private Map<String, Object> params;
@@ -323,15 +322,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		completed = true;
 		
-		if(isActive()){
-		
-			if(callback != null){
+		if(callback != null){
+			Object handler = getHandler();
+			if(isActive(handler)){
 				Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
-				AQUtility.invokeHandler(getHandler(), callback, true, AJAX_SIG, DEFAULT_SIG, url, result, status);			
-			}else{		
-				callback(url, result, status);
+				AQUtility.invokeHandler(handler, callback, true, AJAX_SIG, DEFAULT_SIG, url, result, status);		
 			}
-			
+		}else{		
+			callback(url, result, status);
 		}
 		
 		filePut();
@@ -532,8 +530,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 */
 	public void async(Context context){
 		
-		this.context = new WeakReference<Context>(context);
-		
 		if(status == null){
 			status = new AjaxStatus();
 			status.redirect(url).refresh(refresh);
@@ -554,14 +550,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	}
 	
-	private boolean isActive(){
+	
+	private boolean isActive(Object handler){
 		
-		Context c = context.get();
-		if(c instanceof Activity){
-			Activity act = (Activity) c;
+		if(handler instanceof Activity){
+			Activity act = (Activity) handler;
 			if(act.isFinishing()){			
 				AQUtility.debug("skipping callback activity finished", act);			
 				return false;
+			}else{
+				AQUtility.debug("active", act);
 			}
 		}
 		
