@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -99,10 +100,29 @@ public class AQUtility {
 	}
 	
 	public static void report(Throwable e){
-		if(debug && e != null){
-			String trace = Log.getStackTraceString(e);
-			Log.w("AQuery", trace);
+		
+		if(e == null) return;
+
+		try{
+
+			if(debug){
+				String trace = Log.getStackTraceString(e);
+				Log.w("AQuery", trace);
+			}
+			
+			if(eh != null){
+				eh.uncaughtException(Thread.currentThread(), e);
+			}
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
 		}
+		
+	}
+	
+	private static UncaughtExceptionHandler eh;
+	public static void setExceptionHandler(UncaughtExceptionHandler handler){
+		eh = handler;
 	}
 	
 	private static Map<String, Long> times = new HashMap<String, Long>();
