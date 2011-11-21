@@ -110,6 +110,16 @@ public class FacebookHandle extends AccountHandle{
 		}
 	}
 	
+	private void hide(){
+		if(dialog != null){
+			try{
+				dialog.hide();
+			}catch(Exception e){
+				AQUtility.debug(e);
+			}
+		}
+	}
+	
 	private void failure(){
 		dismiss();
 		failure(act, AjaxStatus.AUTH_ERROR, "cancel");
@@ -118,6 +128,8 @@ public class FacebookHandle extends AccountHandle{
 	
 	protected void auth() {
 
+		if(act.isFinishing()) return;
+		
 		Bundle parameters = new Bundle();
 		parameters.putString("client_id", appId);
 		parameters.putString("type", "user_agent");
@@ -134,14 +146,14 @@ public class FacebookHandle extends AccountHandle{
 		dialog.setLoadingMessage(message);
 		dialog.setOnCancelListener(client);
 		
-		dialog.show();
+		//dialog.show();
 		
 		show();
 		
 		if(!first || token != null){
 			
 			AQUtility.debug("auth hide");
-			dialog.hide();
+			hide();
 			
 		}
 		

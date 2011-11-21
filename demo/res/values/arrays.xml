@@ -162,7 +162,10 @@
     
   	<string-array name="auth_names">
   		<item>Facebook</item>  
-  		<item>Twitter</item>  
+  		
+  		<!--      
+  		<item>Twitter</item>
+  		-->  
         <item>Google Reader (Pick Account)</item>  
         <item>Google Reader (Active Account)</item>  
         <item>Google Reader (Specific Account)</item>    
@@ -175,7 +178,9 @@
   
   	<string-array name="auth_values">
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:preview</item> 
+  		<!--  
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:preview</item> 
+  		-->
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_pick_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_last_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_specific_account</item>
@@ -248,7 +253,9 @@
         <item>image_send</item>      
               
         <item>auth_facebook</item> 
-        <item>auth_twitter</item>       
+        <!--  
+        <item>auth_twitter</item>   
+        -->    
         <item>auth_pick_account</item>  
         <item>auth_last_account</item>      
         <item>auth_specific_account</item> 
@@ -330,7 +337,10 @@
         <item>Send and Share Image</item>      
            
         <item>Facebook Auth - Get User Feed</item> 
+        
+        <!--  
         <item>Twitter Auth - Get User Feed</item>    
+        -->
            
         <item>Google Reader (user select account, if multiple)</item> 
         <item>Google Reader (remember last selected account, pick if first uses)</item> 

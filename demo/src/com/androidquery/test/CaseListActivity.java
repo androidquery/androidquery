@@ -21,7 +21,7 @@ import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.service.MarketService;
 import com.androidquery.util.AQUtility;
 
-public class IntentListActivity extends ListActivity {
+public class CaseListActivity extends ListActivity {
 
 	private boolean debug = false;
 	private AQuery aq;
@@ -59,7 +59,7 @@ public class IntentListActivity extends ListActivity {
 		
 		if(isTaskRoot()){			
 			MarketService ms = new MarketService(this);
-			ms.checkVersion();
+			ms.level(MarketService.MINOR).checkVersion();
 		}
 		
 	}
