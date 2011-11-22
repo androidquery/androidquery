@@ -1232,7 +1232,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T overridePendingTransition5(int enterAnim, int exitAnim){
 		
 		if(act != null){
-			AQUtility.invokeHandler(act, "overridePendingTransition", false, PENDING_TRANSITION_SIG, enterAnim, exitAnim);
+			AQUtility.invokeHandler(act, "overridePendingTransition", false, false, PENDING_TRANSITION_SIG, enterAnim, exitAnim);
 		}
 		
 		return self();
@@ -1249,7 +1249,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T setOverScrollMode9(int mode){
 		
 		if(view instanceof AbsListView){
-			AQUtility.invokeHandler(view, "setOverScrollMode", false, OVER_SCROLL_SIG, mode);
+			AQUtility.invokeHandler(view, "setOverScrollMode", false, false, OVER_SCROLL_SIG, mode);
 		}
 		
 		return self();
@@ -1270,7 +1270,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view != null){
 			
-			AQUtility.invokeHandler(view, "setLayerType", false, LAYER_TYPE_SIG, type, paint);
+			AQUtility.invokeHandler(view, "setLayerType", false, false, LAYER_TYPE_SIG, type, paint);
 		}
 		
 		return self();
@@ -1289,7 +1289,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		Object handler = view;
 		if(handler == null) handler = act;
 		
-		return AQUtility.invokeHandler(handler, method, false, sig, params);
+		return AQUtility.invokeHandler(handler, method, false, false, sig, params);
 	}
 	
 	
@@ -1880,7 +1880,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			}
 		
 		}catch(Exception e){
-			AQUtility.report(e);
+			AQUtility.debug(e);
 		}
 		
 		return file;

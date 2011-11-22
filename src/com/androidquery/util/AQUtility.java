@@ -99,16 +99,20 @@ public class AQUtility {
 		}
 	}
 	
+	public static void debug(Throwable e){
+		if(debug){
+			String trace = Log.getStackTraceString(e);
+			Log.w("AQuery", trace);
+		}
+	}
+	
 	public static void report(Throwable e){
 		
 		if(e == null) return;
 
 		try{
 
-			if(debug){
-				String trace = Log.getStackTraceString(e);
-				Log.w("AQuery", trace);
-			}
+			debug(e);
 			
 			if(eh != null){
 				eh.uncaughtException(Thread.currentThread(), e);
@@ -151,17 +155,21 @@ public class AQUtility {
 		
 	}
 	
-	public static Object invokeHandler(Object handler, String callback, boolean fallback, Class<?>[] cls, Object... params){
+	public static Object invokeHandler(Object handler, String callback, boolean fallback, boolean report, Class<?>[] cls, Object... params){
     	
-		return invokeHandler(handler, callback, fallback, cls, null, params);
+		return invokeHandler(handler, callback, fallback, report, cls, null, params);
 		
     }
 
-	public static Object invokeHandler(Object handler, String callback, boolean fallback, Class<?>[] cls, Class<?>[] cls2, Object... params){
+	public static Object invokeHandler(Object handler, String callback, boolean fallback, boolean report, Class<?>[] cls, Class<?>[] cls2, Object... params){
 		try {
 			return invokeMethod(handler, callback, fallback, cls, cls2, params);
 		} catch (Exception e) {
-			e.printStackTrace();
+			if(report){
+				AQUtility.report(e);
+			}else{
+				AQUtility.debug(e);
+			}
 			return null;
 		}
 	}

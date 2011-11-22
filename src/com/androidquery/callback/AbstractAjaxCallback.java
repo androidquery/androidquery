@@ -326,7 +326,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			Object handler = getHandler();
 			if(isActive(handler)){
 				Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
-				AQUtility.invokeHandler(handler, callback, true, AJAX_SIG, DEFAULT_SIG, url, result, status);		
+				AQUtility.invokeHandler(handler, callback, true, false, AJAX_SIG, DEFAULT_SIG, url, result, status);		
 			}
 		}else{		
 			callback(url, result, status);
@@ -388,7 +388,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			byte[] data = AQUtility.toBytes(new FileInputStream(file));			
 			return transform(url, data, status);
 		} catch(Exception e) {
-			AQUtility.report(e);
+			AQUtility.debug(e);
 			return null;
 		}
 	}
@@ -436,7 +436,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    		String str = new String(data, encoding);
 				result = (JSONObject) new JSONTokener(str).nextValue();
 			} catch (Exception e) {	  		
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			return (T) result;
 		}
@@ -449,7 +449,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    		String str = new String(data, encoding);
 				result = (JSONArray) new JSONTokener(str).nextValue();
 			} catch (Exception e) {	  		
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			return (T) result;
 		}
@@ -460,7 +460,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    	try {    		
 	    		result = new String(data, encoding);
 			} catch (Exception e) {	  		
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			return (T) result;
 		}
@@ -472,7 +472,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			try {    
 				result = new XmlDom(data);
 			} catch (Exception e) {	  		
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			
 			return (T) result; 
@@ -617,7 +617,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			try{			
 				backgroundWork();			
 			}catch(Throwable e){
-				AQUtility.report(e);
+				AQUtility.debug(e);
 				status.code(AjaxStatus.NETWORK_ERROR).done();
 			}
 			
@@ -716,7 +716,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			data = status.getData();
 			
 		}catch(Exception e){
-			AQUtility.report(e);
+			AQUtility.debug(e);
 			status.code(AjaxStatus.NETWORK_ERROR).message("network error");
 		}
 		
@@ -724,7 +724,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		try{
 			result = transform(url, data, status);
 		}catch(Exception e){
-			AQUtility.report(e);
+			AQUtility.debug(e);
 		}
 		
 		if(result == null && data != null){
@@ -756,7 +756,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 					
 				}
 			}catch(Exception e){
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			
 			status.data(null);

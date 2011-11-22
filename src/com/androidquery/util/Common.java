@@ -83,7 +83,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 				cbo = this;
 			}
 			
-			AQUtility.invokeHandler(cbo, method, fallback, sig, input);
+			AQUtility.invokeHandler(cbo, method, fallback, true, sig, input);
 			
 		}else if(methodId != 0){
 			
