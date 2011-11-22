@@ -121,6 +121,7 @@ public class MarketService{
 	private String getHost(){
 		//return "http://192.168.1.222";
 		return "https://androidquery.appspot.com";
+		//return "http://0-1-3.androidquery.appspot.com";
 	}
 	
 	private String getQueryUrl(){

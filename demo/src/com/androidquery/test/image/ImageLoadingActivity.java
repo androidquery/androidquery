@@ -61,7 +61,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	@Override
 	protected void runSource(){
 		AQUtility.debug(type);
-		AQUtility.invokeHandler(this, type, false, null);
+		AQUtility.invokeHandler(this, type, false, false, null);
 	}
 	
 	public void image_simple(){

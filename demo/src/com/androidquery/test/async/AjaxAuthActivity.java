@@ -40,7 +40,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 		AQUtility.debug("run", type);
 		
-		AQUtility.invokeHandler(this, type, false, null);
+		AQUtility.invokeHandler(this, type, false, false, null);
 	}
 
 	

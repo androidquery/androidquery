@@ -35,7 +35,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 		AQUtility.debug("type", type);
 		
-		AQUtility.invokeHandler(this, type, false, null);
+		AQUtility.invokeHandler(this, type, false, false, null);
 	}
 	
 	public void async_json(){
