@@ -620,7 +620,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			}
 		}else if(animation > 0){
 			anim = AnimationUtils.loadAnimation(iv.getContext(), animation);
-			
 		}
 		
 		iv.setImageDrawable(d);
@@ -628,6 +627,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		if(anim != null){
 			anim.setStartTime(AnimationUtils.currentAnimationTimeMillis());		
 			iv.startAnimation(anim);
+		}else{
+			iv.setAnimation(null);
 		}
 	}
 	
@@ -664,7 +665,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		if(bm != null){
 			iv.setTag(AQuery.TAG_URL, url);
-			if(progress != null) progress.setVisibility(View.GONE);			
+			if(progress != null) progress.setVisibility(View.GONE);		
 			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, AjaxStatus.MEMORY);
 		}else{
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();			
