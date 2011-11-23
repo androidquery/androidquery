@@ -14,6 +14,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -442,6 +443,41 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		assertNotNull(status);
 		assertEquals(AjaxStatus.NETWORK_ERROR, status.getCode());
 		
+    }
+	
+	public void testAjaxInactiveActivity() {
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		Activity act = getActivity();
+		act.finish();
+		
+		assertTrue(act.isFinishing());
+		
+		AQuery aq = new AQuery(act);
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				assertFalse(true);
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+			
+        aq.ajax(url, JSONObject.class, cb);
+        
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        assertNull(jo);       
+        
     }
 	
 }
