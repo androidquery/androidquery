@@ -16,11 +16,16 @@
 
 package com.androidquery.callback;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -794,7 +799,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(params == null){
 			httpGet(networkUrl, headers, status);	
 		}else{
-			httpPost(networkUrl, headers, params, status);
+			if(isMultiPart(params)){
+				httpMulti(networkUrl, headers, params, status);
+			}else{
+				httpPost(networkUrl, headers, params, status);
+			}
+			
 		}
 		
 	}
@@ -890,25 +900,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	/*
-	private static DefaultHttpClient getClient(){
-		
-		AQUtility.debug("b");
-		
-		
-		HttpParams httpParams = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(httpParams, NET_TIMEOUT);
-		HttpConnectionParams.setSoTimeout(httpParams, NET_TIMEOUT);
-		
-		//Added this line to avoid issue at: http://stackoverflow.com/questions/5358014/android-httpclient-oom-on-4g-lte-htc-thunderbolt
-		HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
-		
-		DefaultHttpClient client = new DefaultHttpClient(httpParams);
-		
-		return client;
-	}
-	*/
-	
 	
 	private static DefaultHttpClient client;
 	private static DefaultHttpClient getClient(){
@@ -970,18 +961,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	//throw new IOException();
         }else{
         	
-        	HttpEntity entity = response.getEntity();				
-			//InputStream is = entity.getContent();
+        	HttpEntity entity = response.getEntity();	
 			
 			HttpHost currentHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
 	        redirect = currentHost.toURI() + currentReq.getURI();
 			
-			//data = AQUtility.toBytes(is);
-	        
 	        int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
 	        
-	        //ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
 	        PredefinedBAOS baos = new PredefinedBAOS(size);
 	        entity.writeTo(baos);
 	        
@@ -1062,6 +1049,131 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	public AjaxStatus getStatus(){
 		return status;
+	}
+	
+	private static final String lineEnd = "\r\n";
+	private static final String twoHyphens = "--";
+	private static final String boundary = "*****";
+	
+	
+	private static boolean isMultiPart(Map<String, Object> params){
+		
+		for(Map.Entry<String, Object> entry: params.entrySet()){
+			Object value = entry.getValue();
+			AQUtility.debug(entry.getKey(), value);
+			if(value instanceof File || value instanceof byte[]) return true;
+		}
+		
+		return false;
+	}
+	
+	//String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status
+	//private static HttpURLConnection postRealMultiPartConnection(String urlString, Map<String, Object> params) throws IOException {
+	private void httpMulti(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws IOException {
+
+		AQUtility.debug("multipart", url);
+		
+		HttpURLConnection conn = null;
+		DataOutputStream dos = null;
+		
+		
+		URL u = new URL(url);
+		conn = (HttpURLConnection) u.openConnection();
+
+		conn.setInstanceFollowRedirects(false);
+		
+		conn.setConnectTimeout(NET_TIMEOUT);
+		
+		/*
+		if(ah != null){
+			ah.applyToken(this, hr);
+		}
+		*/
+		//conn.addRequestProperty("Cookie", makeSessionCookie());	
+		
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		conn.setUseCaches(false);
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Connection", "Keep-Alive");
+		conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+		dos = new DataOutputStream(conn.getOutputStream());
+
+		for(Map.Entry<String, Object> entry: params.entrySet()){
+			
+			writeObject(dos, entry.getKey(), entry.getValue());
+			
+		}
+		
+		dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+		dos.flush();
+		dos.close();
+		
+		conn.connect();
+		
+        int code = conn.getResponseCode();
+        String message = conn.getResponseMessage();
+        
+        byte[] data = null;
+        
+        if(code < 200 || code >= 300){        	
+        	//throw new IOException();
+        }else{
+        	
+        	InputStream is = conn.getInputStream();
+    		data = AQUtility.toBytes(is);
+    		
+        }
+        
+        AQUtility.debug("response", code);
+        if(data != null){
+        	AQUtility.debug(data.length, url);
+        }
+        
+        status.code(code).message(message).redirect(url).time(new Date()).data(data).client(null);
+			
+	
+	
+	}
+	
+	private static void writeObject(DataOutputStream dos, String name, Object obj) throws IOException{
+		
+		if(obj == null) return;
+		
+		if(obj instanceof File){
+			writeData(dos, name, new FileInputStream((File) obj));
+		}else if(obj instanceof byte[]){
+			writeData(dos, name, new ByteArrayInputStream((byte[]) obj));
+		}else{
+			writeField(dos, name, obj.toString());
+		}
+		
+	}
+	
+	
+	private static void writeData(DataOutputStream dos, String name, InputStream is) throws IOException {
+		
+		dos.writeBytes(twoHyphens + boundary + lineEnd);
+		dos.writeBytes("Content-Disposition: form-data; name=\""+name+"\";"
+				+ " filename=\"" + name + "\"" + lineEnd);
+		dos.writeBytes(lineEnd);
+
+		//dos.write(data);
+		AQUtility.copy(is, dos);
+		
+		dos.writeBytes(lineEnd);
+		
+	}
+	
+    
+	private static void writeField(DataOutputStream dos, String name, String value) throws IOException {
+		dos.writeBytes(twoHyphens + boundary + lineEnd);
+		dos.writeBytes("Content-Disposition: form-data; name=\"" + name + "\"");
+		dos.writeBytes(lineEnd);
+		dos.writeBytes(lineEnd);
+		dos.writeBytes(value);
+		dos.writeBytes(lineEnd);
 	}
 	
 }
