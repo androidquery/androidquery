@@ -103,7 +103,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private long expire;
 	private String encoding = "UTF-8";
-	
+	private WeakReference<Activity> act;
 	
 	@SuppressWarnings("unchecked")
 	private K self(){
@@ -322,14 +322,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		completed = true;
 		
-		if(callback != null){
-			Object handler = getHandler();
-			if(isActive(handler)){
+		if(isActive()){
+		
+			if(callback != null){	
+				Object handler = getHandler();
 				Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
-				AQUtility.invokeHandler(handler, callback, true, false, AJAX_SIG, DEFAULT_SIG, url, result, status);		
+				AQUtility.invokeHandler(handler, callback, true, false, AJAX_SIG, DEFAULT_SIG, url, result, status);					
+			}else{		
+				callback(url, result, status);
 			}
-		}else{		
-			callback(url, result, status);
+		
 		}
 		
 		filePut();
@@ -522,6 +524,22 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return file;
 	}
 	
+	/**
+	 * Starts the async process. 
+	 *
+	 * If activity is passed, the callback method will not be invoked if the activity is no longer in use.
+	 * Specifically, isFinishing() is called to determine if the activity is active.
+	 *
+	 * @param Activity activity
+	 */
+	public void async(Activity act){
+		
+		this.act = new WeakReference<Activity>(act);
+		async((Context) act);
+		
+	}
+	
+	
 	
 	/**
 	 * Starts the async process. 
@@ -551,16 +569,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	
-	private boolean isActive(Object handler){
+	private boolean isActive(){
 		
-		if(handler instanceof Activity){
-			Activity act = (Activity) handler;
-			if(act.isFinishing()){			
-				AQUtility.debug("skipping callback activity finished", act);			
-				return false;
-			}else{
-				AQUtility.debug("active", act);
-			}
+		
+		if(act == null) return true;
+		
+		Activity a = act.get();
+		
+		if(a.isFinishing()){			
+			AQUtility.debug("skipping callback activity finished", a);			
+			return false;
+		}else{
+			AQUtility.debug("active", a);
 		}
 		
 		return true;

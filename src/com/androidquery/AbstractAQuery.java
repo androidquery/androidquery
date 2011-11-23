@@ -61,6 +61,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.androidquery.auth.AccountHandle;
+import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
@@ -90,6 +91,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		try{
 			Constructor<T> c = getConstructor();
 			result = (T) c.newInstance(view);
+			result.act = act;
 		}catch(Exception e){
 			//should never happen
 			e.printStackTrace();
@@ -134,6 +136,17 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		this.view = root;
 	}
 	
+	/**
+	 * Instantiates a new AQuery object. This constructor should be used for Fragments.
+	 *
+	 * @param act Activity
+	 * @param root View container that's the parent of the to-be-operated views.
+	 */
+	public AbstractAQuery(Activity act, View root){
+		this.root = root;
+		this.view = root;
+		this.act = act;
+	}
 
 	
 	/**
@@ -548,7 +561,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		*/
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, progress);
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, progress);
 			progress = null;
 		}
 		
@@ -569,11 +582,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){			
 			callback.imageView((ImageView) view);
+			
+			/*
 			if(progress != null){
 				callback.progress(progress);
 				progress = null;
 			}
 			callback.async(getContext());						
+			*/
+			invoke(callback);
 		} 
 		
 		return self();
@@ -1471,7 +1488,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return context;
 	}
 	
-	
 	/**
 	 * Advanced Ajax callback. User must manually prepare the callback object settings (url, type, etc...) by using its methods.
 	 *
@@ -1482,6 +1498,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	
 	public <K> T ajax(AjaxCallback<K> callback){
+		return invoke(callback);
+	}
+	
+	
+	
+	private <K> T invoke(AbstractAjaxCallback<?, K> callback){
 				
 		
 		if(ah != null){
@@ -1494,10 +1516,18 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			progress = null;
 		}
 		
-		callback.async(getContext());
+		if(act != null){
+			callback.async(act);
+		}else{
+			callback.async(getContext());
+		}
+		
 		
 		return self();
 	}	
+	
+	
+	
 	
 	/**
 	 * Ajax call with various callback data types.

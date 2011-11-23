@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -655,7 +656,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 */
 	
-	public static void async(Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, View progress){
+	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, View progress){
 		
 		Bitmap bm = null;
 		
@@ -670,7 +671,11 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}else{
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();			
 			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).progress(progress);
-			cb.async(context);
+			if(act != null){
+				cb.async(act);
+			}else{
+				cb.async(context);
+			}
 		}
 		
 	}
