@@ -26,6 +26,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -109,6 +110,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private long expire;
 	private String encoding = "UTF-8";
 	private WeakReference<Activity> act;
+	
+	private boolean uiCallback = true;
 	
 	@SuppressWarnings("unchecked")
 	private K self(){
@@ -233,6 +236,17 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 */
 	public K refresh(boolean refresh){
 		this.refresh = refresh;
+		return self();
+	}
+	
+	/**
+	 * Indicate the ajax request should use the main ui thread for callback. Default is true.
+	 *
+	 * @param uiCallback use the main ui thread for callback
+	 * @return self
+	 */
+	public K uiCallback(boolean uiCallback){
+		this.uiCallback = uiCallback;
 		return self();
 	}
 	
@@ -648,11 +662,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			if(!status.getReauth()){
 				//if doesn't need to reauth
-				AQUtility.post(this);
+				if(uiCallback){
+					AQUtility.post(this);
+				}else{
+					afterWork();
+				}
 			}
 		}else{
 			afterWork();
-			clear();
 		}
 			
 		
@@ -817,7 +834,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 		
 		callback();
-		
+		clear();
 	}
 	
 	
@@ -1082,7 +1099,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 
 		conn.setInstanceFollowRedirects(false);
 		
-		conn.setConnectTimeout(NET_TIMEOUT);
+		conn.setConnectTimeout(NET_TIMEOUT * 4);
 		
 		/*
 		if(ah != null){
@@ -1096,8 +1113,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		conn.setUseCaches(false);
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Connection", "Keep-Alive");
-		conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+		conn.setRequestProperty("Content-Type", "multipart/form-data;charset=utf-8;boundary=" + boundary);
 
+		//headers.put("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+		
 		dos = new DataOutputStream(conn.getOutputStream());
 
 		for(Map.Entry<String, Object> entry: params.entrySet()){
@@ -1159,7 +1178,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				+ " filename=\"" + name + "\"" + lineEnd);
 		dos.writeBytes(lineEnd);
 
-		//dos.write(data);
 		AQUtility.copy(is, dos);
 		
 		dos.writeBytes(lineEnd);
@@ -1172,7 +1190,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		dos.writeBytes("Content-Disposition: form-data; name=\"" + name + "\"");
 		dos.writeBytes(lineEnd);
 		dos.writeBytes(lineEnd);
-		dos.writeBytes(value);
+		
+		byte[] data = value.getBytes("UTF-8");
+		dos.write(data);
+		
 		dos.writeBytes(lineEnd);
 	}
 	
