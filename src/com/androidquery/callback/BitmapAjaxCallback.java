@@ -66,6 +66,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private int animation;
 	private Bitmap preset;
 	private float ratio;
+	private boolean targetDim = true;
 	
 	/**
 	 * Instantiates a new bitmap ajax callback.
@@ -97,6 +98,20 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		this.targetWidth = targetWidth;
 		return this;
 	}
+	
+	
+	/**
+	 * Set the target dimension for downsampling.
+	 *
+	 * @param targetDim the target dimension
+	 * @return self
+	 */
+	/*
+	public BitmapAjaxCallback targetDim(boolean targetDim){
+		this.targetDim = targetDim;
+		return this;
+	}
+	*/
 	
 	/**
 	 * Set the image source file.
@@ -183,23 +198,24 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 * @param path the file path
 	 * @param data if file path is null, provide the image data directly
-	 * @param targetWidth the target width
+	 * @param target the target dimension
+	 * @param width use width as target, otherwise use the higher value of height or width
 	 * @return the resized image
 	 */
-	public static Bitmap getResizedImage(String path, byte[] data, int targetWidth){
+	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width){
     	
     	BitmapFactory.Options options = null;
     	
-    	if(targetWidth > 0){
+    	if(target > 0){
 	    	
     		options = new BitmapFactory.Options();
 	        options.inJustDecodeBounds = true;
 	        
 	    	decode(path, data, options);
 	        
-	        int width = options.outWidth;
-	        
-	        int ssize = sampleSize(width, targetWidth);
+	        int dim = options.outWidth;
+	        if(!width) dim = Math.max(dim, options.outHeight);
+	        int ssize = sampleSize(dim, target);
 	       
 	        options = new BitmapFactory.Options();
 	        options.inSampleSize = ssize;	        
@@ -239,7 +255,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
     private Bitmap bmGet(String path, byte[] data){
     	
-    	return getResizedImage(path, data, targetWidth);
+    	return getResizedImage(path, data, targetWidth, targetDim);
     }
 	
     @Override
