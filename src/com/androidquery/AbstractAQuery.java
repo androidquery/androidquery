@@ -67,6 +67,7 @@ import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
+import com.androidquery.util.WebImage;
 
 
 /**
@@ -1759,7 +1760,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		if(result == null){
 			File file = getCachedFile(url);
 			if(file != null){
-				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth);
+				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth, true);
 			}
 		}
 		
@@ -2046,6 +2047,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		return self();
 		
+	}
+	
+	public T webImage(String url){
+		
+		if(view instanceof WebView){
+			WebImage.webImage((WebView) view, url, progress);
+			progress = null;
+		}
+		
+		return self();
 	}
 	
 }
