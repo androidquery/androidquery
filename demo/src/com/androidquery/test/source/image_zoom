@@ -1,0 +1,6 @@
+    private void image_zoom(){
+    
+    	String url = "http://farm4.static.flickr.com/3531/3769416703_b76406f9de.jpg";   	
+    	aq.id(R.id.web).progress(R.id.progress).webImage(url);
+    	
+    }

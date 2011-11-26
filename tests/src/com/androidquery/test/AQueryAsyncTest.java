@@ -46,6 +46,8 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
 		checkStatus(status);
 		
+		assertTrue(AQUtility.isUIThread());
+		
 		done();
 		
 	}
@@ -478,6 +480,29 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         assertNull(jo);       
         
+    }
+	
+	
+	public void testAjaxNotUICb() {
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				assertFalse(AQUtility.isUIThread());
+				
+			}
+			
+		};
+		
+		cb.uiCallback(false);
+		
+		aq.ajax(url, JSONObject.class, cb);
+		
+		waitAsync();
     }
 	
 }

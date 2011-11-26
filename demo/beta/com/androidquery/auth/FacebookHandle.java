@@ -74,8 +74,8 @@ public class FacebookHandle extends AccountHandle{
 		
 		splits = permissions.split("[,\\s]+");
 		
-		AQUtility.debug("old", oldSet);
-		AQUtility.debug("new", Arrays.asList(splits));
+		//AQUtility.debug("old", oldSet);
+		//AQUtility.debug("new", Arrays.asList(splits));
 		
 		for(int i = 0; i < splits.length; i++){
 			if(!oldSet.contains(splits[i])){

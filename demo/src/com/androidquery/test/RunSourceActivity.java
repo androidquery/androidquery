@@ -174,10 +174,13 @@ public class RunSourceActivity extends Activity {
 			String name = getIntent().getStringExtra("type");
 		
 			InputStream is = getClassLoader().getResourceAsStream("com/androidquery/test/source/" + name);
-			
+		
 			if(is != null){
 				source = new String(AQUtility.toBytes(is));
 			}
+			
+			AQUtility.debug(name, source);
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -392,22 +392,6 @@
     <string-array name="locales">
         <item>en</item>
         <item>zh_TW</item>
-        <item>zh_CN</item>
-        <item>fr</item>
-        <item>de</item>
-        <item>it</item>
-        <item>es</item>
-        <item>nl</item>
-        <item>pl</item>
-        <item>cs</item>
-        <item>pt</item>
-        <item>ja</item>
-        <item>ko</item>
-        <item>ru</item>
-        <item>sv</item>
-        <item>no</item>
-        <item>da</item>
-        <item>fi</item>
     </string-array>
     
 </resources>
