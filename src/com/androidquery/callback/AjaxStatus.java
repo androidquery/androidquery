@@ -55,6 +55,7 @@ public class AjaxStatus {
 	private boolean done;
 	private boolean invalid;
 	private boolean reauth;
+	private String error;
 	
 	public AjaxStatus(){		
 	}
@@ -71,6 +72,11 @@ public class AjaxStatus {
 	
 	protected AjaxStatus code(int code){
 		this.code = code;
+		return this;
+	}
+	
+	protected AjaxStatus error(String error){
+		this.error = error;
 		return this;
 	}
 	
@@ -209,6 +215,15 @@ public class AjaxStatus {
 	 */
 	public int getSource() {
 		return source;
+	}
+	
+	/**
+	 * Gets the error response as a string. For http response code that's not 200-299.
+	 *
+	 * @return source
+	 */
+	public String getError() {
+		return error;
 	}
 	
 	/**

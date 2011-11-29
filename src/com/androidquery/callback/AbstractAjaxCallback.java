@@ -529,15 +529,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	protected File accessFile(File cacheDir, String url){	
 		
+		if(expire < 0) return null;
 		
 		File file = AQUtility.getExistedCacheByUrl(cacheDir, url);
 		
 		if(file != null && expire != 0){
-			long diff = System.currentTimeMillis() - file.lastModified();
+			long diff = System.currentTimeMillis() - file.lastModified();			
 			if(diff > expire){
 				return null;
 			}
-			
 		}
 		
 		return file;
@@ -680,6 +680,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private void backgroundWork(){
 	
 		
+		
 		if(!refresh){
 		
 			if(fileCache){	
@@ -708,7 +709,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private void fileWork(){
 		
 		File file = accessFile(cacheDir, getCacheUrl());
-				
+		
 		//if file exist
 		if(file != null){
 			//convert
@@ -973,9 +974,21 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         
         int code = response.getStatusLine().getStatusCode();
         String message = response.getStatusLine().getReasonPhrase();
+        String error = null;
+        
         
         if(code < 200 || code >= 300){        	
         	//throw new IOException();
+        	try{
+        		HttpEntity entity = response.getEntity();
+        		byte[] s = AQUtility.toBytes(entity.getContent());
+        		error = new String(s, "UTF-8");
+        		AQUtility.debug("error", error);
+        	}catch(Exception e){
+        		AQUtility.debug(e);
+        	}
+        	
+        	
         }else{
         	
         	HttpEntity entity = response.getEntity();	
@@ -997,7 +1010,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	AQUtility.debug(data.length, url);
         }
         
-        status.code(code).message(message).redirect(redirect).time(new Date()).data(data).client(client);
+        status.code(code).message(message).error(error).redirect(redirect).time(new Date()).data(data).client(client);
 		
 	}
 	
