@@ -321,11 +321,11 @@ public class FacebookHandle extends AccountHandle{
 		
 		String url = cb.getUrl();
 		
-		if(code == 400 && url.endsWith("/likes")){
+		if(code == 400 && (url.endsWith("/likes") || url.endsWith("/comments"))){
 			return false;
 		}
 		
-		if(code == 403 && url.endsWith("/feed")){
+		if(code == 403 && (url.endsWith("/feed") || url.contains("method=delete"))){
 			return false;
 		}
 		
@@ -338,7 +338,7 @@ public class FacebookHandle extends AccountHandle{
 		AQUtility.debug("reauth requested");
 		
 		token = null;
-		storeToken(null, null);
+		//storeToken(null, null);
 		
 		AQUtility.post(new Runnable() {
 			

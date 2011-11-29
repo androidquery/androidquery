@@ -505,4 +505,32 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		waitAsync();
     }
 	
+	public void testAjaxBitmap() {
+		
+		String url = ICON_URL;
+        
+		AjaxCallback<Bitmap> cb = new AjaxCallback<Bitmap>(){
+			
+			@Override
+			public void callback(String url, Bitmap bm, AjaxStatus status) {
+				
+				done(url, bm, status);
+				
+			}
+			
+		};
+		
+			
+        aq.ajax(url, Bitmap.class, 15 * 60 * 1000, cb);
+        
+        waitAsync(2000);
+        
+        assertNotNull(result);
+       
+		File cached = aq.getCachedFile(url);
+		assertTrue(cached.exists());
+		assertTrue(cached.length() > 100);
+		
+    }
+	
 }
