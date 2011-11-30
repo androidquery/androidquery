@@ -590,16 +590,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private boolean isActive(){
 		
-		
 		if(act == null) return true;
 		
 		Activity a = act.get();
 		
-		if(a.isFinishing()){			
-			AQUtility.debug("skipping callback activity finished", a);			
+		if(a.isFinishing()){					
 			return false;
-		}else{
-			AQUtility.debug("active", a);
 		}
 		
 		return true;
