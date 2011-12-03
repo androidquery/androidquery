@@ -594,7 +594,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		Activity a = act.get();
 		
-		if(a.isFinishing()){					
+		if(a == null || a.isFinishing()){					
 			return false;
 		}
 		
