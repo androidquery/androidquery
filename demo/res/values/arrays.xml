@@ -162,7 +162,7 @@
     
   	<string-array name="auth_names">
   		<item>Facebook</item>  
-  		
+  		<item>Facebook (Single Sign On)</item>
   		<!--      
   		<item>Twitter</item>
   		-->  
@@ -177,7 +177,8 @@
     </string-array>
   
   	<string-array name="auth_values">
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:preview</item> 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:preview</item>
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook_sso:preview</item> 
   		<!--  
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:preview</item> 
   		-->
@@ -253,6 +254,7 @@
         <item>image_send</item>      
               
         <item>auth_facebook</item> 
+        <item>auth_facebook_sso</item>
         <!--  
         <item>auth_twitter</item>   
         -->    
@@ -337,6 +339,7 @@
         <item>Send and Share Image</item>      
            
         <item>Facebook Auth - Get User Feed</item> 
+        <item>Facebook Auth - Get User Feed with Single Sign On</item> 
         
         <!--  
         <item>Twitter Auth - Get User Feed</item>    
@@ -392,6 +395,22 @@
     <string-array name="locales">
         <item>en</item>
         <item>zh_TW</item>
+        <item>zh_CN</item>
+        <item>fr</item>
+        <item>de</item>
+        <item>it</item>
+        <item>es</item>
+        <item>nl</item>
+        <item>pl</item>
+        <item>cs</item>
+        <item>pt</item>
+        <item>ja</item>
+        <item>ko</item>
+        <item>ru</item>
+        <item>sv</item>
+        <item>no</item>
+        <item>da</item>
+        <item>fi</item>
     </string-array>
     
 </resources>

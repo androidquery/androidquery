@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="/AndroidQuery/bin/androidquery.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="/facebook/bin/facebook.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

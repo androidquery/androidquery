@@ -51,6 +51,8 @@ public class ImageZoomActivity extends RunSourceActivity {
     
     	String url = "http://farm4.static.flickr.com/3531/3769416703_b76406f9de.jpg";
     	
+    	url = "https://lh3.googleusercontent.com/-TapIKLsIzgk/TtQhrvbEdvI/AAAAAAAAAB4/BbmpD7_oY-A/bg_video.jpg";
+    	
     	aq.id(R.id.text).text("Try pinch zoom with finger.");
     	
     	aq.id(R.id.web).progress(R.id.progress).webImage(url);
