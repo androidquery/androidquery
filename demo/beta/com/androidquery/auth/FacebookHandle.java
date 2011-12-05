@@ -137,7 +137,11 @@ public class FacebookHandle extends AccountHandle{
 		
 		if(act.isFinishing()) return;
 		
+		
 		boolean ok = sso();
+		
+		AQUtility.debug("authing", ok);
+		
 		
 		if(!ok){
 			webAuth();
@@ -154,6 +158,7 @@ public class FacebookHandle extends AccountHandle{
 	
 	private void webAuth() {
 
+		AQUtility.debug("web auth");
 		
 		Bundle parameters = new Bundle();
 		parameters.putString("client_id", appId);
@@ -344,7 +349,7 @@ public class FacebookHandle extends AccountHandle{
 		
 		String url = cb.getUrl();
 		
-		if(code == 400 && (url.endsWith("/likes") || url.endsWith("/comments"))){
+		if(code == 400 && (url.endsWith("/likes") || url.endsWith("/comments") || url.endsWith("/checkins"))){
 			return false;
 		}
 		
@@ -352,7 +357,7 @@ public class FacebookHandle extends AccountHandle{
 			return false;
 		}
 		
-		return code == 400 || code == 401 || code == 403;
+		return code == 401 || code == 403;
 	}
 
 	@Override

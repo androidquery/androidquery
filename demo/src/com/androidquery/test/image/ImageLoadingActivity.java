@@ -15,6 +15,7 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 

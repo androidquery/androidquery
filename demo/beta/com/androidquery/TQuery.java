@@ -26,4 +26,5 @@ public class TQuery extends AbstractAQuery<TQuery>{
 		super(view);
 	}
 	
+	
 }
