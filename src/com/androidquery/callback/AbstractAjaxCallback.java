@@ -96,7 +96,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private Map<String, Object> params;
 	private Map<String, String> headers;
 	
-	private T result;
+	protected T result;
 	
 	private File cacheDir;
 	private AccountHandle ah;
@@ -335,7 +335,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private static final Class<?>[] DEFAULT_SIG = {String.class, Object.class, AjaxStatus.class};	
 	
 	private boolean completed;
-	private void callback(){
+	protected void callback(){
 		
 		showProgress(false);
 		

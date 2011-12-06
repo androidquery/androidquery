@@ -37,6 +37,8 @@ public class AjaxStatus {
 	/** Source MEMORY. */
 	public static final int MEMORY = 4;
 	
+	public static final int DEVICE = 5;
+	
 	public static final int NETWORK_ERROR = -101;
 	public static final int AUTH_ERROR = -102;
 	public static final int TRANSFORM_ERROR = -103;
