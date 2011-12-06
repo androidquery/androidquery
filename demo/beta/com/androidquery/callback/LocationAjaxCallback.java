@@ -60,7 +60,7 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 	
 		if(loc != null){		
 			if(!init){
-				clear();
+				stop();
 			}
 			if(isDiff(loc)){
 				result = loc;
@@ -108,7 +108,7 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 		callback();
 	}
 	
-	private void clear(){
+	public void stop(){
 		
 		AQUtility.debug("unreg");
 		
@@ -135,7 +135,7 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 					failure();
 				}
 				
-				clear();
+				stop();
 			}
 		};
 
@@ -143,6 +143,12 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 		timer.schedule(task, timeout);
 	}
 	
+	//12-06 22:39:42.652: W/AQuery(14047): cb:Location[mProvider=network,mTime=1323180586944,mLatitude=22.3804801,mLongitude=114.1766253,mHasAltitude=false,mAltitude=0.0,mHasSpeed=false,mSpeed=0.0,mHasBearing=false,mBearing=0.0,mHasAccuracy=true,mAccuracy=740.0,mExtras=Bundle[mParcelledData.dataSize=148]]
+
+	//12-06 22:39:47.699: W/AQuery(14047): cb:Location[mProvider=network,mTime=1323182387660,mLatitude=22.3823468,mLongitude=114.1783388,mHasAltitude=false,mAltitude=0.0,mHasSpeed=false,mSpeed=0.0,mHasBearing=false,mBearing=0.0,mHasAccuracy=true,mAccuracy=719.0,mExtras=Bundle[mParcelledData.dataSize=148]]
+
+	//12-06 22:47:09.101: W/AQuery(14047): cb:Location[mProvider=gps,mTime=1323176878428,mLatitude=22.381488255763212,mLongitude=114.17933830037093,mHasAltitude=true,mAltitude=22.0,mHasSpeed=false,mSpeed=0.0,mHasBearing=false,mBearing=0.0,mHasAccuracy=true,mAccuracy=200.0,mExtras=Bundle[mParcelledData.dataSize=4]]
+
 	
 	private String getBestProvider(){
 		
