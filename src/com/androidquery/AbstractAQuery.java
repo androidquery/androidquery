@@ -1032,6 +1032,22 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * Gets the text of a TextView.
+	 *
+	 * @return the text
+	 */
+	public CharSequence getText(){
+		
+		CharSequence result = null;
+		
+		if(view instanceof TextView){
+			result = ((TextView) view).getText();
+		}
+		
+		return result;
+	}
+	
+	/**
 	 * Gets the selected item if current view is an adapter view.
 	 *
 	 * @return selected
