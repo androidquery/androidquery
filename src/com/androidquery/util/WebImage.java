@@ -4,34 +4,32 @@ import java.io.InputStream;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Picture;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.WebView.PictureListener;
 
 import com.androidquery.AQuery;
 
 public class WebImage extends WebViewClient{
 
 	private View progress;
+	private static String template;
 	
 	private static String getSource(Context context){
 		
-		String source = null;
+		if(template == null){
 		
-		try{
-			InputStream is = context.getClassLoader().getResourceAsStream("com/androidquery/util/web_image.html");			
-			if(is != null){
-				source = new String(AQUtility.toBytes(is));
+			try{
+				InputStream is = context.getClassLoader().getResourceAsStream("com/androidquery/util/web_image.html");			
+				template = new String(AQUtility.toBytes(is));
+			}catch(Exception e){
+				AQUtility.debug(e);
 			}
-		}catch(Exception e){
-			AQUtility.debug(e);
+			
 		}
 		
-		return source;
+		return template;
 		
 	}
 	

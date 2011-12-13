@@ -20,8 +20,6 @@ import java.util.Date;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import com.androidquery.util.AQUtility;
-
 /**
  * AjaxStatus contains meta information of an AjaxCallback callback.
  */

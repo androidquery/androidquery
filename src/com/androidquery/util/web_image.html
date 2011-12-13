@@ -4,7 +4,7 @@
 <body style="background:@color;margin:0px;padding:0px;">
   
   	<div id="box" style="vertical-align:middle;text-align:center;display:table-cell;">
-		<img id="img" src="@src" />
+		<img id="img" src="@src" style="display:none;" onload="this.style.display='inline';"/>
 	</div>
   
 	<script>
@@ -12,10 +12,8 @@
 	var ratio = 10;
 	var draw;
 	
-	resize();
-	
 	window.onresize = resize;
-	
+	resize();
 	
 	function now(){
 		var d = new Date();
