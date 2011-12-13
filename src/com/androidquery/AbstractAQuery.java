@@ -583,14 +583,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){			
 			callback.imageView((ImageView) view);
-			
-			/*
-			if(progress != null){
-				callback.progress(progress);
-				progress = null;
-			}
-			callback.async(getContext());						
-			*/
 			invoke(callback);
 		} 
 		
@@ -1520,7 +1512,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	
 	
-	private <K> T invoke(AbstractAjaxCallback<?, K> callback){
+	protected <K> T invoke(AbstractAjaxCallback<?, K> callback){
 				
 		
 		if(ah != null){
@@ -2066,9 +2058,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	public T webImage(String url){
+		return webImage(url, true, false, 0xFF000000);
+	}
+	
+	public T webImage(String url, boolean zoom, boolean control, int color){
 		
 		if(view instanceof WebView){
-			WebImage.webImage((WebView) view, url, progress);
+			setLayerType11(AQuery.LAYER_TYPE_SOFTWARE, null);
+			WebImage wi = new WebImage();
+			wi.webImage((WebView) view, url, progress, zoom, control, color);
 			progress = null;
 		}
 		

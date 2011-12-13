@@ -1,32 +1,50 @@
 <html>
 <meta name="viewport" content="target-densitydpi=device-dpi, initial-scale=1, minimum-scale=1, user-scalable=1">
 
-<body style="background:black; margin: 0px; padding: 0px;">
-
-	<div id="box" style="vertical-align: middle; text-align: center; display: table-cell;width:@widthpx;height:@heightpx;">
-		<img id="img" src="@src" style="@dim"/>
+<body style="background:@color;margin:0px;padding:0px;">
+  
+  	<div id="box" style="vertical-align:middle;text-align:center;display:table-cell;">
+		<img id="img" src="@src" />
 	</div>
-	
+  
 	<script>
 	
-	var scape = @scape;	
+	var ratio = 10;
+	var draw;
+	
+	resize();
+	
 	window.onresize = resize;
+	
+	
+	function now(){
+		var d = new Date();
+		return d.getTime();
+	}
 	
 	function resize(){
 		
 	 	var w = window.innerWidth;
 	 	var h = window.innerHeight;
 		
-	 	if(w == 0) return;
+	 	if(w == 0 || h == 0) return;
 	 	
-	 	var landscape = w > h;
+	 	var r = w / h; 
 	 	
-	 	var box = document.getElementById("box");
+		var diff = Math.abs((ratio - r) / r); 
 	 	
-	 	if(scape != landscape){
+		var n = now();
+		if(diff > 0.1){
+			draw = n + 300; 
+		}
 		
-	 		scape = landscape;
+	 	if(n < draw){
+		
+	 		ratio = r;
 	 		
+	 		var landscape = w > h;
+		 	
+			var box = document.getElementById("box");		
 		 	box.style.width = w;
 		 	box.style.height = h;
 			
@@ -40,9 +58,7 @@
 				img.style.height = h;
 			}
 			
-		 	
 		}
-	 	
 	}
 	
 	</script>

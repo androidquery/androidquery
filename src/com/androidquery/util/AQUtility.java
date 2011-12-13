@@ -331,7 +331,6 @@ public class AQUtility {
 	    		try{
 	    			file.createNewFile();
 	    		}catch(Exception e){
-	    			AQUtility.debug("can't make:" + file.getAbsolutePath());
 	    			AQUtility.report(e);
 	    		}
 	    	}
@@ -340,7 +339,6 @@ public class AQUtility {
 	    	fos.write(data);
 	    	fos.close();
     	}catch(Exception e){
-    		AQUtility.debug(file.getAbsolutePath());
     		AQUtility.report(e);
     	}
     	

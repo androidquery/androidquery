@@ -20,6 +20,8 @@ import java.util.Date;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.androidquery.util.AQUtility;
+
 /**
  * AjaxStatus contains meta information of an AjaxCallback callback.
  */
@@ -237,9 +239,9 @@ public class AjaxStatus {
 	
 	public boolean expired(long expire){
 		
-		long durr = time.getTime();
+		long mod = time.getTime();
 		long now = System.currentTimeMillis();		
-		long diff = now - durr;
+		long diff = now - mod;
 		
 		if(diff > expire && getSource() != NETWORK){
 			return true;

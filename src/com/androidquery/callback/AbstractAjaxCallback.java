@@ -335,7 +335,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private static final Class<?>[] DEFAULT_SIG = {String.class, Object.class, AjaxStatus.class};	
 	
 	private boolean completed;
-	protected void callback(){
+	void callback(){
 		
 		showProgress(false);
 		
@@ -534,7 +534,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		File file = AQUtility.getExistedCacheByUrl(cacheDir, url);
 		
 		if(file != null && expire != 0){
-			long diff = System.currentTimeMillis() - file.lastModified();			
+			long diff = System.currentTimeMillis() - file.lastModified();	
 			if(diff > expire){
 				return null;
 			}
@@ -711,7 +711,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			//convert
 			result = fileGet(url, file, status);
 			//if result is ok
-			if(result != null){				
+			if(result != null){
 				status.source(AjaxStatus.FILE).time(new Date(file.lastModified())).done();
 			}
 		}
@@ -775,7 +775,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	private void filePut(){
-		
+				
 		if(result != null && fileCache){
 			
 			byte[] data = status.getData();
@@ -951,6 +951,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(headers != null){
         	for(String name: headers.keySet()){
         		hr.addHeader(name, headers.get(name));
+        		AQUtility.debug(name, headers.get(name));
         	}
         }
 		

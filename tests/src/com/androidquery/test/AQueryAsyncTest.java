@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.androidquery.AQuery;
-import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
@@ -532,5 +531,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		assertTrue(cached.length() > 100);
 		
     }
+	
+
 	
 }

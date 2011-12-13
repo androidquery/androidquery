@@ -357,7 +357,8 @@ public class FacebookHandle extends AccountHandle{
 			return false;
 		}
 		
-		return code == 401 || code == 403;
+		return code == 400 || code == 401 || code == 403;
+		//return code == 401 || code == 403;
 	}
 
 	@Override
