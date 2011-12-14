@@ -4,18 +4,25 @@ import java.io.InputStream;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Picture;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebView.PictureListener;
 import android.webkit.WebViewClient;
 
 import com.androidquery.AQuery;
 
 public class WebImage extends WebViewClient{
 
-	private View progress;
-	private static String template;
+	private View progress;	
+	private WebView wv;
+	private String url;
+	private boolean zoom;
+	private boolean control;
+	private int color;
 	
+	private static String template;
 	private static String getSource(Context context){
 		
 		if(template == null){
@@ -43,29 +50,31 @@ public class WebImage extends WebViewClient{
 		}
 	}
 	
-	public void webImage(WebView wv, String url, View progress, boolean zoom, boolean control, int color){
+	public WebImage(WebView wv, String url, View progress, boolean zoom, boolean control, int color){
+		
+		this.wv = wv;
+		this.url = url;
+		this.progress = progress;
+		this.zoom = zoom;
+		this.control = control;
+		this.color = color;
+		
+	}
+	
+	
+	
+	public void load(){
 		
 		if(url.equals(wv.getTag(AQuery.TAG_URL))){
     		return;
     	}
 		
-		this.progress = progress;
-    	
     	wv.setTag(AQuery.TAG_URL, url);
     	fixWebviewTip(wv.getContext());
 		
-		setupWebview(wv, url, zoom, control, color);
-		
-	}
-	
-    private void setupWebview(WebView wv, String url, boolean zoom, boolean control, int color){
     	
     	wv.setInitialScale(100);
     	
-    	String html = getSource(wv.getContext());
-    	html = html.replace("@src", url).replace("@color", Integer.toHexString(color));
-    	
-    
     	WebSettings ws = wv.getSettings();
     	ws.setSupportZoom(zoom);
     	ws.setBuiltInZoomControls(zoom);
@@ -75,16 +84,48 @@ public class WebImage extends WebViewClient{
     	}
     	
     	ws.setJavaScriptEnabled(true);
-    	wv.setWebViewClient(this);
+    	wv.setBackgroundColor(color);
     	
     	if(progress != null){
     		progress.setVisibility(View.VISIBLE);
     	}
     	
+		if(wv.getWidth() > 0){
+			setup();
+		}else{
+			delaySetup();
+		}
+		
+	}
+	
+	private void delaySetup(){
+		
+		wv.setPictureListener(new PictureListener() {
+			
+
+			@Override
+			public void onNewPicture(WebView view, Picture picture) {
+				wv.setPictureListener(null);
+				setup();
+			}
+			
+			
+		});
+		
+		wv.loadData("<html></html>", "text/html", "utf-8");
+		wv.setBackgroundColor(color);
+		
+	}
+	
+	
+    private void setup(){
+    	
+    	String source = getSource(wv.getContext());
+    	String html = source.replace("@src", url).replace("@color", Integer.toHexString(color));
+    	
+    	wv.setWebViewClient(this);
+    	
     	wv.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-    	
-    	//wv.setBackgroundColor(Color.parseColor("#000000"));
-    	
     	wv.setBackgroundColor(color);
     	
     }

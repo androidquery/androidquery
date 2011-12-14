@@ -3,24 +3,23 @@
 
 <body style="background:@color;margin:0px;padding:0px;">
   
-  	<div id="box" style="vertical-align:middle;text-align:center;display:table-cell;">
-		<img id="img" src="@src" style="display:none;" onload="this.style.display='inline';"/>
-	</div>
-  
 	<script>
 	
 	var ratio = 10;
 	var draw;
 	
-	window.onresize = resize;
-	resize();
+	
 	
 	function now(){
 		var d = new Date();
 		return d.getTime();
 	}
 	
-	function resize(){
+	function change(){
+		resize(false);
+	}
+	
+	function resize(force){
 		
 	 	var w = window.innerWidth;
 	 	var h = window.innerHeight;
@@ -36,7 +35,10 @@
 			draw = n + 300; 
 		}
 		
-	 	if(n < draw){
+		//console.log("diff:" + diff);
+		//console.log("time:" + n + ":" + draw)
+		
+	 	if(force || n < draw){
 		
 	 		ratio = r;
 	 		
@@ -56,10 +58,25 @@
 				img.style.height = h;
 			}
 			
+			//console.log("resize:" + w + ":" + h);
 		}
 	}
 	
-	</script>
+	</script>  
+  
+  
+  	<div id="box" style="vertical-align:middle;text-align:center;display:table-cell;">
+ 
+		<img id="img" src="@src" style="display:none;" onload="resize(true);this.style.display='inline';"/>
+
+	</div>
+  
+  	<script>
+ 		//console.log('2nd');
+ 		resize(true);
+ 		window.onresize = change;
+  	</script>
+
 	
 </body>
 

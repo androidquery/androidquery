@@ -2065,8 +2065,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof WebView){
 			setLayerType11(AQuery.LAYER_TYPE_SOFTWARE, null);
-			WebImage wi = new WebImage();
-			wi.webImage((WebView) view, url, progress, zoom, control, color);
+			WebImage wi = new WebImage((WebView) view, url, progress, zoom, control, color);
+			wi.load();
 			progress = null;
 		}
 		
