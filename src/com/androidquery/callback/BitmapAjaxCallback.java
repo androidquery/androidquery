@@ -275,7 +275,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	@Override
-	protected Bitmap transform(String url, byte[] data, AjaxStatus status) {
+	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
 		
 		Bitmap bm = bmGet(null, data);
 		

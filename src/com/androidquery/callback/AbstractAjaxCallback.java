@@ -94,6 +94,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private String url;
 	private Map<String, Object> params;
 	private Map<String, String> headers;
+	private Transformer transformer;
 	
 	protected T result;
 	
@@ -201,6 +202,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 */
 	public K type(Class<T> type){
 		this.type = type;
+		return self();
+	}
+	
+	
+	/**
+	 * Set the transformer that transform raw data to desired type.
+	 * If not set, default transformer will be used.
+	 * 
+	 * Default transformer supports:
+	 * 
+	 * JSONObject, JSONArray, XmlDom, String, byte[], and Bitmap. 
+	 * 
+	 *
+	 * @param tranformer transformer
+	 * @return self
+	 */
+	public K transformer(Transformer transformer){
+		this.transformer = transformer;
 		return self();
 	}
 	
@@ -448,6 +467,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			return null;
 		}
 		
+		
+		
 		if(type.equals(JSONObject.class)){
 			
 			JSONObject result = null;
@@ -505,6 +526,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		if(type.equals(Bitmap.class)){			
 			return (T) BitmapFactory.decodeByteArray(data, 0, data.length);
+		}
+		
+		if(transformer != null){
+			return transformer.transform(url, type, encoding, data, status);
 		}
 		
 		return null;
@@ -1075,6 +1100,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	public AjaxStatus getStatus(){
 		return status;
+	}
+	
+	public String getEncoding(){
+		return encoding;
 	}
 	
 	private static final String lineEnd = "\r\n";

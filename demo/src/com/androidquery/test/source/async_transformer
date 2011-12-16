@@ -1,0 +1,26 @@
+	private static class Profile{
+		public String id;
+		public String name;		
+	}
+	
+	private static class GsonTransformer implements Transformer{
+
+		public <T> T transform(String url, Class<T> type, String encoding, byte[] data, AjaxStatus status) {			
+			Gson g = new Gson();
+			return g.fromJson(new String(data), type);
+		}
+	}
+	
+	public void async_transformer(){
+		
+		String url = "https://graph.facebook.com/205050232863343";		
+		GsonTransformer t = new GsonTransformer();
+		
+		aq.transformer(t).ajax(url, Profile.class, new AjaxCallback<Profile>(){			
+			public void callback(String url, Profile profile, AjaxStatus status) {				
+				Gson gson = new Gson();
+				showResult("GSON Object:" + gson.toJson(profile), status);			
+			}			
+		});
+        
+	}

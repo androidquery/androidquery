@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/emma.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="lib/gson-2.0.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

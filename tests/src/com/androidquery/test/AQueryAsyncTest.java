@@ -12,6 +12,8 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -35,7 +37,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
     }
 
 	
-	private void done(String url, Object result, AjaxStatus status){
+	public void done(String url, Object result, AjaxStatus status){
 		
 		this.url = url;
 		this.result = result;
@@ -532,6 +534,99 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
     }
 	
+	private static class Profile{
 
+		public String id;
+		public String name;
+		
+	}
+	public void testExtendTransformer() {
+		
+		String url = "https://graph.facebook.com/205050232863343";
+		
+		AjaxCallback<Profile> cb = new AjaxCallback<Profile>(){
+			
+			@Override
+			protected Profile transform(String url, byte[] data, AjaxStatus status) {
+				
+				Profile profile = null;
+				
+				if(data != null){
+					Gson g = new Gson();
+					profile = g.fromJson(new String(data), getType());
+				}
+				
+				return profile;
+			}
+			
+			
+			@Override
+			public void callback(String url, Profile profile, AjaxStatus status) {
+				
+				done(url, profile, status);
+				
+			}
+			
+		};
+		
+			
+        aq.ajax(url, Profile.class, cb);
+        
+        waitAsync(2000);
+        
+        assertNotNull(result);
+		
+	}
+	
+	
+	public void testSetTransformer() {
+		
+		String url = "https://graph.facebook.com/205050232863343";
+		
+		
+		AjaxCallback<Profile> cb = new AjaxCallback<Profile>(){
+			
+			
+			@Override
+			public void callback(String url, Profile profile, AjaxStatus status) {
+				
+				done(url, profile, status);
+				
+			}
+			
+		};
+		
+		GsonTransformer t = new GsonTransformer();
+		cb.transformer(t);
+		
+        aq.ajax(url, Profile.class, cb);
+        
+        waitAsync(2000);
+        
+        assertNotNull(result);
+        
+        Profile p  = (Profile) result;
+        assertNotNull(p.id);
+        assertNotNull(p.name);
+		
+	}
+	
+	
+	public void testAjaxTransformer() {
+		
+		String url = "https://graph.facebook.com/205050232863343";
+		
+		GsonTransformer t = new GsonTransformer();
+        aq.transformer(t).ajax(url, Profile.class, this, "done");
+        
+        waitAsync(2000);
+        
+        assertNotNull(result);
+        
+        Profile p  = (Profile) result;
+        assertNotNull(p.id);
+        assertNotNull(p.name);
+		
+	}
 	
 }

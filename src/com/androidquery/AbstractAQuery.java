@@ -64,6 +64,7 @@ import com.androidquery.auth.AccountHandle;
 import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.callback.Transformer;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
@@ -84,6 +85,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected View view;
 	protected View progress;
 	protected AccountHandle ah;
+	private Transformer trans;
 
 	protected T create(View view){
 		
@@ -300,10 +302,28 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	
+	/**
+	 * Apply the account handler for authentication for the next ajax request. 
+	 *
+	 * @param handle the account handler
+	 * @return self
+	 */
 	public T auth(AccountHandle handle){
 		ah = handle;
 		return self();
 	}
+	
+	/**
+	 * Apply the transformer to convert raw data to desired object type for the next ajax request. 
+	 *
+	 * @param transformer transformer
+	 * @return self
+	 */
+	public T transformer(Transformer transformer){
+		trans = transformer;
+		return self();
+	}	
 	
 	
 	/**
@@ -1523,6 +1543,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		if(progress != null){
 			callback.progress(progress);
 			progress = null;
+		}
+		
+		if(trans != null){
+			callback.transformer(trans);
+			trans = null;
 		}
 		
 		if(act != null){

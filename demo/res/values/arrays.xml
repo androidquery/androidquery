@@ -29,6 +29,7 @@
         <item>byte[]</item>  
         <item>XML Dom</item>  
         <item>JSON (Array)</item>
+        <item>Custom Type (ex. Gson)</item>
         <item>Http POST</item> 
         <item>Activity Method as Callback</item> 
         <item>Caching</item> 
@@ -48,6 +49,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:preview</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
@@ -199,6 +201,7 @@
         <item>async_bytes</item>  
         <item>async_xml</item>
         <item>async_json_array</item>
+        <item>async_transformer</item>
         <item>async_post</item> 
         <item>async_method_cb</item>  
         <item>async_cached</item>
@@ -283,6 +286,7 @@
         <item>Asynchronous HTTP Get as Bytes Array</item>
         <item>Asynchronous HTTP Get XML Dom</item>   
         <item>Asynchronous HTTP Get JSON Array</item>
+        <item>Asynchronous HTTP Get Custom Type (GSON example)</item>
         <item>Asynchronous HTTP Post</item> 
         <item>Use Activity Method as Callback</item> 
         <item>Asynchronous HTTP Get with Cache Control</item>
