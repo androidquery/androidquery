@@ -7,6 +7,7 @@
         <item>Async Network</item>
         <item>Image Loading</item> 
         <item>Authentication</item> 
+        <item>Location Callback</item> 
         <item>XML Parsing</item>
         <item>AQuery Service</item> 
         <item>Home @AndroidQuery</item>
@@ -17,6 +18,7 @@
         <item>com.androidquery.test.IntentListActivity:async:updated</item>
         <item>com.androidquery.test.IntentListActivity:image:updated</item>
         <item>com.androidquery.test.IntentListActivity:auth:updated</item>
+        <item>com.androidquery.test.IntentListActivity:location:preview</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
         <item>com.androidquery.test.IntentListActivity:service:preview</item>
         <item>http://code.google.com/p/android-query/</item>
@@ -31,6 +33,7 @@
         <item>JSON (Array)</item>
         <item>Custom Type (ex. Gson)</item>
         <item>Http POST</item> 
+        <item>Http POST (Multipart)</item> 
         <item>Activity Method as Callback</item> 
         <item>Caching</item> 
         <item>Progress</item> 
@@ -51,6 +54,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:preview</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_multipart:preview</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
@@ -203,6 +207,7 @@
         <item>async_json_array</item>
         <item>async_transformer</item>
         <item>async_post</item> 
+        <item>async_multipart</item> 
         <item>async_method_cb</item>  
         <item>async_cached</item>
         <item>async_progress</item>
@@ -275,6 +280,8 @@
         <item>xml_ajax</item>
         <item>xml_resource</item>
         
+        <item>location_ajax</item>
+        
         <item>service_version_force</item>
         <item>service_version_locale</item>
         <item>service_version_auto</item>
@@ -288,6 +295,7 @@
         <item>Asynchronous HTTP Get JSON Array</item>
         <item>Asynchronous HTTP Get Custom Type (GSON example)</item>
         <item>Asynchronous HTTP Post</item> 
+        <item>Asynchronous HTTP Multipart Post (Image Upload)</item> 
         <item>Use Activity Method as Callback</item> 
         <item>Asynchronous HTTP Get with Cache Control</item>
         <item>Show Requests Progress</item>
@@ -365,6 +373,7 @@
         <item>Ajax Request with XmlDom Type - Get a list of featured images on Picasa.</item>
         <item>Parse XML Resource in Raw Resource Folder</item>
         
+        <item>Location callback with priority and duplication detection</item>
         
         <item>Check App Version - Force update dialog with default locale</item> 
         <item>Check App Version - Pick any supported locale</item> 
@@ -382,6 +391,14 @@
         <item>com.androidquery.test.async.XmlActivity:xml_ajax</item>
         <item>com.androidquery.test.async.XmlActivity:xml_resource</item>
         <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/util/XmlDom.html</item>  
+    </string-array>
+    
+  	<string-array name="location_names">
+        <item>Optimal Location Callbacks</item>  
+    </string-array>
+  
+  	<string-array name="location_values">
+        <item>com.androidquery.test.async.LocationActivity:location_ajax:preview</item>
     </string-array>
     
     <string-array name="service_names">

@@ -30,6 +30,10 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 		type = getIntent().getStringExtra("type");
 			
+		if("async_multipart".equals(type)){
+			aq.id(R.id.go_run).gone();
+			aq.id(R.id.result).gone();
+		}
 	}
 	
 	@Override

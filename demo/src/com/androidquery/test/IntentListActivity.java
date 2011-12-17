@@ -93,6 +93,8 @@ public class IntentListActivity extends ListActivity {
 			return new int[]{R.array.auth_names, R.array.auth_values};
 		}else if("xml".equals(type)){
 			return new int[]{R.array.xml_names, R.array.xml_values};
+		}else if("location".equals(type)){
+			return new int[]{R.array.location_names, R.array.location_values};
 		}else if("service".equals(type)){
 			return new int[]{R.array.service_names, R.array.service_values};
 		}else{
