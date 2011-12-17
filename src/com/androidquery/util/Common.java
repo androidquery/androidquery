@@ -256,6 +256,11 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		if(sl != null){
 			state = sl.getScrollState();
 			vel = sl.getVelocity();
+		}else if(parent instanceof AbsListView){
+			AbsListView lv = (AbsListView) parent;
+			sl = new Common();
+			lv.setOnScrollListener(sl);
+			lv.setTag(AQuery.TAG_SCROLL_LISTENER, sl);	
 		}
 		
 		boolean moving = state == OnScrollListener.SCROLL_STATE_FLING && vel >= velocity;
@@ -271,15 +276,6 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 			return false;
 		}
 		
-		if(sl == null && parent instanceof AbsListView){
-		
-			AbsListView lv = (AbsListView) parent;
-			sl = new Common();
-			lv.setOnScrollListener(sl);
-			lv.setTag(AQuery.TAG_SCROLL_LISTENER, sl);				
-			
-		}
-				
 		if(sl != null){
 			sl.addSkip();
 			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, url);
