@@ -73,8 +73,6 @@ public class WebImage extends WebViewClient{
     	fixWebviewTip(wv.getContext());
 		
     	
-    	wv.setInitialScale(100);
-    	
     	WebSettings ws = wv.getSettings();
     	ws.setSupportZoom(zoom);
     	ws.setBuiltInZoomControls(zoom);
@@ -112,6 +110,7 @@ public class WebImage extends WebViewClient{
 			
 		});
 		
+		//wv.setInitialScale(100);
 		wv.loadData("<html></html>", "text/html", "utf-8");
 		wv.setBackgroundColor(color);
 		
@@ -125,6 +124,7 @@ public class WebImage extends WebViewClient{
     	
     	wv.setWebViewClient(this);
     	
+    	//wv.setInitialScale(100);
     	wv.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
     	wv.setBackgroundColor(color);
     	
@@ -146,6 +146,11 @@ public class WebImage extends WebViewClient{
 	@Override
 	public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 		done(view);
+	}
+	
+	@Override
+	public void onScaleChanged(WebView view, float oldScale, float newScale) {
+		//AQUtility.debug("onScaleChanged", oldScale + ":" + newScale);
 	}
 	
 	private static void disableZoomControl(WebView wv){
