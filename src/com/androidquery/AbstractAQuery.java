@@ -2076,10 +2076,34 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 	}
 	
+	/**
+	 * Load the webview with an image with a url.
+	 * 
+	 * Zoom is enabled without zoom control. Default background color is solid black (0xFF000000).
+	 * 
+	 * @param url The image url
+	 * @return self
+	 * 
+	 */
 	public T webImage(String url){
 		return webImage(url, true, false, 0xFF000000);
 	}
 	
+	/**
+	 * Load the webview with an image with a url.
+	 * 
+	 * Zoom control can only be disabled for API level 14+. Lower level apis will always show zoom control if zoom is enabled.
+	 * 
+	 * Note that color is AARRGGBB, where AA is the alpha value. Solid color (0xFF??????) should be used for performance reason.
+	 * Transparent background is not well supported by WebView in most devices.
+	 * 
+	 * @param url The image url
+	 * @param zoom Image is zoomable
+	 * @param control Show zoom control (API level 14+)
+	 * @param color The background color 
+	 * @return self
+	 * 
+	 */
 	public T webImage(String url, boolean zoom, boolean control, int color){
 		
 		if(view instanceof WebView){

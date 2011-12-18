@@ -215,7 +215,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * JSONObject, JSONArray, XmlDom, String, byte[], and Bitmap. 
 	 * 
 	 *
-	 * @param tranformer transformer
+	 * @param transformer transformer
 	 * @return self
 	 */
 	public K transformer(Transformer transformer){
@@ -573,7 +573,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * If activity is passed, the callback method will not be invoked if the activity is no longer in use.
 	 * Specifically, isFinishing() is called to determine if the activity is active.
 	 *
-	 * @param Activity activity
+	 * @param act activity
 	 */
 	public void async(Activity act){
 		
