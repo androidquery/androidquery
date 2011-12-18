@@ -26,6 +26,7 @@ public abstract class AbstractTest<T extends Activity> extends ActivityInstrumen
 	protected void setUp() throws Exception {
         super.setUp();
         aq = new AQuery(getActivity());
+        AQUtility.debug("new act", getActivity() + ":" + getActivity().isFinishing());
     }
 	
 	protected void log(Object msg, Object msg2){
@@ -37,11 +38,11 @@ public abstract class AbstractTest<T extends Activity> extends ActivityInstrumen
 	}
 	
 	protected void waitAsync(){		
-		AQUtility.debugWait();		
+		AQUtility.debugWait(10000);		
 	}
 	
 	protected void waitAsync(long wait){		
-		AQUtility.debugWait();		
+		AQUtility.debugWait(10000);		
 		waitSec(wait);
 	}
 	
@@ -52,6 +53,7 @@ public abstract class AbstractTest<T extends Activity> extends ActivityInstrumen
 		File cacheDir = AQUtility.getCacheDir(getActivity());
 		AQUtility.cleanCache(cacheDir, 0, 0);
 		
+		waitSec(2000);
 	}
 	
 	protected void waitSec(){

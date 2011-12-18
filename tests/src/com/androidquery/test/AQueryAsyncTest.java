@@ -9,11 +9,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.androidquery.AQuery;
-import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.test.ActivityInstrumentationTestCase2;
@@ -34,7 +37,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
     }
 
 	
-	private void done(String url, Object result, AjaxStatus status){
+	public void done(String url, Object result, AjaxStatus status){
 		
 		this.url = url;
 		this.result = result;
@@ -43,6 +46,8 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		log("done", result);
 		
 		checkStatus(status);
+		
+		assertTrue(AQUtility.isUIThread());
 		
 		done();
 		
@@ -403,6 +408,224 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         File cached = aq.getCachedFile(url);
         assertNull(cached);
         
+		
+	}
+	
+	public void testWaitBlock() {
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();		
+		cb.url(url).type(JSONObject.class);		
+        
+		aq.sync(cb);
+        
+		String u = cb.getUrl();
+        JSONObject jo = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        assertNotNull(jo);       
+        assertNotNull(jo.opt("responseData"));
+        checkStatus(status);
+    }
+	
+	
+	public void testWaitNullUrlCacheBlock() {
+		
+        String url = null;
+		
+		AjaxCallback<String> cb = new AjaxCallback<String>();
+		cb.url(url).type(String.class).fileCache(true).expire(15 * 60 * 1000);
+
+		aq.sync(cb);
+
+		String res = cb.getResult();
+		AjaxStatus status = cb.getStatus();
+		
+		assertNull(res);
+		assertNotNull(status);
+		assertEquals(AjaxStatus.NETWORK_ERROR, status.getCode());
+		
+    }
+	
+	public void testAjaxInactiveActivity() {
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		Activity act = getActivity();
+		act.finish();
+		
+		assertTrue(act.isFinishing());
+		
+		AQuery aq = new AQuery(act);
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				assertFalse(true);
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+			
+        aq.ajax(url, JSONObject.class, cb);
+        
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        assertNull(jo);       
+        
+    }
+	
+	
+	public void testAjaxNotUICb() {
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				assertFalse(AQUtility.isUIThread());
+				
+			}
+			
+		};
+		
+		cb.uiCallback(false);
+		
+		aq.ajax(url, JSONObject.class, cb);
+		
+		waitAsync();
+    }
+	
+	public void testAjaxBitmap() {
+		
+		String url = ICON_URL;
+        
+		AjaxCallback<Bitmap> cb = new AjaxCallback<Bitmap>(){
+			
+			@Override
+			public void callback(String url, Bitmap bm, AjaxStatus status) {
+				
+				done(url, bm, status);
+				
+			}
+			
+		};
+		
+			
+        aq.ajax(url, Bitmap.class, 15 * 60 * 1000, cb);
+        
+        waitAsync(2000);
+        
+        assertNotNull(result);
+       
+		File cached = aq.getCachedFile(url);
+		assertTrue(cached.exists());
+		assertTrue(cached.length() > 100);
+		
+    }
+	
+	private static class Profile{
+
+		public String id;
+		public String name;
+		
+	}
+	public void testExtendTransformer() {
+		
+		String url = "https://graph.facebook.com/205050232863343";
+		
+		AjaxCallback<Profile> cb = new AjaxCallback<Profile>(){
+			
+			@Override
+			protected Profile transform(String url, byte[] data, AjaxStatus status) {
+				
+				Profile profile = null;
+				
+				if(data != null){
+					Gson g = new Gson();
+					profile = g.fromJson(new String(data), getType());
+				}
+				
+				return profile;
+			}
+			
+			
+			@Override
+			public void callback(String url, Profile profile, AjaxStatus status) {
+				
+				done(url, profile, status);
+				
+			}
+			
+		};
+		
+			
+        aq.ajax(url, Profile.class, cb);
+        
+        waitAsync(2000);
+        
+        assertNotNull(result);
+		
+	}
+	
+	
+	public void testSetTransformer() {
+		
+		String url = "https://graph.facebook.com/205050232863343";
+		
+		
+		AjaxCallback<Profile> cb = new AjaxCallback<Profile>(){
+			
+			
+			@Override
+			public void callback(String url, Profile profile, AjaxStatus status) {
+				
+				done(url, profile, status);
+				
+			}
+			
+		};
+		
+		GsonTransformer t = new GsonTransformer();
+		cb.transformer(t);
+		
+        aq.ajax(url, Profile.class, cb);
+        
+        waitAsync(2000);
+        
+        assertNotNull(result);
+        
+        Profile p  = (Profile) result;
+        assertNotNull(p.id);
+        assertNotNull(p.name);
+		
+	}
+	
+	
+	public void testAjaxTransformer() {
+		
+		String url = "https://graph.facebook.com/205050232863343";
+		
+		GsonTransformer t = new GsonTransformer();
+        aq.transformer(t).ajax(url, Profile.class, this, "done");
+        
+        waitAsync(2000);
+        
+        assertNotNull(result);
+        
+        Profile p  = (Profile) result;
+        assertNotNull(p.id);
+        assertNotNull(p.name);
 		
 	}
 	

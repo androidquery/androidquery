@@ -16,13 +16,16 @@
 
 package com.androidquery.callback;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -91,8 +94,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private String url;
 	private Map<String, Object> params;
 	private Map<String, String> headers;
+	private Transformer transformer;
 	
-	private T result;
+	protected T result;
 	
 	private File cacheDir;
 	private AccountHandle ah;
@@ -105,7 +109,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private long expire;
 	private String encoding = "UTF-8";
+	private WeakReference<Activity> act;
 	
+	private boolean uiCallback = true;
 	
 	@SuppressWarnings("unchecked")
 	private K self(){
@@ -114,8 +120,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private void clear(){		
 		whandler = null;
-		result = null;
-		status = null;
 		handler = null;
 		progress = null;
 	}
@@ -201,6 +205,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	
+	/**
+	 * Set the transformer that transform raw data to desired type.
+	 * If not set, default transformer will be used.
+	 * 
+	 * Default transformer supports:
+	 * 
+	 * JSONObject, JSONArray, XmlDom, String, byte[], and Bitmap. 
+	 * 
+	 *
+	 * @param tranformer transformer
+	 * @return self
+	 */
+	public K transformer(Transformer transformer){
+		this.transformer = transformer;
+		return self();
+	}
+	
 	/**
 	 * Set ajax request to be file cached.
 	 *
@@ -232,6 +254,17 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 */
 	public K refresh(boolean refresh){
 		this.refresh = refresh;
+		return self();
+	}
+	
+	/**
+	 * Indicate the ajax request should use the main ui thread for callback. Default is true.
+	 *
+	 * @param uiCallback use the main ui thread for callback
+	 * @return self
+	 */
+	public K uiCallback(boolean uiCallback){
+		this.uiCallback = uiCallback;
 		return self();
 	}
 	
@@ -320,24 +353,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private static final Class<?>[] DEFAULT_SIG = {String.class, Object.class, AjaxStatus.class};	
 	
 	private boolean completed;
-	private void callback(){
+	void callback(){
 		
 		showProgress(false);
 		
 		completed = true;
 		
-		if(callback != null){
-			Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
-			AQUtility.invokeHandler(getHandler(), callback, true, AJAX_SIG, DEFAULT_SIG, url, result, status);			
-		}else{		
-			callback(url, result, status);
+		if(isActive()){
+		
+			if(callback != null){	
+				Object handler = getHandler();
+				Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
+				AQUtility.invokeHandler(handler, callback, true, false, AJAX_SIG, DEFAULT_SIG, url, result, status);					
+			}else{		
+				callback(url, result, status);
+			}
+		
 		}
 		
 		filePut();
 		
 		wake();
 		AQUtility.debugNotify();
-		
 	}
 	
 	private void wake(){
@@ -354,7 +391,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	private boolean blocked;
-	public void block() throws IllegalStateException{
+	public void block(){
 		
 		if(AQUtility.isUIThread()){
 			throw new IllegalStateException("Cannot block UI thread.");
@@ -365,7 +402,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		try{
 			synchronized(this){
 				blocked = true;
-				this.wait();
+				//wait at most the network timeout plus 5 seconds, this guarantee thread will never be blocked forever
+				this.wait(NET_TIMEOUT + 5000);
 			}
 		}catch(Exception e){			
 		}
@@ -389,7 +427,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			byte[] data = AQUtility.toBytes(new FileInputStream(file));			
 			return transform(url, data, status);
 		} catch(Exception e) {
-			AQUtility.report(e);
+			AQUtility.debug(e);
 			return null;
 		}
 	}
@@ -429,6 +467,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			return null;
 		}
 		
+		
+		
 		if(type.equals(JSONObject.class)){
 			
 			JSONObject result = null;
@@ -437,7 +477,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    		String str = new String(data, encoding);
 				result = (JSONObject) new JSONTokener(str).nextValue();
 			} catch (Exception e) {	  		
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			return (T) result;
 		}
@@ -450,7 +490,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    		String str = new String(data, encoding);
 				result = (JSONArray) new JSONTokener(str).nextValue();
 			} catch (Exception e) {	  		
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			return (T) result;
 		}
@@ -461,7 +501,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    	try {    		
 	    		result = new String(data, encoding);
 			} catch (Exception e) {	  		
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			return (T) result;
 		}
@@ -473,7 +513,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			try {    
 				result = new XmlDom(data);
 			} catch (Exception e) {	  		
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			
 			return (T) result; 
@@ -486,6 +526,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		if(type.equals(Bitmap.class)){			
 			return (T) BitmapFactory.decodeByteArray(data, 0, data.length);
+		}
+		
+		if(transformer != null){
+			return transformer.transform(url, type, encoding, data, status);
 		}
 		
 		return null;
@@ -507,19 +551,37 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	protected File accessFile(File cacheDir, String url){		
+	protected File accessFile(File cacheDir, String url){	
+		
+		if(expire < 0) return null;
+		
 		File file = AQUtility.getExistedCacheByUrl(cacheDir, url);
 		
 		if(file != null && expire != 0){
-			long diff = System.currentTimeMillis() - file.lastModified();
+			long diff = System.currentTimeMillis() - file.lastModified();	
 			if(diff > expire){
 				return null;
 			}
-			
 		}
 		
 		return file;
 	}
+	
+	/**
+	 * Starts the async process. 
+	 *
+	 * If activity is passed, the callback method will not be invoked if the activity is no longer in use.
+	 * Specifically, isFinishing() is called to determine if the activity is active.
+	 *
+	 * @param Activity activity
+	 */
+	public void async(Activity act){
+		
+		this.act = new WeakReference<Activity>(act);
+		async((Context) act);
+		
+	}
+	
 	
 	
 	/**
@@ -528,7 +590,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @param context the context
 	 */
 	public void async(Context context){
-		
 		
 		if(status == null){
 			status = new AjaxStatus();
@@ -540,6 +601,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(ah != null){
 			
 			if(!ah.authenticated()){
+				AQUtility.debug("auth needed", url);
 				ah.auth(this);
 				return;
 			}
@@ -548,6 +610,21 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		work(context);
 	
 	}
+	
+	
+	private boolean isActive(){
+		
+		if(act == null) return true;
+		
+		Activity a = act.get();
+		
+		if(a == null || a.isFinishing()){					
+			return false;
+		}
+		
+		return true;
+	}
+	
 	
 	public void failure(int code, String message){
 		
@@ -594,34 +671,35 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	public void run() {
 		
 		
-		try{
+		if(!status.getDone()){
 			
-			if(!status.getDone()){
-				backgroundWork();
-				
-				if(status.getDone()){
-					AQUtility.post(this);
-				}
-			}else{
-				afterWork();
-				clear();
+			try{			
+				backgroundWork();			
+			}catch(Throwable e){
+				AQUtility.debug(e);
+				status.code(AjaxStatus.NETWORK_ERROR).done();
 			}
 			
-		}catch(Exception e){
-			AQUtility.report(e);
+			if(!status.getReauth()){
+				//if doesn't need to reauth
+				if(uiCallback){
+					AQUtility.post(this);
+				}else{
+					afterWork();
+				}
+			}
+		}else{
+			afterWork();
 		}
+			
 		
 		
-	}
-	
-	protected void background(){
 		
 	}
-	
 	
 	private void backgroundWork(){
 	
-		background();
+		
 		
 		if(!refresh){
 		
@@ -650,15 +728,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private void fileWork(){
 		
-		//File file = accessFile(cacheDir, url);
 		File file = accessFile(cacheDir, getCacheUrl());
-				
+		
 		//if file exist
 		if(file != null){
 			//convert
 			result = fileGet(url, file, status);
 			//if result is ok
-			if(result != null){				
+			if(result != null){
 				status.source(AjaxStatus.FILE).time(new Date(file.lastModified())).done();
 			}
 		}
@@ -669,14 +746,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		result = datastoreGet(url);
 		
 		if(result != null){		
-			status.source(AjaxStatus.DATASTORE);
+			status.source(AjaxStatus.DATASTORE).done();
 		}
 	}
 	
 	private boolean reauth;
 	private void networkWork(){
 		
-		if(url == null) return;
+		if(url == null){
+			status.code(AjaxStatus.NETWORK_ERROR).done();
+			return;
+		}
+		
 		
 		byte[] data = null;
 		
@@ -684,13 +765,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			network();
 			
-			if(ah != null && ah.expired(status.getCode()) && !reauth){
+			if(ah != null && ah.expired(this, status.getCode()) && !reauth){
 				AQUtility.debug("reauth needed", status.getMessage());	
 				reauth = true;
 				if(ah.reauth(this)){
 					network();
 				}else{
-					//skip work until reauth and retry					
+					status.reauth(true);				
 					return;
 				}
 			}
@@ -698,7 +779,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			data = status.getData();
 			
 		}catch(Exception e){
-			AQUtility.report(e);
+			AQUtility.debug(e);
 			status.code(AjaxStatus.NETWORK_ERROR).message("network error");
 		}
 		
@@ -706,7 +787,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		try{
 			result = transform(url, data, status);
 		}catch(Exception e){
-			AQUtility.report(e);
+			AQUtility.debug(e);
 		}
 		
 		if(result == null && data != null){
@@ -718,7 +799,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	private void filePut(){
-		
+				
 		if(result != null && fileCache){
 			
 			byte[] data = status.getData();
@@ -738,7 +819,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 					
 				}
 			}catch(Exception e){
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			
 			status.data(null);
@@ -756,7 +837,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(params == null){
 			httpGet(networkUrl, headers, status);	
 		}else{
-			httpPost(networkUrl, headers, params, status);
+			if(isMultiPart(params)){
+				httpMulti(networkUrl, headers, params, status);
+			}else{
+				httpPost(networkUrl, headers, params, status);
+			}
+			
 		}
 		
 	}
@@ -769,7 +855,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 		
 		callback();
-		
+		clear();
 	}
 	
 	
@@ -852,25 +938,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	/*
-	private static DefaultHttpClient getClient(){
-		
-		AQUtility.debug("b");
-		
-		
-		HttpParams httpParams = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(httpParams, NET_TIMEOUT);
-		HttpConnectionParams.setSoTimeout(httpParams, NET_TIMEOUT);
-		
-		//Added this line to avoid issue at: http://stackoverflow.com/questions/5358014/android-httpclient-oom-on-4g-lte-htc-thunderbolt
-		HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
-		
-		DefaultHttpClient client = new DefaultHttpClient(httpParams);
-		
-		return client;
-	}
-	*/
-	
 	
 	private static DefaultHttpClient client;
 	private static DefaultHttpClient getClient(){
@@ -908,6 +975,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(headers != null){
         	for(String name: headers.keySet()){
         		hr.addHeader(name, headers.get(name));
+        		AQUtility.debug(name, headers.get(name));
         	}
         }
 		
@@ -927,23 +995,31 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         
         int code = response.getStatusLine().getStatusCode();
         String message = response.getStatusLine().getReasonPhrase();
+        String error = null;
+        
         
         if(code < 200 || code >= 300){        	
         	//throw new IOException();
+        	try{
+        		HttpEntity entity = response.getEntity();
+        		byte[] s = AQUtility.toBytes(entity.getContent());
+        		error = new String(s, "UTF-8");
+        		AQUtility.debug("error", error);
+        	}catch(Exception e){
+        		AQUtility.debug(e);
+        	}
+        	
+        	
         }else{
         	
-        	HttpEntity entity = response.getEntity();				
-			//InputStream is = entity.getContent();
+        	HttpEntity entity = response.getEntity();	
 			
 			HttpHost currentHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
 	        redirect = currentHost.toURI() + currentReq.getURI();
 			
-			//data = AQUtility.toBytes(is);
-	        
 	        int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
 	        
-	        //ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
 	        PredefinedBAOS baos = new PredefinedBAOS(size);
 	        entity.writeTo(baos);
 	        
@@ -951,8 +1027,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         }
         
         AQUtility.debug("response", code);
+        if(data != null){
+        	AQUtility.debug(data.length, url);
+        }
         
-        status.code(code).message(message).redirect(redirect).time(new Date()).data(data).client(client);
+        status.code(code).message(message).error(error).redirect(redirect).time(new Date()).data(data).client(client);
 		
 	}
 	
@@ -1012,6 +1091,137 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private static int lastStatus = 200;
 	protected static int getLastStatus(){
 		return lastStatus;
+	}
+	
+	
+	public T getResult(){
+		return result;
+	}
+	
+	public AjaxStatus getStatus(){
+		return status;
+	}
+	
+	public String getEncoding(){
+		return encoding;
+	}
+	
+	private static final String lineEnd = "\r\n";
+	private static final String twoHyphens = "--";
+	private static final String boundary = "*****";
+	
+	
+	private static boolean isMultiPart(Map<String, Object> params){
+		
+		for(Map.Entry<String, Object> entry: params.entrySet()){
+			Object value = entry.getValue();
+			AQUtility.debug(entry.getKey(), value);
+			if(value instanceof File || value instanceof byte[]) return true;
+		}
+		
+		return false;
+	}
+	
+	private void httpMulti(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws IOException {
+
+		AQUtility.debug("multipart", url);
+		
+		HttpURLConnection conn = null;
+		DataOutputStream dos = null;
+		
+		
+		URL u = new URL(url);
+		conn = (HttpURLConnection) u.openConnection();
+
+		conn.setInstanceFollowRedirects(false);
+		
+		conn.setConnectTimeout(NET_TIMEOUT * 4);
+		
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		conn.setUseCaches(false);
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Connection", "Keep-Alive");
+		conn.setRequestProperty("Content-Type", "multipart/form-data;charset=utf-8;boundary=" + boundary);
+
+		dos = new DataOutputStream(conn.getOutputStream());
+
+		for(Map.Entry<String, Object> entry: params.entrySet()){
+			
+			writeObject(dos, entry.getKey(), entry.getValue());
+			
+		}
+		
+		dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+		dos.flush();
+		dos.close();
+		
+		conn.connect();
+		
+        int code = conn.getResponseCode();
+        String message = conn.getResponseMessage();
+        
+        byte[] data = null;
+        
+        if(code < 200 || code >= 300){        	
+        	//throw new IOException();
+        }else{
+        	
+        	InputStream is = conn.getInputStream();
+    		data = AQUtility.toBytes(is);
+    		
+        }
+        
+        AQUtility.debug("response", code);
+        if(data != null){
+        	AQUtility.debug(data.length, url);
+        }
+        
+        status.code(code).message(message).redirect(url).time(new Date()).data(data).client(null);
+			
+	
+	
+	}
+	
+	private static void writeObject(DataOutputStream dos, String name, Object obj) throws IOException{
+		
+		if(obj == null) return;
+		
+		if(obj instanceof File){
+			writeData(dos, name, new FileInputStream((File) obj));
+		}else if(obj instanceof byte[]){
+			writeData(dos, name, new ByteArrayInputStream((byte[]) obj));
+		}else{
+			writeField(dos, name, obj.toString());
+		}
+		
+	}
+	
+	
+	private static void writeData(DataOutputStream dos, String name, InputStream is) throws IOException {
+		
+		dos.writeBytes(twoHyphens + boundary + lineEnd);
+		dos.writeBytes("Content-Disposition: form-data; name=\""+name+"\";"
+				+ " filename=\"" + name + "\"" + lineEnd);
+		dos.writeBytes(lineEnd);
+
+		AQUtility.copy(is, dos);
+		
+		dos.writeBytes(lineEnd);
+		
+	}
+	
+    
+	private static void writeField(DataOutputStream dos, String name, String value) throws IOException {
+		dos.writeBytes(twoHyphens + boundary + lineEnd);
+		dos.writeBytes("Content-Disposition: form-data; name=\"" + name + "\"");
+		dos.writeBytes(lineEnd);
+		dos.writeBytes(lineEnd);
+		
+		byte[] data = value.getBytes("UTF-8");
+		dos.write(data);
+		
+		dos.writeBytes(lineEnd);
 	}
 	
 }

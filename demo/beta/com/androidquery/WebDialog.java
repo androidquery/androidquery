@@ -29,11 +29,13 @@ public class WebDialog extends Dialog {
 
 	private String url;
 	private WebViewClient client;
+	private WebView wv;
 	private LinearLayout ll;
 	private String message;
     
     public WebDialog(Context context, String url, WebViewClient client) {
-        super(context, R.style.Theme);
+        //super(context, R.style.Theme_Light_NoTitleBar);
+    	super(context, R.style.Theme_NoTitleBar);
         this.url = url;
         this.client = client;
         
@@ -49,10 +51,11 @@ public class WebDialog extends Dialog {
         
     	super.onCreate(savedInstanceState);
    
+    	
     	RelativeLayout layout = new RelativeLayout(getContext());
-        
-        setupWebView(layout);
-        
+        layout.setBackgroundColor(0xFFFFFFFF);
+    	
+        setupWebView(layout);        
         setupProgress(layout);
         
         
@@ -91,7 +94,7 @@ public class WebDialog extends Dialog {
     
     private void setupWebView(RelativeLayout layout) {
     	
-    	WebView wv = new WebView(getContext());
+    	wv = new WebView(getContext());
     	wv.setVerticalScrollBarEnabled(false);
     	wv.setHorizontalScrollBarEnabled(false);
         
@@ -103,12 +106,18 @@ public class WebDialog extends Dialog {
         ws.setJavaScriptEnabled(true);
         //ws.setSaveFormData(false);
         
-        wv.loadUrl(url);
+        //wv.loadUrl(url);
         
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);       
         layout.addView(wv, lp);
         
         
+    }
+    
+    public void load(){
+    	if(wv != null){
+    		wv.loadUrl(url);
+    	}
     }
 
     private void showProgress(boolean show){

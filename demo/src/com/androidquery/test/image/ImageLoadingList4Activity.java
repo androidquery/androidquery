@@ -42,6 +42,8 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 		aq.progress(R.id.progress).ajax(url, XmlDom.class, this, "renderPhotos");
 	     
 		
+		
+		
 	}
 	
 	private List<Photo> convertAll(XmlDom xml){
@@ -94,24 +96,6 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 		
 		List<Photo> entries = convertAll(xml);
 	
-		//aq.id(R.id.list).scrolled(new OnScrollListener(){...});
-		
-		/*
-		aq.id(R.id.list).scrolled(new OnScrollListener() {
-			
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				//AQUtility.debug("onScrollStateChanged");
-			}
-			
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-				//AQUtility.debug("onScroll");
-			}
-		});
-		*/
-		
 		listAq = new AQuery(this);
 		
 		ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.photo_item, entries){
@@ -134,8 +118,10 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 				Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
 				
 				if(aq.shouldDelay(convertView, parent, tbUrl, 0)){
+					//AQUtility.debug("delay");
 					aq.id(R.id.tb).image(placeholder);
 				}else{
+					//AQUtility.debug("not delay");
 					aq.id(R.id.tb).image(tbUrl, true, true, 0, R.drawable.image_missing, placeholder, AQuery.FADE_IN_NETWORK, 0);
 				}
 				
@@ -147,6 +133,8 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 		};
 		
 		aq.id(R.id.list).adapter(aa);
+		
+		//aq.scrolledBottom(this, "scrolledBottom");
 		
 	}
 	

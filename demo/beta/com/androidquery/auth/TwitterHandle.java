@@ -249,7 +249,7 @@ public class TwitterHandle extends AccountHandle{
 	
 
 	@Override
-	public boolean expired(int code) {
+	public boolean expired(AbstractAjaxCallback<?, ?> cb, int code) {
 		return code == 400 || code == 401;
 	}
 

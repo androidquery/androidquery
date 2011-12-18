@@ -27,12 +27,8 @@ public abstract class AccountHandle {
 	
 	
 	public abstract boolean authenticated();
-	
-	protected void success(Context context){
-		callback(context);
-	}
-	
-	private synchronized void callback(Context context){
+
+	protected synchronized void success(Context context){
 		
 		if(callbacks != null){
 			
@@ -61,7 +57,7 @@ public abstract class AccountHandle {
 	
 	protected abstract void auth();
 	
-	public abstract boolean expired(int code);
+	public abstract boolean expired(AbstractAjaxCallback<?, ?> cb, int code);
 	
 	public abstract boolean reauth(AbstractAjaxCallback<?, ?> cb);
 	

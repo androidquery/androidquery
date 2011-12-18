@@ -2,6 +2,7 @@ package com.androidquery.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,4 +68,13 @@ public class AQueryMiscTest extends AbstractTest<AQueryTestActivity> {
 		assertNull(ghost);
 		
     }
+	
+	public void testAdhoc(){
+		
+		String str = "eka_2322";
+		String[] splits = str.split("\\_");
+		
+		AQUtility.debug(Arrays.asList(splits));
+		
+	}
 }

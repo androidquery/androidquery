@@ -13,9 +13,11 @@ import android.os.Bundle;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.androidquery.callback.Transformer;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
+import com.google.gson.Gson;
 
 public class AjaxLoadingActivity extends RunSourceActivity {
 
@@ -28,6 +30,10 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 		type = getIntent().getStringExtra("type");
 			
+		if("async_multipart".equals(type)){
+			aq.id(R.id.go_run).gone();
+			aq.id(R.id.result).gone();
+		}
 	}
 	
 	@Override
@@ -35,7 +41,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 		AQUtility.debug("type", type);
 		
-		AQUtility.invokeHandler(this, type, false, null);
+		AQUtility.invokeHandler(this, type, false, false, null);
 	}
 	
 	public void async_json(){
@@ -118,6 +124,69 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}	
 	
+	
+	private static class Profile{
+		public String id;
+		public String name;		
+	}
+	
+	private static class GsonTransformer implements Transformer{
+
+		public <T> T transform(String url, Class<T> type, String encoding, byte[] data, AjaxStatus status) {			
+			Gson g = new Gson();
+			return g.fromJson(new String(data), type);
+		}
+	}
+	
+	public void async_transformer(){
+		
+		String url = "https://graph.facebook.com/205050232863343";		
+		GsonTransformer t = new GsonTransformer();
+		
+        aq.transformer(t).progress(R.id.progress).ajax(url, Profile.class, new AjaxCallback<Profile>(){			
+			public void callback(String url, Profile profile, AjaxStatus status) {	
+				Gson gson = new Gson();
+				showResult("GSON Object:" + gson.toJson(profile), status);		
+			}			
+		});
+        
+	}
+	
+	/*
+	public void async_transformer() {
+		
+		String url = "https://graph.facebook.com/205050232863343";
+		
+		aq.progress(R.id.progress).ajax(url, Profile.class, new AjaxCallback<Profile>(){
+			
+			@Override
+			public Profile transform(String url, Class<Profile> type, String encoding, byte[] data, AjaxStatus status) {
+				
+				Profile profile = null;
+				
+				if(data != null){
+					Gson g = new Gson();					
+					profile = g.fromJson(new String(data), type);
+				}
+				
+				return profile;
+			}
+			
+			
+			@Override
+			public void callback(String url, Profile profile, AjaxStatus status) {
+				
+				showTextResult("id:" + profile.id + " name:" + profile.name);
+				
+			}
+			
+		});
+		
+			
+        
+		
+	}
+	*/
 	public void async_post(){
 		
         String url = "http://search.twitter.com/search.json";

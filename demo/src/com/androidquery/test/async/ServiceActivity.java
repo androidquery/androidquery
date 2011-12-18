@@ -54,7 +54,7 @@ public class ServiceActivity extends RunSourceActivity {
 		
 		AQUtility.debug("run", type);
 		
-		AQUtility.invokeHandler(this, type, false, null);
+		AQUtility.invokeHandler(this, type, false, false, null);
 	}
 	
 	public void service_version_force(){

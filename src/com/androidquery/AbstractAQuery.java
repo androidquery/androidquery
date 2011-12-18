@@ -61,11 +61,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.androidquery.auth.AccountHandle;
+import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.callback.Transformer;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
+import com.androidquery.util.WebImage;
 
 
 /**
@@ -82,14 +85,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected View view;
 	protected View progress;
 	protected AccountHandle ah;
+	private Transformer trans;
 
-	private T create(View view){
+	protected T create(View view){
 		
 		T result = null;
 		
 		try{
 			Constructor<T> c = getConstructor();
 			result = (T) c.newInstance(view);
+			result.act = act;
 		}catch(Exception e){
 			//should never happen
 			e.printStackTrace();
@@ -134,6 +139,17 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		this.view = root;
 	}
 	
+	/**
+	 * Instantiates a new AQuery object. This constructor should be used for Fragments.
+	 *
+	 * @param act Activity
+	 * @param root View container that's the parent of the to-be-operated views.
+	 */
+	public AbstractAQuery(Activity act, View root){
+		this.root = root;
+		this.view = root;
+		this.act = act;
+	}
 
 	
 	/**
@@ -192,7 +208,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T recycle(View root){
 		this.root = root;
 		this.view = root;
-		this.act = null;
 		this.progress = null;
 		this.ah = null;
 		this.context = null;
@@ -287,10 +302,28 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	
+	/**
+	 * Apply the account handler for authentication for the next ajax request. 
+	 *
+	 * @param handle the account handler
+	 * @return self
+	 */
 	public T auth(AccountHandle handle){
 		ah = handle;
 		return self();
 	}
+	
+	/**
+	 * Apply the transformer to convert raw data to desired object type for the next ajax request. 
+	 *
+	 * @param transformer transformer
+	 * @return self
+	 */
+	public T transformer(Transformer transformer){
+		trans = transformer;
+		return self();
+	}	
 	
 	
 	/**
@@ -404,6 +437,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;
+			iv.setTag(AQuery.TAG_URL, null);
 			if(resid == 0){
 				iv.setImageBitmap(null);
 			}else{				
@@ -427,6 +461,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;
+			iv.setTag(AQuery.TAG_URL, null);
 			iv.setImageDrawable(drawable);
 		}
 		
@@ -445,6 +480,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){
 			ImageView iv = (ImageView) view;
+			iv.setTag(AQuery.TAG_URL, null);
 			iv.setImageBitmap(bm);
 		}
 		
@@ -539,14 +575,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio){
 		
-		/*
-		BitmapAjaxCallback cb = new BitmapAjaxCallback();		
-		cb.url(url).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animId).ratio(ratio);			
-		return image(cb);
-		*/
-		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, progress);
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, progress);
 			progress = null;
 		}
 		
@@ -567,11 +597,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){			
 			callback.imageView((ImageView) view);
-			if(progress != null){
-				callback.progress(progress);
-				progress = null;
-			}
-			callback.async(getContext());						
+			invoke(callback);
 		} 
 		
 		return self();
@@ -771,7 +797,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T gone(){
 		
-		if(view != null){
+		if(view != null && view.getVisibility() != View.GONE){
 			view.setVisibility(View.GONE);
 		}
 		
@@ -785,7 +811,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T invisible(){
 		
-		if(view != null){
+		if(view != null && view.getVisibility() != View.INVISIBLE){
 			view.setVisibility(View.INVISIBLE);
 		}
 		
@@ -799,7 +825,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T visible(){
 		
-		if(view != null){
+		if(view != null && view.getVisibility() != View.VISIBLE){
 			view.setVisibility(View.VISIBLE);
 		}
 		
@@ -1006,6 +1032,22 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof EditText){
 			result = ((EditText) view).getEditableText();
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Gets the text of a TextView.
+	 *
+	 * @return the text
+	 */
+	public CharSequence getText(){
+		
+		CharSequence result = null;
+		
+		if(view instanceof TextView){
+			result = ((TextView) view).getText();
 		}
 		
 		return result;
@@ -1230,7 +1272,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T overridePendingTransition5(int enterAnim, int exitAnim){
 		
 		if(act != null){
-			AQUtility.invokeHandler(act, "overridePendingTransition", false, PENDING_TRANSITION_SIG, enterAnim, exitAnim);
+			AQUtility.invokeHandler(act, "overridePendingTransition", false, false, PENDING_TRANSITION_SIG, enterAnim, exitAnim);
 		}
 		
 		return self();
@@ -1247,7 +1289,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T setOverScrollMode9(int mode){
 		
 		if(view instanceof AbsListView){
-			AQUtility.invokeHandler(view, "setOverScrollMode", false, OVER_SCROLL_SIG, mode);
+			AQUtility.invokeHandler(view, "setOverScrollMode", false, false, OVER_SCROLL_SIG, mode);
 		}
 		
 		return self();
@@ -1268,7 +1310,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view != null){
 			
-			AQUtility.invokeHandler(view, "setLayerType", false, LAYER_TYPE_SIG, type, paint);
+			AQUtility.invokeHandler(view, "setLayerType", false, false, LAYER_TYPE_SIG, type, paint);
 		}
 		
 		return self();
@@ -1287,7 +1329,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		Object handler = view;
 		if(handler == null) handler = act;
 		
-		return AQUtility.invokeHandler(handler, method, false, sig, params);
+		return AQUtility.invokeHandler(handler, method, false, false, sig, params);
 	}
 	
 	
@@ -1469,7 +1511,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return context;
 	}
 	
-	
 	/**
 	 * Advanced Ajax callback. User must manually prepare the callback object settings (url, type, etc...) by using its methods.
 	 *
@@ -1480,6 +1521,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	
 	public <K> T ajax(AjaxCallback<K> callback){
+		return invoke(callback);
+	}
+	
+	
+	
+	protected <K> T invoke(AbstractAjaxCallback<?, K> callback){
 				
 		
 		if(ah != null){
@@ -1492,10 +1539,23 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			progress = null;
 		}
 		
-		callback.async(getContext());
+		if(trans != null){
+			callback.transformer(trans);
+			trans = null;
+		}
+		
+		if(act != null){
+			callback.async(act);
+		}else{
+			callback.async(getContext());
+		}
+		
 		
 		return self();
 	}	
+	
+	
+	
 	
 	/**
 	 * Ajax call with various callback data types.
@@ -1637,6 +1697,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 	}
 	
+	public <K> T sync(AjaxCallback<K> callback){
+		ajax(callback);
+		callback.block();
+		return self();
+	}
+	
+	
+	
 	/**
 	 * Cache the url to file cache without any callback.
 	 *
@@ -1719,7 +1787,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		if(result == null){
 			File file = getCachedFile(url);
 			if(file != null){
-				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth);
+				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth, true);
 			}
 		}
 		
@@ -1740,6 +1808,23 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * 
+	 * See shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck).
+	 * File check is true by default.
+	 * 
+	 * @param convertView the list item view
+	 * @param parent the parent input of getView
+	 * @param url the content url to be checked if cached and is available immediately
+	 * @param velocity the trigger velocity
+	 * 
+	 * @return Bitmap
+	 */
+	
+	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
+		return Common.shouldDelay(convertView, parent, url, velocity, true);
+	}
+	
+	/**
 	 * Determines if a list view item should delay loading a url resource because the list view is scrolling very fast.
 	 * The primary purpose of this method is to skip loading remote resources (such as images) over the internet 
 	 * until the list stop flinging and the user is confusing on the displaying items.
@@ -1750,9 +1835,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *
 	 * Designed to be used inside getView(int position, View convertView, ViewGroup parent) of an adapter.
 	 * 
-	 * If the url resource is cached (in memory or file), this method will returns true. Otherwise, the method returns
+	 * If the url resource is cached, in memory or file, this method will returns true. Otherwise, the method returns
 	 * true of the list is scrolling above the specified velocity. Velocity is measured in items/seconds. 
 	 * Velocity of 0 implies always delay during fling.
+	 * 
+	 * If fileCheck is false, only memory is checked. This only applies to image resources.
 	 * 
 	 * <br>
 	 * <br>
@@ -1786,12 +1873,13 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param parent the parent input of getView
 	 * @param url the content url to be checked if cached and is available immediately
 	 * @param velocity the trigger velocity
+	 * @param fileCheck fileCheck
 	 * 
 	 * @return Bitmap
 	 */
 	
-	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
-		return Common.shouldDelay(convertView, parent, url, velocity);
+	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck){
+		return Common.shouldDelay(convertView, parent, url, velocity, fileCheck);
 	}
 	
 	/**
@@ -1850,7 +1938,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			}
 		
 		}catch(Exception e){
-			AQUtility.report(e);
+			AQUtility.debug(e);
 		}
 		
 		return file;
@@ -1986,6 +2074,22 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		return self();
 		
+	}
+	
+	public T webImage(String url){
+		return webImage(url, true, false, 0xFF000000);
+	}
+	
+	public T webImage(String url, boolean zoom, boolean control, int color){
+		
+		if(view instanceof WebView){
+			setLayerType11(AQuery.LAYER_TYPE_SOFTWARE, null);
+			WebImage wi = new WebImage((WebView) view, url, progress, zoom, control, color);
+			wi.load();
+			progress = null;
+		}
+		
+		return self();
 	}
 	
 }

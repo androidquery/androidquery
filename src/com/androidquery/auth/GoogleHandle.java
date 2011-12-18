@@ -93,7 +93,7 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 			token = am.blockingGetAuthToken(acc, type, true);
 			AQUtility.debug("re token", token);
 		} catch (Exception e) {			
-			AQUtility.report(e);
+			AQUtility.debug(e);
 			token = null;
 		} 
 		
@@ -167,9 +167,9 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 				bundle = future.getResult();
 			} catch (OperationCanceledException e) {
 			} catch (AuthenticatorException e) {
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			} catch (IOException e) {
-				AQUtility.report(e);
+				AQUtility.debug(e);
 			}
 			
 			return bundle;
@@ -200,7 +200,7 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 	}
 	
 	@Override
-	public boolean expired(int code) {
+	public boolean expired(AbstractAjaxCallback<?, ?> cb, int code) {
 		return code == 401 || code == 403;
 	}
 	
@@ -222,5 +222,7 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 	public boolean authenticated() {
 		return token != null;
 	}
+
+	
 	
 }

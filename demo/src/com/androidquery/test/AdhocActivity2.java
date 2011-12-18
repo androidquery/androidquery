@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
 
@@ -24,8 +25,16 @@ public class AdhocActivity2 extends RunSourceActivity{
 	
 	private void work(){
 		
-		//runSource();
+		//11-16 22:38:26.449: W/AQuery(18289): preset:http://graph.facebook.com/1281625122/picture
+		AQUtility.cleanCache(AQUtility.getCacheDir(this), 0, 0);
+		BitmapAjaxCallback.clearCache();
+
+		String pic = "http://graph.facebook.com/1281625122/picture";
 		
+		aq.id(R.id.image1).image(pic);
+		aq.id(R.id.image2).image(pic);
+		
+
 	}
 	
 	
@@ -36,58 +45,11 @@ public class AdhocActivity2 extends RunSourceActivity{
 	@Override
 	protected void runSource(){
 		
-		AQUtility.debug("ad hoc2");
-		ajax_encoding();
-	}
-	
-	private void ajax_encoding(){
-		
-		//String url = "http://www.kyotojp.com/limousine-big5.html";
-		String url = "http://192.168.1.222/test/big5.xml";
 		
 		
-		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>();
-		//cb.url(url).type(String.class).encoding("Big5").weakHandler(this, "big5cb");
-		cb.url(url).type(XmlDom.class).weakHandler(this, "big5cb");
-		
-		aq.ajax(cb);
 		
 	}
 	
-	public void big5cb(String url, String html, AjaxStatus status){
-		
-		
-		AQUtility.debug(html);
-		
-	}
 	
-	public void big5cb(String url, XmlDom xml, AjaxStatus status){
-		
-		
-		AQUtility.debug(xml);
-		
-		if(xml != null){
-			String text = xml.text("text");
-			AQUtility.debug(text);
-		}
-		
-	}
-	
-	/*
-	public void big5cb(String url, byte[] data, AjaxStatus status){
-		
-		if(data != null){
-			String html = null;
-			try {
-				html = new String(data, "Big5");
-			} catch (UnsupportedEncodingException e) {
-			}
-			AQUtility.debug(html);
-		}
-		
-		
-		
-	}
-	*/
 	
 }

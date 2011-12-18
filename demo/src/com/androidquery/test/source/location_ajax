@@ -1,0 +1,17 @@
+	public void location_ajax(){
+		
+		aq.id(R.id.result).text("");
+    	
+		LocationAjaxCallback cb = new LocationAjaxCallback();
+    	cb.weakHandler(this, "locationCb").timeout(40 * 1000);   	
+    	cb.async(this);
+		
+	}
+	
+	public void locationCb(String url, Location loc, AjaxStatus status){
+		
+		if(loc != null){
+			appendResult(loc);
+		}
+		
+	}

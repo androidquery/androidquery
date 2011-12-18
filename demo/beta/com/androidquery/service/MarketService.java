@@ -16,6 +16,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -119,8 +120,12 @@ public class MarketService{
 	
 	
 	private String getHost(){
+		
 		//return "http://192.168.1.222";
+		
 		return "https://androidquery.appspot.com";
+		
+		//return "http://0-2-6.androidquery.appspot.com";
 	}
 	
 	private String getQueryUrl(){
@@ -137,6 +142,11 @@ public class MarketService{
 	
 	private Drawable getAppIcon(){
 		Drawable d = getApplicationInfo().loadIcon(act.getPackageManager());
+		
+		AQUtility.debug("icon", d.getIntrinsicHeight());
+		
+		//Drawable s = new ScaleDrawable(d, 0x11, 0.5f, 0.5f);
+		//s.setLevel(1);
 		return d;
 	}
 	
@@ -282,6 +292,7 @@ public class MarketService{
 		
 		Drawable icon = getAppIcon();
 		
+		
 		Context context = act;
 		
 		//getDialogStyle(act);
@@ -320,6 +331,7 @@ public class MarketService{
 		//AQUtility.debug("method finished", System.currentTimeMillis());
 		
 		dialog.setMessage(Html.fromHtml(patchBody(body), null, handler));
+		
 		
 		aq.show(dialog);
 		

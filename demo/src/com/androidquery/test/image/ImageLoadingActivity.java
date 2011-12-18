@@ -15,6 +15,7 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 
@@ -61,7 +62,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	@Override
 	protected void runSource(){
 		AQUtility.debug(type);
-		AQUtility.invokeHandler(this, type, false, null);
+		AQUtility.invokeHandler(this, type, false, false, null);
 	}
 	
 	public void image_simple(){

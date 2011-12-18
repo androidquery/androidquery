@@ -143,6 +143,15 @@ public class RunSourceActivity extends Activity {
 		}
 	}
 	
+	protected void appendResult(Object result){
+		
+		aq.id(R.id.result).visible();
+		String str = aq.getText().toString();
+		
+		aq.text(str + " " + result);
+	}
+	
+	
 	protected void showResult(Object result, AjaxStatus status){
 		showMeta(status);
 		aq.id(R.id.result).visible().text(result + "");
@@ -174,27 +183,19 @@ public class RunSourceActivity extends Activity {
 			String name = getIntent().getStringExtra("type");
 		
 			InputStream is = getClassLoader().getResourceAsStream("com/androidquery/test/source/" + name);
-			
+		
 			if(is != null){
 				source = new String(AQUtility.toBytes(is));
 			}
+			
+			//AQUtility.debug(name, source);
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		return source;
 		
-		
-		/*
-		String name = getIntent().getStringExtra("type");
-		
-		if(sourceMap == null){
-			sourceMap = loadMap();			
-		}
-		
-		return sourceMap.get(name);
-		
-		*/
 	}
 	
 	

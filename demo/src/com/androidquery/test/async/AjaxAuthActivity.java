@@ -6,6 +6,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.webkit.CookieManager;
@@ -40,16 +41,32 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 		AQUtility.debug("run", type);
 		
-		AQUtility.invokeHandler(this, type, false, null);
+		AQUtility.invokeHandler(this, type, false, false, null);
 	}
 
 	
 	
 	private static String APP_ID = "251003261612555";
+	private static String PERMISSIONS = "read_stream,read_friendlists,manage_friendlists,manage_notifications,publish_stream,publish_checkins,offline_access,user_photos,user_likes,user_groups,friends_photos";
+	
+	
 	public void auth_facebook(){
 		
 		
-		FacebookHandle handle = new FacebookHandle(this, APP_ID, "read_stream");
+		FacebookHandle handle = new FacebookHandle(this, APP_ID, PERMISSIONS);
+		
+		String url = "https://graph.facebook.com/me/feed";
+		aq.auth(handle).progress(R.id.progress).ajax(url, JSONObject.class, this, "facebookCb");
+		
+	}
+	
+	private FacebookHandle handle;
+	private final int ACTIVITY_SSO = 1002;
+	public void auth_facebook_sso(){
+		
+		
+		handle = new FacebookHandle(this, APP_ID, PERMISSIONS);
+		handle.sso(ACTIVITY_SSO);
 		
 		String url = "https://graph.facebook.com/me/feed";
 		aq.auth(handle).progress(R.id.progress).ajax(url, JSONObject.class, this, "facebookCb");
@@ -61,6 +78,23 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		showResult(jo, status);
 		
 	}
+	
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	
+    	switch(requestCode) {
+    		
+	    	case ACTIVITY_SSO: {
+	    		if(handle != null){
+	    			handle.onActivityResult(requestCode, resultCode, data);	  
+	    		}
+	    		break;
+	    	}
+	    	
+    	}
+    }
+	
+	
 	
 	private static String CONSUMER_KEY = "x5l8Ax1RSo8T4GjSMYiG8g";
 	private static String CONSUMER_SECRET = "8p46vY3H2sk7hnbTAQF0JqLe8J9xtsssGlxVAWdoySg";

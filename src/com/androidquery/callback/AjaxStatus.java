@@ -37,6 +37,8 @@ public class AjaxStatus {
 	/** Source MEMORY. */
 	public static final int MEMORY = 4;
 	
+	public static final int DEVICE = 5;
+	
 	public static final int NETWORK_ERROR = -101;
 	public static final int AUTH_ERROR = -102;
 	public static final int TRANSFORM_ERROR = -103;
@@ -54,6 +56,8 @@ public class AjaxStatus {
 	private long start = System.currentTimeMillis();
 	private boolean done;
 	private boolean invalid;
+	private boolean reauth;
+	private String error;
 	
 	public AjaxStatus(){		
 	}
@@ -70,6 +74,11 @@ public class AjaxStatus {
 	
 	protected AjaxStatus code(int code){
 		this.code = code;
+		return this;
+	}
+	
+	protected AjaxStatus error(String error){
+		this.error = error;
 		return this;
 	}
 	
@@ -93,6 +102,11 @@ public class AjaxStatus {
 		return this;
 	}
 	
+	protected AjaxStatus reauth(boolean reauth){
+		this.reauth = reauth;
+		return this;
+	}
+	
 	protected AjaxStatus client(DefaultHttpClient client){
 		this.client = client;
 		return this;
@@ -101,8 +115,10 @@ public class AjaxStatus {
 	protected AjaxStatus done(){
 		this.duration = System.currentTimeMillis() - start;
 		this.done = true;
+		this.reauth = false;
 		return this;
 	}
+	
 	
 	protected AjaxStatus data(byte[] data){
 		this.data = data;
@@ -116,6 +132,10 @@ public class AjaxStatus {
 	
 	protected boolean getDone() {
 		return done;
+	}
+	
+	protected boolean getReauth() {
+		return reauth;
 	}
 	
 	protected boolean getInvalid() {
@@ -200,6 +220,15 @@ public class AjaxStatus {
 	}
 	
 	/**
+	 * Gets the error response as a string. For http response code that's not 200-299.
+	 *
+	 * @return source
+	 */
+	public String getError() {
+		return error;
+	}
+	
+	/**
 	 * Test if the response is expired against current time, given the expire duration in milliseconds.
 	 * If the ajax source is NETWORK, it's never considered expired.
 	 *
@@ -208,9 +237,9 @@ public class AjaxStatus {
 	
 	public boolean expired(long expire){
 		
-		long durr = time.getTime();
+		long mod = time.getTime();
 		long now = System.currentTimeMillis();		
-		long diff = now - durr;
+		long diff = now - mod;
 		
 		if(diff > expire && getSource() != NETWORK){
 			return true;

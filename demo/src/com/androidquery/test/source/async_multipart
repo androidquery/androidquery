@@ -1,0 +1,19 @@
+	private void aync_multipart(){
+		
+		String url = "https://graph.facebook.com/me/photos";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("message", "Message");
+		
+		//Simply put a byte[] to the params, AQuery will detect it and treat it as a multi-part post
+		byte[] data = getImageData();
+		params.put("source", data);
+		
+		//Alternatively, put a file instead of byte[]
+		//File file = getImageFile();		
+		//params.put("source", file);
+		
+		AQuery aq = new AQuery(getApplicationContext());
+		aq.auth(handle).ajax(url, params, JSONObject.class, this, "photoCb");
+		
+	}
