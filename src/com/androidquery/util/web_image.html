@@ -1,11 +1,6 @@
 <html>
 
-<!--  
-<meta name="viewport" content="target-densitydpi=device-dpi, initial-scale=1, minimum-scale=1, user-scalable=1">
--->
-
 <meta name="viewport" content="initial-scale=1, minimum-scale=1, user-scalable=1">
-
 
 <body style="background:@color;margin:0px;padding:0px;">
   
@@ -13,8 +8,6 @@
 	
 	var ratio = 10;
 	var draw;
-	
-	
 	
 	function now(){
 		var d = new Date();
@@ -70,18 +63,13 @@
 	
 	</script>  
   
-  
   	<div id="box" style="vertical-align:middle;text-align:center;display:table-cell;">
  		  
 		<img id="img" src="@src" style="display:none;" onload="resize(true);this.style.display='inline';"/>
-		
-		<!--
-		<img id="img" src="@src" />
-		-->
+
 	</div>
   
-  	<script>
- 		//console.log('2nd');
+  	<script>		
  		resize(true);
  		window.onresize = change;
   	</script>

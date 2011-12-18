@@ -1,6 +1,5 @@
 package com.androidquery.callback;
 
-import android.graphics.Bitmap;
 
 public interface Transformer{
 

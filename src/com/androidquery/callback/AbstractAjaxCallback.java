@@ -1122,8 +1122,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return false;
 	}
 	
-	//String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status
-	//private static HttpURLConnection postRealMultiPartConnection(String urlString, Map<String, Object> params) throws IOException {
 	private void httpMulti(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws IOException {
 
 		AQUtility.debug("multipart", url);
@@ -1139,13 +1137,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		conn.setConnectTimeout(NET_TIMEOUT * 4);
 		
-		/*
-		if(ah != null){
-			ah.applyToken(this, hr);
-		}
-		*/
-		//conn.addRequestProperty("Cookie", makeSessionCookie());	
-		
 		conn.setDoInput(true);
 		conn.setDoOutput(true);
 		conn.setUseCaches(false);
@@ -1153,8 +1144,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		conn.setRequestProperty("Connection", "Keep-Alive");
 		conn.setRequestProperty("Content-Type", "multipart/form-data;charset=utf-8;boundary=" + boundary);
 
-		//headers.put("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-		
 		dos = new DataOutputStream(conn.getOutputStream());
 
 		for(Map.Entry<String, Object> entry: params.entrySet()){
