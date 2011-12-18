@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="beta"/>
-	<classpathentry kind="src" path="aquery"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="lib" path="lib/FlurryAgent.jar"/>
@@ -10,5 +9,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="lib/gson-2.0.jar"/>
+	<classpathentry kind="lib" path="/AndroidQuery/bin/androidquery.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

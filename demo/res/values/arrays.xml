@@ -17,7 +17,7 @@
     <string-array name="top_values">
         <item>com.androidquery.test.IntentListActivity:async:updated</item>
         <item>com.androidquery.test.IntentListActivity:image:updated</item>
-        <item>com.androidquery.test.IntentListActivity:auth:updated</item>
+        <item>com.androidquery.test.IntentListActivity:auth:</item>
         <item>com.androidquery.test.IntentListActivity:location:preview</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
         <item>com.androidquery.test.IntentListActivity:service:preview</item>
@@ -54,15 +54,15 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:preview</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_multipart:preview</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_multipart:new</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_encoding:new</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_encoding</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_status</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_error:updated</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_error</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_invalidate</item>  
         <item>http://code.google.com/p/android-query/wiki/AsyncAPI</item>    
     </string-array>
@@ -130,7 +130,7 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_ratio</item>
         <item>com.androidquery.test.image.ImageLoadingAspectRatioActivity:image_ratio_fixed</item>
         
-        <item>com.androidquery.test.image.ImageZoomActivity:image_zoom:preview</item>
+        <item>com.androidquery.test.image.ImageZoomActivity:image_zoom:new</item>
         
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
