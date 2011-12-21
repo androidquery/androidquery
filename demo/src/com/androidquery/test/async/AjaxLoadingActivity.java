@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,6 +47,8 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	
 	public void async_json(){
 	    
+		//AjaxCallback.setSSF(SSLSocketFactory.getSocketFactory());
+		
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
         
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {

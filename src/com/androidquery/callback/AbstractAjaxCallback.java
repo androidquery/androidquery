@@ -48,6 +48,7 @@ import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.scheme.SocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -938,6 +939,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	private static SocketFactory ssf;
+	public static void setSSF(SocketFactory sf){
+		ssf = sf;
+		client = null;
+	}
 	
 	private static DefaultHttpClient client;
 	private static DefaultHttpClient getClient(){
@@ -950,13 +956,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(NETWORK_POOL));
 			
+			
 			//Added this line to avoid issue at: http://stackoverflow.com/questions/5358014/android-httpclient-oom-on-4g-lte-htc-thunderbolt
 			HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
 			
 			SchemeRegistry registry = new SchemeRegistry();
 			registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-			registry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
-
+			registry.register(new Scheme("https", ssf == null ? SSLSocketFactory.getSocketFactory() : ssf, 443));
 			
 			ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(httpParams, registry);			
 			client = new DefaultHttpClient(cm, httpParams);
