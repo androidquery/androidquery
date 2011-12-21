@@ -35,6 +35,7 @@ import android.text.Editable;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -2138,6 +2139,25 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		return view;
 		
+	}
+	
+	
+	public T parent(int id){
+		
+		View node = view;
+		View result = null;
+		
+		while(node != null){			
+			if(node.getId() == id){
+				result = node;
+				break;
+			}
+			ViewParent p = node.getParent();
+			if(!(p instanceof View)) break;
+			node = (View) p;
+		}
+		
+		return create(result);
 	}
 	
 }
