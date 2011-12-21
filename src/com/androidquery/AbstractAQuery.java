@@ -33,6 +33,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -2114,6 +2115,29 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		
 		return self();
+	}
+	
+	
+	private static LayoutInflater inflater;
+	public View inflate(View convertView, int id, ViewGroup root, boolean attach){
+		
+		if(convertView != null){
+			Integer layout = (Integer) convertView.getTag(AQuery.TAG_LAYOUT);
+			if(layout != null && layout.intValue() == id){
+				return convertView;
+			}
+		}
+		
+		if(inflater == null){
+			inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		}
+			
+		
+		View view = inflater.inflate(id, root, attach);	
+		view.setTag(AQuery.TAG_LAYOUT, id);
+		
+		return view;
+		
 	}
 	
 }
