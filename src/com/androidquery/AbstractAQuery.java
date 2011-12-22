@@ -192,12 +192,39 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * Return a new AQuery object that uses the found view as a root.
 	 *
 	 * @param id the id
-	 * @return self
+	 * @return new AQuery object
 	 */
 	public T find(int id){
 		View view = findView(id);
 		return create(view);
 	}
+	
+	/**
+	 * Return a new AQuery object that uses the found parent as a root.
+	 * If no parent with matching id is found, operating view will be null and isExist() will return false.
+	 * 
+	 *
+	 * @param id the parent id
+	 * @return new AQuery object
+	 */
+	public T parent(int id){
+		
+		View node = view;
+		View result = null;
+		
+		while(node != null){			
+			if(node.getId() == id){
+				result = node;
+				break;
+			}
+			ViewParent p = node.getParent();
+			if(!(p instanceof View)) break;
+			node = (View) p;
+		}
+		
+		return create(result);
+	}
+	
 	
 	/**
 	 * Recycle this AQuery object. 
@@ -2118,13 +2145,27 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
-	
+	/**
+	 * Inflate a view from xml layout.
+	 * 
+	 * This method is similar to LayoutInflater.inflate() but with sanity checks against the
+	 * layout type against the convert view. 
+	 * 
+	 * If the convertView is null or the convertView type doesn't matches layoutId type, a new view
+	 * is inflated. Otherwise the convertView will be returned to be reused. 
+	 * 
+	 * @param convertView the view to be reused
+	 * @param layoutId the desired view type
+	 * @param root the view root for layout params, can be null
+	 * @return self
+	 * 
+	 */
 	private static LayoutInflater inflater;
-	public View inflate(View convertView, int id, ViewGroup root, boolean attach){
+	public View inflate(View convertView, int layoutId, ViewGroup root){
 		
 		if(convertView != null){
 			Integer layout = (Integer) convertView.getTag(AQuery.TAG_LAYOUT);
-			if(layout != null && layout.intValue() == id){
+			if(layout != null && layout.intValue() == layoutId){
 				return convertView;
 			}
 		}
@@ -2134,30 +2175,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 			
 		
-		View view = inflater.inflate(id, root, attach);	
-		view.setTag(AQuery.TAG_LAYOUT, id);
+		View view = inflater.inflate(layoutId, root, false);	
+		view.setTag(AQuery.TAG_LAYOUT, layoutId);
 		
 		return view;
 		
 	}
 	
 	
-	public T parent(int id){
-		
-		View node = view;
-		View result = null;
-		
-		while(node != null){			
-			if(node.getId() == id){
-				result = node;
-				break;
-			}
-			ViewParent p = node.getParent();
-			if(!(p instanceof View)) break;
-			node = (View) p;
-		}
-		
-		return create(result);
-	}
+
 	
 }
