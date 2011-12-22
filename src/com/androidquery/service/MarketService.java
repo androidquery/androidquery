@@ -176,7 +176,7 @@ public class MarketService{
 	/**
 	 * The time duration which last version check expires. Default is 10 hours.
 	 *
-	 * @param force force an update check
+	 * @param expire expire time in milliseconds
 	 * @return self
 	 */
 	
@@ -424,6 +424,7 @@ public class MarketService{
 	
 	private class Handler implements DialogInterface.OnClickListener, TagHandler{
         
+		@SuppressWarnings("unused")
 		public void marketCb(String url, JSONObject jo, AjaxStatus status){
 			
 			if(act.isFinishing()) return;
@@ -466,6 +467,7 @@ public class MarketService{
 			}
 		}
 		
+		@SuppressWarnings("unused")
 		public void detailCb(String url, String html, AjaxStatus status){
 			
 			if(html != null && html.length() > 1000){
