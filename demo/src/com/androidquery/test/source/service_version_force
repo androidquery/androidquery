@@ -1,6 +1,6 @@
 	public void service_version_force(){
 	    
 		MarketService ms = new MarketService(this);
-		ms.locale(Locale.getDefault().toString()).force(true).progress(R.id.progress).checkVersion();
+		ms.locale(Locale.getDefault().toString()).force(true).level(MarketService.MINOR).progress(R.id.progress).checkVersion();
 	        
 	}	
