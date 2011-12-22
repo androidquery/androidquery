@@ -5,7 +5,6 @@ import java.util.Locale;
 import org.json.JSONObject;
 import org.xml.sax.XMLReader;
 
-import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,15 +13,12 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Html.TagHandler;
-import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
