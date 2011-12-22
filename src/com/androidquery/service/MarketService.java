@@ -67,6 +67,12 @@ public class MarketService{
 	/** Update check level MAJOR. */
 	public static final int MAJOR = 2;
 	
+	/**
+	 * Instantiates a new MarketService.
+	 *
+	 * @param act Current activity.
+	 */
+	
 	public MarketService(Activity act) {
 		this.act = act;
 		this.aq = new AQuery(act);
@@ -76,35 +82,103 @@ public class MarketService{
 		this.updateUrl = rateUrl;
 	}
 	
+	/**
+	 * Set the destination url of the default rate/review button.
+	 *
+	 * @param url url
+	 * @return self
+	 */
 	public MarketService rateUrl(String url){
 		this.rateUrl = url;
 		return this;
 	}
 	
+	/**
+	 * Set the update check granularity level. Default is REVISION.
+	 * 
+	 * <br>
+	 * 
+	 * Can be REVISION, MINOR, or MAJOR.
+	 *
+	 * <br>
+	 *
+	 * App version format: MAJOR.MINOR.REVISION
+	 * 
+	 * <br>
+	 * 
+	 * Example:
+	 * 
+	 * <br>
+	 * Current app version: 3.1.2
+	 * <br>
+	 * Newest app version: 3.1.4
+	 * <br>
+	 * Update notice will show if level is REVISION, because the revision code is higher.
+	 * <br>
+	 * Update notice will NOT show if level is MINOR, because the minor code is equal (or higher).
+	 * 
+	 *
+	 * @param level granularity level
+	 * @return self
+	 */
 	public MarketService level(int level){
 		this.level = level;
 		return this;
 	}
 	
+	
+	/**
+	 * Set the destination url of the default update button.
+	 *
+	 * @param url url
+	 * @return self
+	 */
 	public MarketService updateUrl(String url){
 		this.updateUrl = url;
 		return this;
 	}
+	
+	
+	/**
+	 * Force the update dialog to a specific locale. Example: en_US, ja_JP.
+	 *
+	 * @param locale interface locale
+	 * @return self
+	 */
 	
 	public MarketService locale(String locale){
 		this.locale = locale;
 		return this;
 	}
 	
+	/**
+	 * Display a progress view during version check.
+	 *
+	 * @param id view id
+	 * @return self
+	 */
 	public MarketService progress(int id){
 		this.progress = id;
 		return this;
 	}
 	
+	/**
+	 * Force a version check against the AQuery server and show a dialog regardless of versions.
+	 *
+	 * @param force force an update check
+	 * @return self
+	 */
 	public MarketService force(boolean force){
 		this.force = force;
 		return this;
 	}
+	
+	/**
+	 * The time duration which last version check expires. Default is 10 hours.
+	 *
+	 * @param force force an update check
+	 * @return self
+	 */
 	
 	public MarketService expire(long expire){
 		this.expire = expire;
@@ -166,6 +240,11 @@ public class MarketService{
 		return getPackageInfo().versionCode;		
 	}
 	
+	/**
+	 * Perform a version check.
+	 *
+	 * 
+	 */
 	
 	public void checkVersion(){
 		
@@ -343,7 +422,7 @@ public class MarketService{
 	
 	private static final String BULLET = "•";
 	
-	protected class Handler implements DialogInterface.OnClickListener, TagHandler{
+	private class Handler implements DialogInterface.OnClickListener, TagHandler{
         
 		public void marketCb(String url, JSONObject jo, AjaxStatus status){
 			
