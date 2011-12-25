@@ -50,6 +50,9 @@ public class RatioDrawable extends BitmapDrawable{
 		this.ratio = ratio;
 		iv.setScaleType(ScaleType.MATRIX);
 		
+		Matrix m = new Matrix();
+		iv.setImageMatrix(m);
+		
 		adjust(iv, bm, false);
 		
 		
@@ -71,14 +74,15 @@ public class RatioDrawable extends BitmapDrawable{
 	
 	public void draw(Canvas canvas){
 		
+		
+		
 		ImageView iv = ref.get();
 		
 		if(ratio == 0 || iv == null){
-			
 			super.draw(canvas);
 		
 		}else{
-		
+			
 			Bitmap bm = getBitmap();
 			
 			Matrix m = getMatrix(iv, bm);	
@@ -110,11 +114,8 @@ public class RatioDrawable extends BitmapDrawable{
 		
 		int vh = lp.height;
 		
-		//AQUtility.debug("adj start", th + ":" + vh);
 		
 		if(th != vh){
-			
-			//AQUtility.debug("adj", vh + "->" + th);
 			
 			lp.height = th;
 			iv.setLayoutParams(lp);
@@ -171,6 +172,8 @@ public class RatioDrawable extends BitmapDrawable{
 	        
 	        m.setScale(scale, scale);
 	        m.postTranslate(dx, dy);
+	        
+	        //AQUtility.debug("new mat", scale + ":" + dx + ":" + dy);
 	        
 	        w = dw;
     	}
