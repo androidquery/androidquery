@@ -407,7 +407,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	
 	private boolean blocked;
+	
+	/**
+	 * Block the current thread until the ajax call is completed. Returns immediately if ajax is already completed.
+	 * Exception will be thrown if this method is called in main thread.
+	 *
+	 * @return the handler
+	 */
+	
 	public void block(){
 		
 		if(AQUtility.isUIThread()){
@@ -1080,6 +1089,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	/**
+	 * Set the authentication account handle.
+	 *
+	 * @param handle the account handle
+	 * @return self
+	 */
+	
 	public K auth(AccountHandle handle){		
 		ah = handle;
 		return self();
@@ -1120,15 +1136,32 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return lastStatus;
 	}
 	
-	
+	/**
+	 * Gets the result. Can be null if ajax is not completed or the ajax call failed.
+	 * This method should only be used after the block() method.
+	 *
+	 * @return the result
+	 */
 	public T getResult(){
 		return result;
 	}
+	
+	/**
+	 * Gets the ajax status.
+	 * This method should only be used after the block() method.
+	 *
+	 * @return the status
+	 */
 	
 	public AjaxStatus getStatus(){
 		return status;
 	}
 	
+	/**
+	 * Gets the encoding. Default is UTF-8.
+	 *
+	 * @return the encoding
+	 */
 	public String getEncoding(){
 		return encoding;
 	}
