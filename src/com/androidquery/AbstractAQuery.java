@@ -59,6 +59,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -353,6 +354,21 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		trans = transformer;
 		return self();
 	}	
+	
+	/**
+	 * Set the rating of a RatingBar.
+	 *
+	 * @param rating the rating
+	 * @return self
+	 */
+	public T rating(float rating){
+		
+		if(view instanceof RatingBar){			
+			RatingBar rb = (RatingBar) view;
+			rb.setRating(rating);
+		}
+		return self();
+	}
 	
 	
 	/**
@@ -1030,6 +1046,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public GridView getGridView(){
 		return (GridView) view;
+	}
+	
+	/**
+	 * Gets the current view as a RatingBar.
+	 *
+	 * @return RatingBar
+	 */
+	public RatingBar getRatingBar(){
+		return (RatingBar) view;
 	}
 	
 	/**
