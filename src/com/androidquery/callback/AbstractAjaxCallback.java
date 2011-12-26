@@ -144,6 +144,22 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	/**
+	 * Sets the default static transformer. This transformer should be stateless.
+	 * If state is required, use the AjaxCallback.transformer() or AQuery.transformer().
+	 * 
+	 * Transformers are selected in the following priority:
+	 * 1. Native 2. instance transformer() 3. static setTransformer()
+	 *
+	 * @param agent the default transformer to transform raw data to specified type
+	 */
+	
+	private static Transformer st;
+	public static void setTransformer(Transformer transformer){
+		st = transformer;
+	}
+	
+	
+	/**
 	 * Gets the ajax response type.
 	 *
 	 * @return the type
@@ -468,8 +484,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			return null;
 		}
 		
-		
-		
 		if(type.equals(JSONObject.class)){
 			
 			JSONObject result = null;
@@ -533,8 +547,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			return transformer.transform(url, type, encoding, data, status);
 		}
 		
+		if(st != null){
+			return st.transform(url, type, encoding, data, status);
+		}
+		
 		return null;
 	}
+	
+
+	
 	
 	protected T memGet(String url){
 		return null;

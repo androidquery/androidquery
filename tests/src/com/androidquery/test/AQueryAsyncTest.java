@@ -629,4 +629,24 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
 	}
 	
+	public void testAjaxStaticTransformer() {
+		
+		String url = "https://graph.facebook.com/205050232863343";
+		
+		GsonTransformer t = new GsonTransformer();
+        
+		AjaxCallback.setTransformer(t);
+		
+		aq.ajax(url, Profile.class, this, "done");
+        
+        waitAsync(2000);
+        
+        assertNotNull(result);
+        
+        Profile p  = (Profile) result;
+        assertNotNull(p.id);
+        assertNotNull(p.name);
+		
+	}
+	
 }
