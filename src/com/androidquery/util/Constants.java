@@ -52,4 +52,5 @@ public interface Constants {
 	public static final String AUTH_FINANCE = "g.finance";
 	public static final String AUTH_MAPS = "g.local";
 
+	public static final String POST_ENTITY = "%entity";
 }

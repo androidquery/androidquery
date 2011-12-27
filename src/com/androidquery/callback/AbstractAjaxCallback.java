@@ -50,6 +50,7 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.scheme.SocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -942,22 +943,35 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	
 	private void httpPost(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
 		
 		AQUtility.debug("post", url);
 		
+		
 		HttpPost post = new HttpPost(url);
 		
-		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		HttpEntity entity = null;
 		
-		for(Map.Entry<String, Object> e: params.entrySet()){
-			Object value = e.getValue();
-			if(value != null){
-				pairs.add(new BasicNameValuePair(e.getKey(), value.toString()));				
+		Object value = params.get(AQuery.POST_ENTITY);
+		
+		if(value instanceof HttpEntity){			
+			entity = (HttpEntity) value;			
+		}else{
+			
+			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+			
+			for(Map.Entry<String, Object> e: params.entrySet()){
+				value = e.getValue();
+				if(value != null){
+					pairs.add(new BasicNameValuePair(e.getKey(), value.toString()));				
+				}
 			}
+			
+			entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+			
 		}
 		
-		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
 		
 		if(headers != null  && !headers.containsKey("Content-Type")){
 			headers.put("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");

@@ -2,9 +2,16 @@ package com.androidquery.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -156,6 +163,35 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("q", "androidquery");
+		
+        aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+            	done(url, jo, status);
+               
+            }
+        });
+		
+        waitAsync();
+		
+        JSONObject jo = (JSONObject) result;
+        assertNotNull(jo);       
+        assertNotNull(jo.opt("results"));
+        
+	}
+	
+	public void testAjaxPostRaw() throws UnsupportedEncodingException{
+		
+        String url = "http://search.twitter.com/search.json";
+		
+        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		pairs.add(new BasicNameValuePair("q", "androidquery"));				
+		HttpEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+        
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put(AQuery.POST_ENTITY, entity);
 		
         aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
 
