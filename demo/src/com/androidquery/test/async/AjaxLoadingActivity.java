@@ -1,16 +1,24 @@
 package com.androidquery.test.async;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.os.Bundle;
 
+import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -209,6 +217,30 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 		
 	}
+	
+	
+	public void async_post_entity() throws UnsupportedEncodingException{
+		
+        String url = "http://search.twitter.com/search.json";
+		
+        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		pairs.add(new BasicNameValuePair("q", "androidquery"));				
+		HttpEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+        
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put(AQuery.POST_ENTITY, entity);
+        
+        aq.progress(R.id.progress).ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                
+                showResult(json, status);
+               
+            }
+        });
+	}
+	
 	
 	public void async_method_cb(){
 	    

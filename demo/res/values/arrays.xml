@@ -34,6 +34,7 @@
         <item>Custom Type (ex. Gson)</item>
         <item>Http POST</item> 
         <item>Http POST (Multipart)</item> 
+        <item>Http POST (Custom Entity)</item> 
         <item>Activity Method as Callback</item> 
         <item>Caching</item> 
         <item>Progress</item> 
@@ -55,6 +56,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:preview</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_multipart:new</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_post_entity:new</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
@@ -208,6 +210,8 @@
         <item>async_transformer</item>
         <item>async_post</item> 
         <item>async_multipart</item> 
+        <item>async_post_entity</item> 
+        
         <item>async_method_cb</item>  
         <item>async_cached</item>
         <item>async_progress</item>
@@ -296,6 +300,7 @@
         <item>Asynchronous HTTP Get Custom Type (GSON example)</item>
         <item>Asynchronous HTTP Post</item> 
         <item>Asynchronous HTTP Multipart Post (Image Upload)</item> 
+        <item>Asynchronous HTTP Post with Custom HttpEntity</item> 
         <item>Use Activity Method as Callback</item> 
         <item>Asynchronous HTTP Get with Cache Control</item>
         <item>Show Requests Progress</item>
