@@ -34,6 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
@@ -551,4 +552,12 @@ public class AQUtility {
 		return value;
 	}
 	
+	private static Context context;
+	public static void setContext(Application app){
+		context = app.getApplicationContext();
+	}
+	
+	public static Context getContext(){
+		return context;
+	}
 }
