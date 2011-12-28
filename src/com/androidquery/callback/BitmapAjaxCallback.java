@@ -43,6 +43,7 @@ import com.androidquery.util.AQUtility;
 import com.androidquery.util.BitmapCache;
 import com.androidquery.util.RatioDrawable;
 
+
 /**
  * The callback handler for handling Aquery.image() methods.
  */
@@ -56,6 +57,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
+	private static Map<String, Bitmap> invalidCache;
 	
 	private static HashMap<String, WeakHashMap<ImageView, BitmapAjaxCallback>> queueMap = new HashMap<String, WeakHashMap<ImageView, BitmapAjaxCallback>>();	
 	
@@ -262,6 +264,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return bmGet(file.getAbsolutePath(), null);
 	}
 	
+	private boolean invalid;
+	
 	@Override
 	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
 		
@@ -274,29 +278,17 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			}else if(fallback == AQuery.GONE || fallback == AQuery.INVISIBLE){
 				bm = getEmptyBitmap();
 			}
+			
+			if(status.getCode() != 200){
+				invalid = true;
+			}
 		}
 		
-		checkConnect(status);
 		
 		return bm;
 	}
 	
-	private static int failed;
-	private static void checkConnect(AjaxStatus status){
-		
-		if(status.getCode() == AjaxStatus.NETWORK_ERROR){
-			failed++;
-		}else if(status.getSource() == AjaxStatus.NETWORK){			
-			failed = 0;
-		}
-		
-	}
-	
-	private static void checkCache(){
-		if(failed >= 3 && getLastStatus() == 200){
-			clearCache();
-		}
-	}
+
 	
 	private Bitmap getFallback(){
 		
@@ -329,7 +321,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			bm = BitmapFactory.decodeResource(context.getResources(), resId);
 			
 			if(bm != null){
-				memPut(key, 0, bm);
+				memPut(key, 0, bm, false);
 			}
 		}
 		
@@ -452,13 +444,14 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	public static void clearCache(){
 		bigCache = null;
 		smallCache = null;
+		invalidCache = null;
 	}
 	
 	protected static void clearTasks(){
 		queueMap.clear();
 	}
 	
-	private static Map<String, Bitmap> getBImgCache(){
+	private static Map<String, Bitmap> getBCache(){
 		if(bigCache == null){
 			bigCache = Collections.synchronizedMap(new BitmapCache(BIG_MAX, BIG_PIXELS, BIG_TPIXELS));
 		}
@@ -466,11 +459,18 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	
-	private static Map<String, Bitmap> getSImgCache(){
+	private static Map<String, Bitmap> getSCache(){
 		if(smallCache == null){
 			smallCache = Collections.synchronizedMap(new BitmapCache(SMALL_MAX, SMALL_PIXELS, 250000));
 		}
 		return smallCache;
+	}
+	
+	private static Map<String, Bitmap> getICache(){
+		if(invalidCache == null){
+			invalidCache = Collections.synchronizedMap(new BitmapCache(100, BIG_PIXELS, 250000));
+		}
+		return invalidCache;
 	}
 	
 	@Override
@@ -494,16 +494,28 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	private static Bitmap memGet(String url, int targetWidth){
 		
-		checkCache();
-		
 		url = getKey(url, targetWidth);
 		
-		Map<String, Bitmap> cache = getBImgCache();
+		Map<String, Bitmap> cache = getBCache();
 		Bitmap result = cache.get(url);
 		
 		if(result == null){
-			cache = getSImgCache();
+			cache = getSCache();
 			result = cache.get(url);
+		}
+		
+		if(result == null){
+			cache = getICache();
+			result = cache.get(url);
+			
+			if(result != null){
+				
+				if(getLastStatus() == 200){
+					invalidCache = null;
+					result = null;
+				}
+				
+			}
 		}
 
 		return result;
@@ -516,7 +528,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return url + "#" + targetWidth;
 	}
 	
-	private static void memPut(String url, int targetWidth, Bitmap bm){
+	private static void memPut(String url, int targetWidth, Bitmap bm, boolean invalid){
 		
 		if(bm == null) return;
 		
@@ -524,10 +536,12 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		Map<String, Bitmap> cache = null;
 		
-		if(pixels <= SMALL_PIXELS){
-			cache = getSImgCache();
+		if(invalid){
+			cache = getICache();
+		}else if(pixels <= SMALL_PIXELS){
+			cache = getSCache();
 		}else{
-			cache = getBImgCache();
+			cache = getBCache();
 		}
 		
 		cache.put(getKey(url, targetWidth), bm);
@@ -537,7 +551,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	@Override
 	protected void memPut(String url, Bitmap bm){
-		memPut(url, targetWidth, bm);
+		memPut(url, targetWidth, bm, invalid);
 	}
 	
 	
