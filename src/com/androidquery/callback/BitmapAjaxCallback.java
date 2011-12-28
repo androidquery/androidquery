@@ -50,6 +50,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 
 	private static int SMALL_MAX = 20;
 	private static int BIG_MAX = 20;
+	private static int SMALL_PIXELS = 50 * 50;
 	private static int BIG_PIXELS = 400 * 400;
 	private static int BIG_TPIXELS = 1000000;
 	
@@ -99,19 +100,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return this;
 	}
 	
-	
-	/**
-	 * Set the target dimension for downsampling.
-	 *
-	 * @param targetDim the target dimension
-	 * @return self
-	 */
-	/*
-	public BitmapAjaxCallback targetDim(boolean targetDim){
-		this.targetDim = targetDim;
-		return this;
-	}
-	*/
 	
 	/**
 	 * Set the image source file.
@@ -437,6 +425,18 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	/**
+	 * Sets the pixel criteria for small images. Small images are cached in a separate cache.
+	 *
+	 * Default is 50x50 (2500 pixels)
+	 *
+	 * @param pixels the small image pixel criteria
+	 */
+	public static void setSmallPixel(int pixels){
+		SMALL_PIXELS = pixels;
+		clearCache();
+	}
+	
+	/**
 	 * Sets the max pixel limit for the entire memcache. LRU images will be expunged if max pixels limit is reached.
 	 *
 	 * @param pixels the new max pixel limit
@@ -468,7 +468,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	private static Map<String, Bitmap> getSImgCache(){
 		if(smallCache == null){
-			smallCache = Collections.synchronizedMap(new BitmapCache(SMALL_MAX, 50 * 50, 250000));
+			smallCache = Collections.synchronizedMap(new BitmapCache(SMALL_MAX, SMALL_PIXELS, 250000));
 		}
 		return smallCache;
 	}
@@ -524,7 +524,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		Map<String, Bitmap> cache = null;
 		
-		if(pixels <= 2500){
+		if(pixels <= SMALL_PIXELS){
 			cache = getSImgCache();
 		}else{
 			cache = getBImgCache();
