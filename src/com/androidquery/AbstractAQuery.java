@@ -33,11 +33,13 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -57,6 +59,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -190,12 +193,39 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * Return a new AQuery object that uses the found view as a root.
 	 *
 	 * @param id the id
-	 * @return self
+	 * @return new AQuery object
 	 */
 	public T find(int id){
 		View view = findView(id);
 		return create(view);
 	}
+	
+	/**
+	 * Return a new AQuery object that uses the found parent as a root.
+	 * If no parent with matching id is found, operating view will be null and isExist() will return false.
+	 * 
+	 *
+	 * @param id the parent id
+	 * @return new AQuery object
+	 */
+	public T parent(int id){
+		
+		View node = view;
+		View result = null;
+		
+		while(node != null){			
+			if(node.getId() == id){
+				result = node;
+				break;
+			}
+			ViewParent p = node.getParent();
+			if(!(p instanceof View)) break;
+			node = (View) p;
+		}
+		
+		return create(result);
+	}
+	
 	
 	/**
 	 * Recycle this AQuery object. 
@@ -324,6 +354,21 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		trans = transformer;
 		return self();
 	}	
+	
+	/**
+	 * Set the rating of a RatingBar.
+	 *
+	 * @param rating the rating
+	 * @return self
+	 */
+	public T rating(float rating){
+		
+		if(view instanceof RatingBar){			
+			RatingBar rb = (RatingBar) view;
+			rb.setRating(rating);
+		}
+		return self();
+	}
 	
 	
 	/**
@@ -1001,6 +1046,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public GridView getGridView(){
 		return (GridView) view;
+	}
+	
+	/**
+	 * Gets the current view as a RatingBar.
+	 *
+	 * @return RatingBar
+	 */
+	public RatingBar getRatingBar(){
+		return (RatingBar) view;
 	}
 	
 	/**
@@ -2115,5 +2169,45 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		return self();
 	}
+	
+	/**
+	 * Inflate a view from xml layout.
+	 * 
+	 * This method is similar to LayoutInflater.inflate() but with sanity checks against the
+	 * layout type against the convert view. 
+	 * 
+	 * If the convertView is null or the convertView type doesn't matches layoutId type, a new view
+	 * is inflated. Otherwise the convertView will be returned to be reused. 
+	 * 
+	 * @param convertView the view to be reused
+	 * @param layoutId the desired view type
+	 * @param root the view root for layout params, can be null
+	 * @return self
+	 * 
+	 */
+	private static LayoutInflater inflater;
+	public View inflate(View convertView, int layoutId, ViewGroup root){
+		
+		if(convertView != null){
+			Integer layout = (Integer) convertView.getTag(AQuery.TAG_LAYOUT);
+			if(layout != null && layout.intValue() == layoutId){
+				return convertView;
+			}
+		}
+		
+		if(inflater == null){
+			inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		}
+			
+		
+		View view = inflater.inflate(layoutId, root, false);	
+		view.setTag(AQuery.TAG_LAYOUT, layoutId);
+		
+		return view;
+		
+	}
+	
+	
+
 	
 }

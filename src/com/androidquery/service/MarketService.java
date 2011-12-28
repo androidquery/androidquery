@@ -1,3 +1,19 @@
+/*
+ * Copyright 2011 - AndroidQuery.com (tinyeeliu@gmail.com)
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package com.androidquery.service;
 
 import java.util.Locale;
@@ -5,7 +21,6 @@ import java.util.Locale;
 import org.json.JSONObject;
 import org.xml.sax.XMLReader;
 
-import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,15 +29,12 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Html.TagHandler;
-import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -46,9 +58,20 @@ public class MarketService{
 	private boolean completed;
 	private int level = REVISION;
 	
+	/** Update check level REVISION. */
 	public static final int REVISION = 0;
+	
+	/** Update check level MINOR. */
 	public static final int MINOR = 1;
+	
+	/** Update check level MAJOR. */
 	public static final int MAJOR = 2;
+	
+	/**
+	 * Instantiates a new MarketService.
+	 *
+	 * @param act Current activity.
+	 */
 	
 	public MarketService(Activity act) {
 		this.act = act;
@@ -59,35 +82,103 @@ public class MarketService{
 		this.updateUrl = rateUrl;
 	}
 	
+	/**
+	 * Set the destination url of the default rate/review button.
+	 *
+	 * @param url url
+	 * @return self
+	 */
 	public MarketService rateUrl(String url){
 		this.rateUrl = url;
 		return this;
 	}
 	
+	/**
+	 * Set the update check granularity level. Default is REVISION.
+	 * 
+	 * <br>
+	 * 
+	 * Can be REVISION, MINOR, or MAJOR.
+	 *
+	 * <br>
+	 *
+	 * App version format: MAJOR.MINOR.REVISION
+	 * 
+	 * <br>
+	 * 
+	 * Example:
+	 * 
+	 * <br>
+	 * Current app version: 3.1.2
+	 * <br>
+	 * Newest app version: 3.1.4
+	 * <br>
+	 * Update notice will show if level is REVISION, because the revision code is higher.
+	 * <br>
+	 * Update notice will NOT show if level is MINOR, because the minor code is equal (or higher).
+	 * 
+	 *
+	 * @param level granularity level
+	 * @return self
+	 */
 	public MarketService level(int level){
 		this.level = level;
 		return this;
 	}
 	
+	
+	/**
+	 * Set the destination url of the default update button.
+	 *
+	 * @param url url
+	 * @return self
+	 */
 	public MarketService updateUrl(String url){
 		this.updateUrl = url;
 		return this;
 	}
+	
+	
+	/**
+	 * Force the update dialog to a specific locale. Example: en_US, ja_JP.
+	 *
+	 * @param locale interface locale
+	 * @return self
+	 */
 	
 	public MarketService locale(String locale){
 		this.locale = locale;
 		return this;
 	}
 	
+	/**
+	 * Display a progress view during version check.
+	 *
+	 * @param id view id
+	 * @return self
+	 */
 	public MarketService progress(int id){
 		this.progress = id;
 		return this;
 	}
 	
+	/**
+	 * Force a version check against the AQuery server and show a dialog regardless of versions.
+	 *
+	 * @param force force an update check
+	 * @return self
+	 */
 	public MarketService force(boolean force){
 		this.force = force;
 		return this;
 	}
+	
+	/**
+	 * The time duration which last version check expires. Default is 10 hours.
+	 *
+	 * @param expire expire time in milliseconds
+	 * @return self
+	 */
 	
 	public MarketService expire(long expire){
 		this.expire = expire;
@@ -121,11 +212,7 @@ public class MarketService{
 	
 	private String getHost(){
 		
-		//return "http://192.168.1.222";
-		
 		return "https://androidquery.appspot.com";
-		
-		//return "http://0-2-6.androidquery.appspot.com";
 	}
 	
 	private String getQueryUrl(){
@@ -142,11 +229,6 @@ public class MarketService{
 	
 	private Drawable getAppIcon(){
 		Drawable d = getApplicationInfo().loadIcon(act.getPackageManager());
-		
-		AQUtility.debug("icon", d.getIntrinsicHeight());
-		
-		//Drawable s = new ScaleDrawable(d, 0x11, 0.5f, 0.5f);
-		//s.setLevel(1);
 		return d;
 	}
 	
@@ -158,6 +240,11 @@ public class MarketService{
 		return getPackageInfo().versionCode;		
 	}
 	
+	/**
+	 * Perform a version check.
+	 *
+	 * 
+	 */
 	
 	public void checkVersion(){
 		
@@ -287,48 +374,19 @@ public class MarketService{
 		
 		AQUtility.debug("wbody", body);
 		
-		
 		version = jo.optString("version", null);
 		
 		Drawable icon = getAppIcon();
 		
-		
 		Context context = act;
-		
-		//getDialogStyle(act);
-		
 		
 		final AlertDialog dialog = new AlertDialog.Builder(context)
         .setIcon(icon)
 		.setTitle(title)
-		//.setMessage(message)
 		.setPositiveButton(rate, handler)
         .setNeutralButton(skip, handler)
         .setNegativeButton(update, handler)
         .create();
-		
-		/*
-		if(color == null || rec == null){			
-			dialog.setMessage(message);			
-			aq.show(dialog);
-		}else{
-			WebView wv = new WebView(act);	
-			aq.id(wv).setLayerType11(AQuery.LAYER_TYPE_SOFTWARE, null);			
-			String wbody = patchWBody(body, color);		
-			
-			wv.setBackgroundColor(0);
-			int margin = Math.max(10, Math.min(20, rec.left));
-			
-			//dialog.setView(wv, margin, margin, margin, margin); 
-			dialog.setMessage(Html.fromHtml(patchBody(body), null, handler));
-			
-			
-			
-
-			wv.loadDataWithBaseURL(null, wbody, "text/html", "utf-8", null);
-		}
-		*/
-		//AQUtility.debug("method finished", System.currentTimeMillis());
 		
 		dialog.setMessage(Html.fromHtml(patchBody(body), null, handler));
 		
@@ -340,44 +398,11 @@ public class MarketService{
 		
 	}
 
-	
-	private static String patchWBody(String body, int color){
-		String wbody = "<html><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"><div style=\"color:#" +  Integer.toHexString(color) + ";\">" + body + "</div></html>"; 
-		return wbody;
-	}
     
 	private static String patchBody(String body){
 		return "<small>" + body + "</small>";
 	}
-	
-	private static Integer color;
-	private static Rect rec;
-	
-	private static void getDialogStyle(Activity act){
-		
-		if(color == null){
-			
-			AlertDialog dialog = new AlertDialog.Builder(act).setMessage(" ").create();
-			
-			dialog.show();
-			dialog.hide();
-			
-			TextView tv = (TextView) dialog.findViewById(R.id.message);
-			
-			if(tv != null){
-				int c = tv.getTextColors().getDefaultColor();
-				c = c & 0xffffff;
-				color = c;	
-				rec = new Rect(tv.getPaddingLeft(), tv.getPaddingTop(), tv.getPaddingRight(), tv.getPaddingBottom());				
-			}
-			
-			dialog.dismiss();
-			
-		}
-		
-		
-	}
-	
+
 	private static final String SKIP_VERSION = "aqs.skip";
 	
 	private static void setSkipVersion(Context context, String version){
@@ -390,22 +415,19 @@ public class MarketService{
 	}
 	
 	private boolean isActive(){
-		
 		if(act.isFinishing()) return false;
-		
 		return true;
 	}
 	
 	
 	private static final String BULLET = "•";
 	
-	protected class Handler implements DialogInterface.OnClickListener, TagHandler{
+	private class Handler implements DialogInterface.OnClickListener, TagHandler{
         
+		@SuppressWarnings("unused")
 		public void marketCb(String url, JSONObject jo, AjaxStatus status){
 			
 			if(act.isFinishing()) return;
-			
-			AQUtility.debug(jo);
 			
 			if(jo != null){
 				
@@ -445,6 +467,7 @@ public class MarketService{
 			}
 		}
 		
+		@SuppressWarnings("unused")
 		public void detailCb(String url, String html, AjaxStatus status){
 			
 			if(html != null && html.length() > 1000){
