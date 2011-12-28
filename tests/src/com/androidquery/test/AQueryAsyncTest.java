@@ -679,7 +679,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         assertNotNull(result);
         
-        Profile p  = (Profile) result;
+        Profile p = (Profile) result;
         assertNotNull(p.id);
         assertNotNull(p.name);
 		
