@@ -415,7 +415,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * Block the current thread until the ajax call is completed. Returns immediately if ajax is already completed.
 	 * Exception will be thrown if this method is called in main thread.
 	 *
-	 * @return the handler
 	 */
 	
 	public void block(){
