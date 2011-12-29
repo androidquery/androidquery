@@ -45,7 +45,7 @@ public class TestUtility {
 		}
 	}
 	
-	private static String[] deviceIds = {"00000000-6b8b-aae1-0356-4b8d0033c587", "00000000-582e-8c83-ffff-ffffb12a7939", "ffffffff-a7af-71df-0033-c5870033c587", "00000000-2e56-36d7-ffff-ffffb12a7939"};
+	private static String[] deviceIds = {"ffffffff-b588-0cd1-ffff-ffffb12a7939", "00000000-582e-8c83-ffff-ffffb12a7939", "ffffffff-a7af-71df-0033-c5870033c587", "00000000-2e56-36d7-ffff-ffffb12a7939"};
 	private static Boolean testDevice;
 	
 	public static boolean isTestDevice(Context context){
@@ -82,6 +82,7 @@ public class TestUtility {
 		    UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
 		    deviceId = deviceUuid.toString();
 		    
+		    System.err.println(deviceId);
 		}
 	    return deviceId;
 	}

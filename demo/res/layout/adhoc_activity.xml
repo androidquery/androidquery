@@ -7,19 +7,37 @@
 	android:orientation="vertical"
 >  
 
-    <Button 
-        android:id="@+id/button"
+    
+    <ImageView 
+        android:id="@+id/image1"
         android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Click"
+		android:layout_marginBottom="10dip"
+		android:padding="20dip"
+		android:src="@drawable/logo_96"
+		android:background="#cc0000"
+        />
+    
+	
+	<ImageView 
+        android:id="@+id/image2"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		
+		android:layout_marginBottom="10dip"
+		android:padding="20dip"
+		android:src="@drawable/logo_96"
+		android:background="#cc0000"
+		android:cropToPadding="false"
         />
 	
-	<WebView
-	    android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-	    android:id="@+id/web"
-	    />
-	
-	
+	<ImageView 
+        android:id="@+id/image3"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="20dip"
+		android:src="@drawable/logo_96"
+		android:background="#cc0000"
+        />
 	
 </LinearLayout>

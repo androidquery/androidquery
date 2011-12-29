@@ -69,6 +69,14 @@ public class RatioDrawable extends BitmapDrawable{
 			width = iv.getWidth();
 		}
 		
+		//AQUtility.debug("width1", width);
+		
+		if(width > 0){
+			width = width - iv.getPaddingLeft() - iv.getPaddingRight();
+		}
+		
+		//AQUtility.debug("width2", width);
+		
 		return width;
 	}
 	
@@ -88,6 +96,11 @@ public class RatioDrawable extends BitmapDrawable{
 			Matrix m = getMatrix(iv, bm);	
 			
 			if(m != null){
+				int vpad = iv.getPaddingTop() + iv.getPaddingBottom();
+				int hpad = iv.getPaddingLeft() + iv.getPaddingRight();
+				if(vpad > 0 || hpad > 0){
+					canvas.clipRect(0, 0, iv.getWidth() - hpad, iv.getHeight() - vpad);
+				}
 				canvas.drawBitmap(bm, m, getPaint());
 			}
 			
@@ -107,7 +120,7 @@ public class RatioDrawable extends BitmapDrawable{
 		int dh = bm.getHeight();
 		
 		
-		int th = targetHeight(dw, dh, vw);
+		int th = targetHeight(dw, dh, vw) + iv.getPaddingTop() + iv.getPaddingBottom();
 			
 		LayoutParams lp = iv.getLayoutParams();
 		if(lp == null) return;
@@ -120,7 +133,7 @@ public class RatioDrawable extends BitmapDrawable{
 			lp.height = th;
 			iv.setLayoutParams(lp);
 					
-			
+			//AQUtility.debug("adjust height", th);
 		}
 		
 		if(done) adjusted = true;	
