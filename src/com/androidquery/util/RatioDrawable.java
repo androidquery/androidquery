@@ -41,13 +41,15 @@ public class RatioDrawable extends BitmapDrawable{
 	private boolean adjusted;
 	private Matrix m;
 	private int w;
+	private float anchor;
 	
-	public RatioDrawable(Resources res, Bitmap bm, ImageView iv, float ratio){
+	public RatioDrawable(Resources res, Bitmap bm, ImageView iv, float ratio, float anchor){
 		
 		super(res, bm);
 		
 		this.ref = new WeakReference<ImageView>(iv);
 		this.ratio = ratio;
+		this.anchor = anchor;
 		iv.setScaleType(ScaleType.MATRIX);
 		
 		Matrix m = new Matrix();
@@ -69,20 +71,14 @@ public class RatioDrawable extends BitmapDrawable{
 			width = iv.getWidth();
 		}
 		
-		//AQUtility.debug("width1", width);
-		
 		if(width > 0){
 			width = width - iv.getPaddingLeft() - iv.getPaddingRight();
 		}
-		
-		//AQUtility.debug("width2", width);
 		
 		return width;
 	}
 	
 	public void draw(Canvas canvas){
-		
-		
 		
 		ImageView iv = ref.get();
 		
@@ -164,7 +160,7 @@ public class RatioDrawable extends BitmapDrawable{
     	int vh = targetHeight(dw, dh, vw);
     	
     	if(dw <= 0 || dh <= 0 || vw <= 0 || vh <= 0) return null;
-    		
+    	
     	if(m == null || dw != w){
     	
 	        float scale;
@@ -179,8 +175,11 @@ public class RatioDrawable extends BitmapDrawable{
 			}else{
 				//if image is taller
 				scale = (float) vw / (float) dw;	
-				float sy = getYOffset(dw, dh);				
+				float sy = getYOffset(dw, dh);
+				
+				//AQUtility.debug("sy", sy + ":" + ratio);
 				dy = (vh - dh * scale) * sy;
+				//AQUtility.debug("off", (vh - dh * scale));
 			}
 	        
 	        m.setScale(scale, scale);
@@ -195,14 +194,18 @@ public class RatioDrawable extends BitmapDrawable{
     	
     }
 	
-    private static float getYOffset(int vwidth, int vheight){
+    private float getYOffset(int vwidth, int vheight){
+    	
+    	if(anchor != AQuery.ANCHOR_DYNAMIC){
+    		return (1 - anchor) / 2;
+    	}
     	
     	float ratio = (float) vheight / (float) vwidth;
     	
     	ratio = Math.min(1.5f, ratio);
     	ratio = Math.max(1, ratio);
     	
-    	return  0.25f + ((1.5f - ratio) / 2.0f);
+    	return 0.25f + ((1.5f - ratio) / 2.0f);
     	
     }
 	

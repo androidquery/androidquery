@@ -70,6 +70,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private Bitmap preset;
 	private float ratio;
 	private boolean targetDim = true;
+	private float anchor = AQuery.ANCHOR_DYNAMIC;
 	
 	/**
 	 * Instantiates a new bitmap ajax callback.
@@ -167,6 +168,11 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 */
 	public BitmapAjaxCallback ratio(float ratio){
 		this.ratio = ratio;
+		return this;
+	}
+	
+	public BitmapAjaxCallback anchor(float anchor){
+		this.anchor = anchor;
 		return this;
 	}
 	
@@ -600,22 +606,22 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 		if(isPreset){
-			iv.setImageDrawable(makeDrawable(iv, bm, ratio));
+			iv.setImageDrawable(makeDrawable(iv, bm, ratio, anchor));
 			return;
 		}
 		
 		if(status != null){
-			setBmAnimate(iv, bm, preset, fallback, animation, ratio, status.getSource());
+			setBmAnimate(iv, bm, preset, fallback, animation, ratio, anchor, status.getSource());
 		}
 		
 	}
 
-	private static Drawable makeDrawable(ImageView iv, Bitmap bm, float ratio){
+	private static Drawable makeDrawable(ImageView iv, Bitmap bm, float ratio, float anchor){
 		
 		BitmapDrawable bd = null;
 		
 		if(ratio > 0){
-			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio);
+			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio, anchor);
 		}else{
 			bd = new BitmapDrawable(iv.getResources(), bm);
 		}
@@ -624,7 +630,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-	private static void setBmAnimate(ImageView iv, Bitmap bm, Bitmap preset, int fallback, int animation, float ratio, int source){
+	private static void setBmAnimate(ImageView iv, Bitmap bm, Bitmap preset, int fallback, int animation, float ratio, float anchor, int source){
 		
 		bm = filter(iv, bm, fallback);
 		if(bm == null){
@@ -632,7 +638,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			return;
 		}
 		
-		Drawable d = makeDrawable(iv, bm, ratio);
+		Drawable d = makeDrawable(iv, bm, ratio, anchor);
 		Animation anim = null;
 		
 		if(fadeIn(animation, source)){	
@@ -642,7 +648,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 				anim.setDuration(FADE_DUR);
 			}else{
 				
-				Drawable pd = makeDrawable(iv, preset, ratio);
+				Drawable pd = makeDrawable(iv, preset, ratio, anchor);
 				Drawable[] ds = new Drawable[]{pd, d};
 				TransitionDrawable td = new TransitionDrawable(ds);
 				td.setCrossFadeEnabled(true);				
@@ -686,7 +692,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 */
 	
-	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, View progress){
+	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, View progress){
 		
 		Bitmap bm = null;
 		
@@ -697,10 +703,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		if(bm != null){
 			iv.setTag(AQuery.TAG_URL, url);
 			if(progress != null) progress.setVisibility(View.GONE);		
-			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, AjaxStatus.MEMORY);
+			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor, AjaxStatus.MEMORY);
 		}else{
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();			
-			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).progress(progress);
+			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).anchor(anchor).progress(progress);
 			if(act != null){
 				cb.async(act);
 			}else{

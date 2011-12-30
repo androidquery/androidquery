@@ -38,6 +38,8 @@ public interface Constants {
 	public static final int TAG_LAYOUT = 0x40FF0003;
 	
 	public static final float RATIO_PRESERVE = Float.MAX_VALUE;
+	public static final float ANCHOR_DYNAMIC = Float.MAX_VALUE;
+	
 	public static final String ACTIVE_ACCOUNT = "aq.account";
 	
 	public static final String AUTH_READER = "g.reader";
