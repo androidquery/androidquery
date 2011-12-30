@@ -222,6 +222,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
         try{
         	bm = decode(path, data, options);
 		}catch(OutOfMemoryError e){
+			clearCache();
 			AQUtility.report(e);
 		}
         
