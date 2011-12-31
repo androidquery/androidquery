@@ -280,7 +280,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
         	bm = decode(path, data, options);
         	if(reuse != null){
         		//reuse.inBitmap = bm;
+        		
+        		AQUtility.debug("reused", bm.getWidth() + ":" + bm.getHeight());
         		setField(reuse, "inBitmap", bm);
+        		
         	}
 		}catch(OutOfMemoryError e){
 			clearCache();
@@ -667,22 +670,22 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 		if(isPreset){
-			iv.setImageDrawable(makeDrawable(iv, bm, ratio, anchor));
+			iv.setImageDrawable(makeDrawable(iv, bm, ratio, anchor, null, null));
 			return;
 		}
 		
 		if(status != null){
-			setBmAnimate(iv, bm, preset, fallback, animation, ratio, anchor, status.getSource());
+			setBmAnimate(iv, bm, preset, fallback, animation, ratio, anchor, status.getSource(), getCacheFile(), reuse);
 		}
 		
 	}
 
-	private static Drawable makeDrawable(ImageView iv, Bitmap bm, float ratio, float anchor){
+	private static Drawable makeDrawable(ImageView iv, Bitmap bm, float ratio, float anchor, File file, Options reuse){
 		
 		BitmapDrawable bd = null;
 		
 		if(ratio > 0){
-			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio, anchor);
+			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio, anchor, file, reuse);
 		}else{
 			bd = new BitmapDrawable(iv.getResources(), bm);
 		}
@@ -691,7 +694,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-	private static void setBmAnimate(ImageView iv, Bitmap bm, Bitmap preset, int fallback, int animation, float ratio, float anchor, int source){
+	private static void setBmAnimate(ImageView iv, Bitmap bm, Bitmap preset, int fallback, int animation, float ratio, float anchor, int source, File file, Options reuse){
 		
 		bm = filter(iv, bm, fallback);
 		if(bm == null){
@@ -699,7 +702,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			return;
 		}
 		
-		Drawable d = makeDrawable(iv, bm, ratio, anchor);
+		Drawable d = makeDrawable(iv, bm, ratio, anchor, file, reuse);
 		Animation anim = null;
 		
 		if(fadeIn(animation, source)){	
@@ -709,7 +712,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 				anim.setDuration(FADE_DUR);
 			}else{
 				
-				Drawable pd = makeDrawable(iv, preset, ratio, anchor);
+				Drawable pd = makeDrawable(iv, preset, ratio, anchor, null, null);
 				Drawable[] ds = new Drawable[]{pd, d};
 				TransitionDrawable td = new TransitionDrawable(ds);
 				td.setCrossFadeEnabled(true);				
@@ -764,7 +767,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		if(bm != null){
 			iv.setTag(AQuery.TAG_URL, url);
 			if(progress != null) progress.setVisibility(View.GONE);		
-			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor, AjaxStatus.MEMORY);
+			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor, AjaxStatus.MEMORY, null, null);
 		}else{
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();			
 			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).anchor(anchor).progress(progress);
