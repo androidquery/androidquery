@@ -1,7 +1,11 @@
 package com.androidquery.test;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,6 +17,7 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 
 public class AdhocActivity extends Activity {
@@ -32,20 +37,75 @@ public class AdhocActivity extends Activity {
 		
 	}
 	
+	private int count = 0;
+	
 	private void work(){
 		
-		//12-30 22:18:58.612: W/AQuery(8517): {"data":{"id":14,"picture":"http:\/\/lh6.ggpht.com\/bHvkpWmmOMFL4c5N_WRVA1OGyz6pPSxN1ojf7nHMQOFIClCp3JA0YisLwHQsdrDVPrr4zFKg9CYPL9icOjCC","desc":"坊間的洋蔥鴨一般釀入大量洋蔥，而且燉至肉質軟腍、入口即溶。有次宴客因太趕不夠時間預備，賓客到齊但洋蔥鴨還未燉夠火侯，出乎意料地鴨肉的質感及味道卻比之前還好吃，你不妨試試。","price":"200.0","name":"洋蔥鴨","link":"http:\/\/aigens-app.appspot.com\/dish\/14#洋蔥鴨"},"status":"1","comments":[]}
-
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		aq.id(R.id.button).clicked(this, "changeClicked");
 		
-		url = "http://lh6.ggpht.com/bHvkpWmmOMFL4c5N_WRVA1OGyz6pPSxN1ojf7nHMQOFIClCp3JA0YisLwHQsdrDVPrr4zFKg9CYPL9icOjCC";
+		change();
+    	
+	}
+	
+	public void changeClicked(){
 		
-		aq.id(R.id.image2).image(url, true, true);
-    	
-    	aq.id(R.id.image3).image(url, true, true, 0, 0, null, AQuery.FADE_IN_NETWORK, 1.0f);
-    	
-    	AQUtility.debug("ad hoc done");
-    	
+		change();
+		
+	}
+	
+	private Options reuse = new Options();
+	private void change(){
+		
+		String[] pics = new String[]{
+				"http://lh3.ggpht.com/36jZOjOQhiKEww7HYQ0vuIgpoZPXPABUnpaKvJW3oB-ICKsNje2wQrWMpAiecPm4O9ds0YsIGGCLmNvJzctb=w720",	
+				"http://lh4.ggpht.com/mERAL6RTzcaqMYeO6yluQNLv4eQQh0Sw8aOI2EPYdiEbBpoAYry_MJJGrNsVnqe-Aglkzn-9FZiwOYRjmC54aQ=w720",
+				"http://lh6.ggpht.com/K5iNBUb9q2z1dB8ydKGaM6xxOidaUm0HW843Z63IcxU1Yeth6PlN9liTGN49apSoJdjDFvhieHm6mVsudp1IXA=w720",
+				"http://lh6.ggpht.com/bgdvMgCjpRWUHgl72reqwpHIl75aloTORrTi_Zn4LzcNXnIR6M7E42PcW2A7SAtlYE7H87cxpg0DAJvS0Vinsw=w720",
+				"http://lh5.ggpht.com/-9vDPE6RQmqoC-YRaamuOpBO1nKVr_ulgGZqK-ZSL5CsTe8n0ygx5UkjAz9MhFgBMyFZSremw5mOkuZWHkwCOA=w720",
+				"http://lh6.ggpht.com/c5vZpr2XY6Jkswd1maDJK2FgSVsfhZd02ZE8k6LR0LXl_5u7UEm8Lkv2UacXUJBRspng9p5BPtv-jg81jyY-Jw=w720",
+				"http://lh3.ggpht.com/3nQCVQfQToBvde-vG4DzpW0DEXlTi0TbH822NFANDuqgc3ch8YT-Z-8eivO6tfKAVu5KNHQJMRJu5BYb6Qe2=w720",
+				"http://lh4.ggpht.com/3Dwdi493BqhW99pMJV7Xt--qnXdofcpqPEh70P5PljI-BSydDtDbM50QxyFaSgsMz9axf6z0P9OXK8KpEn5Hpw=w720"
+		};
+		
+		String url = pics[count++ % pics.length];
+		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.url(url).ratio(AQuery.RATIO_PRESERVE).reuse(reuse);
+		
+		aq.id(R.id.image1).image(cb);
+		
+		//AQUtility.debug("reuse", reuse.inBitmap);
+		
+		/*
+		//aq.id(R.id.image1).image(url, true, true, 0, 0, null, AQuery.FADE_IN_NETWORK, AQuery.RATIO_PRESERVE);
+		
+		File file = aq.getCachedFile(url);
+		
+		//AQUtility.debug("cached", file.length());
+		if(file == null || !file.exists()){
+			aq.id(R.id.image1).image(url, true, true, 0, 0, null, AQuery.FADE_IN_NETWORK, AQuery.RATIO_PRESERVE);
+			
+		}else{
+		
+			Options os = new Options();
+			os.inBitmap = reuse;
+			os.inMutable = true;
+			os.inSampleSize = 1;
+			
+			
+			AQUtility.debug("reuse", os.inBitmap);
+			
+			Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath(), os);
+			
+			AQUtility.debug("same bitmap?", bm == reuse);
+			
+			reuse = bm;
+			
+			AQUtility.debug("mut", bm.isMutable());
+			
+			aq.id(R.id.image1).image(bm, AQuery.RATIO_PRESERVE);
+		}
+		*/
 	}
 	
 	

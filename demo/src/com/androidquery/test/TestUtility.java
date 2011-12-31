@@ -45,7 +45,8 @@ public class TestUtility {
 		}
 	}
 	
-	private static String[] deviceIds = {"ffffffff-b588-0cd1-ffff-ffffb12a7939", "00000000-582e-8c83-ffff-ffffb12a7939", "ffffffff-a7af-71df-0033-c5870033c587", "00000000-2e56-36d7-ffff-ffffb12a7939"};
+
+	private static String[] deviceIds = {"ffffffff-b588-0cd1-ffff-ffffb12a7939", "00000000-582e-8c83-ffff-ffffb12a7939", "ffffffff-a7af-71df-0033-c5870033c587", "00000000-2e56-36d7-ffff-ffffb12a7939", "ffffffff-b588-0cd1-ae81-42290033c587"};
 	private static Boolean testDevice;
 	
 	public static boolean isTestDevice(Context context){
@@ -66,6 +67,7 @@ public class TestUtility {
 		}
 		return false;
 	}
+	
 	
 	private static String deviceId;
 	public static String getDeviceId(Context context){

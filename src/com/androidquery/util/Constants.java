@@ -55,4 +55,6 @@ public interface Constants {
 	public static final String AUTH_MAPS = "g.local";
 
 	public static final String POST_ENTITY = "%entity";
+	
+	public static final int SDK_INT = android.os.Build.VERSION.SDK_INT;
 }

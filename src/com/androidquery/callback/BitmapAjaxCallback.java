@@ -18,6 +18,7 @@ package com.androidquery.callback;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -71,6 +73,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private float ratio;
 	private boolean targetDim = true;
 	private float anchor = AQuery.ANCHOR_DYNAMIC;
+	private boolean invalid;
+	private Options reuse;
+	
 	
 	/**
 	 * Instantiates a new bitmap ajax callback.
@@ -171,10 +176,42 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return this;
 	}
 	
+	
+	/**
+	 * Set the image aspect ratio anchor.
+	 * 
+	 * Value of 1 implies show top end of the image, 0 implies at the center, -1 implies show at the bottom.
+	 * 
+	 * A special value AQuery.ANCHOR_DYNAMIC will adjust the anchor base. 
+	 * This setting will add up from 0 to 0.5 bias and it's suitable for portraits and common photos.
+	 * 
+	 * Default value is ANCHOR_DYNAMIC.
+	 *
+	 * @param anchor the anchor
+	 * @return self
+	 */
+	
 	public BitmapAjaxCallback anchor(float anchor){
 		this.anchor = anchor;
+	
 		return this;
 	}
+	
+	/**
+	 * Set the image decoding options for bitmap reuse to conserve memory. 
+	 * 
+	 * This feature is only available on API 11+. Nothing happens otherwise.
+	 *
+	 * @param reuse the options for decoding image
+	 * @return self
+	 */
+	public BitmapAjaxCallback reuse(Options reuse){
+		if(AQuery.SDK_INT >= 11){		
+			this.reuse = reuse;
+		}
+		return this;
+	}
+	
 	
 	private static Bitmap decode(String path, byte[] data, BitmapFactory.Options options){
 		
@@ -189,6 +226,18 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return result;
 	}
 	
+	private static void setField(Object object, String field, Object value){
+		
+		if(object == null || field == null || value == null) return;
+		try{
+			Field f = object.getClass().getField(field);
+			f.set(object, value);
+		}catch(Exception e){
+			AQUtility.report(e);
+		}
+	}
+	
+	
 	/**
 	 * Utility method for downsampling images.
 	 *
@@ -196,24 +245,32 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 * @param data if file path is null, provide the image data directly
 	 * @param target the target dimension
 	 * @param width use width as target, otherwise use the higher value of height or width
+	 * @param reuse the options for bitmap reuse
 	 * @return the resized image
 	 */
-	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width){
+	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width, Options reuse){
     	
-    	BitmapFactory.Options options = null;
-    	
-    	if(target > 0){
+		Options options = null;
+		
+		if(reuse != null){
+			
+			options = reuse;
+			//options.inMutable = true;
+			setField(options, "inMutable", true);
+			options.inSampleSize = 1;
+			
+		}else if(target > 0){
 	    	
-    		options = new BitmapFactory.Options();
-	        options.inJustDecodeBounds = true;
+    		Options info = new Options();
+    		info.inJustDecodeBounds = true;
 	        
-	    	decode(path, data, options);
+	    	decode(path, data, info);
 	        
-	        int dim = options.outWidth;
-	        if(!width) dim = Math.max(dim, options.outHeight);
+	        int dim = info.outWidth;
+	        if(!width) dim = Math.max(dim, info.outHeight);
 	        int ssize = sampleSize(dim, target);
 	       
-	        options = new BitmapFactory.Options();
+	        options = new Options();	        
 	        options.inSampleSize = ssize;	        
     	
     	}
@@ -221,6 +278,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
         Bitmap bm = null;
         try{
         	bm = decode(path, data, options);
+        	if(reuse != null){
+        		//reuse.inBitmap = bm;
+        		setField(reuse, "inBitmap", bm);
+        	}
 		}catch(OutOfMemoryError e){
 			clearCache();
 			AQUtility.report(e);
@@ -250,9 +311,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
     	return result;
     }
 	
-    private Bitmap bmGet(String path, byte[] data){
-    	
-    	return getResizedImage(path, data, targetWidth, targetDim);
+    private Bitmap bmGet(String path, byte[] data){    	
+    	return getResizedImage(path, data, targetWidth, targetDim, reuse);
     }
 	
     @Override
@@ -271,7 +331,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return bmGet(file.getAbsolutePath(), null);
 	}
 	
-	private boolean invalid;
+	
 	
 	@Override
 	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
