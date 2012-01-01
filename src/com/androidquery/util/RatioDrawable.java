@@ -105,11 +105,12 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 			Bitmap bm = getBitmap();
 			
 			if(bm.getWidth() == 720){
-				AQUtility.debug("redraw");
+				AQUtility.debug("draw",this + ":" + bm);
 			}
 			
 			if(file != null && bm.getGenerationId() != version){
-				AQUtility.debug("new version", version + "->" + bm.getGenerationId());
+				AQUtility.debug("reload", version + "->" + bm.getGenerationId());
+				AQUtility.debug("reload", file.getName());
 				if(!loading){
 					loading = true;
 					AbstractAjaxCallback.execute(this);
@@ -121,6 +122,30 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 			
 			
 		}
+	}
+	
+	@Override
+	public void run() {
+		
+		try{
+			AQUtility.debug("reloading shared", version);
+			
+			Bitmap bm = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, 0, true, reuse);			
+			version = bm.getGenerationId();
+			
+			AQUtility.debug("reloading done", version);
+			
+			
+			ref.get().postInvalidate();
+			
+			AQUtility.debug("redrawing", ref.get());
+			
+		}catch(Throwable e){
+			AQUtility.debug(e);
+		}
+		
+		loading = false;
+		
 	}
 	
 	private void draw(Canvas canvas, ImageView iv, Bitmap bm){
@@ -246,24 +271,7 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
     	
     }
 
-	@Override
-	public void run() {
-		
-		try{
-			AQUtility.debug("reloading shared", version);
-			
-			Bitmap bm = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, 0, true, reuse);			
-			version = bm.getGenerationId();
-			
-			ref.get().postInvalidate();
-			
-		}catch(Throwable e){
-			AQUtility.debug(e);
-		}
-		
-		loading = false;
-		
-	}
+
 	
 	
 }

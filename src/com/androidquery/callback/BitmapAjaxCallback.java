@@ -200,13 +200,13 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	/**
 	 * Set the image decoding options for bitmap reuse to conserve memory. 
 	 * 
-	 * This feature is only available on API 11+. Nothing happens otherwise.
+	 * This feature is only available on API 12+. Nothing happens otherwise.
 	 *
 	 * @param reuse the options for decoding image
 	 * @return self
 	 */
 	public BitmapAjaxCallback reuse(Options reuse){
-		if(AQuery.SDK_INT >= 11){		
+		if(AQuery.SDK_INT >= 12){		
 			this.reuse = reuse;
 		}
 		return this;

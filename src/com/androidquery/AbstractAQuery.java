@@ -1395,7 +1395,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T hardwareAccelerated11(){
 		
 		if(act != null){
-			
 			act.getWindow().setFlags(AQuery.FLAG_HARDWARE_ACCELERATED, AQuery.FLAG_HARDWARE_ACCELERATED);
 		}
 		
@@ -2162,6 +2161,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof WebView){
 			setLayerType11(AQuery.LAYER_TYPE_SOFTWARE, null);
+			
 			WebImage wi = new WebImage((WebView) view, url, progress, zoom, control, color);
 			wi.load();
 			progress = null;
@@ -2174,10 +2174,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * Inflate a view from xml layout.
 	 * 
 	 * This method is similar to LayoutInflater.inflate() but with sanity checks against the
-	 * layout type against the convert view. 
+	 * layout type of the convert view. 
 	 * 
 	 * If the convertView is null or the convertView type doesn't matches layoutId type, a new view
-	 * is inflated. Otherwise the convertView will be returned to be reused. 
+	 * is inflated. Otherwise the convertView will be returned for reuse. 
 	 * 
 	 * @param convertView the view to be reused
 	 * @param layoutId the desired view type

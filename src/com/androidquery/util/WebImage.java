@@ -18,6 +18,8 @@ package com.androidquery.util;
 
 import java.io.InputStream;
 
+import org.apache.http.conn.routing.RouteInfo.LayerType;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Picture;
