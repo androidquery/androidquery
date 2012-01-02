@@ -104,11 +104,9 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 			
 			Bitmap bm = getBitmap();
 			
-			if(bm.getWidth() == 720){
-				AQUtility.debug("draw",this + ":" + bm);
-			}
+			int gen = bm.getGenerationId();
 			
-			if(file != null && bm.getGenerationId() != version){
+			if(file != null && gen != version){
 				AQUtility.debug("reload", version + "->" + bm.getGenerationId());
 				AQUtility.debug("reload", file.getName());
 				if(!loading){
@@ -116,12 +114,16 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 					AbstractAjaxCallback.execute(this);
 				}
 			}else{
+				version = gen;
 				draw(canvas, iv, bm);
 			}
 			
+		
 			
 			
 		}
+		
+		
 	}
 	
 	@Override
@@ -135,8 +137,8 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 			
 			AQUtility.debug("reloading done", version);
 			
-			
 			ref.get().postInvalidate();
+			//bm.prepareToDraw();
 			
 			AQUtility.debug("redrawing", ref.get());
 			
