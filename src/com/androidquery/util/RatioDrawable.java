@@ -21,16 +21,15 @@ import java.lang.ref.WeakReference;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.BitmapFactory.Options;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 import com.androidquery.AQuery;
-import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
 
 /**
@@ -46,8 +45,8 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 	private Matrix m;
 	private int w;
 	private float anchor;
-	private int version;
-	private boolean loading;
+	//private int version;
+	//private boolean loading;
 	private File file;
 	private Options reuse;
 	
@@ -60,7 +59,7 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 		this.anchor = anchor;
 		
 		if(reuse != null){
-			version = bm.getGenerationId();
+			//version = bm.getGenerationId();
 			this.reuse = reuse;
 			this.file = file;
 		}
@@ -72,8 +71,10 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 		
 		adjust(iv, bm, false);
 		
-		
 	}
+	
+	
+	
 	
 	private int getWidth(ImageView iv){
 		
@@ -103,7 +104,8 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 		}else{
 			
 			Bitmap bm = getBitmap();
-			
+			draw(canvas, iv, bm);
+			/*
 			int gen = bm.getGenerationId();
 			
 			if(file != null && gen != version){
@@ -117,7 +119,7 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 				version = gen;
 				draw(canvas, iv, bm);
 			}
-			
+			*/
 		
 			
 			
@@ -130,23 +132,23 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 	public void run() {
 		
 		try{
-			AQUtility.debug("reloading shared", version);
+			//AQUtility.debug("reloading shared", version);
 			
 			Bitmap bm = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, 0, true, reuse);			
-			version = bm.getGenerationId();
+			//version = bm.getGenerationId();
 			
-			AQUtility.debug("reloading done", version);
+			//AQUtility.debug("reloading done", version);
 			
 			ref.get().postInvalidate();
 			//bm.prepareToDraw();
 			
-			AQUtility.debug("redrawing", ref.get());
+			//AQUtility.debug("redrawing", ref.get());
 			
 		}catch(Throwable e){
 			AQUtility.debug(e);
 		}
 		
-		loading = false;
+		//loading = false;
 		
 	}
 	
