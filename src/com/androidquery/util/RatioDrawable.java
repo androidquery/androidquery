@@ -30,7 +30,6 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 import com.androidquery.AQuery;
-import com.androidquery.callback.BitmapAjaxCallback;
 
 /**
  * AQuery internal use only.

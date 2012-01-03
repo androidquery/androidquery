@@ -211,7 +211,6 @@ public class MarketService{
 	
 	
 	private String getHost(){
-		
 		return "https://androidquery.appspot.com";
 	}
 	
