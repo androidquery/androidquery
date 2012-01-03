@@ -50,7 +50,6 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.scheme.SocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -666,12 +665,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	protected void execute(){
+	//protected void execute(){
 		
-		ExecutorService exe = getExecutor();	
-		exe.execute(this);
+		//ExecutorService exe = getExecutor();	
+		//exe.execute(this);
 		
-	}
+	//}
 	
 	private void work(Context context){
 		
@@ -684,8 +683,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}else{
 		
 			if(fileCache) cacheDir = AQUtility.getCacheDir(context);				
-			execute();			
-			
+			//execute();			
+			execute(this);
 		}
 	}
 	
@@ -829,6 +828,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		status.done();
 	}
 	
+	protected File getCacheFile(){
+		return AQUtility.getCacheFile(cacheDir, getCacheUrl());
+	}
+	
+	
 	private void filePut(){
 				
 		if(result != null && fileCache){
@@ -838,8 +842,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			try{
 				if(data != null && status.getSource() == AjaxStatus.NETWORK){
 				
-					//File file = AQUtility.getCacheFile(cacheDir, url);
-					File file = AQUtility.getCacheFile(cacheDir, getCacheUrl());
+					File file = getCacheFile();
 					if(!status.getInvalid()){	
 						filePut(url, result, file, data);
 					}else{
@@ -891,13 +894,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	
 	private static ExecutorService fetchExe;
-	private static ExecutorService getExecutor(){
+	public static void execute(Runnable job){
 		
 		if(fetchExe == null){
 			fetchExe = Executors.newFixedThreadPool(NETWORK_POOL);			
 		}
 		
-		return fetchExe;
+		fetchExe.execute(job);
 	}
 	
 	/**

@@ -1,7 +1,11 @@
 package com.androidquery.test;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,6 +17,7 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 
 public class AdhocActivity extends Activity {
@@ -28,66 +33,59 @@ public class AdhocActivity extends Activity {
 		
 		aq = new AQuery(this);
 		
-		debug();
 		work();
 		
 	}
 	
-	private void debug(){
-		/*
-		WebView wv = aq.id(R.id.web).getWebView();
-		
-		wv.setWebChromeClient(new WebChromeClient() {
-			  public boolean onConsoleMessage(ConsoleMessage cm) {
-			    AQUtility.debug(cm.message() + " -- From line "
-			                         + cm.lineNumber() + " of "
-			                         + cm.sourceId() );
-			    return true;
-			  }
-			});
-		
-		wv.setWebViewClient(new WebViewClient(){
-			
-			@Override
-			public void onPageStarted(WebView view, String url, Bitmap favicon) {
-				AQUtility.debug("onPageStarted", url);
-			}
-			
-			@Override
-			public void onReceivedError(WebView view, int errorCode,
-					String description, String failingUrl) {
-			
-				AQUtility.debug("onReceivedError");
-			}
-			
-			@Override
-			public void onScaleChanged(WebView view, float oldScale,
-					float newScale) {
-				AQUtility.debug("onScaleChanged", oldScale + ":" + newScale);
-			}
-			
-			@Override
-			public void onPageFinished(WebView view, String url) {
-				AQUtility.debug("onPageFinished");
-			}
-			
-		});
-		*/
-	}
+	private int count = 2;
+	
 	private void work(){
 		
-    	aq.id(R.id.button).clicked(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				String url = "http://farm4.static.flickr.com/3531/3769416703_b76406f9de.jpg";    	    	
-				aq.id(R.id.web).clear().progress(R.id.progress).webImage(url);
-				//url = "http://192.168.1.222/test/test.htm";
-				//aq.id(R.id.web).setLayerType11(AQuery.LAYER_TYPE_SOFTWARE, null).getWebView().loadUrl(url);
-			}
-		});
+		aq.id(R.id.button).clicked(this, "changeClicked");
+		aq.id(R.id.button2).clicked(this, "refreshClicked");
+		
+		String url = pics[0];
+		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.url(url).ratio(AQuery.RATIO_PRESERVE).reuse(reuse);
+		
+		aq.id(R.id.image1).image(cb);
     	
-    	
+	}
+	
+	private String[] pics = new String[]{
+			"http://lh3.ggpht.com/36jZOjOQhiKEww7HYQ0vuIgpoZPXPABUnpaKvJW3oB-ICKsNje2wQrWMpAiecPm4O9ds0YsIGGCLmNvJzctb=w720",	
+			"http://lh4.ggpht.com/mERAL6RTzcaqMYeO6yluQNLv4eQQh0Sw8aOI2EPYdiEbBpoAYry_MJJGrNsVnqe-Aglkzn-9FZiwOYRjmC54aQ=w720",
+			"http://lh6.ggpht.com/K5iNBUb9q2z1dB8ydKGaM6xxOidaUm0HW843Z63IcxU1Yeth6PlN9liTGN49apSoJdjDFvhieHm6mVsudp1IXA=w720",
+			"http://lh6.ggpht.com/bgdvMgCjpRWUHgl72reqwpHIl75aloTORrTi_Zn4LzcNXnIR6M7E42PcW2A7SAtlYE7H87cxpg0DAJvS0Vinsw=w720",
+			"http://lh5.ggpht.com/-9vDPE6RQmqoC-YRaamuOpBO1nKVr_ulgGZqK-ZSL5CsTe8n0ygx5UkjAz9MhFgBMyFZSremw5mOkuZWHkwCOA=w720",
+			"http://lh6.ggpht.com/c5vZpr2XY6Jkswd1maDJK2FgSVsfhZd02ZE8k6LR0LXl_5u7UEm8Lkv2UacXUJBRspng9p5BPtv-jg81jyY-Jw=w720",
+			"http://lh3.ggpht.com/3nQCVQfQToBvde-vG4DzpW0DEXlTi0TbH822NFANDuqgc3ch8YT-Z-8eivO6tfKAVu5KNHQJMRJu5BYb6Qe2=w720",
+			"http://lh4.ggpht.com/3Dwdi493BqhW99pMJV7Xt--qnXdofcpqPEh70P5PljI-BSydDtDbM50QxyFaSgsMz9axf6z0P9OXK8KpEn5Hpw=w720"
+	};
+	
+	public void changeClicked(){
+		change();
+		
+	}
+	
+	private Options reuse = new Options();
+	private void change(){
+		
+		
+		
+		String url = pics[count++ % pics.length];
+		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.url(url).ratio(AQuery.RATIO_PRESERVE).reuse(reuse);
+		
+		aq.id(R.id.image2).image(cb);
+	
+	}
+	
+	public void refreshClicked(){
+
+		aq.id(R.id.image1).getView().invalidate();
 	}
 	
 	

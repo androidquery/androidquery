@@ -1,5 +1,5 @@
 # built application files
-#*.apk
+*.apk
 *.ap_
 
 # files for the dex VM
@@ -7,7 +7,7 @@
 
 # Java class files
 *.class
-#*.jar
+*.jar
 
 # generated files
 bin/

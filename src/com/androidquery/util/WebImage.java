@@ -86,6 +86,11 @@ public class WebImage extends WebViewClient{
     	}
 		
     	wv.setTag(AQuery.TAG_URL, url);
+    	
+    	if(android.os.Build.VERSION.SDK_INT <= 10){
+    		wv.setDrawingCacheEnabled(true);
+    	}
+    	
     	fixWebviewTip(wv.getContext());
 		
     	
@@ -109,6 +114,8 @@ public class WebImage extends WebViewClient{
 		}else{
 			delaySetup();
 		}
+		
+		
 		
 	}
 	

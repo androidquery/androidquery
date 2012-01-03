@@ -64,6 +64,9 @@
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center_horizontal"	
 	    	android:layout_margin="10dip"
+	    	android:background="#EEEEEE"
+	    	android:padding="5dip"
+	    	android:visibility="gone"
 		/>
 		
 		<TextView  
@@ -81,6 +84,9 @@
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center_horizontal"	
 	    	android:layout_margin="10dip"	
+	    	android:background="#EEEEEE"
+	    	android:padding="5dip"
+	    	android:visibility="gone"
 		/>
 		
 		<TextView  
@@ -98,6 +104,9 @@
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center_horizontal"	
 	    	android:layout_margin="10dip"	
+	    	android:background="#EEEEEE"
+	    	android:padding="5dip"
+	    	android:visibility="gone"
 		/>
 		
 		<TextView  
@@ -115,6 +124,9 @@
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center_horizontal"	
 	    	android:layout_margin="10dip"	
+	    	android:background="#EEEEEE"
+	    	android:padding="5dip"
+	    	android:visibility="gone"
 		/>
 		
 		<TextView  
@@ -132,6 +144,9 @@
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center_horizontal"	
 	    	android:layout_margin="10dip"	
+	    	android:background="#EEEEEE"
+	    	android:padding="5dip"
+	    	android:visibility="gone"
 		/>
 	</LinearLayout>
 

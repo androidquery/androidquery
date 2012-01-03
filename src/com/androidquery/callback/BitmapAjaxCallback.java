@@ -18,6 +18,7 @@ package com.androidquery.callback;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -43,6 +45,7 @@ import com.androidquery.util.AQUtility;
 import com.androidquery.util.BitmapCache;
 import com.androidquery.util.RatioDrawable;
 
+
 /**
  * The callback handler for handling Aquery.image() methods.
  */
@@ -50,11 +53,13 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 
 	private static int SMALL_MAX = 20;
 	private static int BIG_MAX = 20;
+	private static int SMALL_PIXELS = 50 * 50;
 	private static int BIG_PIXELS = 400 * 400;
 	private static int BIG_TPIXELS = 1000000;
 	
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
+	private static Map<String, Bitmap> invalidCache;
 	
 	private static HashMap<String, WeakHashMap<ImageView, BitmapAjaxCallback>> queueMap = new HashMap<String, WeakHashMap<ImageView, BitmapAjaxCallback>>();	
 	
@@ -67,6 +72,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private Bitmap preset;
 	private float ratio;
 	private boolean targetDim = true;
+	private float anchor = AQuery.ANCHOR_DYNAMIC;
+	private boolean invalid;
+	private Options reuse;
+	
 	
 	/**
 	 * Instantiates a new bitmap ajax callback.
@@ -99,19 +108,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return this;
 	}
 	
-	
-	/**
-	 * Set the target dimension for downsampling.
-	 *
-	 * @param targetDim the target dimension
-	 * @return self
-	 */
-	/*
-	public BitmapAjaxCallback targetDim(boolean targetDim){
-		this.targetDim = targetDim;
-		return this;
-	}
-	*/
 	
 	/**
 	 * Set the image source file.
@@ -180,6 +176,43 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return this;
 	}
 	
+	
+	/**
+	 * Set the image aspect ratio anchor.
+	 * 
+	 * Value of 1 implies show top end of the image, 0 implies at the center, -1 implies show at the bottom.
+	 * 
+	 * A special value AQuery.ANCHOR_DYNAMIC will adjust the anchor base. 
+	 * This setting will add up from 0 to 0.5 bias and it's suitable for portraits and common photos.
+	 * 
+	 * Default value is ANCHOR_DYNAMIC.
+	 *
+	 * @param anchor the anchor
+	 * @return self
+	 */
+	
+	public BitmapAjaxCallback anchor(float anchor){
+		this.anchor = anchor;
+	
+		return this;
+	}
+	
+	/**
+	 * Set the image decoding options for bitmap reuse to conserve memory. 
+	 * 
+	 * This feature is only available on API 12+. Nothing happens otherwise.
+	 *
+	 * @param reuse the options for decoding image
+	 * @return self
+	 */
+	public BitmapAjaxCallback reuse(Options reuse){
+		if(AQuery.SDK_INT >= 12){		
+			this.reuse = reuse;
+		}
+		return this;
+	}
+	
+	
 	private static Bitmap decode(String path, byte[] data, BitmapFactory.Options options){
 		
 		Bitmap result = null;
@@ -193,6 +226,18 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return result;
 	}
 	
+	private static void setField(Object object, String field, Object value){
+		
+		if(object == null || field == null || value == null) return;
+		try{
+			Field f = object.getClass().getField(field);
+			f.set(object, value);
+		}catch(Exception e){
+			AQUtility.report(e);
+		}
+	}
+	
+	
 	/**
 	 * Utility method for downsampling images.
 	 *
@@ -200,24 +245,32 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 * @param data if file path is null, provide the image data directly
 	 * @param target the target dimension
 	 * @param width use width as target, otherwise use the higher value of height or width
+	 * @param reuse the options for bitmap reuse
 	 * @return the resized image
 	 */
-	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width){
+	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width, Options reuse){
     	
-    	BitmapFactory.Options options = null;
-    	
-    	if(target > 0){
+		Options options = null;
+		
+		if(reuse != null){
+			
+			options = reuse;
+			//options.inMutable = true;
+			setField(options, "inMutable", true);
+			options.inSampleSize = 1;
+			
+		}else if(target > 0){
 	    	
-    		options = new BitmapFactory.Options();
-	        options.inJustDecodeBounds = true;
+    		Options info = new Options();
+    		info.inJustDecodeBounds = true;
 	        
-	    	decode(path, data, options);
+	    	decode(path, data, info);
 	        
-	        int dim = options.outWidth;
-	        if(!width) dim = Math.max(dim, options.outHeight);
+	        int dim = info.outWidth;
+	        if(!width) dim = Math.max(dim, info.outHeight);
 	        int ssize = sampleSize(dim, target);
 	       
-	        options = new BitmapFactory.Options();
+	        options = new Options();	        
 	        options.inSampleSize = ssize;	        
     	
     	}
@@ -225,7 +278,15 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
         Bitmap bm = null;
         try{
         	bm = decode(path, data, options);
+        	if(reuse != null){
+        		//reuse.inBitmap = bm;
+        		
+        		AQUtility.debug("reused", bm.getWidth() + ":" + bm.getHeight());
+        		setField(reuse, "inBitmap", bm);
+        		
+        	}
 		}catch(OutOfMemoryError e){
+			clearCache();
 			AQUtility.report(e);
 		}
         
@@ -253,9 +314,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
     	return result;
     }
 	
-    private Bitmap bmGet(String path, byte[] data){
-    	
-    	return getResizedImage(path, data, targetWidth, targetDim);
+    private Bitmap bmGet(String path, byte[] data){    	
+    	return getResizedImage(path, data, targetWidth, targetDim, reuse);
     }
 	
     @Override
@@ -274,6 +334,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return bmGet(file.getAbsolutePath(), null);
 	}
 	
+	
+	
 	@Override
 	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
 		
@@ -284,31 +346,19 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			if(fallback > 0){			
 				bm = getFallback();		
 			}else if(fallback == AQuery.GONE || fallback == AQuery.INVISIBLE){
-				bm = empty();
+				bm = getEmptyBitmap();
+			}
+			
+			if(status.getCode() != 200){
+				invalid = true;
 			}
 		}
 		
-		checkConnect(status);
 		
 		return bm;
 	}
 	
-	private static int failed;
-	private static void checkConnect(AjaxStatus status){
-		
-		if(status.getCode() == AjaxStatus.NETWORK_ERROR){
-			failed++;
-		}else if(status.getSource() == AjaxStatus.NETWORK){			
-			failed = 0;
-		}
-		
-	}
-	
-	private static void checkCache(){
-		if(failed >= 3 && getLastStatus() == 200){
-			clearCache();
-		}
-	}
+
 	
 	private Bitmap getFallback(){
 		
@@ -341,7 +391,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			bm = BitmapFactory.decodeResource(context.getResources(), resId);
 			
 			if(bm != null){
-				memPut(key, 0, bm);
+				memPut(key, 0, bm, false);
 			}
 		}
 		
@@ -349,7 +399,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	private static Bitmap empty;
-	private static Bitmap empty(){
+	public static Bitmap getEmptyBitmap(){
 		
 		if(empty == null){
 			empty = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
@@ -437,6 +487,18 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	/**
+	 * Sets the pixel criteria for small images. Small images are cached in a separate cache.
+	 *
+	 * Default is 50x50 (2500 pixels)
+	 *
+	 * @param pixels the small image pixel criteria
+	 */
+	public static void setSmallPixel(int pixels){
+		SMALL_PIXELS = pixels;
+		clearCache();
+	}
+	
+	/**
 	 * Sets the max pixel limit for the entire memcache. LRU images will be expunged if max pixels limit is reached.
 	 *
 	 * @param pixels the new max pixel limit
@@ -452,13 +514,14 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	public static void clearCache(){
 		bigCache = null;
 		smallCache = null;
+		invalidCache = null;
 	}
 	
 	protected static void clearTasks(){
 		queueMap.clear();
 	}
 	
-	private static Map<String, Bitmap> getBImgCache(){
+	private static Map<String, Bitmap> getBCache(){
 		if(bigCache == null){
 			bigCache = Collections.synchronizedMap(new BitmapCache(BIG_MAX, BIG_PIXELS, BIG_TPIXELS));
 		}
@@ -466,11 +529,18 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	
-	private static Map<String, Bitmap> getSImgCache(){
+	private static Map<String, Bitmap> getSCache(){
 		if(smallCache == null){
-			smallCache = Collections.synchronizedMap(new BitmapCache(SMALL_MAX, 50 * 50, 250000));
+			smallCache = Collections.synchronizedMap(new BitmapCache(SMALL_MAX, SMALL_PIXELS, 250000));
 		}
 		return smallCache;
+	}
+	
+	private static Map<String, Bitmap> getICache(){
+		if(invalidCache == null){
+			invalidCache = Collections.synchronizedMap(new BitmapCache(100, BIG_PIXELS, 250000));
+		}
+		return invalidCache;
 	}
 	
 	@Override
@@ -494,16 +564,28 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	private static Bitmap memGet(String url, int targetWidth){
 		
-		checkCache();
-		
 		url = getKey(url, targetWidth);
 		
-		Map<String, Bitmap> cache = getBImgCache();
+		Map<String, Bitmap> cache = getBCache();
 		Bitmap result = cache.get(url);
 		
 		if(result == null){
-			cache = getSImgCache();
+			cache = getSCache();
 			result = cache.get(url);
+		}
+		
+		if(result == null){
+			cache = getICache();
+			result = cache.get(url);
+			
+			if(result != null){
+				
+				if(getLastStatus() == 200){
+					invalidCache = null;
+					result = null;
+				}
+				
+			}
 		}
 
 		return result;
@@ -516,7 +598,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return url + "#" + targetWidth;
 	}
 	
-	private static void memPut(String url, int targetWidth, Bitmap bm){
+	private static void memPut(String url, int targetWidth, Bitmap bm, boolean invalid){
 		
 		if(bm == null) return;
 		
@@ -524,10 +606,12 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		Map<String, Bitmap> cache = null;
 		
-		if(pixels <= 2500){
-			cache = getSImgCache();
+		if(invalid){
+			cache = getICache();
+		}else if(pixels <= SMALL_PIXELS){
+			cache = getSCache();
 		}else{
-			cache = getBImgCache();
+			cache = getBCache();
 		}
 		
 		cache.put(getKey(url, targetWidth), bm);
@@ -537,13 +621,13 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	@Override
 	protected void memPut(String url, Bitmap bm){
-		memPut(url, targetWidth, bm);
+		memPut(url, targetWidth, bm, invalid);
 	}
 	
 	
 	private static Bitmap filter(View iv, Bitmap bm, int fallback){
 		//ignore 1x1 pixels
-		if(bm != null && bm.getWidth() == 1 && bm.getHeight() == 1){        
+		if(bm != null && bm.getWidth() == 1 && bm.getHeight() == 1 && bm != empty){        
 			bm = null;
 		}
 		
@@ -586,22 +670,22 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 		if(isPreset){
-			iv.setImageDrawable(makeDrawable(iv, bm, ratio));
+			iv.setImageDrawable(makeDrawable(iv, bm, ratio, anchor, null, null));
 			return;
 		}
 		
 		if(status != null){
-			setBmAnimate(iv, bm, preset, fallback, animation, ratio, status.getSource());
+			setBmAnimate(iv, bm, preset, fallback, animation, ratio, anchor, status.getSource(), getCacheFile(), reuse);
 		}
 		
 	}
 
-	private static Drawable makeDrawable(ImageView iv, Bitmap bm, float ratio){
+	private static Drawable makeDrawable(ImageView iv, Bitmap bm, float ratio, float anchor, File file, Options reuse){
 		
 		BitmapDrawable bd = null;
 		
 		if(ratio > 0){
-			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio);
+			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio, anchor, file, reuse);
 		}else{
 			bd = new BitmapDrawable(iv.getResources(), bm);
 		}
@@ -610,7 +694,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-	private static void setBmAnimate(ImageView iv, Bitmap bm, Bitmap preset, int fallback, int animation, float ratio, int source){
+	private static void setBmAnimate(ImageView iv, Bitmap bm, Bitmap preset, int fallback, int animation, float ratio, float anchor, int source, File file, Options reuse){
 		
 		bm = filter(iv, bm, fallback);
 		if(bm == null){
@@ -618,7 +702,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			return;
 		}
 		
-		Drawable d = makeDrawable(iv, bm, ratio);
+		Drawable d = makeDrawable(iv, bm, ratio, anchor, file, reuse);
 		Animation anim = null;
 		
 		if(fadeIn(animation, source)){	
@@ -628,7 +712,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 				anim.setDuration(FADE_DUR);
 			}else{
 				
-				Drawable pd = makeDrawable(iv, preset, ratio);
+				Drawable pd = makeDrawable(iv, preset, ratio, anchor, null, null);
 				Drawable[] ds = new Drawable[]{pd, d};
 				TransitionDrawable td = new TransitionDrawable(ds);
 				td.setCrossFadeEnabled(true);				
@@ -672,7 +756,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 */
 	
-	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, View progress){
+	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, View progress){
 		
 		Bitmap bm = null;
 		
@@ -683,10 +767,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		if(bm != null){
 			iv.setTag(AQuery.TAG_URL, url);
 			if(progress != null) progress.setVisibility(View.GONE);		
-			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, AjaxStatus.MEMORY);
+			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor, AjaxStatus.MEMORY, null, null);
 		}else{
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();			
-			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).progress(progress);
+			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).anchor(anchor).progress(progress);
 			if(act != null){
 				cb.async(act);
 			}else{

@@ -16,10 +16,12 @@
 
 package com.androidquery.util;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
@@ -34,20 +36,33 @@ import com.androidquery.AQuery;
  * 
  */
 
-public class RatioDrawable extends BitmapDrawable{
+public class RatioDrawable extends BitmapDrawable implements Runnable{
 
 	private float ratio;
 	private WeakReference<ImageView> ref;
 	private boolean adjusted;
 	private Matrix m;
 	private int w;
+	private float anchor;
+	//private int version;
+	//private boolean loading;
+	//private File file;
+	//private Options reuse;
 	
-	public RatioDrawable(Resources res, Bitmap bm, ImageView iv, float ratio){
+	public RatioDrawable(Resources res, Bitmap bm, ImageView iv, float ratio, float anchor, File file, Options reuse){
 		
 		super(res, bm);
 		
 		this.ref = new WeakReference<ImageView>(iv);
 		this.ratio = ratio;
+		this.anchor = anchor;
+		/*
+		if(reuse != null){
+			//version = bm.getGenerationId();
+			this.reuse = reuse;
+			this.file = file;
+		}
+		*/
 		iv.setScaleType(ScaleType.MATRIX);
 		
 		Matrix m = new Matrix();
@@ -55,8 +70,10 @@ public class RatioDrawable extends BitmapDrawable{
 		
 		adjust(iv, bm, false);
 		
-		
 	}
+	
+	
+	
 	
 	private int getWidth(ImageView iv){
 		
@@ -69,12 +86,14 @@ public class RatioDrawable extends BitmapDrawable{
 			width = iv.getWidth();
 		}
 		
+		if(width > 0){
+			width = width - iv.getPaddingLeft() - iv.getPaddingRight();
+		}
+		
 		return width;
 	}
 	
 	public void draw(Canvas canvas){
-		
-		
 		
 		ImageView iv = ref.get();
 		
@@ -84,19 +103,75 @@ public class RatioDrawable extends BitmapDrawable{
 		}else{
 			
 			Bitmap bm = getBitmap();
+			draw(canvas, iv, bm);
+			/*
+			int gen = bm.getGenerationId();
 			
-			Matrix m = getMatrix(iv, bm);	
-			
-			if(m != null){
-				canvas.drawBitmap(bm, m, getPaint());
+			if(file != null && gen != version){
+				AQUtility.debug("reload", version + "->" + bm.getGenerationId());
+				AQUtility.debug("reload", file.getName());
+				if(!loading){
+					loading = true;
+					AbstractAjaxCallback.execute(this);
+				}
+			}else{
+				version = gen;
+				draw(canvas, iv, bm);
 			}
+			*/
+		
 			
-			if(!adjusted){
-				adjust(iv, bm, true);
-			}
 			
 		}
+		
+		
 	}
+	
+	@Override
+	public void run() {
+		
+		/*
+		try{
+			//AQUtility.debug("reloading shared", version);
+			
+			Bitmap bm = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, 0, true, reuse);			
+			//version = bm.getGenerationId();
+			
+			//AQUtility.debug("reloading done", version);
+			
+			ref.get().postInvalidate();
+			//bm.prepareToDraw();
+			
+			//AQUtility.debug("redrawing", ref.get());
+			
+		}catch(Throwable e){
+			AQUtility.debug(e);
+		}
+		
+		//loading = false;
+		*/
+	}
+	
+	private void draw(Canvas canvas, ImageView iv, Bitmap bm){
+		
+		
+		Matrix m = getMatrix(iv, bm);	
+		
+		if(m != null){
+			int vpad = iv.getPaddingTop() + iv.getPaddingBottom();
+			int hpad = iv.getPaddingLeft() + iv.getPaddingRight();
+			if(vpad > 0 || hpad > 0){
+				canvas.clipRect(0, 0, iv.getWidth() - hpad, iv.getHeight() - vpad);
+			}
+			canvas.drawBitmap(bm, m, getPaint());
+		}
+		
+		if(!adjusted){
+			adjust(iv, bm, true);
+		}
+		
+	}
+	
 	
 	private void adjust(ImageView iv, Bitmap bm, boolean done){
 		
@@ -107,7 +182,7 @@ public class RatioDrawable extends BitmapDrawable{
 		int dh = bm.getHeight();
 		
 		
-		int th = targetHeight(dw, dh, vw);
+		int th = targetHeight(dw, dh, vw) + iv.getPaddingTop() + iv.getPaddingBottom();
 			
 		LayoutParams lp = iv.getLayoutParams();
 		if(lp == null) return;
@@ -120,7 +195,7 @@ public class RatioDrawable extends BitmapDrawable{
 			lp.height = th;
 			iv.setLayoutParams(lp);
 					
-			
+			//AQUtility.debug("adjust height", th);
 		}
 		
 		if(done) adjusted = true;	
@@ -151,7 +226,7 @@ public class RatioDrawable extends BitmapDrawable{
     	int vh = targetHeight(dw, dh, vw);
     	
     	if(dw <= 0 || dh <= 0 || vw <= 0 || vh <= 0) return null;
-    		
+    	
     	if(m == null || dw != w){
     	
 	        float scale;
@@ -166,8 +241,11 @@ public class RatioDrawable extends BitmapDrawable{
 			}else{
 				//if image is taller
 				scale = (float) vw / (float) dw;	
-				float sy = getYOffset(dw, dh);				
+				float sy = getYOffset(dw, dh);
+				
+				//AQUtility.debug("sy", sy + ":" + ratio);
 				dy = (vh - dh * scale) * sy;
+				//AQUtility.debug("off", (vh - dh * scale));
 			}
 	        
 	        m.setScale(scale, scale);
@@ -182,16 +260,22 @@ public class RatioDrawable extends BitmapDrawable{
     	
     }
 	
-    private static float getYOffset(int vwidth, int vheight){
+    private float getYOffset(int vwidth, int vheight){
+    	
+    	if(anchor != AQuery.ANCHOR_DYNAMIC){
+    		return (1 - anchor) / 2;
+    	}
     	
     	float ratio = (float) vheight / (float) vwidth;
     	
     	ratio = Math.min(1.5f, ratio);
     	ratio = Math.max(1, ratio);
     	
-    	return  0.25f + ((1.5f - ratio) / 2.0f);
+    	return 0.25f + ((1.5f - ratio) / 2.0f);
     	
     }
+
+
 	
 	
 }
