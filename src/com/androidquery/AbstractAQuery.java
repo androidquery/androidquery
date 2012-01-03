@@ -55,6 +55,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Gallery;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -984,6 +985,17 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public ImageView getImageView(){
 		return (ImageView) view;
 	}
+	
+	/**
+	 * Gets the current view as an Gallery.
+	 *
+	 * @return Gallery
+	 */
+	public Gallery getGallery(){
+		return (Gallery) view;
+	}
+	
+	
 	
 	/**
 	 * Gets the current view as a text view.
@@ -2111,6 +2123,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Dismiss any AQuery dialogs.
+	 * 
+	 * @return self
+	 * 
+	 */
 	public T dismiss(){
 		
 		Iterator<Dialog> keys = dialogs.keySet().iterator();

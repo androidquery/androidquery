@@ -177,16 +177,27 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	
 	public void auth_picasa(){
+		/*
+		GoogleHandle handle = new GoogleHandle(this, AQuery.AUTH_PICASA, AQuery.ACTIVE_ACCOUNT);
 		
 		String url = "https://picasaweb.google.com/data/feed/api/user/default?alt=json";
-		
+		aq.auth(handle).ajax(url, JSONObject.class, new AjaxCallback<JSONObject>(){
+			@Override
+			public void callback(String url, JSONObject object, AjaxStatus status) {
+				System.out.println(object);
+			}
+		});
+		*/
+		 
+		String url = "https://picasaweb.google.com/data/feed/api/user/default?alt=json";
+		 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
   
 		cb.url(url).type(JSONObject.class).weakHandler(this, "picasaCb");  
 		cb.auth(this, AQuery.AUTH_PICASA, AQuery.ACTIVE_ACCOUNT);
   
 		aq.progress(R.id.progress).ajax(cb);
-	        
+	    
 	}	
 	
 	public void picasaCb(String url, JSONObject jo, AjaxStatus status) {

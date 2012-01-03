@@ -18,7 +18,7 @@ package com.androidquery.util;
 
 public interface Constants {
 
-	public static final String VERSION = "0.18.1";
+	public static final String VERSION = "0.18.3";
 	
 	public static final int LAYER_TYPE_SOFTWARE = 1;
 	public static final int LAYER_TYPE_HARDWARE = 2;
@@ -49,9 +49,9 @@ public interface Constants {
 	public static final String AUTH_ANALYTICS = "g.analytics";
 	public static final String AUTH_BLOGGER = "g.blogger";
 	public static final String AUTH_CALENDAR = "g.cl";
-	public static final String AUTH_BUZZ = "g.buzz";
+	//public static final String AUTH_BUZZ = "g.buzz";
 	public static final String AUTH_CONTACTS = "g.cp";
-	public static final String AUTH_FINANCE = "g.finance";
+	//public static final String AUTH_FINANCE = "g.finance";
 	public static final String AUTH_MAPS = "g.local";
 
 	public static final String POST_ENTITY = "%entity";

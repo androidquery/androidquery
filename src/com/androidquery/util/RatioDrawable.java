@@ -47,8 +47,8 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 	private float anchor;
 	//private int version;
 	//private boolean loading;
-	private File file;
-	private Options reuse;
+	//private File file;
+	//private Options reuse;
 	
 	public RatioDrawable(Resources res, Bitmap bm, ImageView iv, float ratio, float anchor, File file, Options reuse){
 		
@@ -57,13 +57,13 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 		this.ref = new WeakReference<ImageView>(iv);
 		this.ratio = ratio;
 		this.anchor = anchor;
-		
+		/*
 		if(reuse != null){
 			//version = bm.getGenerationId();
 			this.reuse = reuse;
 			this.file = file;
 		}
-		
+		*/
 		iv.setScaleType(ScaleType.MATRIX);
 		
 		Matrix m = new Matrix();
@@ -131,6 +131,7 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 	@Override
 	public void run() {
 		
+		/*
 		try{
 			//AQUtility.debug("reloading shared", version);
 			
@@ -149,7 +150,7 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 		}
 		
 		//loading = false;
-		
+		*/
 	}
 	
 	private void draw(Canvas canvas, ImageView iv, Bitmap bm){
