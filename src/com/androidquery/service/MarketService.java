@@ -51,7 +51,7 @@ public class MarketService{
 	private String updateUrl;
 	private boolean force;
 	private int progress;
-	private long expire = 10 * 60 * 1000;
+	private long expire = 12 * 60 * 1000;
 	
 	private String version;
 	private boolean fetch;
@@ -211,12 +211,16 @@ public class MarketService{
 	
 	
 	private String getHost(){
+		
 		return "https://androidquery.appspot.com";
 	}
 	
 	private String getQueryUrl(){
 		String appId = getAppId();		
 		String url = getHost() + "/api/market?app=" + appId + "&locale=" + locale + "&version=" + getVersion() + "&code=" + getVersionCode() + "&aq=" + AQuery.VERSION;
+		if(force){
+			url += "&force=true";
+		}
 		return url;
 	}
 	
@@ -276,10 +280,12 @@ public class MarketService{
     }
     
     private String getMarketUrl(){
-    	return "market://details?id=" + getAppId(); 	
+    	String id = getAppId();
+    	return "market://details?id=" + id; 	
     }
     
     protected void callback(String url, JSONObject jo, AjaxStatus status){
+    	
     	
     	if(jo == null) return;
     	
@@ -430,7 +436,9 @@ public class MarketService{
 			
 			if(jo != null){
 				
-				if("1".equals(jo.optString("status"))){
+				String s = jo.optString("status");
+				
+				if("1".equals(s)){
 				
 					if(jo.has("dialog")){
 						cb(url, jo, status);
@@ -448,8 +456,10 @@ public class MarketService{
 						
 					}		
 					
-				}else{
+				}else if("0".equals(s)){
 					status.invalidate();
+				}else{
+					cb(url, jo, status);
 				}
 				
 			}else{
