@@ -373,7 +373,7 @@ public class MarketService{
 		String update = dia.optString("update", "Update");
 		String skip = dia.optString("skip", "Skip");
 		String rate = dia.optString("rate", "Rate");
-		String message = dia.optString("body", "");
+		//String message = dia.optString("body", "");
 		String body = dia.optString("wbody", "");
 		String title = dia.optString("title", "Update Available");
 		
