@@ -41,7 +41,13 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 	private long timeout = 30000;
 	private long interval = 1000;
 	private float tolerance = 10;
-	private long expire = 0;
+	private float accuracy = 1000;
+	private int iteration = 3;
+	private int n = 0;
+	private boolean networkEnabled = false;
+	private boolean gpsEnabled = false;
+	
+	//private long expire = 0;
 	private Listener networkListener;
 	private Listener gpsListener;
 	private long initTime;
@@ -53,9 +59,9 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 	
 	@Override
 	public void async(Context context){
-		lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-		//super.async(context);
-		
+		lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);		
+		gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 		work();
 	}
 	
@@ -64,27 +70,67 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 		return this;
 	}
 	
-	private void callback(Location loc, boolean init){
+	public LocationAjaxCallback accuracy(float accuracy){
+		this.accuracy = accuracy;
+		return this;
+	}
+	
+	public LocationAjaxCallback tolerance(float tolerance){
+		this.tolerance = tolerance;
+		return this;
+	}
+	
+	public LocationAjaxCallback iteration(int iteration){
+		this.iteration = iteration;
+		return this;
+	}
+	
+	private void check(Location loc){
 	
 		if(loc != null){	
-			/*
-			if(!init){
-				stop();
-			}
-			*/
+			
 			if(isBetter(loc)){
+
+				n++;				
+				boolean last = n >= iteration;
 				
-				if(isDiff(loc)){
-					result = loc;
-					status(loc, 200);
-					callback();
-				}else{
-					result = loc;
+				boolean accurate = isAccurate(loc);
+				boolean diff = isDiff(loc);
+				
+				boolean best = !gpsEnabled || LocationManager.GPS_PROVIDER.equals(loc.getProvider());
+				
+				AQUtility.debug(n, iteration);
+				AQUtility.debug("acc", accurate);
+				AQUtility.debug("best", best);
+				
+				
+				if(diff){
+					if(last){
+						if(accurate && best){
+							stop();
+							callback(loc);
+						}
+					}else{
+						if(accurate && best){
+							stop();
+						}
+						callback(loc);
+					}
+					
 				}
+				
 			}
 		}
 		
 	}
+	
+	private void callback(Location loc){
+		result = loc;					
+		status(loc, 200);
+		callback();
+	}
+	
+	
 	
 	private void status(Location loc, int code){
 		
@@ -100,14 +146,18 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 		
 	}
 	
+	private boolean isAccurate(Location loc){
+		
+		return loc.getAccuracy() < accuracy;
+		
+	}
+	
+	
 	private boolean isDiff(Location loc){
 
 		if(result == null) return true;
 		
 		float diff = distFrom(result.getLatitude(), result.getLongitude(), loc.getLatitude(), loc.getLongitude());
-		
-		AQUtility.debug("diff", diff);
-		AQUtility.debug("time", new Date(loc.getTime()));
 		
 		if(diff < tolerance){
 			AQUtility.debug("duplicate location");
@@ -122,7 +172,6 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 		
 		if(result == null) return true;
 		
-		
 		// if this loc is network and there's already an recent async gps update
 		if(result.getTime() > initTime && result.getProvider().equals(LocationManager.GPS_PROVIDER) && loc.getProvider().equals(LocationManager.NETWORK_PROVIDER)){
 			AQUtility.debug("inferior location");
@@ -135,8 +184,14 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 	}
 	
 	private void failure(){
+		
+		if(gpsListener == null && networkListener == null) return;
+		
+		AQUtility.debug("fail");
+		
 		result = null;
 		status(null, AjaxStatus.TRANSFORM_ERROR);
+		stop();
 		callback();
 	}
 	
@@ -162,62 +217,30 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 		
 		Location loc = getBestLocation();		
 		
-		String provider = getBestProvider();
-		
-		AQUtility.debug("registered", provider);
-		
-		GpsStatus status = lm.getGpsStatus(null);
-		AQUtility.debug("gps", status.getTimeToFirstFix() + ":" + status.getSatellites());
-		
-		
-		//lm.requestLocationUpdates(provider, interval, 0, this, Looper.getMainLooper());   
-		
 		Timer timer = new Timer(false);
 		
-		if(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+		if(networkEnabled){
 			AQUtility.debug("register net");
 			networkListener = new Listener();
 			lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, 0, networkListener, Looper.getMainLooper()); 
 			timer.schedule(networkListener, timeout);
 		}
 		
-		if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+		
+		if(gpsEnabled){
 			AQUtility.debug("register gps");
 			gpsListener = new Listener();
 			lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval, 0, gpsListener, Looper.getMainLooper());  
 			timer.schedule(gpsListener, timeout);
 		}
 		
-		callback(loc, true);
+		if(iteration > 1 && loc != null){
+			n++;
+			callback(loc);
+		}
 		
 		initTime = System.currentTimeMillis();
 		
-	}
-	
-	//12-06 22:39:42.652: W/AQuery(14047): cb:Location[mProvider=network,mTime=1323180586944,mLatitude=22.3804801,mLongitude=114.1766253,mHasAltitude=false,mAltitude=0.0,mHasSpeed=false,mSpeed=0.0,mHasBearing=false,mBearing=0.0,mHasAccuracy=true,mAccuracy=740.0,mExtras=Bundle[mParcelledData.dataSize=148]]
-
-	//12-06 22:39:47.699: W/AQuery(14047): cb:Location[mProvider=network,mTime=1323182387660,mLatitude=22.3823468,mLongitude=114.1783388,mHasAltitude=false,mAltitude=0.0,mHasSpeed=false,mSpeed=0.0,mHasBearing=false,mBearing=0.0,mHasAccuracy=true,mAccuracy=719.0,mExtras=Bundle[mParcelledData.dataSize=148]]
-
-	//12-06 22:47:09.101: W/AQuery(14047): cb:Location[mProvider=gps,mTime=1323176878428,mLatitude=22.381488255763212,mLongitude=114.17933830037093,mHasAltitude=true,mAltitude=22.0,mHasSpeed=false,mSpeed=0.0,mHasBearing=false,mBearing=0.0,mHasAccuracy=true,mAccuracy=200.0,mExtras=Bundle[mParcelledData.dataSize=4]]
-
-	
-	private String getBestProvider(){
-		
-		Criteria c = makeCriteria();
-		return lm.getBestProvider(c, true);
-		
-	}
-	
-	private Criteria makeCriteria(){
-		
-		Criteria criteria = new Criteria();
-		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		criteria.setAltitudeRequired(false);
-		criteria.setBearingRequired(false);
-		criteria.setCostAllowed(true);
-		criteria.setPowerRequirement(Criteria.POWER_LOW);
-		
-		return criteria;
 	}
 	
 	
@@ -238,26 +261,7 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 		
 	}
 	
-	private Location getBestLocation(long expire){
-		Location loc = getBestLocation();
-		if(withIn(loc, expire)) return loc;
-		return null;
-	}
-
-	private static boolean withIn(Location loc, long expire){
-		
-		if(loc == null) return false;
-		if(expire == 0) return true;
-		
-		long now = System.currentTimeMillis();
-		long diff = now - loc.getTime();
-		return diff < expire;
-	}
-	
-
-
-	
-	public static float distFrom(double lat1, double lng1, double lat2, double lng2) {
+	private static float distFrom(double lat1, double lng1, double lat2, double lng2) {
 	    
 		double earthRadius = 3958.75;
 		double dLat = Math.toRadians(lat2-lat1);
@@ -269,7 +273,7 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 		double dist = earthRadius * c;
 
 		int meterConversion = 1609;
-		return new Float(dist * meterConversion);
+		return (float) dist * meterConversion;
 		 
 		 
 	}
@@ -277,48 +281,30 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 	private class Listener extends TimerTask implements LocationListener {
 		
 	    public void onLocationChanged(Location location) {
-	        // Called when a new location is found by the network location provider.
-	        //makeUseOfNewLocation(location);
-	      
+	        
 	      	AQUtility.debug("changed", location);
+	      	check(location);
 	      	
-	      	
-	      	
-	      	callback(location, false);
-	      	
-	      	lm.removeUpdates(this);
 	      	
 		}
 		
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 		  	AQUtility.debug("onStatusChanged");
-		  	//lm.removeUpdates(this);
-		  	//callback(getBestLocation(), false);
 		}
 		
 		public void onProviderEnabled(String provider) {
 		  	AQUtility.debug("onProviderEnabled");
-		  	callback(getBestLocation(), false);
+		  	check(getBestLocation());
 		  	lm.removeUpdates(this);
 		}
 		
 		public void onProviderDisabled(String provider) {
 		  	AQUtility.debug("onProviderDisabled");
-		  	//callback(getBestLocation(), false);
-		  	
 		}
 
 		@Override
-		public void run() {
-
-			/*
-			if(result == null){
-				failure();
-			}
-			*/
-			AQUtility.debug("unreg");
-			lm.removeUpdates(this);
-			
+		public void run() {			
+			failure();
 		}
 		
 	}

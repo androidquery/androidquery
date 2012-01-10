@@ -7,6 +7,7 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="lib" path="lib/emma.jar"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="beta"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="lib/gson-2.0.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
