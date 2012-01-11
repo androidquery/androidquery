@@ -632,7 +632,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		if(bm != null){
 			iv.setVisibility(View.VISIBLE);
 		}else if(fallback == AQuery.GONE){
-			AQUtility.debug("gone");
 			iv.setVisibility(View.GONE);
 		}else if(fallback == AQuery.INVISIBLE){
 			iv.setVisibility(View.INVISIBLE);
