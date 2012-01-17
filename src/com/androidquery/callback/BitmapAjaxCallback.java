@@ -346,7 +346,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			if(fallback > 0){			
 				bm = getFallback();		
 			}else if(fallback == AQuery.GONE || fallback == AQuery.INVISIBLE){
-				bm = getEmptyBitmap();
+				bm = dummy;
 			}
 			
 			if(status.getCode() != 200){
@@ -398,15 +398,13 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return bm;
 	}
 	
-	private static Bitmap empty;
+	private static Bitmap empty = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
 	public static Bitmap getEmptyBitmap(){
-		
-		if(empty == null){
-			empty = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
-		}
-		
 		return empty;
 	}
+	
+	private static Bitmap dummy = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
+
 	
 	
 	@Override

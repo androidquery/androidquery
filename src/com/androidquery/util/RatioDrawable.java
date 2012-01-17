@@ -30,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.BitmapAjaxCallback;
 
 /**
  * AQuery internal use only.
@@ -44,10 +46,10 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 	private Matrix m;
 	private int w;
 	private float anchor;
-	//private int version;
-	//private boolean loading;
-	//private File file;
-	//private Options reuse;
+	private int version;
+	private boolean loading;
+	private File file;
+	private Options reuse;
 	
 	public RatioDrawable(Resources res, Bitmap bm, ImageView iv, float ratio, float anchor, File file, Options reuse){
 		
@@ -56,13 +58,15 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 		this.ref = new WeakReference<ImageView>(iv);
 		this.ratio = ratio;
 		this.anchor = anchor;
-		/*
+		
 		if(reuse != null){
 			//version = bm.getGenerationId();
+			version = getGen(bm);
+			AQUtility.debug("reuse init version", version);
 			this.reuse = reuse;
 			this.file = file;
 		}
-		*/
+		
 		iv.setScaleType(ScaleType.MATRIX);
 		
 		Matrix m = new Matrix();
@@ -72,7 +76,11 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 		
 	}
 	
-	
+	private static int getGen(Bitmap bm){
+		Integer result = (Integer) AQUtility.invokeHandler(bm, "getGenerationId", false, false, null);
+		if(result == null) return 0;
+		return result;
+	}
 	
 	
 	private int getWidth(ImageView iv){
@@ -103,22 +111,26 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 		}else{
 			
 			Bitmap bm = getBitmap();
-			draw(canvas, iv, bm);
-			/*
-			int gen = bm.getGenerationId();
 			
-			if(file != null && gen != version){
-				AQUtility.debug("reload", version + "->" + bm.getGenerationId());
-				AQUtility.debug("reload", file.getName());
-				if(!loading){
-					loading = true;
-					AbstractAjaxCallback.execute(this);
+			if(file != null){
+				
+				int gen = getGen(bm);
+				if(gen != version){
+					
+					AQUtility.debug("reload", version + "->" + gen);
+					AQUtility.debug("reload", file.getName());
+					if(!loading){
+						loading = true;
+						AjaxCallback.execute(this);
+					}
+				}else{
+					draw(canvas, iv, bm);
 				}
+				
 			}else{
-				version = gen;
 				draw(canvas, iv, bm);
 			}
-			*/
+			
 		
 			
 			
@@ -130,26 +142,25 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 	@Override
 	public void run() {
 		
-		/*
+		
 		try{
-			//AQUtility.debug("reloading shared", version);
+			AQUtility.debug("reloading shared", version);
 			
 			Bitmap bm = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, 0, true, reuse);			
-			//version = bm.getGenerationId();
+			version = getGen(bm);
 			
-			//AQUtility.debug("reloading done", version);
+			AQUtility.debug("reloading done", version);
 			
 			ref.get().postInvalidate();
-			//bm.prepareToDraw();
 			
-			//AQUtility.debug("redrawing", ref.get());
+			AQUtility.debug("redrawing", ref.get());
 			
 		}catch(Throwable e){
 			AQUtility.debug(e);
 		}
 		
-		//loading = false;
-		*/
+		loading = false;
+		
 	}
 	
 	private void draw(Canvas canvas, ImageView iv, Bitmap bm){

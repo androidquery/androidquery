@@ -62,11 +62,14 @@ import org.apache.http.protocol.HttpContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Xml;
 import android.view.View;
 
 import com.androidquery.AQuery;
@@ -551,6 +554,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			return (T) BitmapFactory.decodeByteArray(data, 0, data.length);
 		}
 		
+		/*
+		if(type.equals(XmlPullParser.class)){	
+			XmlPullParser parser = Xml.newPullParser();
+			try {
+				parser.setInput(new ByteArrayInputStream(data), encoding);
+			} catch (XmlPullParserException e) {
+				AQUtility.report(e);
+				return null;
+			}
+			return (T) parser;
+		}
+		*/
 		if(transformer != null){
 			return transformer.transform(url, type, encoding, data, status);
 		}
