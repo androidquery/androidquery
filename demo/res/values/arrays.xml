@@ -93,6 +93,7 @@
         
         <item>Grid Items</item>  
         
+        <item>Google Chart</item> 
         
         <item>Custom Callback</item>        
         <item>File (Async)</item>
@@ -132,7 +133,7 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_ratio</item>
         <item>com.androidquery.test.image.ImageLoadingAspectRatioActivity:image_ratio_fixed</item>
         
-        <item>com.androidquery.test.image.ImageZoomActivity:image_zoom:new</item>
+        <item>com.androidquery.test.image.ImageZoomActivity:image_zoom</item>
         
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
@@ -143,6 +144,7 @@
         
         <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid</item>
         
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_chart:new</item>
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
@@ -244,6 +246,7 @@
         
         <item>image_grid</item>
         
+        <item>image_chart</item>
         
         <item>image_custom</item>
         <item>image_file</item>
@@ -334,6 +337,7 @@
         
         <item>Loading Image in Grid View with Aspect Ratio</item>   
         
+        <item>Loading Google Chart Images with 2000+ length url</item>   
         
         <item>Async Image Load with Custom Callback</item>
         <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>
