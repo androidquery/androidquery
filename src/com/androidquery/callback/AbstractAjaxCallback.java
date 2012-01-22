@@ -910,9 +910,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		String url = this.url;
 		Map<String, Object> params = this.params;
 		
-		//convert get to post request, if url length is too long to be handled on web
-		
-		if(url.length() > 2000){
+		//convert get to post request, if url length is too long to be handled on web		
+		if(params == null && url.length() > 2000){
 			Uri uri = Uri.parse(url);
 			url = extractUrl(uri);
 			params = extractParams(uri);
