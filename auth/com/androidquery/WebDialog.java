@@ -1,21 +1,13 @@
 
 package com.androidquery;
 
-import org.xmlpull.v1.XmlPullParser;
-
-import com.androidquery.util.AQUtility;
-
 import android.R;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.util.Xml;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -24,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.androidquery.util.AQUtility;
 
 public class WebDialog extends Dialog {
 

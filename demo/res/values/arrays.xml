@@ -15,9 +15,9 @@
     </string-array>
     
     <string-array name="top_values">
-        <item>com.androidquery.test.IntentListActivity:async:updated</item>
+        <item>com.androidquery.test.IntentListActivity:async</item>
         <item>com.androidquery.test.IntentListActivity:image:updated</item>
-        <item>com.androidquery.test.IntentListActivity:auth:</item>
+        <item>com.androidquery.test.IntentListActivity:auth:updated</item>
         <item>com.androidquery.test.IntentListActivity:location:preview</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
         <item>com.androidquery.test.IntentListActivity:service:preview</item>
@@ -53,7 +53,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:preview</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_multipart:new</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post_entity:new</item> 
@@ -173,9 +173,9 @@
   	<string-array name="auth_names">
   		<item>Facebook</item>  
   		<item>Facebook (Single Sign On)</item>
-  		<!--      
+  		      
   		<item>Twitter</item>
-  		-->  
+  		
         <item>Google Reader (Pick Account)</item>  
         <item>Google Reader (Active Account)</item>  
         <item>Google Reader (Specific Account)</item>    
@@ -187,11 +187,11 @@
     </string-array>
   
   	<string-array name="auth_values">
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:preview</item>
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook_sso:preview</item> 
-  		<!--  
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:preview</item> 
-  		-->
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:beta</item>
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook_sso:beta</item> 
+  		 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:beta</item> 
+  		
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_pick_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_last_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_specific_account</item>
@@ -270,9 +270,9 @@
               
         <item>auth_facebook</item> 
         <item>auth_facebook_sso</item>
-        <!--  
+         
         <item>auth_twitter</item>   
-        -->    
+          
         <item>auth_pick_account</item>  
         <item>auth_last_account</item>      
         <item>auth_specific_account</item> 
@@ -362,9 +362,9 @@
         <item>Facebook Auth - Get User Feed</item> 
         <item>Facebook Auth - Get User Feed with Single Sign On</item> 
         
-        <!--  
+          
         <item>Twitter Auth - Get User Feed</item>    
-        -->
+       
            
         <item>Google Reader (user select account, if multiple)</item> 
         <item>Google Reader (remember last selected account, pick if first uses)</item> 

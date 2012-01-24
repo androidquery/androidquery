@@ -9,21 +9,18 @@ import java.util.Set;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
@@ -54,17 +51,22 @@ public class FacebookHandle extends AccountHandle{
 	private int requestId;
 	
 	public FacebookHandle(Activity act, String appId, String permissions) {
+		this(act, appId, permissions, null);
+	}
+	
+	public FacebookHandle(Activity act, String appId, String permissions, String token) {
 		
 		this.appId = appId;
 		this.act = act;
 		this.permissions = permissions;
-		
-		if(permissionOk(permissions, fetchPermission())){
+				
+		if(token == null && permissionOk(permissions, fetchPermission())){
 			token = fetchToken();
 		}
 		
 		first = token == null;
 	}
+	
 	
 	public FacebookHandle sso(int requestId){
 		this.sso = true;
@@ -349,7 +351,9 @@ public class FacebookHandle extends AccountHandle{
 
 	
 	@Override
-	public boolean expired(AbstractAjaxCallback<?, ?> cb, int code) {
+	public boolean expired(AbstractAjaxCallback<?, ?> cb, AjaxStatus status) {
+		
+		int code = status.getCode();
 		
 		String url = cb.getUrl();
 		

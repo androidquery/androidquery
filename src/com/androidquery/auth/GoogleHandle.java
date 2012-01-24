@@ -200,7 +200,8 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 	}
 	
 	@Override
-	public boolean expired(AbstractAjaxCallback<?, ?> cb, int code) {
+	public boolean expired(AbstractAjaxCallback<?, ?> cb, AjaxStatus status) {
+		int code = status.getCode();
 		return code == 401 || code == 403;
 	}
 	

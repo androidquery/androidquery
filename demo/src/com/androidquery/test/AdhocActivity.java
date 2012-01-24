@@ -1,24 +1,12 @@
 package com.androidquery.test;
 
-import java.io.File;
-
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
-import com.androidquery.util.AQUtility;
 
 public class AdhocActivity extends Activity {
 

@@ -23,6 +23,7 @@ import org.apache.http.HttpRequest;
 import android.content.Context;
 
 import com.androidquery.callback.AbstractAjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 
 public abstract class AccountHandle {
 
@@ -73,7 +74,7 @@ public abstract class AccountHandle {
 	
 	protected abstract void auth();
 	
-	public abstract boolean expired(AbstractAjaxCallback<?, ?> cb, int code);
+	public abstract boolean expired(AbstractAjaxCallback<?, ?> cb, AjaxStatus status);
 	
 	public abstract boolean reauth(AbstractAjaxCallback<?, ?> cb);
 	

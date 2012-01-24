@@ -11,7 +11,6 @@ import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -21,6 +20,7 @@ import android.webkit.WebViewClient;
 import com.androidquery.AQuery;
 import com.androidquery.WebDialog;
 import com.androidquery.callback.AbstractAjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
 
 public class TwitterHandle extends AccountHandle{
@@ -78,6 +78,8 @@ public class TwitterHandle extends AccountHandle{
 
 		Task task = new Task();
 		task.execute();
+		
+		
 	}
 	
 	private class Task extends AsyncTask<String, String, String> implements OnCancelListener, Runnable{
@@ -103,10 +105,14 @@ public class TwitterHandle extends AccountHandle{
 		protected void onPostExecute(String url) {
 			
 			if(url != null){
+				
 				dialog = new WebDialog(act, url, new TwWebViewClient());		
 				dialog.setOnCancelListener(this);			
 				show();
-				dialog.hide();
+				//dialog.hide();
+				
+				dialog.load();
+				
 			}else{
 				failure();
 			}
@@ -249,7 +255,8 @@ public class TwitterHandle extends AccountHandle{
 	
 
 	@Override
-	public boolean expired(AbstractAjaxCallback<?, ?> cb, int code) {
+	public boolean expired(AbstractAjaxCallback<?, ?> cb, AjaxStatus status) {
+		int code = status.getCode();
 		return code == 400 || code == 401;
 	}
 

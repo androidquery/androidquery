@@ -1,15 +1,10 @@
 package com.androidquery.test;
 
-import java.io.UnsupportedEncodingException;
-
 import android.os.Bundle;
 
 import com.androidquery.R;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
-import com.androidquery.util.XmlDom;
 
 public class AdhocActivity2 extends RunSourceActivity{
 

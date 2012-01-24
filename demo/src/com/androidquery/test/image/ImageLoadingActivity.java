@@ -1,7 +1,11 @@
 package com.androidquery.test.image;
 
+import static com.googlecode.charts4j.Color.GREEN;
+import static com.googlecode.charts4j.Color.RED;
+import static com.googlecode.charts4j.Color.SKYBLUE;
+import static com.googlecode.charts4j.Color.WHITE;
+
 import java.io.File;
-import java.net.URLEncoder;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,11 +20,22 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
-import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
-import com.googlecode.charts4j.*;
-import static com.googlecode.charts4j.Color.*;
+import com.googlecode.charts4j.AxisLabels;
+import com.googlecode.charts4j.AxisLabelsFactory;
+import com.googlecode.charts4j.AxisStyle;
+import com.googlecode.charts4j.AxisTextAlignment;
+import com.googlecode.charts4j.Color;
+import com.googlecode.charts4j.Data;
+import com.googlecode.charts4j.Fills;
+import com.googlecode.charts4j.GCharts;
+import com.googlecode.charts4j.Line;
+import com.googlecode.charts4j.LineChart;
+import com.googlecode.charts4j.LineStyle;
+import com.googlecode.charts4j.LinearGradientFill;
+import com.googlecode.charts4j.Plots;
+import com.googlecode.charts4j.Shape;
 
 public class ImageLoadingActivity extends RunSourceActivity {
 

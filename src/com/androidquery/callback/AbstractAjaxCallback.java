@@ -62,15 +62,12 @@ import org.apache.http.protocol.HttpContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.util.Xml;
 import android.view.View;
 
 import com.androidquery.AQuery;
@@ -811,7 +808,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			network();
 			
-			if(ah != null && ah.expired(this, status.getCode()) && !reauth){
+			if(ah != null && ah.expired(this, status) && !reauth){
 				AQUtility.debug("reauth needed", status.getMessage());	
 				reauth = true;
 				if(ah.reauth(this)){

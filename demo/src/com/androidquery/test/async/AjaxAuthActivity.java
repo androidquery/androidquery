@@ -8,9 +8,6 @@ import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
