@@ -62,14 +62,12 @@ import org.apache.http.protocol.HttpContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Xml;
+import android.net.Uri;
 import android.view.View;
 
 import com.androidquery.AQuery;
@@ -810,7 +808,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			network();
 			
-			if(ah != null && ah.expired(this, status.getCode()) && !reauth){
+			if(ah != null && ah.expired(this, status) && !reauth){
 				AQUtility.debug("reauth needed", status.getMessage());	
 				reauth = true;
 				if(ah.reauth(this)){
@@ -849,7 +847,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	
 	private void filePut(){
-				
+			
 		if(result != null && fileCache){
 			
 			byte[] data = status.getData();
@@ -859,6 +857,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				
 					File file = getCacheFile();
 					if(!status.getInvalid()){	
+						//AQUtility.debug("write", url);
 						filePut(url, result, file, data);
 					}else{
 						if(file.exists()){
@@ -875,21 +874,57 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 	}
 	
+	private static String extractUrl(Uri uri){	
+		
+		String result = uri.getScheme() + "://" + uri.getAuthority() + uri.getPath();
+		
+		String fragment = uri.getFragment();
+		if(fragment != null) result += "#" + fragment;
+		
+		return result;
+	}
+	
+	private static Map<String, Object> extractParams(Uri uri){
+		
+		Map<String, Object> params = new HashMap<String, Object>(); 
+		String[] pairs = uri.getQuery().split("&");
+		
+		for(String pair: pairs){
+			String[] split = pair.split("=");
+			if(split.length >= 2){
+				params.put(split[0], split[1]);
+			}else if(split.length == 1){
+				params.put(split[0], "");
+			}
+		}
+		return params;
+	}
+	
+	
 	private void network() throws IOException{
 		
 		
-		String networkUrl = url;
+		String url = this.url;
+		Map<String, Object> params = this.params;
+		
+		//convert get to post request, if url length is too long to be handled on web		
+		if(params == null && url.length() > 2000){
+			Uri uri = Uri.parse(url);
+			url = extractUrl(uri);
+			params = extractParams(uri);
+		}
+		
 		if(ah != null){
-			networkUrl = ah.getNetworkUrl(url);
+			url = ah.getNetworkUrl(url);
 		}
 		
 		if(params == null){
-			httpGet(networkUrl, headers, status);	
+			httpGet(url, headers, status);	
 		}else{
 			if(isMultiPart(params)){
-				httpMulti(networkUrl, headers, params, status);
+				httpMulti(url, headers, params, status);
 			}else{
-				httpPost(networkUrl, headers, params, status);
+				httpPost(url, headers, params, status);
 			}
 			
 		}
@@ -945,7 +980,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private static String patchUrl(String url){
 		
-		url = url.replaceAll(" ", "%20");
+		url = url.replaceAll(" ", "%20").replaceAll("\\|", "%7C");
 		return url;
 	}
 	
@@ -1042,7 +1077,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(headers != null){
         	for(String name: headers.keySet()){
         		hr.addHeader(name, headers.get(name));
-        		AQUtility.debug(name, headers.get(name));
+        		//AQUtility.debug(name, headers.get(name));
         	}
         }
 		

@@ -7,7 +7,7 @@
 
 # Java class files
 *.class
-*.jar
+dist/*.jar
 
 # generated files
 bin/

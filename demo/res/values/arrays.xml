@@ -15,9 +15,9 @@
     </string-array>
     
     <string-array name="top_values">
-        <item>com.androidquery.test.IntentListActivity:async:updated</item>
+        <item>com.androidquery.test.IntentListActivity:async</item>
         <item>com.androidquery.test.IntentListActivity:image:updated</item>
-        <item>com.androidquery.test.IntentListActivity:auth:</item>
+        <item>com.androidquery.test.IntentListActivity:auth:updated</item>
         <item>com.androidquery.test.IntentListActivity:location:preview</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
         <item>com.androidquery.test.IntentListActivity:service:preview</item>
@@ -53,7 +53,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:preview</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_multipart:new</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post_entity:new</item> 
@@ -93,6 +93,7 @@
         
         <item>Grid Items</item>  
         
+        <item>Google Chart</item> 
         
         <item>Custom Callback</item>        
         <item>File (Async)</item>
@@ -132,7 +133,7 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_ratio</item>
         <item>com.androidquery.test.image.ImageLoadingAspectRatioActivity:image_ratio_fixed</item>
         
-        <item>com.androidquery.test.image.ImageZoomActivity:image_zoom:new</item>
+        <item>com.androidquery.test.image.ImageZoomActivity:image_zoom</item>
         
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
@@ -143,6 +144,7 @@
         
         <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid</item>
         
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_chart:new</item>
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
@@ -171,9 +173,10 @@
   	<string-array name="auth_names">
   		<item>Facebook</item>  
   		<item>Facebook (Single Sign On)</item>
-  		<!--      
+  		      
   		<item>Twitter</item>
-  		-->  
+  		<item>Basic</item>
+  		
         <item>Google Reader (Pick Account)</item>  
         <item>Google Reader (Active Account)</item>  
         <item>Google Reader (Specific Account)</item>    
@@ -185,11 +188,12 @@
     </string-array>
   
   	<string-array name="auth_values">
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:preview</item>
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook_sso:preview</item> 
-  		<!--  
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:preview</item> 
-  		-->
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:beta</item>
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook_sso:beta</item> 
+  		 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:beta</item> 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_basic:beta</item>
+  		
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_pick_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_last_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_specific_account</item>
@@ -244,6 +248,7 @@
         
         <item>image_grid</item>
         
+        <item>image_chart</item>
         
         <item>image_custom</item>
         <item>image_file</item>
@@ -267,9 +272,10 @@
               
         <item>auth_facebook</item> 
         <item>auth_facebook_sso</item>
-        <!--  
+         
         <item>auth_twitter</item>   
-        -->    
+        <item>auth_basic</item>   
+          
         <item>auth_pick_account</item>  
         <item>auth_last_account</item>      
         <item>auth_specific_account</item> 
@@ -334,6 +340,7 @@
         
         <item>Loading Image in Grid View with Aspect Ratio</item>   
         
+        <item>Loading Google Chart Images with 2000+ length url</item>   
         
         <item>Async Image Load with Custom Callback</item>
         <item>Async Image Load from File with Down-sampling (1024 -> 512)</item>
@@ -358,9 +365,10 @@
         <item>Facebook Auth - Get User Feed</item> 
         <item>Facebook Auth - Get User Feed with Single Sign On</item> 
         
-        <!--  
-        <item>Twitter Auth - Get User Feed</item>    
-        -->
+          
+        <item>Twitter Auth - Get User Feed</item>   
+        <item>Basic Auth with username and password</item>    
+       
            
         <item>Google Reader (user select account, if multiple)</item> 
         <item>Google Reader (remember last selected account, pick if first uses)</item> 
