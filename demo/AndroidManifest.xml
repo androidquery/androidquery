@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.androidquery"
-      android:versionCode="38"
-      android:versionName="0.19.38">
+      android:versionCode="39"
+      android:versionName="0.19.39">
 
 
 	<uses-permission android:name="android.permission.INTERNET" /> 

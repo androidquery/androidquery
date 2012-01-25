@@ -37,9 +37,14 @@
 			<location>C:/git/androidquery.git/src</location>
 		</link>
 		<link>
+			<name>auth</name>
+			<type>2</type>
+			<location>C:/git/androidquery.git/auth</location>
+		</link>
+		<link>
 			<name>beta</name>
 			<type>2</type>
-			<location>C:/git/androidquery.git/demo/beta</location>
+			<location>C:/git/androidquery.git/beta</location>
 		</link>
 	</linkedResources>
 </projectDescription>

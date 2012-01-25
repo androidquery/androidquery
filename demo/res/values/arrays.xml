@@ -175,6 +175,7 @@
   		<item>Facebook (Single Sign On)</item>
   		      
   		<item>Twitter</item>
+  		<item>Basic</item>
   		
         <item>Google Reader (Pick Account)</item>  
         <item>Google Reader (Active Account)</item>  
@@ -191,6 +192,7 @@
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook_sso:beta</item> 
   		 
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:beta</item> 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_basic:beta</item>
   		
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_pick_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_last_account</item>  
@@ -272,6 +274,7 @@
         <item>auth_facebook_sso</item>
          
         <item>auth_twitter</item>   
+        <item>auth_basic</item>   
           
         <item>auth_pick_account</item>  
         <item>auth_last_account</item>      
@@ -363,7 +366,8 @@
         <item>Facebook Auth - Get User Feed with Single Sign On</item> 
         
           
-        <item>Twitter Auth - Get User Feed</item>    
+        <item>Twitter Auth - Get User Feed</item>   
+        <item>Basic Auth with username and password</item>    
        
            
         <item>Google Reader (user select account, if multiple)</item> 

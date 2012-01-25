@@ -1,0 +1,8 @@
+	public void auth_basic(){
+		
+		BasicHandle handle = new BasicHandle("tinyeeliu@gmail.com", "password");
+		
+		String url = "http://xpenser.com/api/v1.0/reports/";
+		aq.auth(handle).progress(R.id.progress).ajax(url, JSONArray.class, this, "basicCb");
+		
+	}

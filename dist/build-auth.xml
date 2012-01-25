@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+	
+    <target name="proguard">
+    
+    	<input addproperty="version">Enter version number</input>
+    	<java fork="true" jar="proguard.jar">
+			<arg value="@proguard.cfg"/>
+			<arg value="-injars"/>
+			<arg value="android-query-auth.jar"/>
+			<arg value="-outjars"/>			
+			<arg value="android-query-auth.${version}.jar"/>
+			<arg value="-keepparameternames"/>
+		</java>
+		
+		
+    </target>
+	
+
+</project>
