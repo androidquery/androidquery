@@ -29,8 +29,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -1080,6 +1082,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         		//AQUtility.debug(name, headers.get(name));
         	}
         }
+			
 		
 		if(ah != null){
 			ah.applyToken(this, hr);
@@ -1088,6 +1091,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		DefaultHttpClient client = getClient();
 		
 		HttpContext context = new BasicHttpContext(); 	
+		
 		
 		HttpResponse response = client.execute(hr, context);
 		
@@ -1348,6 +1352,32 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		dos.write(data);
 		
 		dos.writeBytes(lineEnd);
+	}
+	
+	
+	private String makeCookie(){
+		
+		Map<String, String> cookies = new HashMap<String, String>();
+		
+		if(cookies == null || cookies.size() == 0) return null;
+		
+		Iterator<String> iter = cookies.keySet().iterator();
+		
+		StringBuilder sb = new StringBuilder();
+		
+		while(iter.hasNext()){
+			String key = iter.next();
+			String value = cookies.get(key);
+			sb.append(key);
+			sb.append("=");
+			sb.append(value);
+			if(iter.hasNext()){
+				sb.append("; ");
+			}
+		}
+		
+		return sb.toString();
+		
 	}
 	
 }
