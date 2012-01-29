@@ -15,12 +15,12 @@
     </string-array>
     
     <string-array name="top_values">
-        <item>com.androidquery.test.IntentListActivity:async</item>
+        <item>com.androidquery.test.IntentListActivity:async:updated</item>
         <item>com.androidquery.test.IntentListActivity:image:updated</item>
         <item>com.androidquery.test.IntentListActivity:auth:updated</item>
         <item>com.androidquery.test.IntentListActivity:location:preview</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
-        <item>com.androidquery.test.IntentListActivity:service:preview</item>
+        <item>com.androidquery.test.IntentListActivity:service</item>
         <item>http://code.google.com/p/android-query/</item>
         <item>http://android-query.googlecode.com/svn/trunk/javadoc/com/androidquery/AbstractAQuery.html</item>       
     </string-array>
@@ -40,6 +40,7 @@
         <item>Progress</item> 
         <item>AjaxCallback</item>   
         <item>Http Request Headers</item>  
+        <item>Http Cookies</item>  
         <item>Encoding</item> 
         <item>AjaxStatus</item>  
         <item>Error Handling</item> 
@@ -55,13 +56,14 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_multipart:new</item> 
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_post_entity:new</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_multipart</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_post_entity</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_cookie:new</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_encoding</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_status</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_error</item>  
@@ -221,6 +223,7 @@
         <item>async_progress</item>
         <item>async_advance</item>
         <item>async_header</item>
+        <item>async_cookie</item>
         <item>async_encoding</item>
         <item>async_status</item>
         <item>async_error</item>
@@ -312,6 +315,7 @@
         <item>Show Requests Progress</item>
         <item>Using AjaxCallback Directly</item>
         <item>Setting HTTP Headers for Ajax Requests</item>
+        <item>Setting HTTP Cookies for Ajax Requests</item>
         <item>Setting Encoding other than UTF-8</item>
         <item>Using AjaxStatus for meta data of request and HTTP response</item>
         <item>Handle Error</item>

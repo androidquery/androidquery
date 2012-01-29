@@ -13,6 +13,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Bundle;
@@ -301,6 +302,32 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         aq.progress(R.id.progress).ajax(cb);
 	        
 	}	
+	
+	public void async_cookie(){
+	    
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();		
+		cb.url(url).type(JSONObject.class).weakHandler(this, "cookieCb");
+		
+		cb.cookie("hello", "world").cookie("foo", "bar");		
+        aq.ajax(cb);
+        
+	        
+	}		
+	
+	public void cookieCb(String url, JSONObject jo, AjaxStatus status) {
+		
+		JSONObject result = new JSONObject();
+		
+		try {
+			result.putOpt("cookies", jo.optJSONObject("cookies"));
+		} catch (JSONException e) {
+		}
+		
+		showResult(result, status);
+		
+	}
 	
 	public void async_encoding(){
 		

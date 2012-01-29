@@ -721,4 +721,39 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
 	}
 	
+	public void testAjaxCookie() {
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		cb.url(url).type(JSONObject.class).cookie("hello", "world").cookie("foo", "bar");		
+        aq.ajax(cb);
+        
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        JSONObject cookies = (JSONObject) jo.optJSONObject("cookies");
+        assertNotNull(cookies); 
+        
+        assertEquals("world", cookies.optString("hello"));
+        assertEquals("bar", cookies.optString("foo"));
+        
+        
+    }
+	
 }

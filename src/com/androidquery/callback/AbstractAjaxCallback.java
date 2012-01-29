@@ -98,6 +98,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private String url;
 	private Map<String, Object> params;
 	private Map<String, String> headers;
+	private Map<String, String> cookies;
+	
 	private Transformer transformer;
 	
 	protected T result;
@@ -313,6 +315,21 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		headers.put(name, value);
 		return self();
 	}
+	
+	/**
+	 * Set the cookies for the http request.
+	 *
+	 * @param name the name
+	 * @param value the value
+	 * @return self
+	 */
+	public K cookie(String name, String value){
+		if(cookies == null){
+			cookies = new HashMap<String, String>();
+		}
+		cookies.put(name, value);
+		return self();
+	}	
 	
 	/**
 	 * Set the encoding used to parse the response.
@@ -1083,6 +1100,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	}
         }
 			
+		String cookie = makeCookie();
+		if(cookie != null){
+			hr.addHeader("Cookie", cookie);
+		}
 		
 		if(ah != null){
 			ah.applyToken(this, hr);
@@ -1266,14 +1287,26 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		conn.setInstanceFollowRedirects(false);
 		
 		conn.setConnectTimeout(NET_TIMEOUT * 4);
-		
+
 		conn.setDoInput(true);
 		conn.setDoOutput(true);
 		conn.setUseCaches(false);
+		
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Connection", "Keep-Alive");
 		conn.setRequestProperty("Content-Type", "multipart/form-data;charset=utf-8;boundary=" + boundary);
 
+		if(headers != null){
+        	for(String name: headers.keySet()){
+        		conn.setRequestProperty(name, headers.get(name));
+        	}
+        }
+			
+		String cookie = makeCookie();
+		if(cookie != null){
+			conn.setRequestProperty("Cookie", cookie);
+		}
+		
 		dos = new DataOutputStream(conn.getOutputStream());
 
 		for(Map.Entry<String, Object> entry: params.entrySet()){
@@ -1357,8 +1390,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private String makeCookie(){
 		
-		Map<String, String> cookies = new HashMap<String, String>();
-		
 		if(cookies == null || cookies.size() == 0) return null;
 		
 		Iterator<String> iter = cookies.keySet().iterator();
@@ -1375,6 +1406,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				sb.append("; ");
 			}
 		}
+		
+		//AQUtility.debug("cookie", sb.toString());
 		
 		return sb.toString();
 		
