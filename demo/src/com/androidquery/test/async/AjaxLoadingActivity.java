@@ -218,6 +218,39 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	 /*
+	public void async_post2(){
+		
+        String url = "your url";
+		
+        //get your byte array or file
+        byte[] data = new byte[1000];
+        
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		//put your post params
+		params.put("paramName", data);
+		
+		AjaxCallback<byte[]> cb = new AjaxCallback<byte[]>() {
+
+            @Override
+            public void callback(String url, byte[] data, AjaxStatus status) {
+               
+            	System.out.println(data);
+            	System.out.println(status.getCode() + ":" + status.getError());
+                
+            	
+            }
+        };
+        
+        cb.url(url).type(byte[].class);
+        
+        //set Content-Length header
+        cb.params(params).header("Content-Length", Integer.toString(data.length));
+		cb.async(this);
+		
+	}
+	*/
 	
 	public void async_post_entity() throws UnsupportedEncodingException{
 		
