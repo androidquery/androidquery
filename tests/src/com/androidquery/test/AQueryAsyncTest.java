@@ -759,18 +759,23 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	public void testAjaxPostMulti(){
 		
         String url = "http://www.androidquery.com/p/multipart";
+		//String url = "http://192.168.1.222/p/multipart";
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		
 		byte[] data = new byte[1234];
+		byte[] data2 = new byte[2345];
 		
 		params.put("data", data);
+		params.put("data2", data2);
 		
         aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
 
             @Override
             public void callback(String url, JSONObject jo, AjaxStatus status) {
                    
+            	AQUtility.debug(status.getCode(), status.getError());
+            	
         		AQueryAsyncTest.this.result = jo;
             }
         });
@@ -784,7 +789,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNotNull(jo);       
         
         assertEquals(1234, jo.optInt("data"));
-        
+        assertEquals(2345, jo.optInt("data2"));
 	}
 	
 }
