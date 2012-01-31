@@ -8,44 +8,11 @@
 >  
 
    
-	<ImageView 
-        android:id="@+id/image1"
+	<TextView 
+        android:id="@+id/text"
         android:layout_width="100dip"
 		android:layout_height="100dip"
-		
-		android:layout_marginBottom="10dip"
-		android:padding="2dip"
-		android:src="@drawable/logo_96"
-		android:background="#cc0000"
-		android:cropToPadding="false"
+		android:text="HELLO DEFAULT"
         />
-	
-	<ImageView 
-        android:id="@+id/image2"
-        android:layout_width="100dip"
-		android:layout_height="100dip"
-		android:layout_toRightOf="@id/image1"
-		android:layout_marginBottom="10dip"
-		android:padding="2dip"
-		android:src="@drawable/logo_96"
-		android:background="#cc0000"
-		android:cropToPadding="false"
-        />
-	
-	<Button 
-	    android:id="@+id/button"
-        android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="SWITCH"
-		android:layout_centerInParent="true"
-	    />
-	
-	<Button 
-	    android:id="@+id/button2"
-        android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="REFRESH"
-		android:layout_below="@id/button"
-	    />
 	
 </RelativeLayout>
