@@ -1732,7 +1732,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @see testAjax4
 	 */
 	
-	public <K> T ajax(String url, Map<String, Object> params, Class<K> type, AjaxCallback<K> callback){
+	public <K> T ajax(String url, Map<String, ?> params, Class<K> type, AjaxCallback<K> callback){
 		
 		callback.type(type).url(url).params(params);
 		return ajax(callback);

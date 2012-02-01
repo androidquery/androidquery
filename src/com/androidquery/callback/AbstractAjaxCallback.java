@@ -373,8 +373,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @param params the params
 	 * @return self
 	 */
-	public K params(Map<String, Object> params){
-		this.params = params;
+	
+	@SuppressWarnings("unchecked")
+	public K params(Map<String, ?> params){
+		this.params = (Map<String, Object>) params;
 		return self();
 	}
 	

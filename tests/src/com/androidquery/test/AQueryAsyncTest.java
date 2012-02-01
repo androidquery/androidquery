@@ -168,7 +168,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
         String url = "http://search.twitter.com/search.json";
 		
-		Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, String> params = new HashMap<String, String>();
 		params.put("q", "androidquery");
 		
         aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
@@ -180,7 +180,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
                
             }
         });
-		
+        
         waitAsync();
 		
         JSONObject jo = (JSONObject) result;
