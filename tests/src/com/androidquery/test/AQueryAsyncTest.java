@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,11 +17,13 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParser;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.XmlDom;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -31,6 +34,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
+import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 
@@ -848,5 +852,47 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         Header c = headers.get(0);
         AQUtility.debug(c.getName(), c.getValue());
         
+	}
+	
+	
+	public void testAjaxXmlPullParser(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
+		
+		aq.ajax(url, XmlPullParser.class, new AjaxCallback<XmlPullParser>(){
+			
+			public void callback(String url, XmlPullParser xpp, AjaxStatus status) {
+				
+				Map<String, String> images = new LinkedHashMap<String, String>();
+				String currentTitle = null;
+				
+				try{
+				
+					int eventType = xpp.getEventType();
+			        while(eventType != XmlPullParser.END_DOCUMENT) {
+			          
+			        	if(eventType == XmlPullParser.START_TAG){
+			        		
+			        		String tag = xpp.getName();
+			        		
+			        		if("title".equals(tag)){
+			        			currentTitle = xpp.nextText();
+			        		}else if("content".equals(tag)){
+			        			String imageUrl = xpp.getAttributeValue(0);
+			        			images.put(currentTitle, imageUrl);
+			        		}
+			        	}
+			        	eventType = xpp.next();
+			        }
+				
+				}catch(Exception e){
+					AQUtility.report(e);
+				}
+				
+			}
+			
+		});
+	        
+		waitAsync();
 	}
 }

@@ -30,6 +30,7 @@
         <item>HTML/XML String</item>   
         <item>byte[]</item>  
         <item>XML Dom</item>  
+        <item>XML Pull Parser</item>  
         <item>JSON (Array)</item>
         <item>Custom Type (ex. Gson)</item>
         <item>Http POST</item> 
@@ -37,7 +38,8 @@
         <item>Http POST (Custom Entity)</item> 
         <item>Activity Method as Callback</item> 
         <item>Caching</item> 
-        <item>Progress</item> 
+        <item>Progress</item>
+        <item>Progress Dialog</item> 
         <item>AjaxCallback</item>   
         <item>Request Headers</item>  
         <item>Cookies</item>  
@@ -55,6 +57,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_html</item>   
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_xpp:new</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
@@ -63,6 +66,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialog:new</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cookie:new</item>
@@ -216,6 +220,7 @@
         <item>async_html</item>   
         <item>async_bytes</item>  
         <item>async_xml</item>
+        <item>async_xpp</item>
         <item>async_json_array</item>
         <item>async_transformer</item>
         <item>async_post</item> 
@@ -225,6 +230,7 @@
         <item>async_method_cb</item>  
         <item>async_cached</item>
         <item>async_progress</item>
+        <item>async_progress_dialog</item>
         <item>async_advance</item>
         <item>async_header</item>
         <item>async_cookie</item>
@@ -311,6 +317,7 @@
         <item>Asynchronous HTTP Get HTML/XML</item>   
         <item>Asynchronous HTTP Get as Bytes Array</item>
         <item>Asynchronous HTTP Get XML Dom</item>   
+        <item>Asynchronous HTTP Get XML Pull Parser</item>   
         <item>Asynchronous HTTP Get JSON Array</item>
         <item>Asynchronous HTTP Get Custom Type (GSON example)</item>
         <item>Asynchronous HTTP Post</item> 
@@ -319,6 +326,7 @@
         <item>Use Activity Method as Callback</item> 
         <item>Asynchronous HTTP Get with Cache Control</item>
         <item>Show Requests Progress</item>
+        <item>Show Progress Dialog</item>
         <item>Using AjaxCallback Directly</item>
         <item>Setting HTTP Headers for Ajax Requests</item>
         <item>Setting HTTP Cookies for Ajax Requests</item>
