@@ -411,6 +411,44 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         });
 	}
 	
+	
+	public void async_rcookies(){
+	    
+		String url = "http://www.google.com";
+		aq.progress(R.id.progress).ajax(url, String.class, this, "rcookieCb");
+        
+	        
+	}		
+	
+	public void rcookieCb(String url, String html, AjaxStatus status) {
+		
+		if(html != null){
+			
+			showResult(status.getCookies(), status);
+			
+		}
+		
+	}
+	
+	public void async_rheaders(){
+	    
+		String url = "http://www.google.com";
+		aq.progress(R.id.progress).ajax(url, String.class, this, "rheaderCb");
+        
+	        
+	}		
+	
+	public void rheaderCb(String url, String html, AjaxStatus status) {
+		
+		if(html != null){
+			
+			showResult(status.getHeaders(), status);
+			
+		}
+		
+	}
+	
+	
 	public void async_error(){
 		
 		String url = "http://www.google.com";

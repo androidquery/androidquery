@@ -16,9 +16,17 @@
 
 package com.androidquery.callback;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.http.Header;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HttpContext;
 
 /**
  * AjaxStatus contains meta information of an AjaxCallback callback.
@@ -37,6 +45,7 @@ public class AjaxStatus {
 	/** Source MEMORY. */
 	public static final int MEMORY = 4;
 	
+	/** Source DEVICE. */
 	public static final int DEVICE = 5;
 	
 	public static final int NETWORK_ERROR = -101;
@@ -58,6 +67,8 @@ public class AjaxStatus {
 	private boolean invalid;
 	private boolean reauth;
 	private String error;
+	private HttpContext context;
+	private Header[] headers;
 	
 	public AjaxStatus(){		
 	}
@@ -92,6 +103,11 @@ public class AjaxStatus {
 		return this;
 	}
 	
+	protected AjaxStatus context(HttpContext context){
+		this.context = context;
+		return this;
+	}
+	
 	protected AjaxStatus time(Date time){
 		this.time = time;
 		return this;
@@ -109,6 +125,11 @@ public class AjaxStatus {
 	
 	protected AjaxStatus client(DefaultHttpClient client){
 		this.client = client;
+		return this;
+	}
+	
+	protected AjaxStatus headers(Header[] headers){
+		this.headers = headers;
 		return this;
 	}
 	
@@ -247,5 +268,41 @@ public class AjaxStatus {
 		
 		return false;
 	}
+	
+	
+	/**
+	 * Return the cookies set by the server.
+	 * 
+	 * Return values only when source is not from cache (source == NETWORK), returns empty list otherwise.
+	 *
+	 * @return cookies
+	 */
+	
+	public List<Cookie> getCookies(){
+		
+		if(context == null) return Collections.emptyList();		
+		CookieStore store = (CookieStore) context.getAttribute(ClientContext.COOKIE_STORE);
+		if(store == null) return Collections.emptyList();
+		
+		return store.getCookies();
+	}
+	
+	
+	/**
+	 * Return the http response headers.
+	 * 
+	 * Return values only when source is not from cache (source == NETWORK), returns empty list otherwise.
+	 *
+	 * @return cookies
+	 */
+	
+	public List<Header> getHeaders(){
+		
+		if(headers == null) return Collections.emptyList();		
+		return Arrays.asList(headers);
+		
+	}
+	
+	
 	
 }

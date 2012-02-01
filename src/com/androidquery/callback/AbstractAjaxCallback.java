@@ -41,10 +41,12 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -52,6 +54,7 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.scheme.SocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -1112,6 +1115,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		DefaultHttpClient client = getClient();
 		
 		HttpContext context = new BasicHttpContext(); 	
+		CookieStore cookieStore = new BasicCookieStore();
+		context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 		
 		
 		HttpResponse response = client.execute(hr, context);
@@ -1125,8 +1130,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         String error = null;
         
         
-        if(code < 200 || code >= 300){        	
-        	//throw new IOException();
+        if(code < 200 || code >= 300){     
+        	
         	try{
         		HttpEntity entity = response.getEntity();
         		byte[] s = AQUtility.toBytes(entity.getContent());
@@ -1158,8 +1163,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	AQUtility.debug(data.length, url);
         }
         
-        status.code(code).message(message).error(error).redirect(redirect).time(new Date()).data(data).client(client);
+        
+        status.code(code).message(message).error(error).redirect(redirect).time(new Date()).data(data).client(client).context(context).headers(response.getAllHeaders());
 		
+        
 	}
 	
 	/**
