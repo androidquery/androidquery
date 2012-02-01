@@ -863,11 +863,12 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 			
 			public void callback(String url, XmlPullParser xpp, AjaxStatus status) {
 				
+				
 				Map<String, String> images = new LinkedHashMap<String, String>();
 				String currentTitle = null;
 				
 				try{
-				
+									
 					int eventType = xpp.getEventType();
 			        while(eventType != XmlPullParser.END_DOCUMENT) {
 			          
@@ -889,6 +890,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 					AQUtility.report(e);
 				}
 				
+				AQUtility.debug(images);
 			}
 			
 		});
