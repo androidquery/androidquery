@@ -17,8 +17,10 @@
 package com.androidquery.util;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Comparator;
 
+import android.app.Dialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -315,6 +317,41 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
+		
+	}
+	
+	public static void showProgress(Object p, String url, boolean show){
+		
+		if(p != null){
+			
+			if(p instanceof View){				
+
+				View pv = (View) p;
+				
+				if(show){
+					pv.setTag(AQuery.TAG_URL, url);
+					pv.setVisibility(View.VISIBLE);
+				}else{
+					Object tag = pv.getTag(AQuery.TAG_URL);
+					if(tag == null || tag.equals(url)){
+						pv.setTag(AQuery.TAG_URL, null);
+						pv.setVisibility(View.GONE);						
+					}
+				}
+			}else if(p instanceof Dialog){
+				
+				Dialog pd = (Dialog) p;
+				
+				AQuery aq = new AQuery(pd.getContext());
+				
+				if(show){
+					aq.show(pd);
+				}else{
+					aq.dismiss(pd);
+				}
+				
+			}
+		}
 		
 	}
 }

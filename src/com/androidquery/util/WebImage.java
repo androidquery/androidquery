@@ -31,7 +31,7 @@ import com.androidquery.AQuery;
 
 public class WebImage extends WebViewClient{
 
-	private View progress;	
+	private Object progress;	
 	private WebView wv;
 	private String url;
 	private boolean zoom;
@@ -66,7 +66,7 @@ public class WebImage extends WebViewClient{
 		}
 	}
 	
-	public WebImage(WebView wv, String url, View progress, boolean zoom, boolean control, int color){
+	public WebImage(WebView wv, String url, Object progress, boolean zoom, boolean control, int color){
 		
 		this.wv = wv;
 		this.url = url;
@@ -106,7 +106,8 @@ public class WebImage extends WebViewClient{
     	wv.setBackgroundColor(color);
     	
     	if(progress != null){
-    		progress.setVisibility(View.VISIBLE);
+    		//progress.setVisibility(View.VISIBLE);
+    		Common.showProgress(progress, url, true);
     	}
     	
 		if(wv.getWidth() > 0){
@@ -155,8 +156,9 @@ public class WebImage extends WebViewClient{
 	
     private void done(WebView view){
     	if(progress != null){
-			progress.setVisibility(View.GONE);
+			//progress.setVisibility(View.GONE);
 			view.setVisibility(View.VISIBLE);
+    		Common.showProgress(progress, url, false);
 		}
 		view.setWebViewClient(null);
     }

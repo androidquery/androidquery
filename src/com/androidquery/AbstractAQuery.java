@@ -87,7 +87,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	private Context context;
 	
 	protected View view;
-	protected View progress;
+	protected Object progress;
 	protected AccountHandle ah;
 	private Transformer trans;
 
@@ -317,7 +317,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	
 	/**
-	 * Find the progress bar and show the progress for the next ajax/image request. 
+	 * Set the progress bar and show the progress for the next ajax/image request. 
+	 * 
 	 * Once ajax or image is called, current progress view is consumed.
 	 * Subsequent ajax/image calls won't show progress view unless progress is called again.
 	 *
@@ -330,6 +331,26 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public T progress(View view){
 		progress = view;		
+		return self();
+	}
+	
+	/**
+	 * Set the progress dialog and show the progress for the next ajax/image request. 
+	 * 
+	 * Progress dialogs cannot be reused. They are dismissed on ajax callback.
+	 *
+	 * If a file or network requests is required, the dialog is shown.
+	 * Once the requests completes, dialog is dismissed.
+	 * 
+	 * It's the caller responsibility to dismiss the dialog when the activity terminates before the ajax is completed.
+	 * Calling aq.dismiss() in activity's onDestroy() will ensure all dialogs are properly dismissed. 
+	 *
+	 * @param dialog 
+	 * @return self
+	 */
+	
+	public T progress(Dialog dialog){
+		progress = dialog;		
 		return self();
 	}
 	

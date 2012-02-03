@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import com.androidquery.AQuery;
@@ -350,6 +351,23 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	    
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";                
         aq.progress(R.id.progress).ajax(url, JSONObject.class, this, "jsonCb");
+           
+	}	
+	
+	
+	
+	public void async_progress_dialog(){
+	    
+		ProgressDialog dialog = new ProgressDialog(this);
+		
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(true);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setTitle("Sending...");
+		
+        String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";                
+        aq.progress(dialog).ajax(url, JSONObject.class, this, "jsonCb");
            
 	}	
 	
