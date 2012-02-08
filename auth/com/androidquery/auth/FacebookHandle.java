@@ -54,11 +54,13 @@ public class FacebookHandle extends AccountHandle{
 		this(act, appId, permissions, null);
 	}
 	
-	public FacebookHandle(Activity act, String appId, String permissions, String token) {
+	public FacebookHandle(Activity act, String appId, String permissions, String accessToken) {
 		
 		this.appId = appId;
 		this.act = act;
 		this.permissions = permissions;
+		
+		this.token = accessToken;
 				
 		if(token == null && permissionOk(permissions, fetchPermission())){
 			token = fetchToken();
@@ -84,9 +86,6 @@ public class FacebookHandle extends AccountHandle{
 		Set<String> oldSet = new HashSet<String>(Arrays.asList(splits));
 		
 		splits = permissions.split("[,\\s]+");
-		
-		AQUtility.debug("old", oldSet);
-		AQUtility.debug("new", Arrays.asList(splits));
 		
 		
 		for(int i = 0; i < splits.length; i++){
@@ -409,6 +408,7 @@ public class FacebookHandle extends AccountHandle{
 
 	@Override
 	public boolean authenticated() {
+		
 		return token != null;
 	}
 	

@@ -13,6 +13,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Bundle;
@@ -217,6 +218,39 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	 /*
+	public void async_post2(){
+		
+        String url = "your url";
+		
+        //get your byte array or file
+        byte[] data = new byte[1000];
+        
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		//put your post params
+		params.put("paramName", data);
+		
+		AjaxCallback<byte[]> cb = new AjaxCallback<byte[]>() {
+
+            @Override
+            public void callback(String url, byte[] data, AjaxStatus status) {
+               
+            	System.out.println(data);
+            	System.out.println(status.getCode() + ":" + status.getError());
+                
+            	
+            }
+        };
+        
+        cb.url(url).type(byte[].class);
+        
+        //set Content-Length header
+        cb.params(params).header("Content-Length", Integer.toString(data.length));
+		cb.async(this);
+		
+	}
+	*/
 	
 	public void async_post_entity() throws UnsupportedEncodingException{
 		
@@ -301,6 +335,32 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         aq.progress(R.id.progress).ajax(cb);
 	        
 	}	
+	
+	public void async_cookie(){
+	    
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();		
+		cb.url(url).type(JSONObject.class).weakHandler(this, "cookieCb");
+		
+		cb.cookie("hello", "world").cookie("foo", "bar");		
+        aq.ajax(cb);
+        
+	        
+	}		
+	
+	public void cookieCb(String url, JSONObject jo, AjaxStatus status) {
+		
+		JSONObject result = new JSONObject();
+		
+		try {
+			result.putOpt("cookies", jo.optJSONObject("cookies"));
+		} catch (JSONException e) {
+		}
+		
+		showResult(result, status);
+		
+	}
 	
 	public void async_encoding(){
 		

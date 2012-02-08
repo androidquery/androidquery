@@ -407,7 +407,7 @@ public class XmlDom {
 		NodeList list = root.getChildNodes();
 		if(list.getLength() == 1) return list.item(0).getNodeValue();
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < list.getLength(); i++){
 			sb.append(text(list.item(i)));
 		}

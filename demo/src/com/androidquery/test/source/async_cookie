@@ -1,0 +1,12 @@
+	public void async_cookie(){
+	    
+		String url = "http://www.androidquery.com/p/doNothing";
+	    
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();		
+		cb.url(url).type(JSONObject.class).weakHandler(this, "cookieCb");
+		
+		cb.cookie("hello", "world").cookie("foo", "bar");		
+	    aq.ajax(cb);
+	    
+	        
+	}	
