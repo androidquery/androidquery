@@ -1,0 +1,14 @@
+	public void async_progress_dialog(){
+	    
+		ProgressDialog dialog = new ProgressDialog(this);
+		
+		dialog.setIndeterminate(true);
+		dialog.setCancelable(true);
+		dialog.setInverseBackgroundForced(false);
+		dialog.setCanceledOnTouchOutside(true);
+		dialog.setTitle("Sending...");
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";                
+		aq.progress(dialog).ajax(url, JSONObject.class, this, "jsonCb");
+           
+	}	

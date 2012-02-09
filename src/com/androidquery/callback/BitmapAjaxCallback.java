@@ -44,6 +44,7 @@ import com.androidquery.AQuery;
 import com.androidquery.auth.AccountHandle;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.BitmapCache;
+import com.androidquery.util.Common;
 import com.androidquery.util.RatioDrawable;
 
 
@@ -755,7 +756,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 */
 	
-	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, View progress, AccountHandle ah){
+	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, Object progress, AccountHandle ah){
 		
 		Bitmap bm = null;
 		
@@ -765,7 +766,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		if(bm != null){
 			iv.setTag(AQuery.TAG_URL, url);
-			if(progress != null) progress.setVisibility(View.GONE);		
+			//if(progress != null) progress.setVisibility(View.GONE);		
+			Common.showProgress(progress, url, false);
 			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor, AjaxStatus.MEMORY, null, null);
 		}else{
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();			

@@ -1,0 +1,17 @@
+	public void async_rheaders(){
+	    
+		String url = "http://www.google.com";
+		aq.progress(R.id.progress).ajax(url, String.class, this, "rheaderCb");
+        
+	        
+	}		
+	
+	public void rheaderCb(String url, String html, AjaxStatus status) {
+		
+		if(html != null){
+			
+			showResult(status.getHeaders(), status);
+			
+		}
+		
+	}

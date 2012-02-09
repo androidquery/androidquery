@@ -18,8 +18,8 @@ package com.androidquery.util;
 
 public interface Constants {
 
-	public static final String VERSION = "0.20.5";
-	
+
+	public static final String VERSION = "0.20.6";
 	public static final int LAYER_TYPE_SOFTWARE = 1;
 	public static final int LAYER_TYPE_HARDWARE = 2;
 	public static final int FLAG_HARDWARE_ACCELERATED = 0x01000000;

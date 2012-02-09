@@ -7,6 +7,7 @@ import static com.googlecode.charts4j.Color.WHITE;
 
 import java.io.File;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
@@ -140,10 +141,21 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_progress(){
 		
+		ProgressDialog dialog = new ProgressDialog(this);
+		
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(true);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setTitle("Sending...");
+		
 		aq.id(R.id.image).clear();
 		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
 		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, false, false);
+		
+		//imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";				
+		//aq.id(R.id.image).progress(dialog).image(imageUrl, true, true);
 		
 	}
 
