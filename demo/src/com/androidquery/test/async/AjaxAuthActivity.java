@@ -127,6 +127,27 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 	}
 	
+	public void auth_twitter_token(){
+		
+		TwitterHandle handle = new TwitterHandle(this, CONSUMER_KEY, CONSUMER_SECRET){
+			
+			@Override
+			protected void authenticated(String secret, String token) {
+				showResult("secret:" + secret + " token:" + token, null);
+			}
+			
+		};
+		
+		handle.authenticate(false);
+		
+	}
+	
+	public void tokenCb(String url, JSONArray ja, AjaxStatus status){
+		
+		showResult(ja, status);
+		
+	}
+	
 	public void auth_pick_account(){
 	    
 		String url = "https://www.google.com/reader/atom/user/-/state/com.google/reading-list?n=8";

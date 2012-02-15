@@ -79,7 +79,6 @@ public class TwitterHandle extends AccountHandle{
 		Task task = new Task();
 		task.execute();
 		
-		
 	}
 	
 	private class Task extends AsyncTask<String, String, String> implements OnCancelListener, Runnable{
@@ -135,6 +134,19 @@ public class TwitterHandle extends AccountHandle{
 	
 	}
 	
+	public void authenticate(boolean refreshToken){
+		
+		if(!refreshToken && token != null && secret != null){
+			authenticated(secret, token);
+		}else{
+			auth();
+		}
+		
+	}
+	
+	protected void authenticated(String secret, String token){
+		
+	}
 	
 	private static final String TW_TOKEN = "aq.tw.token";
 	private static final String TW_SECRET = "aq.tw.secret";
@@ -185,6 +197,8 @@ public class TwitterHandle extends AccountHandle{
 				
 				dismiss();
 				success(act);
+				
+				authenticated(secret, token);
 			}else{
 				failure();
 			}
