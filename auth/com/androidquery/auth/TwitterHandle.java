@@ -200,7 +200,9 @@ public class TwitterHandle extends AccountHandle{
 				
 				authenticated(secret, token);
 			}else{
+				
 				failure();
+				authenticated(null, null);
 			}
 			
 		}
