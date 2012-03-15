@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.androidquery.util.AQUtility;
 
 public class BasicHandle extends AccountHandle{
 

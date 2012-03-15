@@ -6,8 +6,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -29,6 +32,7 @@ import android.webkit.WebViewClient;
 import com.androidquery.AQuery;
 import com.androidquery.WebDialog;
 import com.androidquery.callback.AbstractAjaxCallback;
+import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
 
@@ -447,24 +451,47 @@ public class FacebookHandle extends AccountHandle{
         return didSucceed;
     }
     
-    private boolean validateAppSignatureForIntent(Activity activity, Intent intent) {
+    private static Boolean hasSSO;
+    
+    public boolean isSSOAvailable(){
+    	
+    	if(hasSSO == null){
+    		Intent intent = new Intent();
+    		intent.setClassName("com.facebook.katana", "com.facebook.katana.ProxyAuth");
+    		hasSSO = validateAppSignatureForIntent(act, intent);
+    	}
+    	
+    	return hasSSO;
+    }
+    
+    public void ajaxProfile(AjaxCallback<JSONObject> cb){
+    	
+		String url = "https://graph.facebook.com/me";
+		
+		AQuery aq = new AQuery(act);	
+		aq.auth(this).ajax(url, JSONObject.class, 0, cb);
+    
+    }
+    
+    private boolean validateAppSignatureForIntent(Context context, Intent intent) {
 
-        ResolveInfo resolveInfo =
-            activity.getPackageManager().resolveActivity(intent, 0);
-        if (resolveInfo == null) {
+    	PackageManager pm = context.getPackageManager();
+    	
+        ResolveInfo resolveInfo = pm.resolveActivity(intent, 0);
+        if(resolveInfo == null){
             return false;
         }
 
         String packageName = resolveInfo.activityInfo.packageName;
         PackageInfo packageInfo;
         try {
-            packageInfo = activity.getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+            packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
         } catch (NameNotFoundException e) {
             return false;
         }
 
-        for (Signature signature : packageInfo.signatures) {
-            if (signature.toCharsString().equals(FB_APP_SIGNATURE)) {
+        for(Signature signature : packageInfo.signatures) {
+            if(signature.toCharsString().equals(FB_APP_SIGNATURE)) {
                 return true;
             }
         }

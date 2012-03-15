@@ -2243,6 +2243,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		View view = inflater.inflate(layoutId, root, false);	
 		view.setTag(AQuery.TAG_LAYOUT, layoutId);
 		
+		//AQUtility.debug("infalted");
+		
 		return view;
 		
 	}
