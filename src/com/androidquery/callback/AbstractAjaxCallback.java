@@ -96,6 +96,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private static int NET_TIMEOUT = 30000;
 	private static String AGENT = null;
 	private static int NETWORK_POOL = 4;
+	private static boolean GZIP = true;
 	
 	private Class<T> type;
 	private Reference<Object> whandler;
@@ -154,6 +155,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 */
 	public static void setAgent(String agent){
 		AGENT = agent;
+	}
+	
+	/**
+	 * Use gzip.
+	 *
+	 * @param gzip
+	 */
+	public static void setGZip(boolean gzip){
+		GZIP = gzip;
 	}
 	
 	/**
@@ -1139,7 +1149,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
                
 		}
 		
-		if(headers == null || !headers.containsKey("Accept-Encoding")){
+		if(GZIP && headers == null || !headers.containsKey("Accept-Encoding")){
 			hr.addHeader("Accept-Encoding", "gzip");
 		}
 			
