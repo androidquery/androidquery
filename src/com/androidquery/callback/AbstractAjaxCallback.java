@@ -34,7 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.zip.GZIPInputStream;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -1133,9 +1135,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(headers != null){
         	for(String name: headers.keySet()){
         		hr.addHeader(name, headers.get(name));
-        		//AQUtility.debug(name, headers.get(name));
         	}
-        }
+               
+		}
+		
+		if(headers == null || !headers.containsKey("Accept-Encoding")){
+			hr.addHeader("Accept-Encoding", "gzip");
+		}
 			
 		String cookie = makeCookie();
 		if(cookie != null){
@@ -1187,7 +1193,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	        int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
 	        
 	        PredefinedBAOS baos = new PredefinedBAOS(size);
-	        entity.writeTo(baos);
+	        
+	        Header encoding = entity.getContentEncoding();
+	        if(encoding != null && encoding.getValue().equalsIgnoreCase("gzip")) {
+	        	InputStream is = new GZIPInputStream(entity.getContent());
+	        	AQUtility.copy(is, baos);
+	        }else{
+	        	entity.writeTo(baos);
+	        }
+	        
 	        
 	        data = baos.toByteArray();
         }
@@ -1447,8 +1461,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				sb.append("; ");
 			}
 		}
-		
-		//AQUtility.debug("cookie", sb.toString());
 		
 		return sb.toString();
 		
