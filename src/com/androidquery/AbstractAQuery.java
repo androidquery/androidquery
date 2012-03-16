@@ -107,6 +107,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 	}
 	
+	
 	private Constructor<T> constructor;
 	@SuppressWarnings("unchecked")
 	private Constructor<T> getConstructor(){
@@ -123,6 +124,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		return constructor;
 	}
+	
+	
 	
 	/**
 	 * Instantiates a new AQuery object.
@@ -1923,7 +1926,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * Designed to be used inside getView(int position, View convertView, ViewGroup parent) of an adapter.
 	 * 
 	 * If the url resource is cached, in memory or file, this method will returns true. Otherwise, the method returns
-	 * true of the list is scrolling above the specified velocity. Velocity is measured in items/seconds. 
+	 * true if the list is scrolling above the specified velocity. Velocity is measured in items/seconds. 
 	 * Velocity of 0 implies always delay during fling.
 	 * 
 	 * If fileCheck is false, only memory is checked. This only applies to image resources.
