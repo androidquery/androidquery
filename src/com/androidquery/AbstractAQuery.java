@@ -441,6 +441,23 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Set the text of a TextView. Hide the view (gone) if text is empty.
+	 *
+	 * @param text the text
+	 * @param goneIfEmpty hide if text is null or length is 0
+	 * @return self
+	 */
+	
+	public T text(CharSequence text, boolean goneIfEmpty){
+			
+		if(goneIfEmpty && (text == null || text.length() == 0)){
+			return gone();
+		}else{
+			return text(text);
+		}
+	}
+	
 
 	
 	/**
