@@ -564,12 +564,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(type.equals(JSONObject.class)){
 			
 			JSONObject result = null;
-	    	
+			String str = null;
 	    	try {    		
-	    		String str = new String(data, encoding);
+	    		str = new String(data, encoding);
 				result = (JSONObject) new JSONTokener(str).nextValue();
 			} catch (Exception e) {	  		
 				AQUtility.debug(e);
+				AQUtility.debug(str);
 			}
 			return (T) result;
 		}
