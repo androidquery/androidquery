@@ -352,11 +352,19 @@ public class FacebookHandle extends AccountHandle{
 		}
 	}
 
-	
+	//03-17 17:05:40.594: W/AQuery(23190): error:{"error":{"message":"Error validating access token: User 1318428934 has not authorized application 155734287864315.","type":"OAuthException","code":190}}
+
 	@Override
 	public boolean expired(AbstractAjaxCallback<?, ?> cb, AjaxStatus status) {
 		
 		int code = status.getCode();
+		if(code == 200) return false;
+		
+		String error = status.getError();
+		if(error != null && error.contains("OAuthException")){
+			AQUtility.debug("fb token expired");
+			return true;
+		}
 		
 		String url = cb.getUrl();
 		
