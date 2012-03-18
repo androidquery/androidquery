@@ -55,6 +55,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.Gallery;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -506,6 +508,22 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof AdapterView){
 			AdapterView av = (AdapterView) view;
+			av.setAdapter(adapter);
+		}
+		
+		return self();
+	}
+	
+	/**
+	 * Set the adapter of an ExpandableListView.
+	 *
+	 * @param adapter adapter
+	 * @return self
+	 */
+	public T adapter(ExpandableListAdapter adapter){
+		
+		if(view instanceof ExpandableListView){
+			ExpandableListView av = (ExpandableListView) view;
 			av.setAdapter(adapter);
 		}
 		
@@ -1091,6 +1109,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public ListView getListView(){
 		return (ListView) view;
+	}
+	
+	/**
+	 * Gets the current view as a ExpandableListView.
+	 *
+	 * @return ExpandableListView
+	 */
+	public ExpandableListView getExpandableListView(){
+		return (ExpandableListView) view;
 	}
 	
 	/**
