@@ -1958,7 +1958,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Determines if a list view item should delay loading a url resource because the list view is scrolling very fast.
 	 * The primary purpose of this method is to skip loading remote resources (such as images) over the internet 
-	 * until the list stop flinging and the user is confusing on the displaying items.
+	 * until the list stop flinging and the user is focusing on the displaying items.
 	 *
 	 * If the scrolling stops and there are delayed items displaying, the getView method will be called again to force
 	 * the delayed items to be redrawn. During redraw, this method will always return false, thus allowing a particular 
