@@ -1951,7 +1951,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param url the content url to be checked if cached and is available immediately
 	 * @param velocity the trigger velocity
 	 * 
-	 * @return Bitmap
+	 * @return delay
 	 */
 	
 	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
@@ -2009,12 +2009,42 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param velocity the trigger velocity
 	 * @param fileCheck fileCheck
 	 * 
-	 * @return Bitmap
+	 * @return delay
 	 */
 	
 	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck){
 		return Common.shouldDelay(convertView, parent, url, velocity, fileCheck);
 	}
+	
+	/**
+	 * Determines if a gallery view item should delay loading a url resource because the gallery view is scrolling very fast.
+	 * The primary purpose of this method is to skip loading remote resources (such as images) over the internet 
+	 * until the list stop flinging and the user is focusing on the displaying items.
+	 *
+	 * If the scrolling stops and there are delayed items displaying, the getView method will be called again to force
+	 * the delayed items to be redrawn. During redraw, this method will always return false, thus allowing a particular 
+	 * resource to be loaded.
+	 *
+	 * Designed to be used inside getView(int position, View convertView, ViewGroup parent) of an adapter.
+	 * 
+	 * If the url resource is cached, in memory or file, this method will returns true. 
+	 * 
+	 * 
+	 * @param position the list item position
+	 * @param convertView the list item view
+	 * @param parent the parent input of getView
+	 * @param url the content url to be checked if cached and is available immediately
+	 * 
+	 * @return delay
+	 */
+	
+	
+	public boolean shouldDelay(int position, View convertView, ViewGroup parent, String url){
+		return Common.shouldDelay(position, convertView, parent, url);
+	}
+	
+	
+	
 	
 	/**
 	 * Create a temporary file on EXTERNAL storage (sdcard) that holds the cached content of the url.

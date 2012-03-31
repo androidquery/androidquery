@@ -25,6 +25,7 @@ import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.test.image.ImageLoadingList4Activity.Photo;
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.Common;
 import com.androidquery.util.XmlDom;
 
 public class ImageLoadingGalleryActivity extends RunSourceActivity {
@@ -96,9 +97,7 @@ public class ImageLoadingGalleryActivity extends RunSourceActivity {
 		return photo;
 	}
 	
-	private boolean init = false;
-	private int selected = 0;
-	
+	/*
 	private boolean shouldDelayG(int position, View convertView, ViewGroup parent, String url){
 		
 		if(url == null) return false;
@@ -110,76 +109,19 @@ public class ImageLoadingGalleryActivity extends RunSourceActivity {
 		
 		Gallery gallery = (Gallery) parent;
 		
-		if(!init){
+		Integer selected = (Integer) gallery.getTag(AQuery.TAG_LAYOUT);
+		
+		
+		if(selected == null){
+			
+			selected = 0;
+			gallery.setTag(AQuery.TAG_LAYOUT, 0);
 			
 			gallery.setCallbackDuringFling(false);
 			
-			gallery.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-				@Override
-				public void onItemSelected(AdapterView<?> adapterView, View convertView, int pos, long id) {
-					
-					AQUtility.debug("on select", pos);
-					
-					if(selected != pos){
-					
-						Adapter adapter = adapterView.getAdapter();
-						
-						selected = pos;
-					
-						int count = adapterView.getChildCount();
-						
-						AQUtility.debug("redrawing", count);
-						
-						int first = adapterView.getFirstVisiblePosition();
-						
-						for(int i = 0; i < count; i++){
-							View v = adapterView.getChildAt(i);
-							
-							int drawPos = first + i;
-							
-							Integer lastDrawn = (Integer) v.getTag(AQuery.TAG_LAYOUT);
-							
-							if(lastDrawn != null && lastDrawn.intValue() == drawPos){
-								AQUtility.debug("skip", drawPos);
-							}else{						
-								AQUtility.debug("redraw", drawPos);
-								adapter.getView(drawPos, v, adapterView);
-							}
-						}
-						
-						/*
-			            int count = view.getChildCount();
-			            
-			            ListAdapter la = view.getAdapter();
-			            
-			            for(int i = 0; i < count; i++) {
-			                View convertView = (View) view.getChildAt(i);
-			                if(convertView.getTag(AQuery.TAG_SCROLL_LISTENER) != null){
-			                	la.getView(first + i, convertView, view);	                	
-			                	convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
-			                }
-			            }
-						*/
-						
-						
-						//adapter.getView(pos, convertView, adapterView);
-						
-					}
-					
-					
-				}
-
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
-					// TODO Auto-generated method stub
-					
-					AQUtility.debug("on nothing");
-				}
-		
-		
-			});
-			init = true;
+			Common common = new Common();
+			common.listen(gallery);
+			
 		}
 		
 		int first = gallery.getFirstVisiblePosition();
@@ -211,7 +153,7 @@ public class ImageLoadingGalleryActivity extends RunSourceActivity {
 		
 	}
 	
-	
+	*/
 	public void renderPhotos(String url, XmlDom xml, AjaxStatus status) {
 		
 		if(xml == null) return;
@@ -236,9 +178,7 @@ public class ImageLoadingGalleryActivity extends RunSourceActivity {
 				
 				String tbUrl = photo.tb;
 			
-				
-				
-				if(!shouldDelayG(position, convertView, parent, tbUrl)){
+				if(!aq.shouldDelay(position, convertView, parent, tbUrl)){
 					aq.id(R.id.tb).image(tbUrl);
 					aq.id(R.id.text).text(photo.title).gone();
 				}else{

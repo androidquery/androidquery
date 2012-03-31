@@ -30,6 +30,8 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Adapter;
+import android.widget.Gallery;
 import android.widget.ListAdapter;
 
 import com.androidquery.AQuery;
@@ -247,6 +249,16 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	}
 
 
+	public static boolean shouldDelay(int position, View convertView, ViewGroup parent, String url){
+		
+		if(parent instanceof Gallery){
+			return shouldDelayGallery(position, convertView, parent, url);
+		}else{
+			return shouldDelay(convertView, parent, url, 0, false);
+		}
+		
+	}
+	
 	public static boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck){
 		
 		if(url == null) return false;
@@ -288,6 +300,60 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		
 	}
 	
+	private static boolean shouldDelayGallery(int position, View convertView, ViewGroup parent, String url){
+		
+		if(url == null) return false;
+		
+		boolean hit = BitmapAjaxCallback.getMemoryCached(url, 0) != null;
+		if(hit){
+			return false;
+		}
+		
+		Gallery gallery = (Gallery) parent;
+		
+		Integer selected = (Integer) gallery.getTag(AQuery.TAG_LAYOUT);
+		
+		
+		if(selected == null){
+			
+			selected = 0;
+			gallery.setTag(AQuery.TAG_LAYOUT, 0);
+			
+			gallery.setCallbackDuringFling(false);
+			
+			Common common = new Common();
+			common.listen(gallery);
+			
+		}
+		
+		int first = gallery.getFirstVisiblePosition();
+		int last = gallery.getLastVisiblePosition();
+		
+		int diff = last - first;
+		int delta = (diff / 2) + 1;
+		
+		int from = selected - delta;
+		int to = selected + delta;
+		
+		if(from < 0){
+			//shift window back to positive region
+			to = to - from;
+			from = 0;
+		}
+		
+		if((position >= from && position <= to)){
+			
+			AQUtility.debug("yes", position + ":" + from + "." + to);
+			convertView.setTag(AQuery.TAG_LAYOUT, position);
+			
+			return false;
+		}
+		
+		AQUtility.debug("no", position + ":" + from + "." + to);
+		convertView.setTag(AQuery.TAG_LAYOUT, null);
+		return true;
+		
+	}
 	
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -307,15 +373,69 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		invoke(s, start, before, count);
 	}
 
+	private OnItemSelectedListener galleryListener;
+	private boolean galleryListen = false;
+	
+	public void listen(Gallery gallery){
+		
+		galleryListener = gallery.getOnItemSelectedListener();
+		galleryListen = true;
+		
+		gallery.setOnItemSelectedListener(this);
+	}
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+		
 		invoke(parent, v, pos, id);
+	
+		if(galleryListener != null){
+			galleryListener.onItemSelected(parent, v, pos, id);
+		}
+		
+		if(galleryListen){
+			
+			Integer selected = (Integer) parent.getTag(AQuery.TAG_LAYOUT);
+			
+			if(selected != pos){
+			
+				Adapter adapter = parent.getAdapter();
+				parent.setTag(AQuery.TAG_LAYOUT, pos);
+			
+				int count = parent.getChildCount();
+				
+				AQUtility.debug("redrawing", count);
+				
+				int first = parent.getFirstVisiblePosition();
+				
+				for(int i = 0; i < count; i++){
+					View convertView = parent.getChildAt(i);
+					
+					int drawPos = first + i;
+					
+					Integer lastDrawn = (Integer) convertView.getTag(AQuery.TAG_LAYOUT);
+					
+					if(lastDrawn != null && lastDrawn.intValue() == drawPos){
+						AQUtility.debug("skip", drawPos);
+					}else{						
+						AQUtility.debug("redraw", drawPos);
+						adapter.getView(drawPos, convertView, parent);
+					}
+				}
+				
+			}
+			
+		}
+	
 	}
 
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
+		
+		if(galleryListener != null){
+			galleryListener.onNothingSelected(arg0);
+		}
 		
 	}
 	
