@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.SlidingDrawer;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
@@ -54,7 +55,7 @@ public class ImageLoadingListOptionsActivity extends ImageLoadingListActivity {
 		AQUtility.cleanCacheAsync(this, 0, 0);
 		BitmapAjaxCallback.clearCache();
 		
-		aq.id(R.id.list).adapter(null);
+		aq.id(R.id.list).adapter((Adapter) null);
 		
         String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=48";
 		aq.progress(R.id.progress).ajax(url, XmlDom.class, this, "renderPhotos");

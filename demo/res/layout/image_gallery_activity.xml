@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView 
+	xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+>  
+
+	<LinearLayout 
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    >
+		
+		<TextView  
+			android:id="@+id/name"
+			android:layout_margin="10dip"
+		    android:layout_width="fill_parent" 
+		    android:layout_height="wrap_content" 
+		    android:text="Name"
+		    android:textStyle="bold"
+		    android:textSize="14sp"
+		/>
+		
+		
+		<HorizontalScrollView 
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="10dip"
+		> 
+			
+			<TextView  
+				android:id="@+id/code"
+				android:padding="5dip"
+			    android:layout_width="wrap_content" 
+			    android:layout_height="wrap_content" 
+			    android:text="Code Here"
+			    android:scrollbars="horizontal|vertical"
+			    android:background="#eeeeee"
+			    android:textColor="#000000"
+			/>
+		
+		
+		</HorizontalScrollView>
+		
+
+	    <ProgressBar 
+			android:id="@+id/progress"	
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal" 
+			android:visibility="gone"
+		/>
+	    
+	   
+		<Gallery
+			android:id="@+id/gallery"	
+			android:layout_width="fill_parent" 
+			android:layout_height="200dip"		
+		    />
+		
+		    
+		
+	</LinearLayout>
+
+
+</ScrollView>
