@@ -105,6 +105,8 @@
         
         <item>Gallery Items</item>  
         
+        <item>Expandable List Items</item>  
+        
         <item>Google Chart</item> 
         
         <item>Custom Callback</item>        
@@ -156,6 +158,8 @@
         
         <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid</item>
         <item>com.androidquery.test.image.ImageLoadingGalleryActivity:image_gallery:new</item>
+        <item>com.androidquery.test.image.ImageLoadingExpandableListActivity:image_elist:new</item>
+        
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_chart:new</item>
         
@@ -269,6 +273,7 @@
         
         <item>image_grid</item>
         <item>image_gallery</item>
+        <item>image_elist</item>
         
         <item>image_chart</item>
         
@@ -370,6 +375,7 @@
         
         <item>Loading Image in Grid View with Aspect Ratio</item>   
         <item>Loading Image in Gallery View with Delay Load</item>  
+        <item>Loading Image in Expanable List with Delay Load</item>  
         
         <item>Loading Google Chart Images with 2000+ length url</item>   
         

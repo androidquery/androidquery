@@ -46,6 +46,7 @@
 		<activity android:name=".test.image.ImageLoadingListOptionsActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.image.ImageLoadingGridActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.image.ImageLoadingGalleryActivity" android:theme="@style/android:Theme.Light"></activity>
+		<activity android:name=".test.image.ImageLoadingExpandableListActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.image.ImageLoadingAspectRatioActivity" android:theme="@style/android:Theme.Light"></activity>
 		<activity android:name=".test.image.ImageZoomActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:configChanges="orientation|keyboardHidden" ></activity>
 		<activity android:name=".test.async.AjaxAuthActivity" android:theme="@style/android:Theme.Light"></activity>	
