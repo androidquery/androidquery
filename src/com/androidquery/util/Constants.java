@@ -36,6 +36,7 @@ public interface Constants {
 	public static final int TAG_URL = 0x40FF0001;
 	public static final int TAG_SCROLL_LISTENER = 0x40FF0002;
 	public static final int TAG_LAYOUT = 0x40FF0003;
+	public static final int TAG_NUM = 0x40FF0004;
 	
 	public static final float RATIO_PRESERVE = Float.MAX_VALUE;
 	public static final float ANCHOR_DYNAMIC = Float.MAX_VALUE;

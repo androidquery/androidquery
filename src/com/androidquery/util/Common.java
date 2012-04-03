@@ -20,17 +20,21 @@ import java.io.File;
 import java.util.Comparator;
 
 import android.app.Dialog;
+import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.Adapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.Gallery;
 import android.widget.ListAdapter;
 
@@ -42,7 +46,7 @@ import com.androidquery.callback.BitmapAjaxCallback;
  * 
  */
 
-public class Common implements Comparator<File>, Runnable, OnClickListener, OnItemClickListener, OnScrollListener, OnItemSelectedListener, TextWatcher{
+public class Common implements Comparator<File>, Runnable, OnClickListener, OnLongClickListener, OnItemClickListener, OnScrollListener, OnItemSelectedListener, TextWatcher{
 
 	private Object handler;
 	private String method;
@@ -72,7 +76,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		
 	}
 	
-	private void invoke(Object... args){
+	private Object invoke(Object... args){
 		
 		if(method != null){
 			
@@ -86,8 +90,8 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 				cbo = this;
 			}
 			
-			AQUtility.invokeHandler(cbo, method, fallback, true, sig, input);
-			
+			Object result = AQUtility.invokeHandler(cbo, method, fallback, true, sig, input);
+			return result;
 		}else if(methodId != 0){
 			
 			switch(methodId){
@@ -101,9 +105,10 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 			
 			}
 			
+			
 		}
 		
-		
+		return null;
 	}
 	
 	
@@ -139,6 +144,14 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		invoke(v);
 	}
 
+	@Override
+	public boolean onLongClick(View v) {
+		Object result = invoke(v);
+		if(result instanceof Boolean){
+			return (Boolean) result;
+		}
+		return false;
+	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
@@ -147,36 +160,12 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	
 	
 	private int scrollState = OnScrollListener.SCROLL_STATE_IDLE;
-	private int scrollSkip;
-	private long lastScroll;
-	private int lastPosition;
-	private float velocity;
 	private OnScrollListener osl;
 
 	@Override
 	public void onScroll(AbsListView view, int first, int visibleItemCount, int totalItemCount) {
 		
 		checkScrolledBottom(view, scrollState);
-		
-		if(scrollState == OnScrollListener.SCROLL_STATE_FLING){
-			
-			long now = System.currentTimeMillis();	
-			int diff = Math.abs(lastPosition - first);
-			long dur = now - lastScroll;
-			
-			if(lastScroll == 0){
-				lastScroll = now;
-			}else if(diff > 0 && dur > 100){
-				
-				velocity = ((float) diff / (float) dur) * 1000;
-				
-				lastPosition = first;
-				lastScroll = now;
-			}
-			
-		}else{
-			lastScroll = 0;
-		}
 		
 		if(osl != null) osl.onScroll(view, first, visibleItemCount, totalItemCount);
 		
@@ -185,15 +174,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	public int getScrollState(){
 		return scrollState;
 	}
-	
-	public void addSkip(){
-		scrollSkip++;
-	}
 
-	public float getVelocity(){
-		return velocity;
-	}
-	
 	public void forward(OnScrollListener listener){
 		this.osl = listener;
 	}
@@ -218,86 +199,153 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		
-		checkScrolledBottom(view, scrollState);
-		
-		int first = view.getFirstVisiblePosition();
-		
 		this.scrollState = scrollState;
 		
-		if(scrollState == OnScrollListener.SCROLL_STATE_IDLE){
-			
-			if(scrollSkip > 0){
-			
-	            int count = view.getChildCount();
-	            
-	            ListAdapter la = view.getAdapter();
-	            
-	            for(int i = 0; i < count; i++) {
-	                View convertView = (View) view.getChildAt(i);
-	                if(convertView.getTag(AQuery.TAG_SCROLL_LISTENER) != null){
-	                	la.getView(first + i, convertView, view);	                	
-	                	convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
-	                }
-	            }
-				
-			}
-			
-			scrollSkip = 0;
+		checkScrolledBottom(view, scrollState);
+		
+		if(view instanceof ExpandableListView){
+			onScrollStateChanged((ExpandableListView) view, scrollState); 
+		}else{
+			onScrollStateChanged2(view, scrollState);
 		}
 		
 		if(osl != null) osl.onScrollStateChanged(view, scrollState);
 	}
-
+	
+	private void onScrollStateChanged(ExpandableListView elv, int scrollState){
+		
+		elv.setTag(AQuery.TAG_NUM, scrollState);
+		
+		if(scrollState == SCROLL_STATE_IDLE){
+			
+			int first = elv.getFirstVisiblePosition();
+			int last = elv.getLastVisiblePosition();
+			
+			int count = last - first;
+			
+			ExpandableListAdapter ela = elv.getExpandableListAdapter();
+			
+			for(int i = 0; i <= count; i++){
+			
+				long packed = elv.getExpandableListPosition(i + first);
+				
+				int group = ExpandableListView.getPackedPositionGroup(packed);
+				int child = ExpandableListView.getPackedPositionChild(packed);
+				
+				if(group >= 0){
+					
+					View convertView = elv.getChildAt(i);
+					Long targetPacked = (Long) convertView.getTag(AQuery.TAG_NUM);
+					
+					if(targetPacked != null && targetPacked.longValue() == packed){
+					
+						if(child == -1){
+						
+							ela.getGroupView(group, elv.isGroupExpanded(group), convertView, elv);
+							
+						}else{
+							
+							ela.getChildView(group, child, child == ela.getChildrenCount(group) - 1, convertView, elv);
+							
+						}
+						convertView.setTag(AQuery.TAG_NUM, null);
+					}else{
+						AQUtility.debug("skip!");
+					}
+					
+				}
+			
+				
+			}
+			
+			
+			
+		}
+	}
+	
+	
+	private void onScrollStateChanged2(AbsListView lv, int scrollState){
+		
+		lv.setTag(AQuery.TAG_NUM, scrollState);
+		
+		if(scrollState == SCROLL_STATE_IDLE){
+			
+			int first = lv.getFirstVisiblePosition();
+			int last = lv.getLastVisiblePosition();
+			
+			AQUtility.debug(first, last);
+			
+			int count = last - first;
+			
+			ListAdapter la = lv.getAdapter();
+			
+			for(int i = 0; i <= count; i++){
+			
+				long packed = i + first;
+				
+				View convertView = lv.getChildAt(i);
+				Number targetPacked = (Number) convertView.getTag(AQuery.TAG_NUM);
+				
+				if(targetPacked != null && (targetPacked.longValue() == packed || targetPacked.intValue() == -1)){
+				
+					la.getView((int) packed, convertView, lv);
+					convertView.setTag(AQuery.TAG_NUM, null);
+				}else{
+					AQUtility.debug("skip!");
+				}
+					
+			}
+			
+		}
+	}
+	
+	
+	public static boolean shouldDelay(int groupPosition, int childPosition, View convertView, ViewGroup parent, String url){
+		
+		Bitmap bm = BitmapAjaxCallback.getMemoryCached(url, 0);
+		if(bm != null) return false;
+		
+		AbsListView lv = (AbsListView) parent;
+		
+		OnScrollListener sl = (OnScrollListener) parent.getTag(AQuery.TAG_SCROLL_LISTENER);
+		
+		if(sl == null){
+			sl = new Common();
+			lv.setOnScrollListener(sl);
+			parent.setTag(AQuery.TAG_SCROLL_LISTENER, sl);
+		}
+		
+		Integer scrollState = (Integer) lv.getTag(AQuery.TAG_NUM);
+		
+		if(scrollState == null || scrollState == OnScrollListener.SCROLL_STATE_IDLE || scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+			return false;
+		}
+		
+		long packed = childPosition;
+		if(parent instanceof ExpandableListView){
+			packed = ExpandableListView.getPackedPositionForChild(groupPosition, childPosition);
+		}
+		convertView.setTag(AQuery.TAG_NUM, packed);
+		
+		//TODO add draw count and skip drawing list if possible
+		
+		return true;
+	}	
 
 	public static boolean shouldDelay(int position, View convertView, ViewGroup parent, String url){
 		
 		if(parent instanceof Gallery){
 			return shouldDelayGallery(position, convertView, parent, url);
 		}else{
-			return shouldDelay(convertView, parent, url, 0, false);
+			return shouldDelay(-2, position, convertView, parent, url);
 		}
 		
+
 	}
-	
+		
 	public static boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck){
 		
-		if(url == null) return false;
-		
-		int state = OnScrollListener.SCROLL_STATE_IDLE;
-		float vel = 0;
-		Common sl = (Common) parent.getTag(AQuery.TAG_SCROLL_LISTENER);
-		if(sl != null){
-			state = sl.getScrollState();
-			vel = sl.getVelocity();
-		}else if(parent instanceof AbsListView){
-			AbsListView lv = (AbsListView) parent;
-			sl = new Common();
-			lv.setOnScrollListener(sl);
-			lv.setTag(AQuery.TAG_SCROLL_LISTENER, sl);	
-		}
-		
-		boolean moving = state == OnScrollListener.SCROLL_STATE_FLING && vel >= velocity;
-		
-		if(!moving){
-			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, null);
-			return false;
-		}
-		
-		boolean hit = BitmapAjaxCallback.getMemoryCached(url, 0) != null || (fileCheck && AQUtility.getExistedCacheByUrl(parent.getContext(), url) != null);
-		
-		if(hit){
-			return false;
-		}
-		
-		if(sl != null){
-			sl.addSkip();
-			convertView.setTag(AQuery.TAG_SCROLL_LISTENER, url);
-			return true;
-		}
-		
-		return false;
-		
-		
+		return shouldDelay(-1, convertView, parent, url);
 	}
 	
 	private static boolean shouldDelayGallery(int position, View convertView, ViewGroup parent, String url){
@@ -311,13 +359,12 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		
 		Gallery gallery = (Gallery) parent;
 		
-		Integer selected = (Integer) gallery.getTag(AQuery.TAG_LAYOUT);
-		
+		Integer selected = (Integer) gallery.getTag(AQuery.TAG_NUM);
 		
 		if(selected == null){
 			
 			selected = 0;
-			gallery.setTag(AQuery.TAG_LAYOUT, 0);
+			gallery.setTag(AQuery.TAG_NUM, 0);
 			
 			gallery.setCallbackDuringFling(false);
 			
@@ -344,13 +391,13 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		if((position >= from && position <= to)){
 			
 			AQUtility.debug("yes", position + ":" + from + "." + to);
-			convertView.setTag(AQuery.TAG_LAYOUT, position);
+			convertView.setTag(AQuery.TAG_NUM, position);
 			
 			return false;
 		}
 		
 		AQUtility.debug("no", position + ":" + from + "." + to);
-		convertView.setTag(AQuery.TAG_LAYOUT, null);
+		convertView.setTag(AQuery.TAG_NUM, null);
 		return true;
 		
 	}
@@ -395,12 +442,12 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		
 		if(galleryListen){
 			
-			Integer selected = (Integer) parent.getTag(AQuery.TAG_LAYOUT);
+			Integer selected = (Integer) parent.getTag(AQuery.TAG_NUM);
 			
 			if(selected != pos){
 			
 				Adapter adapter = parent.getAdapter();
-				parent.setTag(AQuery.TAG_LAYOUT, pos);
+				parent.setTag(AQuery.TAG_NUM, pos);
 			
 				int count = parent.getChildCount();
 				
@@ -413,7 +460,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 					
 					int drawPos = first + i;
 					
-					Integer lastDrawn = (Integer) convertView.getTag(AQuery.TAG_LAYOUT);
+					Integer lastDrawn = (Integer) convertView.getTag(AQuery.TAG_NUM);
 					
 					if(lastDrawn != null && lastDrawn.intValue() == drawPos){
 						AQUtility.debug("skip", drawPos);
@@ -473,4 +520,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnIt
 		}
 		
 	}
+
+
+
 }

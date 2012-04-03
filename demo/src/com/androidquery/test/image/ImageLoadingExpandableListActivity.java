@@ -100,7 +100,7 @@ public class ImageLoadingExpandableListActivity extends RunSourceActivity {
 		
 		return photo;
 	}
-
+/*
 	private boolean shouldDelay(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent, String url){
 		return shouldDelay(groupPosition, -1, false, convertView, parent, url);
 	}
@@ -204,7 +204,7 @@ public class ImageLoadingExpandableListActivity extends RunSourceActivity {
 		
 		return true;
 	}
-	
+	*/
 	
 	private List<Photo> group1;
 	private List<Photo> group2;
@@ -251,7 +251,7 @@ public class ImageLoadingExpandableListActivity extends RunSourceActivity {
 				
 				String tbUrl = photo.tb;
 			
-				if(!shouldDelay(groupPosition, childPosition, isLastChild, convertView, parent, tbUrl)){
+				if(!aq.shouldDelay(groupPosition, childPosition, isLastChild, convertView, parent, tbUrl)){
 					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, null, 0, 1);
 					aq.id(R.id.name).text(photo.title);
 				}else{
@@ -307,7 +307,7 @@ public class ImageLoadingExpandableListActivity extends RunSourceActivity {
 				
 				String tbUrl = photo.tb;
 			
-				if(!shouldDelay(groupPosition, isExpanded, convertView, parent, tbUrl)){
+				if(!aq.shouldDelay(groupPosition, isExpanded, convertView, parent, tbUrl)){
 					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, null, 0, 1);
 					
 				}else{

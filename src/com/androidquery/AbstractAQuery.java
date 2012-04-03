@@ -36,6 +36,7 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -1239,6 +1240,37 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Register a callback method for when the view is long clicked. Method must have signature of method(View view).
+	 *
+	 * @param handler The handler that has the public callback method.
+	 * @param method The method name of the callback.
+	 * @return self
+	 */
+	public T longClicked(Object handler, String method){
+	
+		Common common = new Common().forward(handler, method, true, ON_CLICK_SIG);
+		return longClicked(common);
+		
+	}	
+	
+	
+	/**
+	 * Register a callback method for when the view is long clicked. 
+	 *
+	 * @param listener The callback method.
+	 * @return self
+	 */
+	public T longClicked(OnLongClickListener listener){
+		
+		if(view != null){						
+			view.setOnLongClickListener(listener);
+		}
+		
+		return self();
+	}
+	
+	
 	private static Class<?>[] ON_ITEM_SIG = {AdapterView.class, View.class, int.class, long.class};
 	
 	/**
@@ -1352,6 +1384,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			common = new Common();
 			lv.setOnScrollListener(common);
 			lv.setTag(AQuery.TAG_SCROLL_LISTENER, common);
+			AQUtility.debug("set scroll listenr");
 		}
 		
 		return common;
@@ -1942,24 +1975,74 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * @deprecated  As of release 0.21.3, replaced by shouldDelay(int position, View convertView, ViewGroup parent, String url)
 	 * 
-	 * See shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck).
-	 * File check is true by default.
+	 * This method is less efficicent and promote file check which could hold up the UI thread.
 	 * 
-	 * @param convertView the list item view
-	 * @param parent the parent input of getView
-	 * @param url the content url to be checked if cached and is available immediately
-	 * @param velocity the trigger velocity
-	 * 
-	 * @return delay
+	 * {@link #shouldDelay(int position, View convertView, ViewGroup parent, String url)}
 	 */
-	
-	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
+	@Deprecated public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity){
 		return Common.shouldDelay(convertView, parent, url, velocity, true);
 	}
 	
+
+	
 	/**
-	 * Determines if a list view item should delay loading a url resource because the list view is scrolling very fast.
+	 * @deprecated  As of release 0.21.3, replaced by shouldDelay(int position, View convertView, ViewGroup parent, String url)
+	 * 
+	 * This method is less efficicent and promote file check which could hold up the UI thread.
+	 * 
+	 * {@link #shouldDelay(int position, View convertView, ViewGroup parent, String url)}
+	 */
+	@Deprecated public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck){
+		return Common.shouldDelay(convertView, parent, url, velocity, fileCheck);
+	}
+	
+	
+	/**
+	 * Determines if a group item of an expandable list should delay loading a url resource.
+	 * 
+	 * Designed to be used inside
+	 * getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent)  of an expandable list adapter.
+	 * 
+	 * @param groupPosition the group position of the item
+	 * @param isExpanded the group is expanded
+	 * @param convertView the list item view
+	 * @param parent the parent input of getView
+	 * @param url the content url to be checked if cached and is available immediately
+	 * 
+	 * @return delay should delay loading a particular resource
+	 */
+	
+	public boolean shouldDelay(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent, String url){
+		return Common.shouldDelay(groupPosition, -1, convertView, parent, url);
+	}
+	
+	
+	
+	/**
+	 * Determines if a child item of an expandable list item should delay loading a url resource.
+	 * 
+	 * Designed to be used inside 
+	 * getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) of an expandable list adapter.
+	 * 
+	 * @param groupPosition the group position of the item
+	 * @param childPosition the child position of the item
+	 * @param isLastChild the item is last child
+	 * @param convertView the list item view
+	 * @param parent the parent input of getView
+	 * @param url the content url to be checked if cached and is available immediately
+	 * 
+	 * @return delay should delay loading a particular resource
+	 */
+	
+	public boolean shouldDelay(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent, String url){
+	
+		return Common.shouldDelay(groupPosition, childPosition, convertView, parent, url);
+	}
+	
+	/**
+	 * Determines if a list or gallery view item should delay loading a url resource because the view is scrolling very fast.
 	 * The primary purpose of this method is to skip loading remote resources (such as images) over the internet 
 	 * until the list stop flinging and the user is focusing on the displaying items.
 	 *
@@ -1969,11 +2052,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *
 	 * Designed to be used inside getView(int position, View convertView, ViewGroup parent) of an adapter.
 	 * 
-	 * If the url resource is cached, in memory or file, this method will returns true. Otherwise, the method returns
-	 * true if the list is scrolling above the specified velocity. Velocity is measured in items/seconds. 
-	 * Velocity of 0 implies always delay during fling.
-	 * 
-	 * If fileCheck is false, only memory is checked. This only applies to image resources.
 	 * 
 	 * <br>
 	 * <br>
@@ -1983,7 +2061,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 *			
 	 *			...
 	 *			
-	 *			if(aq.shouldDelay(convertView, parent, tbUrl, 0)){
+	 *			if(aq.shouldDelay(position, convertView, parent, tbUrl)){
 	 *				aq.id(R.id.tb).image(placeholder);
 	 *			}else{
 	 *				aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0);
@@ -2002,42 +2080,13 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * If a scrolled listener is required, use the aquery method scrolled(OnScrollListener listener) to set the listener
 	 * instead of directly calling setOnScrollListener().
 	 * 
-	 * 
-	 * @param convertView the list item view
-	 * @param parent the parent input of getView
-	 * @param url the content url to be checked if cached and is available immediately
-	 * @param velocity the trigger velocity
-	 * @param fileCheck fileCheck
-	 * 
-	 * @return delay
-	 */
-	
-	public boolean shouldDelay(View convertView, ViewGroup parent, String url, float velocity, boolean fileCheck){
-		return Common.shouldDelay(convertView, parent, url, velocity, fileCheck);
-	}
-	
-	/**
-	 * Determines if a gallery view item should delay loading a url resource because the gallery view is scrolling very fast.
-	 * The primary purpose of this method is to skip loading remote resources (such as images) over the internet 
-	 * until the list stop flinging and the user is focusing on the displaying items.
-	 *
-	 * If the scrolling stops and there are delayed items displaying, the getView method will be called again to force
-	 * the delayed items to be redrawn. During redraw, this method will always return false, thus allowing a particular 
-	 * resource to be loaded.
-	 *
-	 * Designed to be used inside getView(int position, View convertView, ViewGroup parent) of an adapter.
-	 * 
-	 * If the url resource is cached, in memory or file, this method will returns true. 
-	 * 
-	 * 
-	 * @param position the list item position
+	 * @param position the position of the item
 	 * @param convertView the list item view
 	 * @param parent the parent input of getView
 	 * @param url the content url to be checked if cached and is available immediately
 	 * 
-	 * @return delay
+	 * @return delay should delay loading a particular resource
 	 */
-	
 	
 	public boolean shouldDelay(int position, View convertView, ViewGroup parent, String url){
 		return Common.shouldDelay(position, convertView, parent, url);
