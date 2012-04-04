@@ -57,7 +57,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_html</item>   
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_xpp:new</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_xpp</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
@@ -66,14 +66,14 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialog:new</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialog</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_cookie:new</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_cookie</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_encoding</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_status</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_rcookies:new</item>
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_rheaders:new</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_rcookies</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_rheaders</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_error</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_invalidate</item>  
         <item>http://code.google.com/p/android-query/wiki/AsyncAPI</item>    
@@ -161,7 +161,7 @@
         <item>com.androidquery.test.image.ImageLoadingExpandableListActivity:image_elist:new</item>
         
         
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_chart:new</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_chart</item>
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
