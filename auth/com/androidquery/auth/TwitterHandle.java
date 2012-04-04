@@ -55,6 +55,13 @@ public class TwitterHandle extends AccountHandle{
 		  
 	}
 
+	public String getToken(){
+		return token;
+	}
+	
+	public String getSecret(){
+		return secret;
+	}
 
 	private void dismiss(){
 		if(dialog != null){

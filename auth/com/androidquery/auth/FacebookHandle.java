@@ -73,6 +73,9 @@ public class FacebookHandle extends AccountHandle{
 		first = token == null;
 	}
 	
+	public String getToken(){
+		return token;
+	}
 	
 	public FacebookHandle sso(int requestId){
 		this.sso = true;
