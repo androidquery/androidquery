@@ -77,6 +77,12 @@ public class FacebookHandle extends AccountHandle{
 		return token;
 	}
 	
+	public static String getToken(Context context){
+		
+		return PreferenceManager.getDefaultSharedPreferences(context).getString(FB_TOKEN, null);
+		
+	}
+	
 	public FacebookHandle sso(int requestId){
 		this.sso = true;
 		this.requestId = requestId;

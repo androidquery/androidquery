@@ -56,7 +56,6 @@ public class ImageLoadingGalleryActivity extends RunSourceActivity {
 	     
 		
 		
-		
 	}
 	
 	private List<Photo> convertAll(XmlDom xml){
