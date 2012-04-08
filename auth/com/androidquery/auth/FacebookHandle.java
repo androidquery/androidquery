@@ -246,6 +246,7 @@ public class FacebookHandle extends AccountHandle{
 					dismiss();
 					storeToken(token, permissions);
 					first = false;
+					authenticated(token);
 					success(act);
 				}else{
 					failure();
@@ -394,7 +395,6 @@ public class FacebookHandle extends AccountHandle{
 		AQUtility.debug("reauth requested");
 		
 		token = null;
-		//storeToken(null, null);
 		
 		AQUtility.post(new Runnable() {
 			
@@ -481,12 +481,20 @@ public class FacebookHandle extends AccountHandle{
     	return hasSSO;
     }
     
-    public void ajaxProfile(AjaxCallback<JSONObject> cb){
+	protected void authenticated(String token){
+		
+	}
+    
+	public void ajaxProfile(AjaxCallback<JSONObject> cb){
+		ajaxProfile(cb, 0);
+	}
+
+    public void ajaxProfile(AjaxCallback<JSONObject> cb, long expire){
     	
 		String url = "https://graph.facebook.com/me";
 		
 		AQuery aq = new AQuery(act);	
-		aq.auth(this).ajax(url, JSONObject.class, 0, cb);
+		aq.auth(this).ajax(url, JSONObject.class, expire, cb);
     
     }
     
@@ -550,6 +558,7 @@ public class FacebookHandle extends AccountHandle{
 				if(token != null){
 					storeToken(token, permissions);
 					first = false;
+					authenticated(token);
 					success(act);
 				}else{
 					failure();
