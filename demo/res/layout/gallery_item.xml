@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dip"
+    android:layout_height="75dip" 
+    >
+    
+    <ProgressBar 		
+		android:layout_width="15dip"       
+        android:layout_height="15dip"
+		android:id="@+id/progress" 
+		android:layout_centerInParent="true"
+	/>
+
+
+    <ImageView
+        android:id="@+id/tb"       
+        android:layout_width="100dip"       
+        android:layout_height="75dip"
+        style="@style/GalleryItem"
+        />
+
+    <TextView 
+        android:id="@+id/text"       
+        android:layout_width="100dip"       
+        android:layout_height="75dip"
+        android:padding="15dip"
+        android:text="Dummy TextDummy TextDummy TextDummy TextDummy Text"
+        android:gravity="center"
+        android:textSize="8sp"
+        android:maxLines="4"
+        android:textColor="#FFFFFFFF"
+        />    
+
+    
+</RelativeLayout>

@@ -19,7 +19,7 @@ ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.photo_item, entr
 		
 		Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
 		
-		if(aq.shouldDelay(convertView, parent, tbUrl, 0)){
+		if(aq.shouldDelay(position, convertView, parent, tbUrl)){
 			aq.id(R.id.tb).image(placeholder, 0.75f);
 		}else{
 			aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, placeholder, 0, 0.75f);

@@ -55,6 +55,13 @@ public class TwitterHandle extends AccountHandle{
 		  
 	}
 
+	public String getToken(){
+		return token;
+	}
+	
+	public String getSecret(){
+		return secret;
+	}
 
 	private void dismiss(){
 		if(dialog != null){
@@ -78,7 +85,6 @@ public class TwitterHandle extends AccountHandle{
 
 		Task task = new Task();
 		task.execute();
-		
 		
 	}
 	
@@ -135,6 +141,19 @@ public class TwitterHandle extends AccountHandle{
 	
 	}
 	
+	public void authenticate(boolean refreshToken){
+		
+		if(!refreshToken && token != null && secret != null){
+			authenticated(secret, token);
+		}else{
+			auth();
+		}
+		
+	}
+	
+	protected void authenticated(String secret, String token){
+		
+	}
 	
 	private static final String TW_TOKEN = "aq.tw.token";
 	private static final String TW_SECRET = "aq.tw.secret";
@@ -185,8 +204,12 @@ public class TwitterHandle extends AccountHandle{
 				
 				dismiss();
 				success(act);
+				
+				authenticated(secret, token);
 			}else{
+				
 				failure();
+				authenticated(null, null);
 			}
 			
 		}

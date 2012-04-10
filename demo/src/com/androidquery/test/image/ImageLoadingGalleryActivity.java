@@ -3,49 +3,46 @@ package com.androidquery.test.image;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.Gallery;
 import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
-import android.widget.AbsListView.OnScrollListener;
+import android.widget.SlidingDrawer;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.test.RunSourceActivity;
+import com.androidquery.test.image.ImageLoadingList4Activity.Photo;
 import com.androidquery.util.AQUtility;
+import com.androidquery.util.Common;
 import com.androidquery.util.XmlDom;
 
-public class ImageLoadingList4Activity extends ImageLoadingListActivity {
+public class ImageLoadingGalleryActivity extends RunSourceActivity {
 
+	protected AQuery listAq;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 	
 		super.onCreate(savedInstanceState);
 		
-		aq.id(R.id.list).scrolled(new OnScrollListener() {
-			
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				AQUtility.debug("forward", "onScrollStateChanged");
-			}
-			
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				AQUtility.debug("forward", "onScroll");
-			}
-		});
-			
+		work();	
 	}
 	
+	protected int getContainer(){
+		return R.layout.image_gallery_activity;
+	}
 	
 	
 	public void work(){
@@ -57,7 +54,6 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
         String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=48";
 		aq.progress(R.id.progress).ajax(url, XmlDom.class, this, "renderPhotos");
 	     
-
 		
 		
 	}
@@ -100,28 +96,77 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 		return photo;
 	}
 	
-	public void scrolledBottom(AbsListView view, int scrollState){
+	/*
+	private boolean shouldDelayG(int position, View convertView, ViewGroup parent, String url){
 		
-		Toast toast = Toast.makeText(this, "ScrolledBottom", Toast.LENGTH_SHORT);
-		toast.show();
+		if(url == null) return false;
+		
+		boolean hit = BitmapAjaxCallback.getMemoryCached(url, 0) != null;
+		if(hit){
+			return false;
+		}
+		
+		Gallery gallery = (Gallery) parent;
+		
+		Integer selected = (Integer) gallery.getTag(AQuery.TAG_LAYOUT);
+		
+		
+		if(selected == null){
+			
+			selected = 0;
+			gallery.setTag(AQuery.TAG_LAYOUT, 0);
+			
+			gallery.setCallbackDuringFling(false);
+			
+			Common common = new Common();
+			common.listen(gallery);
+			
+		}
+		
+		int first = gallery.getFirstVisiblePosition();
+		int last = gallery.getLastVisiblePosition();
+		
+		int diff = last - first;
+		int delta = (diff / 2) + 1;
+		
+		int from = selected - delta;
+		int to = selected + delta;
+		
+		if(from < 0){
+			//shift window back to positive region
+			to = to - from;
+			from = 0;
+		}
+		
+		if((position >= from && position <= to)){
+			
+			AQUtility.debug("yes", position + ":" + from + "." + to);
+			convertView.setTag(AQuery.TAG_LAYOUT, position);
+			
+			return false;
+		}
+		
+		AQUtility.debug("no", position + ":" + from + "." + to);
+		convertView.setTag(AQuery.TAG_LAYOUT, null);
+		return true;
+		
 	}
 	
-	
-	
+	*/
 	public void renderPhotos(String url, XmlDom xml, AjaxStatus status) {
-	
+		
 		if(xml == null) return;
 		
 		List<Photo> entries = convertAll(xml);
 	
 		listAq = new AQuery(this);
 		
-		ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.photo_item, entries){
+		ArrayAdapter<Photo> aa = new ArrayAdapter<Photo>(this, R.layout.gallery_item, entries){
 			
 			public View getView(int position, View convertView, ViewGroup parent) {
 				
 				if(convertView == null){
-					convertView = getLayoutInflater().inflate(R.layout.photo_item, parent, false);
+					convertView = getLayoutInflater().inflate(R.layout.gallery_item, parent, false);
 				}
 				
 				Photo photo = getItem(position);
@@ -129,20 +174,17 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 				AQuery aq = listAq.recycle(convertView);
 				
 				aq.id(R.id.name).text(photo.title);
-				aq.id(R.id.meta).text(photo.author);
 				
 				String tbUrl = photo.tb;
-				
-				Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
-				
-				//if(aq.shouldDelay(convertView, parent, tbUrl, 0)){
-				if(aq.shouldDelay(position, convertView, parent, tbUrl)){
-							
-					aq.id(R.id.tb).image(placeholder);
+			
+				if(!aq.shouldDelay(position, convertView, parent, tbUrl)){
+					aq.id(R.id.tb).image(tbUrl);
+					aq.id(R.id.text).text(photo.title).gone();
 				}else{
-					
-					aq.id(R.id.tb).image(tbUrl, true, true, 0, R.drawable.image_missing, placeholder, AQuery.FADE_IN_NETWORK, 0);
+					aq.id(R.id.tb).clear();
+					aq.id(R.id.text).text(photo.title).visible();
 				}
+				
 				
 				return convertView;
 				
@@ -151,13 +193,17 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 			
 		};
 		
-		aq.id(R.id.list).adapter(aa);
+		aq.id(R.id.gallery).adapter(aa);
 		
-		//aq.scrolledBottom(this, "scrolledBottom");
 		
 	}
 	
+	@Override
+	protected void runSource(){
 		
+		//AQUtility.invokeHandler(this, type, false, null);
+	}
+	
 	class Photo{
 		
 		String tb;
@@ -165,6 +211,5 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 		String title;
 		String author;
 	}
-	
 	
 }

@@ -1,0 +1,16 @@
+	public void auth_twitter_token(){
+		
+		TwitterHandle handle = new TwitterHandle(this, CONSUMER_KEY, CONSUMER_SECRET){
+			
+			@Override
+			protected void authenticated(String secret, String token) {
+				AQUtility.debug("secret", secret);
+				AQUtility.debug("token", token);
+			}
+			
+		};
+		
+		boolean refreshToken = false;
+		handle.authenticate(refreshToken);
+		
+	}

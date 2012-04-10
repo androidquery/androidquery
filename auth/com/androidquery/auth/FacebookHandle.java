@@ -6,8 +6,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -29,6 +32,7 @@ import android.webkit.WebViewClient;
 import com.androidquery.AQuery;
 import com.androidquery.WebDialog;
 import com.androidquery.callback.AbstractAjaxCallback;
+import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
 
@@ -69,6 +73,15 @@ public class FacebookHandle extends AccountHandle{
 		first = token == null;
 	}
 	
+	public String getToken(){
+		return token;
+	}
+	
+	public static String getToken(Context context){
+		
+		return PreferenceManager.getDefaultSharedPreferences(context).getString(FB_TOKEN, null);
+		
+	}
 	
 	public FacebookHandle sso(int requestId){
 		this.sso = true;
@@ -233,6 +246,7 @@ public class FacebookHandle extends AccountHandle{
 					dismiss();
 					storeToken(token, permissions);
 					first = false;
+					authenticated(token);
 					success(act);
 				}else{
 					failure();
@@ -348,11 +362,19 @@ public class FacebookHandle extends AccountHandle{
 		}
 	}
 
-	
+	//03-17 17:05:40.594: W/AQuery(23190): error:{"error":{"message":"Error validating access token: User 1318428934 has not authorized application 155734287864315.","type":"OAuthException","code":190}}
+
 	@Override
 	public boolean expired(AbstractAjaxCallback<?, ?> cb, AjaxStatus status) {
 		
 		int code = status.getCode();
+		if(code == 200) return false;
+		
+		String error = status.getError();
+		if(error != null && error.contains("OAuthException")){
+			AQUtility.debug("fb token expired");
+			return true;
+		}
 		
 		String url = cb.getUrl();
 		
@@ -373,7 +395,6 @@ public class FacebookHandle extends AccountHandle{
 		AQUtility.debug("reauth requested");
 		
 		token = null;
-		//storeToken(null, null);
 		
 		AQUtility.post(new Runnable() {
 			
@@ -447,24 +468,55 @@ public class FacebookHandle extends AccountHandle{
         return didSucceed;
     }
     
-    private boolean validateAppSignatureForIntent(Activity activity, Intent intent) {
+    private static Boolean hasSSO;
+    
+    public boolean isSSOAvailable(){
+    	
+    	if(hasSSO == null){
+    		Intent intent = new Intent();
+    		intent.setClassName("com.facebook.katana", "com.facebook.katana.ProxyAuth");
+    		hasSSO = validateAppSignatureForIntent(act, intent);
+    	}
+    	
+    	return hasSSO;
+    }
+    
+	protected void authenticated(String token){
+		
+	}
+    
+	public void ajaxProfile(AjaxCallback<JSONObject> cb){
+		ajaxProfile(cb, 0);
+	}
 
-        ResolveInfo resolveInfo =
-            activity.getPackageManager().resolveActivity(intent, 0);
-        if (resolveInfo == null) {
+    public void ajaxProfile(AjaxCallback<JSONObject> cb, long expire){
+    	
+		String url = "https://graph.facebook.com/me";
+		
+		AQuery aq = new AQuery(act);	
+		aq.auth(this).ajax(url, JSONObject.class, expire, cb);
+    
+    }
+    
+    private boolean validateAppSignatureForIntent(Context context, Intent intent) {
+
+    	PackageManager pm = context.getPackageManager();
+    	
+        ResolveInfo resolveInfo = pm.resolveActivity(intent, 0);
+        if(resolveInfo == null){
             return false;
         }
 
         String packageName = resolveInfo.activityInfo.packageName;
         PackageInfo packageInfo;
         try {
-            packageInfo = activity.getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+            packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
         } catch (NameNotFoundException e) {
             return false;
         }
 
-        for (Signature signature : packageInfo.signatures) {
-            if (signature.toCharsString().equals(FB_APP_SIGNATURE)) {
+        for(Signature signature : packageInfo.signatures) {
+            if(signature.toCharsString().equals(FB_APP_SIGNATURE)) {
                 return true;
             }
         }
@@ -506,6 +558,7 @@ public class FacebookHandle extends AccountHandle{
 				if(token != null){
 					storeToken(token, permissions);
 					first = false;
+					authenticated(token);
 					success(act);
 				}else{
 					failure();

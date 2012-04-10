@@ -1,0 +1,54 @@
+			public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent){
+				
+				if(convertView == null){
+					convertView = getLayoutInflater().inflate(R.layout.content_item_s, parent, false);
+				}
+				
+				Photo photo = (Photo) getChild(groupPosition, childPosition);
+				
+				AQuery aq = listAq.recycle(convertView);
+				
+				aq.id(R.id.name).text(photo.title);
+				
+				String tbUrl = photo.tb;
+			
+				if(!aq.shouldDelay(groupPosition, childPosition, isLastChild, convertView, parent, tbUrl)){
+					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, null, 0, 1);
+					aq.id(R.id.name).text(photo.title);
+				}else{
+					aq.id(R.id.tb).clear();
+					aq.id(R.id.text).text(photo.title);
+				}
+				
+				
+				return convertView;
+			}
+
+			@Override
+			public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+				
+				if(convertView == null){
+					convertView = getLayoutInflater().inflate(R.layout.content_item_s, parent, false);
+				}
+				
+				Photo photo = (Photo) getChild(groupPosition, 0);
+				
+				AQuery aq = listAq.recycle(convertView);
+				
+				aq.id(R.id.name).text(photo.title);
+				
+				String tbUrl = photo.tb;
+			
+				if(!aq.shouldDelay(groupPosition, isExpanded, convertView, parent, tbUrl)){
+					aq.id(R.id.tb).image(tbUrl, true, true, 0, 0, null, 0, 1);
+					
+				}else{
+					aq.id(R.id.tb).clear();
+					
+				}
+				
+				aq.id(R.id.name).text("Group " + groupPosition);
+				aq.id(R.id.meta).text("");
+				
+				return convertView;
+			}			

@@ -5,12 +5,12 @@
 	<classpathentry kind="src" path="auth"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="lib" path="lib/FlurryAgent.jar"/>
-	<classpathentry kind="lib" path="lib/signpost-commonshttp4-1.2.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/signpost-core-1.2.1.1.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="lib" path="lib/gson-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/charts4j-1.3.jar"/>
+	<classpathentry kind="lib" path="libs/charts4j-1.3.jar"/>
+	<classpathentry kind="lib" path="libs/FlurryAgent.jar"/>
+	<classpathentry kind="lib" path="libs/gson-2.0.jar"/>
+	<classpathentry kind="lib" path="libs/signpost-commonshttp4-1.2.1.1.jar"/>
+	<classpathentry kind="lib" path="libs/signpost-core-1.2.1.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

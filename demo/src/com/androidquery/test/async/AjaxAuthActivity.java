@@ -127,6 +127,27 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 	}
 	
+	public void auth_twitter_token(){
+		
+		TwitterHandle handle = new TwitterHandle(this, CONSUMER_KEY, CONSUMER_SECRET){
+			
+			@Override
+			protected void authenticated(String secret, String token) {
+				showResult("secret:" + secret + " token:" + token, null);
+			}
+			
+		};
+		
+		handle.authenticate(false);
+		
+	}
+	
+	public void tokenCb(String url, JSONArray ja, AjaxStatus status){
+		
+		showResult(ja, status);
+		
+	}
+	
 	public void auth_pick_account(){
 	    
 		String url = "https://www.google.com/reader/atom/user/-/state/com.google/reading-list?n=8";
@@ -257,18 +278,22 @@ public class AjaxAuthActivity extends RunSourceActivity {
 	
 	public void youtubeCb(String url, JSONObject jo, AjaxStatus status) {
 		
+		//AQUtility.debug("youtube", jo);
+		
+		//04-04 22:00:45.103: W/AQuery(12658): youtube:{"encoding":"UTF-8","feed":{"logo":{"$t":"http:\/\/www.youtube.com\/img\/pic_youtubelogo_123x63.gif"},"link":[{"type":"application\/atom+xml","href":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/tinyeeliu?v=2","rel":"related"},{"type":"text\/html","href":"https:\/\/www.youtube.com","rel":"alternate"},{"href":"http:\/\/pubsubhubbub.appspot.com","rel":"hub"},{"type":"application\/atom+xml","href":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/tinyeeliu\/subscriptions?v=2","rel":"http:\/\/schemas.google.com\/g\/2005#feed"},{"type":"application\/atom+xml","href":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/tinyeeliu\/subscriptions\/batch?v=2","rel":"http:\/\/schemas.google.com\/g\/2005#batch"},{"type":"application\/atom+xml","href":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/tinyeeliu\/subscriptions?alt=json&start-index=1&max-results=25&v=2","rel":"self"},{"type":"application\/atomsvc+xml","href":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/tinyeeliu\/subscriptions?alt=atom-service&v=2","rel":"service"},{"type":"application\/atom+xml","href":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/tinyeeliu\/subscriptions?alt=json&start-index=26&max-results=25&v=2","rel":"next"}],"openSearch$totalResults":{"$t":30},"xmlns":"http:\/\/www.w3.org\/2005\/Atom","id":{"$t":"tag:youtube.com,2008:user:tinyeeliu:subscriptions"},"author":[{"yt$userId":{"$t":"YC478Q7C1734eEJoAmHn0w"},"uri":{"$t":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/tinyeeliu"},"name":{"$t":"tinyeeliu"}}],"xmlns$openSearch":"http:\/\/a9.com\/-\/spec\/opensearch\/1.1\/","title":{"$t":"Subscriptions of tinyeeliu"},"category":[{"scheme":"http:\/\/schemas.google.com\/g\/2005#kind","term":"http:\/\/gdata.youtube.com\/schemas\/2007#subscription"}],"xmlns$gd":"http:\/\/schemas.google.com\/g\/2005","openSearch$startIndex":{"$t":1},"updated":{"$t":"2012-04-04T13:57:33.428Z"},"xmlns$yt":"http:\/\/gdata.youtube.com\/schemas\/2007","gd$etag":"W\/\"DU8BQno5cCp7I2A9WhVQFUk.\"","entry":[{"id":{"$t":"tag:youtube.com,2008:user:tinyeeliu:subscription:cWEwiMn4Zpb4fh3az7vay4POvq2mUjTPh8FUFdHn_z8"},"author":[{"yt$userId":{"$t":"YC478Q7C1734eEJoAmHn0w"},"uri":{"$t":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/tinyeeliu"},"name":{"$t":"tinyeeliu"}}],"title":{"$t":"Activity of: PressHeartToContinue"},"category":[{"scheme":"http:\/\/schemas.google.com\/g\/2005#kind","term":"http:\/\/gdata.youtube.com\/schemas\/2007#subscription"},{"scheme":"http:\/\/gdata.youtube.com\/schemas\/2007\/subscriptiontypes.cat","term":"user"}],"yt$username":{"yt$display":"PressHeartToContinue","$t":"presshearttocontinue"},"updated":{"$t":"2011-12-15T09:55:23.000Z"},"gd$etag":"W\/\"CE4GQn47eCp7I2A9WhRQGUk.\"","link":[{"type":"application\/atom+xml","href":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/presshearttocontinue?v=2","rel":"related"},{"type":"text\/html","href":"https:\/\/www.youtube.com\/channel\/UC_ufxdQbKBrrMOiZ4LzrUyA","rel":"alternate"},{"type":"application\/atom+xml","href":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/tinyeeliu\/subscriptions\/cWEwiMn4Zpb4fh3az7vay4POvq2mUjTPh8FUFdHn_z8?v=2","rel":"self"}],"published":{"$t":"2011-12-15T09:55:23.000Z"},"yt$userId":{"$t":"_ufxdQbKBrrMOiZ4LzrUyA"}},{"id":{"$t":"tag:youtube.com,2008:user:tinyeeliu:subscription:cWEwiMn4Zpb4fh3az7vay0m5eNKJCqunM00MBNAqWWA"},"author":[{"yt$userId":{"$t":"YC478Q7C1734eEJoAmHn0w"},"uri":{"$t":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/tinyeeliu"},"name":{"$t":"tinyeeliu"}}],"title":{"$t":"Activity of: RoosterTeeth"},"category":[{"scheme":"http:\/\/schemas.google.com\/g\/2005#kind","term":"http:\/\/gdata.youtube.com\/schemas\/2007#subscription"},{"scheme":"http:\/\/gdata.youtube.com\/schemas\/2007\/subscriptiontypes.cat","term":"user"}],"yt$username":{"yt$display":"RoosterTeeth","$t":"roosterteeth"},"updated":{"$t":"2011-04-13T15:14:17.000Z"},"gd$etag":"W\/\"DUEBRn47eCp7I2A9WhZRF00.\"","link":[{"type":"application\/atom+xml","href":"https:\/\/gdata.youtube.com\/feeds\/api\/users\/roosterteeth?v=2","rel":"related"},{"type":"text\/html","href":"https:\/\/ww
+
 		
 		if(jo != null){
 			
 			JSONArray entries = jo.optJSONObject("feed").optJSONArray("entry");
 			
-			if(entries.length() > 0){	
+			//if(entries.length() > 0){	
 				
-				String src = entries.optJSONObject(0).optJSONObject("content").optString("src");			
-				auth_youtube2(src + "&alt=json");
-			}else{
+				//String src = entries.optJSONObject(0).optJSONObject("content").optString("src");			
+				//auth_youtube2(src + "&alt=json");
+			//}else{
 				showResult(jo);				
-			}
+			//}
 			
 			
 		}else{

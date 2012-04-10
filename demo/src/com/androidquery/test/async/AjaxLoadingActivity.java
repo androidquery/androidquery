@@ -95,6 +95,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	}
 	
 	
+	
 	public void async_bytes(){
 	    
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
@@ -433,6 +434,8 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		aq.progress(R.id.progress).ajax(cb);
 		
 	}
+	
+
 	
 	public void encodingCb(String url, String html, AjaxStatus status){
 		

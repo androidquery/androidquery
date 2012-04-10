@@ -206,7 +206,7 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 			lp.height = th;
 			iv.setLayoutParams(lp);
 					
-			//AQUtility.debug("adjust height", th);
+			//AQUtility.debug("adjust height", ratio + ":" + vw +":"+ th);
 		}
 		
 		if(done) adjusted = true;	

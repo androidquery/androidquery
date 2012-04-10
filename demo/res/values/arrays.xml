@@ -57,7 +57,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_html</item>   
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_xpp:new</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_xpp</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
@@ -66,14 +66,14 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialog:new</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialog</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_cookie:new</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_cookie</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_encoding</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_status</item>  
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_rcookies:new</item>
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_rheaders:new</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_rcookies</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_rheaders</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_error</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_invalidate</item>  
         <item>http://code.google.com/p/android-query/wiki/AsyncAPI</item>    
@@ -101,7 +101,11 @@
         <item>List Items (Delay Load During Fling)</item>  
         <item>List Items (Options)</item>  
         
-        <item>Grid Items</item>  
+        <item>Grid Items (Delay Load)</item>  
+        
+        <item>Gallery Items (Delay Load)</item>  
+        
+        <item>Expandable List Items (Delay Load)</item>  
         
         <item>Google Chart</item> 
         
@@ -153,8 +157,11 @@
         <item>com.androidquery.test.image.ImageLoadingListOptionsActivity:image_options</item>
         
         <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid</item>
+        <item>com.androidquery.test.image.ImageLoadingGalleryActivity:image_gallery:new</item>
+        <item>com.androidquery.test.image.ImageLoadingExpandableListActivity:image_elist:new</item>
         
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_chart:new</item>
+        
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_chart</item>
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_custom</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_file</item>
@@ -185,6 +192,8 @@
   		<item>Facebook (Single Sign On)</item>
   		      
   		<item>Twitter</item>
+  		<item>Twitter (Token Only)</item>
+  		
   		<item>Basic</item>
   		
         <item>Google Reader (Pick Account)</item>  
@@ -201,7 +210,8 @@
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:beta</item>
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook_sso:beta</item> 
   		 
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:beta</item> 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:beta</item>
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter_token:beta</item> 
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_basic:beta</item>
   		
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_pick_account</item>  
@@ -262,6 +272,8 @@
         <item>image_options</item>
         
         <item>image_grid</item>
+        <item>image_gallery</item>
+        <item>image_elist</item>
         
         <item>image_chart</item>
         
@@ -288,7 +300,8 @@
         <item>auth_facebook</item> 
         <item>auth_facebook_sso</item>
          
-        <item>auth_twitter</item>   
+        <item>auth_twitter</item> 
+        <item>auth_twitter_token</item>  
         <item>auth_basic</item>   
           
         <item>auth_pick_account</item>  
@@ -361,6 +374,8 @@
         <item>List Item Image Options Demo</item>    
         
         <item>Loading Image in Grid View with Aspect Ratio</item>   
+        <item>Loading Image in Gallery View with Delay Load</item>  
+        <item>Loading Image in Expanable List with Delay Load</item>  
         
         <item>Loading Google Chart Images with 2000+ length url</item>   
         
@@ -389,6 +404,7 @@
         
           
         <item>Twitter Auth - Get User Feed</item>   
+        <item>Twitter Auth - Token/Secret Only</item>   
         <item>Basic Auth with username and password</item>    
        
            

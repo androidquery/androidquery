@@ -1,0 +1,26 @@
+			public View getView(int position, View convertView, ViewGroup parent) {
+				
+				if(convertView == null){
+					convertView = getLayoutInflater().inflate(R.layout.gallery_item, parent, false);
+				}
+				
+				Photo photo = getItem(position);
+				
+				AQuery aq = listAq.recycle(convertView);
+				
+				aq.id(R.id.name).text(photo.title);
+				
+				String tbUrl = photo.tb;
+			
+				if(!aq.shouldDelay(position, convertView, parent, tbUrl)){
+					aq.id(R.id.tb).image(tbUrl);
+					aq.id(R.id.text).text(photo.title).gone();
+				}else{
+					aq.id(R.id.tb).clear();
+					aq.id(R.id.text).text(photo.title).visible();
+				}
+				
+				
+				return convertView;
+				
+			}
