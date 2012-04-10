@@ -165,12 +165,7 @@ public class TwitterHandle extends AccountHandle{
 	private void storeToken(String key1, String token1, String key2, String token2){
 		PreferenceManager.getDefaultSharedPreferences(act).edit().putString(key1, token1).putString(key2, token2).commit();	
 	}
-	public String getToken(){
-		return this.token;
-	}
-	public String getSecret(){
-		return this.secret;
-	}
+
 	private String extract(String url, String param){
 		
 		Uri uri = Uri.parse(url);
