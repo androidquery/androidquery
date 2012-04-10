@@ -2089,6 +2089,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	
 	public boolean shouldDelay(int position, View convertView, ViewGroup parent, String url){
+		if(parent instanceof ExpandableListView){
+			throw new IllegalArgumentException("Please use the other shouldDelay methods for expandable list.");
+		}
 		return Common.shouldDelay(position, convertView, parent, url);
 	}
 	
