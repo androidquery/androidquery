@@ -2379,6 +2379,46 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	
-
+	public T expand(int position, boolean expand){
+		
+		if(view instanceof ExpandableListView){
+			
+			ExpandableListView elv = (ExpandableListView) view;
+			if(expand){
+				elv.expandGroup(position);
+			}else{
+				elv.collapseGroup(position);
+			}
+		}
+		
+		return self();
+	}
+	
+	public T expand(boolean expand){
+		
+		if(view instanceof ExpandableListView){
+			
+			ExpandableListView elv = (ExpandableListView) view;			
+			ExpandableListAdapter ela = elv.getExpandableListAdapter();
+			
+			if(ela != null){
+				
+				int count = ela.getGroupCount();
+				
+				for(int i = 0; i < count; i++){
+					if(expand){
+						elv.expandGroup(i);
+					}else{
+						elv.collapseGroup(i);
+					}
+				}
+				
+			}
+			
+				
+		}
+		
+		return self();
+	}
 	
 }
