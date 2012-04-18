@@ -19,7 +19,7 @@ package com.androidquery.util;
 public interface Constants {
 
 
-	public static final String VERSION = "0.21.5";
+	public static final String VERSION = "0.22.1";
 	public static final int LAYER_TYPE_SOFTWARE = 1;
 	public static final int LAYER_TYPE_HARDWARE = 2;
 	public static final int FLAG_HARDWARE_ACCELERATED = 0x01000000;
@@ -46,6 +46,7 @@ public interface Constants {
 	public static final String AUTH_READER = "g.reader";
 	public static final String AUTH_PICASA = "g.lh2";
 	public static final String AUTH_SPREADSHEETS = "g.wise";
+	public static final String AUTH_DOC_LIST = "g.writely";
 	public static final String AUTH_YOUTUBE = "g.youtube";
 	public static final String AUTH_ANALYTICS = "g.analytics";
 	public static final String AUTH_BLOGGER = "g.blogger";
