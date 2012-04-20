@@ -250,7 +250,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 						}
 						convertView.setTag(AQuery.TAG_NUM, null);
 					}else{
-						AQUtility.debug("skip!");
+						//AQUtility.debug("skip!");
 					}
 					
 				}
@@ -273,7 +273,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 			int first = lv.getFirstVisiblePosition();
 			int last = lv.getLastVisiblePosition();
 			
-			AQUtility.debug(first, last);
+			//AQUtility.debug(first, last);
 			
 			int count = last - first;
 			
@@ -291,7 +291,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 					la.getView((int) packed, convertView, lv);
 					convertView.setTag(AQuery.TAG_NUM, null);
 				}else{
-					AQUtility.debug("skip!");
+					//AQUtility.debug("skip!");
 				}
 					
 			}
@@ -390,13 +390,13 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 		
 		if((position >= from && position <= to)){
 			
-			AQUtility.debug("yes", position + ":" + from + "." + to);
+			//AQUtility.debug("yes", position + ":" + from + "." + to);
 			convertView.setTag(AQuery.TAG_NUM, position);
 			
 			return false;
 		}
 		
-		AQUtility.debug("no", position + ":" + from + "." + to);
+		//AQUtility.debug("no", position + ":" + from + "." + to);
 		convertView.setTag(AQuery.TAG_NUM, null);
 		return true;
 		
@@ -451,7 +451,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 			
 				int count = parent.getChildCount();
 				
-				AQUtility.debug("redrawing", count);
+				//AQUtility.debug("redrawing", count);
 				
 				int first = parent.getFirstVisiblePosition();
 				
@@ -463,9 +463,9 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 					Integer lastDrawn = (Integer) convertView.getTag(AQuery.TAG_NUM);
 					
 					if(lastDrawn != null && lastDrawn.intValue() == drawPos){
-						AQUtility.debug("skip", drawPos);
+						//AQUtility.debug("skip", drawPos);
 					}else{						
-						AQUtility.debug("redraw", drawPos);
+						//AQUtility.debug("redraw", drawPos);
 						adapter.getView(drawPos, convertView, parent);
 					}
 				}

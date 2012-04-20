@@ -7,9 +7,11 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.graphics.BitmapFactory.Options;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -80,8 +82,29 @@ public class AdhocActivity extends Activity {
 				if(data != null){
 					
 					
-					AQUtility.storeAsync(target, data, 0);
+					//AQUtility.storeAsync(target, data, 0);
 					
+					AsyncTask<byte[], Integer, Boolean> task = new AsyncTask<byte[], Integer, Boolean>(){
+
+						@Override
+						protected Boolean doInBackground(byte[]... data) {
+							
+							AQUtility.store(target, data[0]);
+							
+							return target.length() == data[0].length;
+						}
+						
+						
+						protected void onPostExecute(Boolean success) {
+					         //do UI stuff here
+							
+							Toast.makeText(getApplicationContext(), "Done!" + success, 1000).show();
+					   
+						}
+						
+					};
+					
+					task.execute(data);
 					
 					
 				}else{

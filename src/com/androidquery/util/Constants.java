@@ -29,6 +29,7 @@ public interface Constants {
 	public static final int OVER_SCROLL_NEVER = 2;
 	public static final int INVISIBLE = -1;
 	public static final int GONE = -2;
+	public static final int PRESET = -3;
 	public static final int FADE_IN = -1;
 	public static final int FADE_IN_NETWORK = -2;
 	public static final int FADE_IN_FILE = -3;

@@ -220,9 +220,17 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		Bitmap result = null;
 		
 		if(path != null){
+			
 			result = BitmapFactory.decodeFile(path, options);
+			if(result == null){
+				AQUtility.debug("decode image from file failed", path);
+			}
 		}else if(data != null){
+			
 			result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+			if(result == null){
+				AQUtility.debug("decode image from data failed", path);
+			}
 		}
 		
 		return result;
@@ -349,6 +357,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 				bm = getFallback();		
 			}else if(fallback == AQuery.GONE || fallback == AQuery.INVISIBLE){
 				bm = dummy;
+			}else if(fallback == AQuery.PRESET){
+				bm = preset;
 			}
 			
 			if(status.getCode() != 200){
