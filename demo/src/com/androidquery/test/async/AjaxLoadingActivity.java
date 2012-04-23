@@ -190,7 +190,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		}
 	}
 	
-	/*
+	
 	public void async_transformer(){
 		
 		String url = "https://graph.facebook.com/205050232863343";		
@@ -204,14 +204,14 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		});
         
 	}
-	*/
+	
 	
 	private static class Profile{
 		public String id;
 		public String name;		
 	}
 	
-	
+	/*
 	public void async_transformer(){
 		
 		String url = "http://www.androidquery.com/test/jsonarray.json";		
@@ -240,7 +240,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		});
         
 	}
-	
+	*/
 	
 
 	public void async_post(){
