@@ -39,6 +39,10 @@ public class AQuery extends AbstractAQuery<AQuery>{
 		super(context);
 	}
 	
+	public AQuery(Activity act, View root){
+		super(act, root);
+	}
+	
 
 }
 
