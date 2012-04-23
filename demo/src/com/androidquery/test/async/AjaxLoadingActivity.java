@@ -190,7 +190,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		}
 	}
 	
-	
+	/*
 	public void async_transformer(){
 		
 		String url = "https://graph.facebook.com/205050232863343";		
@@ -204,22 +204,24 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		});
         
 	}
-	
+	*/
 	
 	private static class Profile{
 		public String id;
 		public String name;		
 	}
 	
-	/*
+	
 	public void async_transformer(){
 		
 		String url = "http://www.androidquery.com/test/jsonarray.json";		
 		GsonTransformer t = new GsonTransformer(){
 			@Override
 			public <T> T transform(String url, Class<T> type, String encoding, byte[] data, AjaxStatus status) {
+				
 				Gson g = new Gson();
 				T result = g.fromJson(new String(data), new TypeToken<List<T>>(){}.getType());				
+				
 				return result;
 			}
 		};
@@ -227,13 +229,18 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         aq.transformer(t).progress(R.id.progress).ajax(url, List.class, new AjaxCallback<List>(){			
 			
 			public void callback(String url, List profiles, AjaxStatus status) {	
-				Gson gson = new Gson();
-				showResult("GSON Object:" + gson.toJson(profiles), status);		
+				
+				
+				for(Profile profile: (List<Profile>) profiles){
+					AQUtility.debug(profile.id, profile.name);
+				}
+					
+				
 			}			
 		});
         
 	}
-	*/
+	
 	
 
 	public void async_post(){

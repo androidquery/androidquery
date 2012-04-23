@@ -435,9 +435,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			if(callback != null){	
 				Object handler = getHandler();
 				Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
-				AQUtility.invokeHandler(handler, callback, true, false, AJAX_SIG, DEFAULT_SIG, url, result, status);					
+				AQUtility.invokeHandler(handler, callback, true, true, AJAX_SIG, DEFAULT_SIG, url, result, status);					
 			}else{		
-				callback(url, result, status);
+				try{
+					callback(url, result, status);
+				}catch(Exception e){
+					AQUtility.report(e);
+				}
 			}
 		
 		}
