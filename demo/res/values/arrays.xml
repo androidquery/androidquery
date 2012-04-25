@@ -30,6 +30,9 @@
         <item>HTML/XML String</item>   
         <item>byte[]</item>  
         <item>XML Dom</item>  
+        <item>File</item>  
+        <item>File (Download)</item> 
+        <item>InputStream</item> 
         <item>XML Pull Parser</item>  
         <item>JSON (Array)</item>
         <item>Custom Type (ex. Gson)</item>
@@ -57,6 +60,9 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_html</item>   
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_file:beta</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_file_custom:beta</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_inputstream:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xpp</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:beta</item>
@@ -230,6 +236,9 @@
         <item>async_html</item>   
         <item>async_bytes</item>  
         <item>async_xml</item>
+        <item>async_file</item>
+        <item>async_file_custom</item>
+        <item>async_inputstream</item>
         <item>async_xpp</item>
         <item>async_json_array</item>
         <item>async_transformer</item>
@@ -330,6 +339,9 @@
         <item>Asynchronous HTTP Get HTML/XML</item>   
         <item>Asynchronous HTTP Get as Bytes Array</item>
         <item>Asynchronous HTTP Get XML Dom</item>   
+        <item>Asynchronous HTTP Get File Download</item>   
+        <item>Asynchronous HTTP Get File Path Download</item>   
+        <item>Asynchronous HTTP Get Input Stream</item>   
         <item>Asynchronous HTTP Get XML Pull Parser</item>   
         <item>Asynchronous HTTP Get JSON Array</item>
         <item>Asynchronous HTTP Get Custom Type (GSON example)</item>

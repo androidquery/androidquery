@@ -1,5 +1,7 @@
 package com.androidquery.test.async;
 
+import java.io.File;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +22,7 @@ import org.xmlpull.v1.XmlPullParser;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Environment;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -126,11 +129,77 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}
 	
+	public void async_file(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
+		
+		aq.progress(R.id.progress).ajax(url, File.class, 0, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+	        
+	}
+	
+	public void async_file_custom(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=16";		
+		
+		File ext = Environment.getExternalStorageDirectory();
+		File tempDir = new File(ext, "aquery/myfolder");		
+		tempDir.mkdirs();
+		
+		File target = new File(tempDir, "photos.xml");
+		
+		aq.progress(R.id.progress).ajax(url, File.class, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		}.targetFile(target));
+		
+		
+		
+	}
+	
+	
+	public void async_inputstream(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
+		
+		aq.progress(R.id.progress).ajax(url, InputStream.class, 0, new AjaxCallback<InputStream>(){
+			
+			public void callback(String url, InputStream is, AjaxStatus status) {
+				
+				if(is != null){
+					showResult("InputStream:" + is, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+		
+	}
+	
 	public void async_xpp(){
 		
 		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
 		
-		aq.progress(R.id.progress).ajax(url, XmlPullParser.class, new AjaxCallback<XmlPullParser>(){
+		aq.progress(R.id.progress).ajax(url, XmlPullParser.class, 0, new AjaxCallback<XmlPullParser>(){
 			
 			public void callback(String url, XmlPullParser xpp, AjaxStatus status) {
 				
