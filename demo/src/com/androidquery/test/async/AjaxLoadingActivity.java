@@ -133,7 +133,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
 		
-		aq.progress(R.id.progress).ajax(url, File.class, 0, new AjaxCallback<File>(){
+		aq.progress(R.id.progress).ajax(url, File.class, new AjaxCallback<File>(){
 			
 			public void callback(String url, File file, AjaxStatus status) {
 				
@@ -153,12 +153,9 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=16";		
 		
 		File ext = Environment.getExternalStorageDirectory();
-		File tempDir = new File(ext, "aquery/myfolder");		
-		tempDir.mkdirs();
+		File target = new File(ext, "aquery/myfolder2/photos1.xml");		
 		
-		File target = new File(tempDir, "photos.xml");
-		
-		aq.progress(R.id.progress).ajax(url, File.class, new AjaxCallback<File>(){
+		aq.progress(R.id.progress).download(url, target, new AjaxCallback<File>(){
 			
 			public void callback(String url, File file, AjaxStatus status) {
 				
@@ -169,9 +166,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 				}
 			}
 			
-		}.targetFile(target));
-		
-		
+		});
 		
 	}
 	
@@ -180,7 +175,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
 		
-		aq.progress(R.id.progress).ajax(url, InputStream.class, 0, new AjaxCallback<InputStream>(){
+		aq.progress(R.id.progress).ajax(url, InputStream.class, new AjaxCallback<InputStream>(){
 			
 			public void callback(String url, InputStream is, AjaxStatus status) {
 				
@@ -199,7 +194,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
 		
-		aq.progress(R.id.progress).ajax(url, XmlPullParser.class, 0, new AjaxCallback<XmlPullParser>(){
+		aq.progress(R.id.progress).ajax(url, XmlPullParser.class, new AjaxCallback<XmlPullParser>(){
 			
 			public void callback(String url, XmlPullParser xpp, AjaxStatus status) {
 				
