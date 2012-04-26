@@ -939,19 +939,30 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		boolean pre = needInputStream();
 		
+		File result = null;
+		
 		if(pre){
 			
 			if(targetFile != null){
-				return targetFile;
+				result = targetFile;
 			}else if(fileCache){
-				return getCacheFile();
+				result = getCacheFile();
 			}else{
-				return AQUtility.getCacheFile(AQUtility.getTempDir(), url);
+				result = AQUtility.getCacheFile(AQUtility.getTempDir(), url);
 			}
-		}else{
-			return null;
 		}
 		
+		if(result != null && !result.exists()){
+			try{
+				result.getParentFile().mkdirs();
+				result.createNewFile();
+			}catch(Exception e){
+				AQUtility.report(e);
+				return null;
+			}
+		}
+		
+		return result;
 	}
 	
 	

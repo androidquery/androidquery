@@ -31,6 +31,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -70,6 +71,7 @@ import android.widget.TextView;
 import com.androidquery.auth.AccountHandle;
 import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.callback.Transformer;
 import com.androidquery.util.AQUtility;
@@ -2419,6 +2421,21 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		
 		return self();
+	}
+	
+	public T download(String url, File target, AjaxCallback<File> cb){
+		
+		cb.url(url).type(File.class).targetFile(target);		
+		return ajax(cb);
+	
+	}
+	
+	public T download(String url, File target, Object handler, String callback){
+		
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.weakHandler(handler, callback);
+		return download(url, target, cb);
+	
 	}
 	
 }
