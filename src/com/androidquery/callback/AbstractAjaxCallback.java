@@ -20,8 +20,10 @@ import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
@@ -114,6 +116,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	protected T result;
 	
 	private File cacheDir;
+	private File targetFile;
 	private AccountHandle ah;
 	
 	protected AjaxStatus status;
@@ -362,6 +365,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	public K targetFile(File file){
+		this.targetFile = file;
+		return self();
+	}
+	
 	
 	/**
 	 * Set http POST params. If params are set, http POST method will be used. 
@@ -435,9 +443,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			if(callback != null){	
 				Object handler = getHandler();
 				Class<?>[] AJAX_SIG = {String.class, type, AjaxStatus.class};				
-				AQUtility.invokeHandler(handler, callback, true, false, AJAX_SIG, DEFAULT_SIG, url, result, status);					
+				AQUtility.invokeHandler(handler, callback, true, true, AJAX_SIG, DEFAULT_SIG, url, result, status);					
 			}else{		
-				callback(url, result, status);
+				try{
+					callback(url, result, status);
+				}catch(Exception e){
+					AQUtility.report(e);
+				}
 			}
 		
 		}
@@ -502,8 +514,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	protected T fileGet(String url, File file, AjaxStatus status){
+		
 		try {			
-			byte[] data = AQUtility.toBytes(new FileInputStream(file));			
+			byte[] data = null;
+		
+			if(needInputStream()){
+				status.file(file);
+			}else{
+				data = AQUtility.toBytes(new FileInputStream(file));
+			}
+						
 			return transform(url, data, status);
 		} catch(Exception e) {
 			AQUtility.debug(e);
@@ -522,124 +542,124 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(progress != null){
 			
 			Common.showProgress(progress.get(), url, show);
-			/*
-			Object p = progress.get();
-			
-			if(p instanceof View){				
-
-				View pv = (View) p;
-				
-				if(show){
-					pv.setTag(AQuery.TAG_URL, url);
-					pv.setVisibility(View.VISIBLE);
-				}else{
-					Object tag = pv.getTag(AQuery.TAG_URL);
-					if(tag == null || tag.equals(url)){
-						pv.setTag(AQuery.TAG_URL, null);
-						pv.setVisibility(View.GONE);						
-					}
-				}
-			}else if(p instanceof Dialog){
-				
-				Dialog pd = (Dialog) p;
-				
-				if(show){
-					pd.show();
-				}else{
-					pd.hide();
-				}
-				
-			}*/
+		
 		}
 		
 	}
 	
 	@SuppressWarnings("unchecked")
 	protected T transform(String url, byte[] data, AjaxStatus status){
-				
-		if(data == null || type == null){
+			
+		if(type == null){
 			return null;
 		}
 		
-		if(type.equals(JSONObject.class)){
-			
-			JSONObject result = null;
-			String str = null;
-	    	try {    		
-	    		str = new String(data, encoding);
-				result = (JSONObject) new JSONTokener(str).nextValue();
-			} catch (Exception e) {	  		
-				AQUtility.debug(e);
-				AQUtility.debug(str);
-			}
-			return (T) result;
-		}
+		AQUtility.debug("transform", type + ":"+ status.getFile());
 		
-		if(type.equals(JSONArray.class)){
-			
-			JSONArray result = null;
-	    	
-	    	try {    		
-	    		String str = new String(data, encoding);
-				result = (JSONArray) new JSONTokener(str).nextValue();
-			} catch (Exception e) {	  		
-				AQUtility.debug(e);
-			}
-			return (T) result;
-		}
+		File file = status.getFile();
 		
-		if(type.equals(String.class)){
-			String result = null;
-	    	
-	    	try {    		
-	    		result = new String(data, encoding);
-			} catch (Exception e) {	  		
-				AQUtility.debug(e);
-			}
-			return (T) result;
-		}
-		
-		if(type.equals(XmlDom.class)){
+		if(data != null){
 			
-			XmlDom result = null;
-			
-			try {    
-				result = new XmlDom(data);
-			} catch (Exception e) {	  		
-				AQUtility.debug(e);
+			if(type.equals(Bitmap.class)){			
+				return (T) BitmapFactory.decodeByteArray(data, 0, data.length);
 			}
 			
-			return (T) result; 
-		}
-		
-		
-		if(type.equals(byte[].class)){
-			return (T) data;
-		}
-		
-		if(type.equals(Bitmap.class)){			
-			return (T) BitmapFactory.decodeByteArray(data, 0, data.length);
-		}
-		
-		
-		if(type.equals(XmlPullParser.class)){	
-			XmlPullParser parser = Xml.newPullParser();
-			try{
-				parser.setInput(new ByteArrayInputStream(data), encoding);
-			}catch(Exception e) {
-				AQUtility.report(e);
-				return null;
+			if(type.equals(JSONObject.class)){
+				
+				JSONObject result = null;
+				String str = null;
+		    	try {    		
+		    		str = new String(data, encoding);
+					result = (JSONObject) new JSONTokener(str).nextValue();
+				} catch (Exception e) {	  		
+					AQUtility.debug(e);
+					AQUtility.debug(str);
+				}
+				return (T) result;
 			}
-			return (T) parser;
+			
+			if(type.equals(JSONArray.class)){
+				
+				JSONArray result = null;
+		    	
+		    	try {    		
+		    		String str = new String(data, encoding);
+					result = (JSONArray) new JSONTokener(str).nextValue();
+				} catch (Exception e) {	  		
+					AQUtility.debug(e);
+				}
+				return (T) result;
+			}
+			
+			if(type.equals(String.class)){
+				String result = null;
+		    	
+		    	try {    		
+		    		result = new String(data, encoding);
+				} catch (Exception e) {	  		
+					AQUtility.debug(e);
+				}
+				return (T) result;
+			}
+			
+			if(type.equals(XmlDom.class)){
+				
+				XmlDom result = null;
+				
+				try {    
+					result = new XmlDom(data);
+				} catch (Exception e) {	  		
+					AQUtility.debug(e);
+				}
+				
+				return (T) result; 
+			}
+			
+			
+			if(type.equals(byte[].class)){
+				return (T) data;
+			}
+			
+			
+			if(transformer != null){
+				return transformer.transform(url, type, encoding, data, status);
+			}
+			
+			if(st != null){
+				return st.transform(url, type, encoding, data, status);
+			}
+			
+		}else if(file != null){
+			
+			if(type.equals(File.class)){
+				return (T) file;
+			}
+
+			if(type.equals(XmlPullParser.class)){	
+
+				XmlPullParser parser = Xml.newPullParser();
+				try{
+					//parser.setInput(new ByteArrayInputStream(data), encoding);
+					parser.setInput(new FileInputStream(file), encoding);
+				}catch(Exception e) {
+					AQUtility.report(e);
+					return null;
+				}
+				return (T) parser;
+			}
+			
+			if(type.equals(InputStream.class)){
+				try{
+					return (T) new FileInputStream(file);
+				}catch(Exception e) {
+					AQUtility.report(e);
+					return null;
+				}
+			}
+			
 		}
 		
-		if(transformer != null){
-			return transformer.transform(url, type, encoding, data, status);
-		}
 		
-		if(st != null){
-			return st.transform(url, type, encoding, data, status);
-		}
 		
 		return null;
 	}
@@ -737,6 +757,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return true;
 	}
 	
+
 	
 	public void failure(int code, String message){
 		
@@ -747,12 +768,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	//protected void execute(){
-		
-		//ExecutorService exe = getExecutor();	
-		//exe.execute(this);
-		
-	//}
 	
 	private void work(Context context){
 		
@@ -764,8 +779,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			callback();
 		}else{
 		
-			if(fileCache) cacheDir = AQUtility.getCacheDir(context);				
-			//execute();			
+			//if(fileCache) cacheDir = AQUtility.getCacheDir(context);				
+			//execute();	
+			cacheDir = AQUtility.getCacheDir(context);	
 			execute(this);
 		}
 	}
@@ -845,6 +861,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		//if file exist
 		if(file != null){
 			//convert
+		
 			result = fileGet(url, file, status);
 			//if result is ok
 			if(result != null){
@@ -914,6 +931,29 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return AQUtility.getCacheFile(cacheDir, getCacheUrl());
 	}
 	
+	private boolean needInputStream(){
+		return File.class.equals(type) || XmlPullParser.class.equals(type) || InputStream.class.equals(type);
+	}
+	
+	private File getPreFile(){
+		
+		boolean pre = needInputStream();
+		
+		if(pre){
+			
+			if(targetFile != null){
+				return targetFile;
+			}else if(fileCache){
+				return getCacheFile();
+			}else{
+				return AQUtility.getCacheFile(AQUtility.getTempDir(), url);
+			}
+		}else{
+			return null;
+		}
+		
+	}
+	
 	
 	private void filePut(){
 			
@@ -926,7 +966,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				
 					File file = getCacheFile();
 					if(!status.getInvalid()){	
-						//AQUtility.debug("write", url);
+						AQUtility.debug("write", url);
 						filePut(url, result, file, data);
 					}else{
 						if(file.exists()){
@@ -1173,6 +1213,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		HttpResponse response = client.execute(hr, context);
 		
         byte[] data = null;
+        File file = getPreFile();
         
         String redirect = url;
         
@@ -1203,6 +1244,37 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 	        int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
 	        
+	        OutputStream os = null;
+	        if(file == null){
+	        	os = new PredefinedBAOS(size);
+	        }else{
+	        	AQUtility.debug("pre file", file);
+	        	file.createNewFile();
+	        	os = new FileOutputStream(file);
+	        }
+	        
+	        Header encoding = entity.getContentEncoding();
+	        if(encoding != null && encoding.getValue().equalsIgnoreCase("gzip")) {
+	        	InputStream is = new GZIPInputStream(entity.getContent());
+	        	AQUtility.copy(is, os);
+	        }else{
+	        	entity.writeTo(os);
+	        }
+	        
+	        os.flush();
+	        os.close();
+	        
+	        if(file == null){
+	        	data = ((PredefinedBAOS) os).toByteArray();
+	        }else{
+	        	if(!file.exists() || file.length() == 0){
+	        		file = null;
+	        	}else{
+	        		AQUtility.debug("pre write", file.length());
+	        	}
+	        }
+	        
+	        /*
 	        PredefinedBAOS baos = new PredefinedBAOS(size);
 	        
 	        Header encoding = entity.getContentEncoding();
@@ -1215,6 +1287,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	        
 	        
 	        data = baos.toByteArray();
+	        */
         }
         
         AQUtility.debug("response", code);
@@ -1223,7 +1296,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         }
         
         
-        status.code(code).message(message).error(error).redirect(redirect).time(new Date()).data(data).client(client).context(context).headers(response.getAllHeaders());
+        status.code(code).message(message).error(error).redirect(redirect).time(new Date()).data(data).file(file).client(client).context(context).headers(response.getAllHeaders());
 		
         
 	}

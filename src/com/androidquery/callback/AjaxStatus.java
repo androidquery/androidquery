@@ -16,6 +16,7 @@
 
 package com.androidquery.callback;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -57,6 +58,7 @@ public class AjaxStatus {
 	private String message = "OK";
 	private String redirect;
 	private byte[] data;
+	private File file;
 	private Date time = new Date();
 	private boolean refresh;
 	private DefaultHttpClient client;
@@ -146,6 +148,11 @@ public class AjaxStatus {
 		return this;
 	}
 	
+	protected AjaxStatus file(File file){
+		this.file = file;
+		return this;
+	}
+	
 	public AjaxStatus invalidate(){
 		this.invalid = true;
 		return this;
@@ -192,6 +199,10 @@ public class AjaxStatus {
 
 	protected byte[] getData() {
 		return data;
+	}
+	
+	protected File getFile() {
+		return file;
 	}
 	
 	/**

@@ -1,5 +1,7 @@
 package com.androidquery.test.async;
 
+import java.io.File;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +22,7 @@ import org.xmlpull.v1.XmlPullParser;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Environment;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -30,6 +33,7 @@ import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class AjaxLoadingActivity extends RunSourceActivity {
 
@@ -125,11 +129,77 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}
 	
+	public void async_file(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
+		
+		aq.progress(R.id.progress).ajax(url, File.class, 0, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+	        
+	}
+	
+	public void async_file_custom(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=16";		
+		
+		File ext = Environment.getExternalStorageDirectory();
+		File tempDir = new File(ext, "aquery/myfolder");		
+		tempDir.mkdirs();
+		
+		File target = new File(tempDir, "photos.xml");
+		
+		aq.progress(R.id.progress).ajax(url, File.class, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		}.targetFile(target));
+		
+		
+		
+	}
+	
+	
+	public void async_inputstream(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
+		
+		aq.progress(R.id.progress).ajax(url, InputStream.class, 0, new AjaxCallback<InputStream>(){
+			
+			public void callback(String url, InputStream is, AjaxStatus status) {
+				
+				if(is != null){
+					showResult("InputStream:" + is, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+		
+	}
+	
 	public void async_xpp(){
 		
 		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
 		
-		aq.progress(R.id.progress).ajax(url, XmlPullParser.class, new AjaxCallback<XmlPullParser>(){
+		aq.progress(R.id.progress).ajax(url, XmlPullParser.class, 0, new AjaxCallback<XmlPullParser>(){
 			
 			public void callback(String url, XmlPullParser xpp, AjaxStatus status) {
 				
@@ -180,12 +250,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}	
 	
-	
-	private static class Profile{
-		public String id;
-		public String name;		
-	}
-	
+
 	private static class GsonTransformer implements Transformer{
 
 		public <T> T transform(String url, Class<T> type, String encoding, byte[] data, AjaxStatus status) {			
@@ -193,6 +258,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 			return g.fromJson(new String(data), type);
 		}
 	}
+	
 	
 	public void async_transformer(){
 		
@@ -208,41 +274,44 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         
 	}
 	
+	
+	private static class Profile{
+		public String id;
+		public String name;		
+	}
+	
 	/*
-	public void async_transformer() {
+	public void async_transformer(){
 		
-		String url = "https://graph.facebook.com/205050232863343";
-		
-		aq.progress(R.id.progress).ajax(url, Profile.class, new AjaxCallback<Profile>(){
-			
+		String url = "http://www.androidquery.com/test/jsonarray.json";		
+		GsonTransformer t = new GsonTransformer(){
 			@Override
-			public Profile transform(String url, Class<Profile> type, String encoding, byte[] data, AjaxStatus status) {
+			public <T> T transform(String url, Class<T> type, String encoding, byte[] data, AjaxStatus status) {
 				
-				Profile profile = null;
+				Gson g = new Gson();
+				T result = g.fromJson(new String(data), new TypeToken<List<T>>(){}.getType());				
 				
-				if(data != null){
-					Gson g = new Gson();					
-					profile = g.fromJson(new String(data), type);
+				return result;
+			}
+		};
+		
+        aq.transformer(t).progress(R.id.progress).ajax(url, List.class, new AjaxCallback<List>(){			
+			
+			public void callback(String url, List profiles, AjaxStatus status) {	
+				
+				
+				for(Profile profile: (List<Profile>) profiles){
+					AQUtility.debug(profile.id, profile.name);
 				}
+					
 				
-				return profile;
-			}
-			
-			
-			@Override
-			public void callback(String url, Profile profile, AjaxStatus status) {
-				
-				showTextResult("id:" + profile.id + " name:" + profile.name);
-				
-			}
-			
+			}			
 		});
-		
-			
         
-		
 	}
 	*/
+	
+
 	public void async_post(){
 		
         String url = "http://search.twitter.com/search.json";
