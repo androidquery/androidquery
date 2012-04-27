@@ -6,6 +6,7 @@ import static com.googlecode.charts4j.Color.SKYBLUE;
 import static com.googlecode.charts4j.Color.WHITE;
 
 import java.io.File;
+import java.io.IOException;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -119,6 +120,23 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 200, 0);
 
 	}
+	
+	/*
+	public void image_down() throws IOException{
+		
+		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";   
+		
+		aq.id(new ImageView(this)).image(url, false, true, 200, 0, new BitmapAjaxCallback(){
+			
+			protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
+				AQUtility.debug(bm.getWidth());
+				aq.id(R.id.image).image(bm);
+			}
+			
+		});
+		
+	}
+	*/
 	
 	public void image_fallback(){
 		

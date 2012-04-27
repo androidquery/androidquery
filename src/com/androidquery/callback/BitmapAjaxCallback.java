@@ -219,18 +219,19 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		Bitmap result = null;
 		
+		
 		if(path != null){
 			
 			result = BitmapFactory.decodeFile(path, options);
-			if(result == null){
-				AQUtility.debug("decode image from file failed", path);
-			}
+			
 		}else if(data != null){
 			
 			result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
-			if(result == null){
-				AQUtility.debug("decode image from data failed", path);
-			}
+			
+		}
+		
+		if(result == null && options != null && !options.inJustDecodeBounds){
+			AQUtility.debug("decode image failed", path);
 		}
 		
 		return result;

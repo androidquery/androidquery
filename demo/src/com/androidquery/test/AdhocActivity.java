@@ -6,11 +6,13 @@ import java.io.IOException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory.Options;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
@@ -42,80 +44,22 @@ public class AdhocActivity extends Activity {
 		}
 	}
 	
-	/*
-	private void work(){
-		
-		String url = "http://www.google.com";
-		File file = AQUtility.getCacheFile(AQUtility.getCacheDir(this), url);
-		
-		String content = "<html>HELLO</html>";
-		byte[] data = content.getBytes();
-		
-		AQUtility.storeAsync(file, data, 0);
-		
-	}
-	*/
+	
 	
 	private void work() throws IOException{
 		
-		String url = "http://www.google.com";
+		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";   
 		
-		File ext = Environment.getExternalStorageDirectory();
-		File tempDir = new File(ext, "myapps");	
-		tempDir.mkdirs();
-		
-		File target = new File(tempDir, "myfile.html");
-		target.createNewFile();
-		
-		
-		download(url, target);
-	}
-	
-	private void download(String url, final File target){
-		
-		
-		aq.ajax(url, byte[].class, -1, new AjaxCallback<byte[]>(){
+		aq.id(new ImageView(this)).image(url, false, true, 200, 0, new BitmapAjaxCallback(){
 			
-			@Override
-			public void callback(String url, byte[] data, AjaxStatus status) {
-				
-				if(data != null){
-					
-					
-					//AQUtility.storeAsync(target, data, 0);
-					
-					AsyncTask<byte[], Integer, Boolean> task = new AsyncTask<byte[], Integer, Boolean>(){
-
-						@Override
-						protected Boolean doInBackground(byte[]... data) {
-							
-							AQUtility.store(target, data[0]);
-							
-							return target.length() == data[0].length;
-						}
-						
-						
-						protected void onPostExecute(Boolean success) {
-					         //do UI stuff here
-							
-							Toast.makeText(getApplicationContext(), "Done!" + success, 1000).show();
-					   
-						}
-						
-					};
-					
-					task.execute(data);
-					
-					
-				}else{
-					//error
-				}
-				
+			protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
+				AQUtility.debug(bm.getWidth());
 			}
 			
 		});
 		
 	}
+	
 	
 	
 	protected int getContainer(){
