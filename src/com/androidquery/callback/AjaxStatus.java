@@ -142,6 +142,11 @@ public class AjaxStatus {
 		return this;
 	}
 	
+	protected AjaxStatus reset(){
+		this.duration = System.currentTimeMillis() - start;
+		this.done = false;
+		return this;
+	}
 	
 	protected AjaxStatus data(byte[] data){
 		this.data = data;

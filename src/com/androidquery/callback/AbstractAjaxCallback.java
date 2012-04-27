@@ -554,8 +554,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			return null;
 		}
 		
-		AQUtility.debug("transform", type + ":"+ status.getFile());
-		
 		File file = status.getFile();
 		
 		if(data != null){
@@ -726,6 +724,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(status == null){
 			status = new AjaxStatus();
 			status.redirect(url).refresh(refresh);
+		}else if(status.getDone()){
+			status.reset();
+			result = null;
 		}
 		
 		showProgress(true);
@@ -779,8 +780,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			callback();
 		}else{
 		
-			//if(fileCache) cacheDir = AQUtility.getCacheDir(context);				
-			//execute();	
 			cacheDir = AQUtility.getCacheDir(context);	
 			execute(this);
 		}
@@ -977,7 +976,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				
 					File file = getCacheFile();
 					if(!status.getInvalid()){	
-						AQUtility.debug("write", url);
+						//AQUtility.debug("write", url);
 						filePut(url, result, file, data);
 					}else{
 						if(file.exists()){
