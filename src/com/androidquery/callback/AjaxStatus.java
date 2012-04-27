@@ -319,6 +319,17 @@ public class AjaxStatus {
 		
 	}
 	
-	
+	public String getHeader(String name){
+		
+		if(headers == null) return null;	
+		
+		for(int i = 0; i < headers.length; i++){
+			if(name.equalsIgnoreCase(headers[i].getName())){
+				return headers[i].getValue();
+			}
+		}
+		
+		return null;
+	}
 	
 }

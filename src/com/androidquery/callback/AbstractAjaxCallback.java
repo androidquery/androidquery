@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.Header;
@@ -590,13 +592,29 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			}
 			
 			if(type.equals(String.class)){
+				/*
 				String result = null;
 		    	
 		    	try {    		
 		    		result = new String(data, encoding);
 				} catch (Exception e) {	  		
 					AQUtility.debug(e);
+				}*/
+				
+				String result = null;
+				
+				if(status.getSource() == AjaxStatus.NETWORK){
+					AQUtility.debug("network");
+					result = correctEncoding(data, encoding, status);
+				}else{
+					AQUtility.debug("file");
+					try {    		
+			    		result = new String(data, encoding);
+					} catch (Exception e) {	  		
+						AQUtility.debug(e);
+					}
 				}
+				
 				return (T) result;
 			}
 			
@@ -662,7 +680,63 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return null;
 	}
 	
-
+	//This is an adhoc way to get charset without html parsing library, might not cover all cases.
+	private String getCharset(String html){
+		
+		String pattern = "<(META|meta) [^>]*http-equiv[^>]*\"Content-Type\"[^>]*>";
+		
+		Pattern p = Pattern.compile(pattern);		
+		Matcher m = p.matcher(html);
+		
+		if(!m.find()) return null;
+		
+		String tag = m.group();
+		
+		return parseCharset(tag);
+	}
+	
+	private String parseCharset(String tag){
+		if(tag == null) return null;
+		int i = tag.indexOf("charset");
+		if(i == -1) return null;
+		
+		String charset = tag.substring(i + 7).replaceAll("[^\\w-]", "");
+		return charset;
+	}
+	
+	private String correctEncoding(byte[] data, String target, AjaxStatus status){
+		
+		String result = null;
+		
+		try{
+			if(!"utf-8".equalsIgnoreCase(target)){
+				return new String(data, target);
+			}
+			
+			String header = parseCharset(status.getHeader("Content-Type"));
+			AQUtility.debug("parsing header", header);
+			if(header != null){
+				return new String(data, header);
+			}
+			
+			result = new String(data, "utf-8");
+			
+			String charset = getCharset(result);
+			AQUtility.debug("parsing needed", charset);
+			
+			if(charset != null && !"utf-8".equalsIgnoreCase(charset)){	
+				AQUtility.debug("correction needed", charset);
+				result = new String(data, charset);
+				status.data(result.getBytes("utf-8"));
+			}
+			
+		}catch(Exception e){
+			AQUtility.report(e);
+		}
+		
+		return result;
+		
+	}
 	
 	
 	protected T memGet(String url){
@@ -860,11 +934,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		//if file exist
 		if(file != null){
 			//convert
-		
+			status.source(AjaxStatus.FILE);
 			result = fileGet(url, file, status);
+			
+			
 			//if result is ok
 			if(result != null){
-				status.source(AjaxStatus.FILE).time(new Date(file.lastModified())).done();
+				status.time(new Date(file.lastModified())).done();
 			}
 		}
 	}
@@ -1305,7 +1381,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	AQUtility.debug(data.length, url);
         }
         
-        
         status.code(code).message(message).error(error).redirect(redirect).time(new Date()).data(data).file(file).client(client).context(context).headers(response.getAllHeaders());
 		
         
@@ -1485,6 +1560,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         }
         
         AQUtility.debug("response", code);
+        
         if(data != null){
         	AQUtility.debug(data.length, url);
         }

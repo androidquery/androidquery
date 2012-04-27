@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -897,4 +899,64 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	        
 		waitAsync();
 	}
+	
+	
+	public void testAjaxParseEncoding(){
+				
+		String url = "http://www.kyotojp.com/limousine-big5.html";
+		//String url = "http://big5.china.com.cn/";
+		
+		aq.ajax(url, String.class, -1, new AjaxCallback<String>(){
+			
+			public void callback(String url, String html, AjaxStatus status) {
+				
+				//AQUtility.debug("charset", html);
+				
+			}
+			
+		});
+	        
+		waitAsync();
+	}
+	
+	private String getCharset(String html){
+		
+		String pattern = "<(META|meta) [^>]*http-equiv[^>]*\"Content-Type\"[^>]*>";
+		
+		Pattern p = Pattern.compile(pattern);		
+		Matcher m = p.matcher(html);
+		
+		if(!m.find()) return null;
+		
+		String tag = m.group();
+		
+		if(tag == null) return null;
+		int i = tag.indexOf("charset");
+		if(i == -1) return null;
+		
+		String charset = tag.substring(i + 7).replaceAll("[^\\w-]", "");
+		
+		return charset;
+	}
+	
+	private String correctEncoding(byte[] data){
+		
+		String result = null;
+		
+		try{
+			result = new String(data, "utf-8");
+			
+			String charset = getCharset(result);
+			if(charset != null || !"utf-8".equalsIgnoreCase(charset)){		
+				result = new String(data, charset);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return result;
+		
+	}
+	
 }

@@ -29,6 +29,7 @@ import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.Transformer;
+import com.androidquery.test.PatternUtility;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
@@ -488,18 +489,17 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	
 	public void async_encoding(){
 		
 		String url = "http://www.kyotojp.com/limousine-big5.html";
 		
 		AjaxCallback<String> cb = new AjaxCallback<String>();
-		cb.url(url).type(String.class).encoding("Big5").weakHandler(this, "encodingCb");
-		
+		//cb.url(url).type(String.class).encoding("Big5").weakHandler(this, "encodingCb");
+		cb.url(url).type(String.class).fileCache(true).weakHandler(this, "encodingCb");
 		aq.progress(R.id.progress).ajax(cb);
 		
 	}
-	
-
 	
 	public void encodingCb(String url, String html, AjaxStatus status){
 		
