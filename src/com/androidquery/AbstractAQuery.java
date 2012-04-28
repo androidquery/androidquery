@@ -337,7 +337,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	
-	public T progress(View view){
+	public T progress(Object view){
 		progress = view;		
 		return self();
 	}

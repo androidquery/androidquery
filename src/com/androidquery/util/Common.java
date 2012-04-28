@@ -19,6 +19,7 @@ package com.androidquery.util;
 import java.io.File;
 import java.util.Comparator;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.text.Editable;
@@ -516,6 +517,11 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 					aq.dismiss(pd);
 				}
 				
+			}else if(p instanceof Activity){
+				
+				Activity act = (Activity) p;;
+				act.setProgressBarIndeterminateVisibility(show);
+			
 			}
 		}
 		

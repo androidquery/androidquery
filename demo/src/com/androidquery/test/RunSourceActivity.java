@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -33,6 +34,8 @@ public class RunSourceActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 				
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
+		
 		aq = new AQuery(this);
 		
 		type = getIntent().getStringExtra("type");
