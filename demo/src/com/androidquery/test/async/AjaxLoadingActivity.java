@@ -492,12 +492,10 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	
 	public void async_encoding(){
 		
-		String url = "http://www.kyotojp.com/limousine-big5.html";
+		//Using String.class type will attempt to detect the encoding of a page and transform it to utf-8
 		
-		AjaxCallback<String> cb = new AjaxCallback<String>();
-		//cb.url(url).type(String.class).encoding("Big5").weakHandler(this, "encodingCb");
-		cb.url(url).type(String.class).fileCache(true).weakHandler(this, "encodingCb");
-		aq.progress(R.id.progress).ajax(cb);
+		String url = "http://114.xixik.com/gb2312_big5/";
+		aq.progress(R.id.progress).ajax(url, String.class, 0, this, "encodingCb");
 		
 	}
 	
