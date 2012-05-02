@@ -30,6 +30,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.Editable;
@@ -498,6 +499,38 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		return self();
 	}
+	
+	
+	/**
+	 * Set the text typeface of a TextView.
+	 *
+	 * @param typeface typeface
+	 * @return self
+	 */
+	public T typeface(Typeface tf){
+		
+		if(view instanceof TextView){			
+			TextView tv = (TextView) view;
+			tv.setTypeface(tf);
+		}
+		return self();
+	}
+	
+	/**
+	 * Set the text size (in sp) of a TextView.
+	 *
+	 * @param size size
+	 * @return self
+	 */
+	public T textSize(float size){
+		
+		if(view instanceof TextView){			
+			TextView tv = (TextView) view;
+			tv.setTextSize(size);
+		}
+		return self();
+	}
+	
 	
 	/**
 	 * Set the adapter of an AdapterView.
