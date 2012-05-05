@@ -2010,7 +2010,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		if(result == null){
 			File file = getCachedFile(url);
 			if(file != null){
-				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth, true, null);
+				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth, true);
 			}
 		}
 		

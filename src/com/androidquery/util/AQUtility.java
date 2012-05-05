@@ -388,18 +388,18 @@ public class AQUtility {
 			
 			if(pcacheDir != null) return pcacheDir;
 			
-			File cd = getCacheDir2(context);
+			File cd = getCacheDir(context);
 			pcacheDir = new File(cd, "persistent");
 			pcacheDir.mkdirs();
 			
 			return pcacheDir;
 		}else{
-			return getCacheDir2(context);
+			return getCacheDir(context);
 		}
 		
 	}
 	
-	public static File getCacheDir2(Context context){			
+	public static File getCacheDir(Context context){			
 		
 		if(cacheDir == null){
 			cacheDir = new File(context.getCacheDir(), "aquery");
@@ -489,7 +489,7 @@ public class AQUtility {
 		
 		
 		try{			
-			File cacheDir = getCacheDir2(context);
+			File cacheDir = getCacheDir(context);
 			
 			Common task = new Common().method(Common.CLEAN_CACHE, cacheDir, triggerSize, targetSize);
 			
