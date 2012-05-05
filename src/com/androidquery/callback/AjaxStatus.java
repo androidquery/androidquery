@@ -17,6 +17,7 @@
 package com.androidquery.callback;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -28,6 +29,8 @@ import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
+
+import com.androidquery.util.AQUtility;
 
 /**
  * AjaxStatus contains meta information of an AjaxCallback callback.
@@ -71,6 +74,7 @@ public class AjaxStatus {
 	private String error;
 	private HttpContext context;
 	private Header[] headers;
+	private InputStream close;
 	
 	public AjaxStatus(){		
 	}
@@ -145,7 +149,17 @@ public class AjaxStatus {
 	protected AjaxStatus reset(){
 		this.duration = System.currentTimeMillis() - start;
 		this.done = false;
+		close();
 		return this;
+	}
+	
+	protected void closeLater(InputStream is){
+		this.close = is;
+	}
+	
+	protected void close(){
+		AQUtility.close(close);
+		close = null;
 	}
 	
 	protected AjaxStatus data(byte[] data){

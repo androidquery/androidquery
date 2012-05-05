@@ -343,6 +343,8 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		AQUtility.setCacheDir(cacheDir);
 		
+		AQUtility.debug("cache dir exist", cacheDir.exists());
+		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		aq.cache(url, 0);
 		

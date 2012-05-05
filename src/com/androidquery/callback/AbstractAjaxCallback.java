@@ -465,6 +465,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		filePut();
 		
+		status.close();
+		
 		wake();
 		AQUtility.debugNotify();
 	}
@@ -663,7 +665,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				XmlPullParser parser = Xml.newPullParser();
 				try{
 					//parser.setInput(new ByteArrayInputStream(data), encoding);
-					parser.setInput(new FileInputStream(file), encoding);
+					FileInputStream fis = new FileInputStream(file);
+					parser.setInput(fis, encoding);
+					status.closeLater(fis);
 				}catch(Exception e) {
 					AQUtility.report(e);
 					return null;
@@ -673,7 +677,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			if(type.equals(InputStream.class)){
 				try{
-					return (T) new FileInputStream(file);
+					FileInputStream fis = new FileInputStream(file);
+					status.closeLater(fis);
+					return (T) fis;
 				}catch(Exception e) {
 					AQUtility.report(e);
 					return null;
@@ -1340,33 +1346,38 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	        int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
 	        
 	        OutputStream os = null;
-	        if(file == null){
-	        	os = new PredefinedBAOS(size);
-	        }else{
-	        	AQUtility.debug("pre file", file);
-	        	file.createNewFile();
-	        	os = new FileOutputStream(file);
-	        }
+	        InputStream is = null;
 	        
-	        Header encoding = entity.getContentEncoding();
-	        if(encoding != null && encoding.getValue().equalsIgnoreCase("gzip")) {
-	        	InputStream is = new GZIPInputStream(entity.getContent());
-	        	AQUtility.copy(is, os);
-	        }else{
-	        	entity.writeTo(os);
-	        }
+	        try{
 	        
-	        os.flush();
-	        os.close();
+		        if(file == null){
+		        	os = new PredefinedBAOS(size);
+		        }else{
+		        	file.createNewFile();
+		        	os = new FileOutputStream(file);
+		        }
+		        
+		        Header encoding = entity.getContentEncoding();
+		        if(encoding != null && encoding.getValue().equalsIgnoreCase("gzip")) {
+		        	is = new GZIPInputStream(entity.getContent());
+		        	AQUtility.copy(is, os);
+		        }else{
+		        	entity.writeTo(os);
+		        }
+		        
+		        os.flush();
+		        
+		        if(file == null){
+		        	data = ((PredefinedBAOS) os).toByteArray();
+		        }else{
+		        	if(!file.exists() || file.length() == 0){
+		        		file = null;
+		        	}
+		        }
 	        
-	        if(file == null){
-	        	data = ((PredefinedBAOS) os).toByteArray();
-	        }else{
-	        	if(!file.exists() || file.length() == 0){
-	        		file = null;
-	        	}else{
-	        		AQUtility.debug("pre write", file.length());
-	        	}
+	        }finally{
+	        	AQUtility.close(is);
+	        	AQUtility.close(os);
 	        }
 	        
 	        /*

@@ -316,12 +316,13 @@ public class AQUtility {
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	
     	try {
-			copy(is, baos);
-			close(is);
+			copy(is, baos);			
 			result = baos.toByteArray();
 		} catch (IOException e){
 			AQUtility.report(e);
 		}
+		
+		close(is);
     	
  	
     	return result;
@@ -335,6 +336,7 @@ public class AQUtility {
 	    		try{
 	    			file.createNewFile();
 	    		}catch(Exception e){
+	    			AQUtility.debug("file create fail", file);
 	    			AQUtility.report(e);
 	    		}
 	    	}
@@ -357,7 +359,14 @@ public class AQUtility {
     	}
     }
     
-
+    public static void close(OutputStream os){
+    	try{
+    		if(os != null){
+    			os.close();
+    		}
+    	}catch(Exception e){   		
+    	}
+    }
 	
 	private static ScheduledExecutorService storeExe;
 	private static ScheduledExecutorService getFileStoreExecutor(){
@@ -485,8 +494,6 @@ public class AQUtility {
 	}
 	
 	public static void cleanCacheAsync(Context context, long triggerSize, long targetSize){
-		
-		
 		
 		try{			
 			File cacheDir = getCacheDir(context);
