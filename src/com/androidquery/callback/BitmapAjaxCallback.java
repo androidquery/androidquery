@@ -767,7 +767,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 */
 	
-	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, Object progress, AccountHandle ah){
+	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, Object progress, AccountHandle ah, int policy){
 		
 		Bitmap bm = null;
 		
@@ -782,7 +782,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor, AjaxStatus.MEMORY, null, null);
 		}else{
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();			
-			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).anchor(anchor).progress(progress).auth(ah);
+			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).anchor(anchor).progress(progress).auth(ah).policy(policy);
 			if(act != null){
 				cb.async(act);
 			}else{

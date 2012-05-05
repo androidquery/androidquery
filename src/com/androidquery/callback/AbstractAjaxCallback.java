@@ -88,6 +88,7 @@ import com.androidquery.auth.AccountHandle;
 import com.androidquery.auth.GoogleHandle;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
+import com.androidquery.util.Constants;
 import com.androidquery.util.PredefinedBAOS;
 import com.androidquery.util.XmlDom;
 
@@ -117,6 +118,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	protected T result;
 	
+	private int policy = Constants.CACHE_DEFAULT;
 	private File cacheDir;
 	private File targetFile;
 	private AccountHandle ah;
@@ -288,6 +290,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 */
 	public K memCache(boolean cache){
 		this.memCache = cache;
+		return self();
+	}
+	
+	public K policy(int policy){
+		this.policy = policy;
 		return self();
 	}
 	
@@ -855,13 +862,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			callback();
 		}else{
 		
-			cacheDir = AQUtility.getCacheDir(context);	
+			cacheDir = AQUtility.getCacheDir(context, policy);	
 			execute(this);
 		}
 	}
 	
 	protected boolean cacheAvailable(Context context){
-		return fileCache && AQUtility.getExistedCacheByUrl(context, url) != null;
+		//return fileCache && AQUtility.getExistedCacheByUrl(context, url) != null;
+		return fileCache && AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(context, policy), url) != null;
 	}
 	
 	

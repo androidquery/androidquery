@@ -346,7 +346,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		aq.cache(url, 0);
 		
-		File file = AQUtility.getCacheFile(AQUtility.getCacheDir(this), url);
+		File file = AQUtility.getCacheFile(AQUtility.getCacheDir(this, AQuery.CACHE_DEFAULT), url);
 		
 		showTextResult(file.getAbsolutePath());
 	}

@@ -18,6 +18,7 @@ package com.androidquery.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +34,8 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import com.androidquery.AQuery;
 
 import android.app.Application;
 import android.content.Context;
@@ -377,13 +380,34 @@ public class AQUtility {
 	}
 	
 	private static File cacheDir;
+	private static File pcacheDir;
 	
-	public static File getCacheDir(Context context){			
+	public static File getCacheDir(Context context, int policy){
+		
+		if(policy == AQuery.CACHE_PERSISTENT){
+			
+			if(pcacheDir != null) return pcacheDir;
+			
+			File cd = getCacheDir2(context);
+			pcacheDir = new File(cd, "persistent");
+			pcacheDir.mkdirs();
+			
+			return pcacheDir;
+		}else{
+			return getCacheDir2(context);
+		}
+		
+	}
+	
+	public static File getCacheDir2(Context context){			
+		
 		if(cacheDir == null){
 			cacheDir = new File(context.getCacheDir(), "aquery");
 			cacheDir.mkdirs();
-		}		
+		}	
+		
 		return cacheDir;
+		
 	}
 	
 	public static void setCacheDir(File dir){
@@ -405,11 +429,11 @@ public class AQUtility {
 		String hash = getMD5Hex(url);
 		return hash;
 	}
-	
+	/*
 	public static File getExistedCacheByUrl(Context context, String url){
 		return getExistedCacheByUrl(getCacheDir(context), url);
 	}
-	
+	*/
 	public static File getCacheFile(File dir, String url){
 		if(url == null) return null;
 		String name = getCacheFileName(url);
@@ -465,7 +489,7 @@ public class AQUtility {
 		
 		
 		try{			
-			File cacheDir = getCacheDir(context);
+			File cacheDir = getCacheDir2(context);
 			
 			Common task = new Common().method(Common.CLEAN_CACHE, cacheDir, triggerSize, targetSize);
 			
@@ -483,6 +507,7 @@ public class AQUtility {
 		try{
 		
 			File[] files = cacheDir.listFiles();
+			
 			if(files == null) return;
 			
 			Arrays.sort(files, new Common());
@@ -530,18 +555,20 @@ public class AQUtility {
 		for(int i = 0; i < files.length; i++){
 			
 			File f = files[i];
-						
-			total += f.length();
 			
-			if(total < maxSize){
-				//ok
-			}else{				
-				f.delete();
-				deletes++;
-				//Utility.debug("del:" + f.getAbsolutePath());
+			if(f.isFile()){
+			
+				total += f.length();
+				
+				if(total < maxSize){
+					//ok
+				}else{				
+					f.delete();
+					deletes++;
+					//AQUtility.debug("del", f.getAbsolutePath());
+				}
+				
 			}
-			
-			
 		}
 		
 		AQUtility.debug("deleted" , deletes);

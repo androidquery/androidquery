@@ -24,6 +24,8 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Window;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -100,7 +102,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}
 	
-	
+
 	
 	public void async_bytes(){
 	    
@@ -170,6 +172,44 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 			
 		});
 		
+	}
+	
+	public void async_web(){
+
+		String MOBILE_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533";		
+
+		AjaxCallback.setAgent(MOBILE_AGENT);
+		
+		aq.id(R.id.result).gone();
+		aq.id(R.id.web).visible();
+		
+		//String url = "http://www.shouda8.com/shouda/tunshixingkong/14/2618.htm";
+		//String url = "http://www.engadget.com/2012/05/04/samsung-releases-galaxy-tab-2-7-and-10-source-code";
+		String url = "http://mashable.com/2012/05/05/new-york-city-tech-startups/";
+		
+		//wv.loadUrl("file:///android_asset/html_no_copy/demo_welcome.html");
+		long expire = 3600000;
+		
+		aq.progress(R.id.progress).ajax(url, String.class, expire, new AjaxCallback<String>() {
+
+	        @Override
+	        public void callback(String url, String html, AjaxStatus status) {
+	             
+	        	AQUtility.debug("file length:" + html.length());
+	        	
+	        	showResult("", status);
+	        	
+	        	WebView wv = aq.id(R.id.web).getWebView();
+	        	WebSettings ws = wv.getSettings();
+	        	//ws.setJavaScriptEnabled(true);
+	        	
+	        	wv.loadDataWithBaseURL(url, html, "text/html", "utf-8", null);
+	        	//wv.loadUrl(url);
+	        	//showResult(html, status);
+	        }
+		        
+		});
+	        
 	}
 	
 	
@@ -419,6 +459,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";                
         aq.progress(R.id.progress).ajax(url, JSONObject.class, this, "jsonCb");
         
+        //aq.policy(AQuery.CACHE_PERSISTENT).ajax(url, JSONObject.class, this, "jsonCb");
 	}	
 	
 	

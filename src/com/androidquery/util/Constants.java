@@ -34,6 +34,9 @@ public interface Constants {
 	public static final int FADE_IN_NETWORK = -2;
 	public static final int FADE_IN_FILE = -3;
 	
+	public static final int CACHE_DEFAULT = 0;
+	public static final int CACHE_PERSISTENT = 1;
+	
 	public static final int TAG_URL = 0x40FF0001;
 	public static final int TAG_SCROLL_LISTENER = 0x40FF0002;
 	public static final int TAG_LAYOUT = 0x40FF0003;

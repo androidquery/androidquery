@@ -96,6 +96,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected Object progress;
 	protected AccountHandle ah;
 	private Transformer trans;
+	private int policy = CACHE_DEFAULT;
 
 	protected T create(View view){
 		
@@ -248,8 +249,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T recycle(View root){
 		this.root = root;
 		this.view = root;
-		this.progress = null;
-		this.ah = null;
+		reset();
 		this.context = null;
 		return self();
 	}
@@ -276,10 +276,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int id){
+		/*
 		view = findView(id);	
-		progress = null;
-		ah = null;
+		reset();
 		return self();
+		*/
+		return id(findView(id));
 	}
 	
 	/**
@@ -290,8 +292,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T id(View view){
 		this.view = view;	
-		progress = null;
-		ah = null;
+		reset();
 		return self();
 	}
 	
@@ -302,10 +303,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int... path){
+		/*
 		view = findView(path);	
-		progress = null;
-		ah = null;		
+		reset();		
 		return self();
+		*/
+		return id(findView(path));
 	}
 	
 	/**
@@ -383,6 +386,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T transformer(Transformer transformer){
 		trans = transformer;
+		return self();
+	}	
+	
+	public T policy(int cachePolicy){
+		policy = cachePolicy;
 		return self();
 	}	
 	
@@ -717,9 +725,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio){
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah);			
-			progress = null;
-			ah = null;
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy);			
+			reset();
 		}
 		
 		return self();
@@ -1728,35 +1735,47 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	
 	
-	protected <K> T invoke(AbstractAjaxCallback<?, K> callback){
+	protected <K> T invoke(AbstractAjaxCallback<?, K> cb){
 				
-		
+		/*
 		if(ah != null){
 			callback.auth(ah);
-			ah = null;
 		}
 		
 		if(progress != null){
 			callback.progress(progress);
-			progress = null;
 		}
 		
 		if(trans != null){
 			callback.transformer(trans);
-			trans = null;
 		}
+		
+		 */
+		
+		cb.auth(ah);
+		cb.progress(progress);
+		cb.transformer(trans);
+		cb.policy(policy);
 		
 		if(act != null){
-			callback.async(act);
+			cb.async(act);
 		}else{
-			callback.async(getContext());
+			cb.async(getContext());
 		}
 		
+		reset();
 		
 		return self();
 	}	
 	
-	
+	private void reset(){
+		
+		ah = null;
+		progress = null;
+		trans = null;
+		policy = CACHE_DEFAULT;
+		
+	}
 	
 	
 	/**
@@ -1943,9 +1962,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return File
 	 */
 	public File getCachedFile(String url){
-		
-		return AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(getContext()), url);
-		
+	
+		//return AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(getContext()), url);
+		File result = AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(getContext(), AQuery.CACHE_PERSISTENT), url);
+		if(result == null) result = AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(getContext(), AQuery.CACHE_DEFAULT), url);
+		return result;
 	}
 	
 	/**

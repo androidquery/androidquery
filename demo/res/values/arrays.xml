@@ -32,6 +32,7 @@
         <item>XML Dom</item>  
         <item>File</item>  
         <item>File (Download)</item> 
+        <item>Web View (URL Cached)</item>
         <item>InputStream</item> 
         <item>XML Pull Parser</item>  
         <item>JSON (Array)</item>
@@ -63,6 +64,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_file:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_file_custom:beta</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_web:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_inputstream:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xpp</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
@@ -120,6 +122,7 @@
         <item>Custom Callback</item>        
         <item>File (Async)</item>
         <item>File Custom Callback</item>
+        
         <item>Duplicated URL</item>    
         
         <item>BitmapAjaxCallback (Advance)</item> 
@@ -240,6 +243,7 @@
         <item>async_xml</item>
         <item>async_file</item>
         <item>async_file_custom</item>
+        <item>async_web</item>
         <item>async_inputstream</item>
         <item>async_xpp</item>
         <item>async_json_array</item>
@@ -343,7 +347,8 @@
         <item>Asynchronous HTTP Get as Bytes Array</item>
         <item>Asynchronous HTTP Get XML Dom</item>   
         <item>Asynchronous HTTP Get File Download</item>   
-        <item>Asynchronous HTTP Get File Path Download</item>   
+        <item>Asynchronous HTTP Get File Path Download</item>  
+        <item>Asynchronous Load Html with WebView Caching</item>   
         <item>Asynchronous HTTP Get Input Stream</item>   
         <item>Asynchronous HTTP Get XML Pull Parser</item>   
         <item>Asynchronous HTTP Get JSON Array</item>
