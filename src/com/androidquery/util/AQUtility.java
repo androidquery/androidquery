@@ -17,8 +17,8 @@
 package com.androidquery.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,8 +35,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.androidquery.AQuery;
-
 import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
@@ -46,6 +44,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+
+import com.androidquery.AQuery;
 
 /**
  * Utility methods. Warning: Methods might changed in future versions.
@@ -350,23 +350,15 @@ public class AQUtility {
     	
     }
     
-    public static void close(InputStream is){
+    public static void close(Closeable c){
     	try{
-    		if(is != null){
-    			is.close();
+    		if(c != null){
+    			c.close();
     		}
     	}catch(Exception e){   		
     	}
     }
-    
-    public static void close(OutputStream os){
-    	try{
-    		if(os != null){
-    			os.close();
-    		}
-    	}catch(Exception e){   		
-    	}
-    }
+   
 	
 	private static ScheduledExecutorService storeExe;
 	private static ScheduledExecutorService getFileStoreExecutor(){

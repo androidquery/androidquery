@@ -16,8 +16,8 @@
 
 package com.androidquery.callback;
 
+import java.io.Closeable;
 import java.io.File;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -74,7 +74,7 @@ public class AjaxStatus {
 	private String error;
 	private HttpContext context;
 	private Header[] headers;
-	private InputStream close;
+	private Closeable close;
 	
 	public AjaxStatus(){		
 	}
@@ -153,8 +153,8 @@ public class AjaxStatus {
 		return this;
 	}
 	
-	protected void closeLater(InputStream is){
-		this.close = is;
+	protected void closeLater(Closeable c){
+		this.close = c;
 	}
 	
 	protected void close(){
