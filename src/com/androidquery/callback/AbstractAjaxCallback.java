@@ -683,9 +683,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	//This is an adhoc way to get charset without html parsing library, might not cover all cases.
 	private String getCharset(String html){
 		
-		String pattern = "<(META|meta) [^>]*http-equiv[^>]*\"Content-Type\"[^>]*>";
+		String pattern = "<meta [^>]*http-equiv[^>]*\"Content-Type\"[^>]*>";
 		
-		Pattern p = Pattern.compile(pattern);		
+		Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);		
 		Matcher m = p.matcher(html);
 		
 		if(!m.find()) return null;
@@ -722,6 +722,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			result = new String(data, "utf-8");
 			
 			String charset = getCharset(result);
+			
 			AQUtility.debug("parsing needed", charset);
 			
 			if(charset != null && !"utf-8".equalsIgnoreCase(charset)){	

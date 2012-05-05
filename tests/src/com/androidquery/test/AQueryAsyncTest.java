@@ -903,14 +903,15 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	
 	public void testAjaxParseEncoding(){
 				
-		String url = "http://www.kyotojp.com/limousine-big5.html";
-		//String url = "http://big5.china.com.cn/";
+		//String url = "http://www.kyotojp.com/limousine-big5.html";
+		String url = "http://big5.china.com.cn/";
+		//String url = "http://www.shouda8.com/shouda/tunshixingkong/14/2618.htm";
 		
 		aq.ajax(url, String.class, -1, new AjaxCallback<String>(){
 			
 			public void callback(String url, String html, AjaxStatus status) {
 				
-				//AQUtility.debug("charset", html);
+				AQUtility.debug("charset", html);
 				
 			}
 			
