@@ -30,6 +30,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spanned;
@@ -830,6 +831,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			AQUtility.transparent(view, transparent);
 		}
 		
+		return self();
+	}
+	
+	public T typeface(String typeface){
+		
+		if(view != null){
+			Context context = getContext();
+			((TextView) view).setTypeface(Typeface.createFromAsset(context.getAssets(), typeface));
+		}
 		return self();
 	}
 	
