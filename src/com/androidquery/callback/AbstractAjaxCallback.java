@@ -1111,28 +1111,35 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	private static DefaultHttpClient client;
-	private static DefaultHttpClient getClient(){
+	public static DefaultHttpClient getClient(){
 		
-		if(client == null){
-		
-			HttpParams httpParams = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(httpParams, NET_TIMEOUT);
-			HttpConnectionParams.setSoTimeout(httpParams, NET_TIMEOUT);
-			
-			ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(NETWORK_POOL));
-			
-			
-			//Added this line to avoid issue at: http://stackoverflow.com/questions/5358014/android-httpclient-oom-on-4g-lte-htc-thunderbolt
-			HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
-			
-			SchemeRegistry registry = new SchemeRegistry();
-			registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-			registry.register(new Scheme("https", ssf == null ? SSLSocketFactory.getSocketFactory() : ssf, 443));
-			
-			ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(httpParams, registry);			
-			client = new DefaultHttpClient(cm, httpParams);
-			
+		if(client == null){	
+			client = initDefaultClient();
 		}
+		return client;
+	}
+	
+	public static void setClient(DefaultHttpClient paramClient){
+		client = paramClient;
+	}
+	
+	public static DefaultHttpClient initDefaultClient(){
+		HttpParams httpParams = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(httpParams, NET_TIMEOUT);
+		HttpConnectionParams.setSoTimeout(httpParams, NET_TIMEOUT);
+		
+		ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(NETWORK_POOL));
+		
+		//Added this line to avoid issue at: http://stackoverflow.com/questions/5358014/android-httpclient-oom-on-4g-lte-htc-thunderbolt
+		HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
+		
+		SchemeRegistry registry = new SchemeRegistry();
+		registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+		registry.register(new Scheme("https", ssf == null ? SSLSocketFactory.getSocketFactory() : ssf, 443));
+		
+		ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(httpParams, registry);			
+		client = new DefaultHttpClient(cm, httpParams);
+		
 		return client;
 	}
 	
