@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences.Editor;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -271,6 +272,16 @@ public class AQUtility {
 	
 	public static void postDelayed(Runnable run, long delay){
 		getHandler().postDelayed(run, delay);
+	}
+	
+	public static void apply(Editor editor){
+		
+		if(AQuery.SDK_INT >= 9){
+			AQUtility.invokeHandler(editor, "apply", false, true, null, (Object[]) null);
+		}else{
+			editor.commit();
+		}
+		
 	}
 	
 	private static String getMD5Hex(String str){
