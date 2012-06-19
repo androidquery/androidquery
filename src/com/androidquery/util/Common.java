@@ -38,6 +38,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Gallery;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.BitmapAjaxCallback;
@@ -274,7 +275,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 			int first = lv.getFirstVisiblePosition();
 			int last = lv.getLastVisiblePosition();
 			
-			//AQUtility.debug(first, last);
+			AQUtility.debug(first, last);
 			
 			int count = last - first;
 			
@@ -287,12 +288,14 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 				View convertView = lv.getChildAt(i);
 				Number targetPacked = (Number) convertView.getTag(AQuery.TAG_NUM);
 				
-				if(targetPacked != null && (targetPacked.longValue() == packed || targetPacked.intValue() == -1)){
+				AQUtility.debug("checking packed", targetPacked);
 				
+				//if(targetPacked != null && (targetPacked.longValue() == packed || targetPacked.intValue() == -1)){
+				if(targetPacked != null){
 					la.getView((int) packed, convertView, lv);
 					convertView.setTag(AQuery.TAG_NUM, null);
 				}else{
-					//AQUtility.debug("skip!");
+					AQUtility.debug("skip!");
 				}
 					
 			}
@@ -307,6 +310,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 		if(bm != null) return false;
 		
 		AbsListView lv = (AbsListView) parent;
+		
 		
 		OnScrollListener sl = (OnScrollListener) parent.getTag(AQuery.TAG_SCROLL_LISTENER);
 		

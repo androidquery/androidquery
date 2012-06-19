@@ -13,6 +13,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 
@@ -58,7 +59,20 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 		aq.progress(R.id.progress).ajax(url, XmlDom.class, this, "renderPhotos");
 	     
 
+		ListView lv = aq.id(R.id.list).getListView();
 		
+		for(int i = 0; i < 5; i++){
+			TextView tv = new TextView(this);
+			tv.setText("Header View " + i);
+			lv.addHeaderView(tv);
+		}
+		
+		
+		for(int i = 0; i < 5; i++){
+			TextView tv = new TextView(this);
+			tv.setText("Footer View " + i);
+			lv.addFooterView(tv);
+		}
 		
 	}
 	
@@ -135,7 +149,6 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 				
 				Bitmap placeholder = aq.getCachedImage(R.drawable.image_ph);
 				
-				//if(aq.shouldDelay(convertView, parent, tbUrl, 0)){
 				if(aq.shouldDelay(position, convertView, parent, tbUrl)){
 							
 					aq.id(R.id.tb).image(placeholder);
