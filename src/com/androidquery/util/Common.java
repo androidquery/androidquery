@@ -275,7 +275,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 			int first = lv.getFirstVisiblePosition();
 			int last = lv.getLastVisiblePosition();
 			
-			AQUtility.debug(first, last);
+			//AQUtility.debug(first, last);
 			
 			int count = last - first;
 			
@@ -288,14 +288,14 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 				View convertView = lv.getChildAt(i);
 				Number targetPacked = (Number) convertView.getTag(AQuery.TAG_NUM);
 				
-				AQUtility.debug("checking packed", targetPacked);
+				//AQUtility.debug("checking packed", targetPacked);
 				
 				//if(targetPacked != null && (targetPacked.longValue() == packed || targetPacked.intValue() == -1)){
 				if(targetPacked != null){
 					la.getView((int) packed, convertView, lv);
 					convertView.setTag(AQuery.TAG_NUM, null);
 				}else{
-					AQUtility.debug("skip!");
+					//AQUtility.debug("skip!");
 				}
 					
 			}
