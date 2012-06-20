@@ -102,6 +102,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private static String AGENT = null;
 	private static int NETWORK_POOL = 4;
 	private static boolean GZIP = true;
+	private static boolean REUSE_CLIENT = true;
 	
 	private Class<T> type;
 	private Reference<Object> whandler;
@@ -1172,6 +1173,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		NETWORK_POOL = Math.max(1, Math.min(25, limit));
 		fetchExe = null;
+		
+		AQUtility.debug("setting network limit", NETWORK_POOL);
 	}
 	
 	/**
@@ -1251,17 +1254,27 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		client = null;
 	}
 	
+	public static void setReuseHttpClient(boolean reuse){
+		
+		REUSE_CLIENT = reuse;
+		client = null;
+		
+	}
+	
+	
 	private static DefaultHttpClient client;
 	private static DefaultHttpClient getClient(){
 		
-		if(client == null){
+		if(client == null || !REUSE_CLIENT){
 		
+			AQUtility.debug("creating http client");
+			
 			HttpParams httpParams = new BasicHttpParams();
 			HttpConnectionParams.setConnectionTimeout(httpParams, NET_TIMEOUT);
 			HttpConnectionParams.setSoTimeout(httpParams, NET_TIMEOUT);
 			
-			ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(NETWORK_POOL));
-			
+			//ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(NETWORK_POOL));
+			ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(25));
 			
 			//Added this line to avoid issue at: http://stackoverflow.com/questions/5358014/android-httpclient-oom-on-4g-lte-htc-thunderbolt
 			HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
