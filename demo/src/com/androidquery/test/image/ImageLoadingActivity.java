@@ -210,13 +210,14 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	        @Override
 	        public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
 	           
+	        	iv.setBackgroundColor(0xffcc0000);
                 iv.setImageBitmap(bm);
-                iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
+                //iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
 	                
                 showMeta(status);
 	        }
 		        
-		});
+		}.round(10));
 	}
 	
 	public void image_file_custom(){

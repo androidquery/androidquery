@@ -1609,9 +1609,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(obj == null) return;
 		
 		if(obj instanceof File){
-			writeData(dos, name, new FileInputStream((File) obj));
+			File file = (File) obj;
+			writeData(dos, name, file.getName(), new FileInputStream(file));
 		}else if(obj instanceof byte[]){
-			writeData(dos, name, new ByteArrayInputStream((byte[]) obj));
+			writeData(dos, name, name, new ByteArrayInputStream((byte[]) obj));
 		}else{
 			writeField(dos, name, obj.toString());
 		}
@@ -1619,11 +1620,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	
-	private static void writeData(DataOutputStream dos, String name, InputStream is) throws IOException {
+	private static void writeData(DataOutputStream dos, String name, String filename, InputStream is) throws IOException {
 		
 		dos.writeBytes(twoHyphens + boundary + lineEnd);
 		dos.writeBytes("Content-Disposition: form-data; name=\""+name+"\";"
-				+ " filename=\"" + name + "\"" + lineEnd);
+				+ " filename=\"" + filename + "\"" + lineEnd);
 		dos.writeBytes(lineEnd);
 
 		AQUtility.copy(is, dos);

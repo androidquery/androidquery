@@ -767,7 +767,6 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	public void testAjaxPostMulti(){
 		
         String url = "http://www.androidquery.com/p/multipart";
-		//String url = "http://192.168.1.222/p/multipart";
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		
@@ -776,6 +775,53 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
 		params.put("data", data);
 		params.put("data2", data2);
+		
+        aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+            	AQUtility.debug(status.getCode(), status.getError());
+            	
+        		AQueryAsyncTest.this.result = jo;
+            }
+        });
+		
+        waitAsync();
+		
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals(1234, jo.optInt("data"));
+        assertEquals(2345, jo.optInt("data2"));
+	}
+	
+	public void testAjaxPostMultiFile() throws IOException{
+		
+        String url = "http://www.androidquery.com/p/multipart";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		File tempFile1 = File.createTempFile("pre1", "bin");
+		File tempFile2 = File.createTempFile("pre2", "bin");
+		
+		byte[] data1 = new byte[1234];
+		byte[] data2 = new byte[2345];
+		
+		AQUtility.write(tempFile1, data1);
+		AQUtility.write(tempFile2, data2);
+		
+		
+		//byte[] data2 = new byte[2345];
+		
+		//params.put("data", data);
+		//params.put("data2", data2);
+		
+		params.put("data", tempFile1);
+		params.put("data2", tempFile2);
 		
         aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
 

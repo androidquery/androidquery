@@ -57,23 +57,27 @@ public class ImageLoadingList4Activity extends ImageLoadingListActivity {
 		
         String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=48";
 		aq.progress(R.id.progress).ajax(url, XmlDom.class, this, "renderPhotos");
-	     
-
-		ListView lv = aq.id(R.id.list).getListView();
+	    
+		View list = aq.id(R.id.list).getView();
 		
-		for(int i = 0; i < 5; i++){
-			TextView tv = new TextView(this);
-			tv.setText("Header View " + i);
-			lv.addHeaderView(tv);
+		if(list instanceof ListView){
+		
+			ListView lv = (ListView) list;
+			
+			for(int i = 0; i < 5; i++){
+				TextView tv = new TextView(this);
+				tv.setText("Header View " + i);
+				lv.addHeaderView(tv);
+			}
+			
+			
+			for(int i = 0; i < 5; i++){
+				TextView tv = new TextView(this);
+				tv.setText("Footer View " + i);
+				lv.addFooterView(tv);
+			}
+			
 		}
-		
-		
-		for(int i = 0; i < 5; i++){
-			TextView tv = new TextView(this);
-			tv.setText("Footer View " + i);
-			lv.addFooterView(tv);
-		}
-		
 	}
 	
 	private List<Photo> convertAll(XmlDom xml){
