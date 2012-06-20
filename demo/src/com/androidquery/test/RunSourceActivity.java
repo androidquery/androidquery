@@ -197,7 +197,7 @@ public class RunSourceActivity extends Activity {
 			//AQUtility.debug(name, source);
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		return source;

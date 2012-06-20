@@ -103,6 +103,8 @@
         <item>Aspect Ratio (Dynamic)</item>          
         <item>Aspect Ratio (Fixed)</item>  
         
+        <item>Round Corner</item>  
+        
         <item>Image Zoom (WebView)</item>    
             
         <item>List Items</item>  
@@ -157,9 +159,8 @@
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_ratio</item>
         <item>com.androidquery.test.image.ImageLoadingAspectRatioActivity:image_ratio_fixed</item>
-        
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_round</item>
         <item>com.androidquery.test.image.ImageZoomActivity:image_zoom</item>
-        
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
         <item>com.androidquery.test.image.ImageLoadingList2Activity:image_list2</item>
@@ -279,6 +280,7 @@
         
         <item>image_ratio</item>
         <item>image_ratio_fixed</item>
+        <item>image_round</item>
         <item>image_zoom</item>
             
         <item>image_list</item>
@@ -385,6 +387,8 @@
         
         <item>Preserve Image Aspect Ratio Dynamically</item>
         <item>Predefined Image Aspect Ratio</item>
+        
+        <item>Round Corner Image</item>
         
         <item>Zoom enables image with WebView</item>
         

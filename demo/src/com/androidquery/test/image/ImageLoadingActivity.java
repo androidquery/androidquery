@@ -109,24 +109,6 @@ public class ImageLoadingActivity extends RunSourceActivity {
 
 	}
 	
-	/*
-	private BitmapAjaxCallback bm;
-	
-	public void image_down() throws IOException{
-		
-		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";   
-		
-		if(bm == null){
-			bm = new BitmapAjaxCallback();
-			bm.url(url);
-			bm.fileCache(false).memCache(false);
-		}
-		
-		aq.id(R.id.image).clear().image(bm);
-		
-		
-	}
-	*/
 	
 	public void image_fallback(){
 		
@@ -187,6 +169,15 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		String imageUrl = "http://farm3.static.flickr.com/2199/2218403922_062bc3bcf2.jpg";	
 		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 0, 0, null, AQuery.FADE_IN, AQuery.RATIO_PRESERVE);
 	
+	}
+	
+	public void image_round(){
+		
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		aq.id(R.id.image);//.progress(R.id.progress).image(url);
+		
+		BitmapAjaxCallback.async(this, this, aq.getImageView(), url, true, true, 0, 0, null, 0, 0, 0, null, null, 0, 15);
+		
 	}
 	
 	public void image_file(){

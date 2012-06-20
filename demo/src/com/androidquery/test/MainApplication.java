@@ -57,6 +57,9 @@ public class MainApplication extends Application{
 	    }
         
         super.onCreate();
+        
+        //AjaxCallback.setNetworkLimit(1);
+        
     }
 	
 	
