@@ -718,12 +718,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @see testImage12
 	 * 
 	 */
-	
-	
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio){
+		return image(url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, 0);
+	}
+	
+	private T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio, int round){
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy);			
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round);			
 			reset();
 		}
 		
@@ -2008,7 +2010,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		if(result == null){
 			File file = getCachedFile(url);
 			if(file != null){
-				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth, true);
+				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth, true, 0);
 			}
 		}
 		
