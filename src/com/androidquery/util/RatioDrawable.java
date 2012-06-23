@@ -60,12 +60,6 @@ public class RatioDrawable extends BitmapDrawable{
 		
 	}
 	
-	/*
-	public RatioDrawable(Resources res, Bitmap bm){
-		super(res, bm);
-	}
-	*/
-	
 	private int getWidth(ImageView iv){
 		
 		int width = 0;
