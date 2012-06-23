@@ -54,6 +54,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -375,6 +376,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	
+	private HttpHost proxy;
+	public K proxy(String host, int port){	
+		proxy = new HttpHost(host, port);
+		return self();
+	}
+	
 	public K targetFile(File file){
 		this.targetFile = file;
 		return self();
@@ -602,14 +610,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			}
 			
 			if(type.equals(String.class)){
-				/*
-				String result = null;
-		    	
-		    	try {    		
-		    		result = new String(data, encoding);
-				} catch (Exception e) {	  		
-					AQUtility.debug(e);
-				}*/
 				
 				String result = null;
 				
@@ -1319,10 +1319,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		DefaultHttpClient client = getClient();
 		
+		client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+		
 		HttpContext context = new BasicHttpContext(); 	
 		CookieStore cookieStore = new BasicCookieStore();
 		context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-		
 		
 		HttpResponse response = client.execute(hr, context);
 		

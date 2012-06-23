@@ -13,9 +13,15 @@ import java.util.regex.Pattern;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -889,6 +895,32 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
             	
             }
         });
+		
+        waitAsync();
+        
+        assertNotNull(result);
+		
+        List<Header> headers = status.getHeaders();
+        assertTrue(headers.size() > 0);
+        
+        Header c = headers.get(0);
+        AQUtility.debug(c.getName(), c.getValue());
+        
+	}
+	
+	public void testAjaxProxy() throws ClientProtocolException, IOException{
+		
+		String url = "http://www.google.com";
+        
+        aq.ajax(url, String.class, new AjaxCallback<String>() {
+
+            @Override
+            public void callback(String url, String json, AjaxStatus status) {
+                
+            	done(url, json, status);
+            	
+            }
+        }.proxy("62.0.192.219", 80));
 		
         waitAsync();
         
