@@ -6,6 +6,7 @@ import static com.googlecode.charts4j.Color.SKYBLUE;
 import static com.googlecode.charts4j.Color.WHITE;
 
 import java.io.File;
+import java.io.IOException;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -97,21 +98,9 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		boolean fileCache = true;
 
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
-		
-		//String query = "chxl=0:|2011-12-20|2012-01-03|2012-01-18&chxp=0,0,14,30&chxr=0,0,30&chxs=0,676767,1%201.5,0,lt,676767&chxt=x&chs=464x225&cht=lc&chco=3072F3&chds=0,760&chd=t:430,%20382,389,312,105,161,438,552,531,453,345,108,179,592,760,757,650,567,360,387%20,658,690,706,616,502,256,413,695,649,619&chdlp=b&chls=2&chma=5,5,5,25";		
-		//url = "http://chart.apis.google.com/chart?" + Uri.encode(query, "&=");
-		
-		//String title = "The easiest way to make a JavaScript POST request is to create a page that hosts a form with chart data in The easiest way to make a JavaScript POST request is to create a page that hosts a form with chart data in The easiest way to make a JavaScript POST request is to create a page that hosts a form with chart data in The easiest way to make a JavaScript POST request is to create a page that hosts a form with chart data in The easiest way to make a JavaScript POST request is to create a page that hosts a form with chart data in The easiest way to make a JavaScript POST request is to create a page that hosts a form with chart data in The easiest way to make a JavaScript POST request is to create a page that hosts a form with chart data in";		
-		//title = title + title + title + title;
-		
-		//url = "https://chart.googleapis.com/chart?chid=1234&cht=lc&chtt=" + title + "&chs=300x200&chxt=x&chd=t:40,20,50,20,100";
-		
-		//AQUtility.debug("url length", title.length());
-		
-		
-		
 		aq.id(R.id.image).progress(R.id.progress).image(url, memCache, fileCache);
 	}
+	
 	
 	public void image_down(){
 		
@@ -119,6 +108,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 200, 0);
 
 	}
+	
 	
 	public void image_fallback(){
 		
@@ -181,6 +171,15 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	}
 	
+	public void image_round(){
+		
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		aq.id(R.id.image);//.progress(R.id.progress).image(url);
+		
+		BitmapAjaxCallback.async(this, this, aq.getImageView(), url, true, true, 0, 0, null, 0, 0, 0, null, null, 0, 15);
+		
+	}
+	
 	public void image_file(){
 		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
@@ -202,13 +201,14 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	        @Override
 	        public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
 	           
+	        	iv.setBackgroundColor(0xffcc0000);
                 iv.setImageBitmap(bm);
-                iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
+                //iv.setColorFilter(tint, PorterDuff.Mode.SRC_ATOP);
 	                
                 showMeta(status);
 	        }
 		        
-		});
+		}.round(10));
 	}
 	
 	public void image_file_custom(){
@@ -335,10 +335,12 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		AQUtility.setCacheDir(cacheDir);
 		
+		AQUtility.debug("cache dir exist", cacheDir.exists());
+		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
 		aq.cache(url, 0);
 		
-		File file = AQUtility.getCacheFile(AQUtility.getCacheDir(this), url);
+		File file = AQUtility.getCacheFile(AQUtility.getCacheDir(this, AQuery.CACHE_DEFAULT), url);
 		
 		showTextResult(file.getAbsolutePath());
 	}

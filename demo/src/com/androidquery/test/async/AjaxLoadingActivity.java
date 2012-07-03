@@ -1,5 +1,7 @@
 package com.androidquery.test.async;
 
+import java.io.File;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,16 +22,22 @@ import org.xmlpull.v1.XmlPullParser;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.Window;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.Transformer;
+import com.androidquery.test.PatternUtility;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class AjaxLoadingActivity extends RunSourceActivity {
 
@@ -94,7 +102,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}
 	
-	
+
 	
 	public void async_bytes(){
 	    
@@ -123,6 +131,105 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 			
 		});
 	        
+	}
+	
+	public void async_file(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
+		
+		aq.progress(R.id.progress).ajax(url, File.class, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+	        
+	}
+	
+	public void async_file_custom(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=16";		
+		
+		File ext = Environment.getExternalStorageDirectory();
+		File target = new File(ext, "aquery/myfolder2/photos1.xml");		
+		
+		aq.progress(R.id.progress).download(url, target, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+		
+	}
+	
+	public void async_web(){
+
+		String MOBILE_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533";		
+
+		AjaxCallback.setAgent(MOBILE_AGENT);
+		
+		aq.id(R.id.result).gone();
+		aq.id(R.id.web).visible();
+		
+		//String url = "http://www.shouda8.com/shouda/tunshixingkong/14/2618.htm";
+		//String url = "http://www.engadget.com/2012/05/04/samsung-releases-galaxy-tab-2-7-and-10-source-code";
+		String url = "http://mashable.com/2012/05/05/new-york-city-tech-startups/";
+		
+		//wv.loadUrl("file:///android_asset/html_no_copy/demo_welcome.html");
+		long expire = 3600000;
+		
+		aq.progress(R.id.progress).ajax(url, String.class, expire, new AjaxCallback<String>() {
+
+	        @Override
+	        public void callback(String url, String html, AjaxStatus status) {
+	             
+	        	AQUtility.debug("file length:" + html.length());
+	        	
+	        	showResult("", status);
+	        	
+	        	WebView wv = aq.id(R.id.web).getWebView();
+	        	WebSettings ws = wv.getSettings();
+	        	//ws.setJavaScriptEnabled(true);
+	        	
+	        	wv.loadDataWithBaseURL(url, html, "text/html", "utf-8", null);
+	        	//wv.loadUrl(url);
+	        	//showResult(html, status);
+	        }
+		        
+		});
+	        
+	}
+	
+	
+	public void async_inputstream(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
+		
+		aq.progress(R.id.progress).ajax(url, InputStream.class, new AjaxCallback<InputStream>(){
+			
+			public void callback(String url, InputStream is, AjaxStatus status) {
+				
+				if(is != null){
+					showResult("InputStream:" + is, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+		
 	}
 	
 	public void async_xpp(){
@@ -180,12 +287,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	        
 	}	
 	
-	
-	private static class Profile{
-		public String id;
-		public String name;		
-	}
-	
+
 	private static class GsonTransformer implements Transformer{
 
 		public <T> T transform(String url, Class<T> type, String encoding, byte[] data, AjaxStatus status) {			
@@ -193,6 +295,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 			return g.fromJson(new String(data), type);
 		}
 	}
+	
 	
 	public void async_transformer(){
 		
@@ -208,41 +311,44 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         
 	}
 	
+	
+	private static class Profile{
+		public String id;
+		public String name;		
+	}
+	
 	/*
-	public void async_transformer() {
+	public void async_transformer(){
 		
-		String url = "https://graph.facebook.com/205050232863343";
-		
-		aq.progress(R.id.progress).ajax(url, Profile.class, new AjaxCallback<Profile>(){
-			
+		String url = "http://www.androidquery.com/test/jsonarray.json";		
+		GsonTransformer t = new GsonTransformer(){
 			@Override
-			public Profile transform(String url, Class<Profile> type, String encoding, byte[] data, AjaxStatus status) {
+			public <T> T transform(String url, Class<T> type, String encoding, byte[] data, AjaxStatus status) {
 				
-				Profile profile = null;
+				Gson g = new Gson();
+				T result = g.fromJson(new String(data), new TypeToken<List<T>>(){}.getType());				
 				
-				if(data != null){
-					Gson g = new Gson();					
-					profile = g.fromJson(new String(data), type);
+				return result;
+			}
+		};
+		
+        aq.transformer(t).progress(R.id.progress).ajax(url, List.class, new AjaxCallback<List>(){			
+			
+			public void callback(String url, List profiles, AjaxStatus status) {	
+				
+				
+				for(Profile profile: (List<Profile>) profiles){
+					AQUtility.debug(profile.id, profile.name);
 				}
+					
 				
-				return profile;
-			}
-			
-			
-			@Override
-			public void callback(String url, Profile profile, AjaxStatus status) {
-				
-				showTextResult("id:" + profile.id + " name:" + profile.name);
-				
-			}
-			
+			}			
 		});
-		
-			
         
-		
 	}
 	*/
+	
+
 	public void async_post(){
 		
         String url = "http://search.twitter.com/search.json";
@@ -352,7 +458,8 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	    
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";                
         aq.progress(R.id.progress).ajax(url, JSONObject.class, this, "jsonCb");
-           
+        
+        //aq.policy(AQuery.CACHE_PERSISTENT).ajax(url, JSONObject.class, this, "jsonCb");
 	}	
 	
 	
@@ -370,6 +477,14 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";                
         aq.progress(dialog).ajax(url, JSONObject.class, this, "jsonCb");
            
+	}	
+	
+	public void async_progress_activity(){
+	    
+		//Remember this: requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
+		
+        String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";          
+        aq.progress(this).ajax(url, JSONObject.class, this, "jsonCb");  
 	}	
 	
 	public void async_advance(){
@@ -424,18 +539,15 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	
 	public void async_encoding(){
 		
-		String url = "http://www.kyotojp.com/limousine-big5.html";
+		//Using String.class type will attempt to detect the encoding of a page and transform it to utf-8
 		
-		AjaxCallback<String> cb = new AjaxCallback<String>();
-		cb.url(url).type(String.class).encoding("Big5").weakHandler(this, "encodingCb");
-		
-		aq.progress(R.id.progress).ajax(cb);
+		String url = "http://114.xixik.com/gb2312_big5/";
+		aq.progress(R.id.progress).ajax(url, String.class, 0, this, "encodingCb");
 		
 	}
-	
-
 	
 	public void encodingCb(String url, String html, AjaxStatus status){
 		

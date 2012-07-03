@@ -105,9 +105,6 @@
 			/>
 		</LinearLayout>
 		
-		
-		
-		
 		<TextView  
 			android:id="@+id/text_result"
 			android:layout_margin="15dip"
@@ -116,13 +113,19 @@
 		    android:visibility="gone"
 		/>
 		
-		
 		<TextView  
 			android:id="@+id/result"
 			android:layout_margin="15dip"
 		    android:layout_width="fill_parent" 
 		    android:layout_height="wrap_content" 
 		    android:text="Click Run for result."
+		/>
+		
+		<WebView
+		    android:id="@+id/web"
+		    android:layout_width="fill_parent" 
+		    android:layout_height="wrap_content" 
+		    android:visibility="gone"
 		/>
 		
 	</LinearLayout>

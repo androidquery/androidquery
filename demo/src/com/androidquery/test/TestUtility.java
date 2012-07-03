@@ -3,6 +3,7 @@ package com.androidquery.test;
 import java.util.UUID;
 
 import android.content.Context;
+import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -43,6 +44,10 @@ public class TestUtility {
 		if(!isTestDevice(context)){
 			FlurryAgent.onEndSession(context);
 		}
+	}
+	
+	public static boolean isEmulator(){
+		return "sdk".equals(Build.PRODUCT);
 	}
 	
 

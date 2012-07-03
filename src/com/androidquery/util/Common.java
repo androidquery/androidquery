@@ -19,6 +19,7 @@ package com.androidquery.util;
 import java.io.File;
 import java.util.Comparator;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.text.Editable;
@@ -37,6 +38,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Gallery;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.BitmapAjaxCallback;
@@ -250,7 +252,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 						}
 						convertView.setTag(AQuery.TAG_NUM, null);
 					}else{
-						AQUtility.debug("skip!");
+						//AQUtility.debug("skip!");
 					}
 					
 				}
@@ -273,7 +275,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 			int first = lv.getFirstVisiblePosition();
 			int last = lv.getLastVisiblePosition();
 			
-			AQUtility.debug(first, last);
+			//AQUtility.debug(first, last);
 			
 			int count = last - first;
 			
@@ -286,12 +288,14 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 				View convertView = lv.getChildAt(i);
 				Number targetPacked = (Number) convertView.getTag(AQuery.TAG_NUM);
 				
-				if(targetPacked != null && (targetPacked.longValue() == packed || targetPacked.intValue() == -1)){
+				//AQUtility.debug("checking packed", targetPacked);
 				
+				//if(targetPacked != null && (targetPacked.longValue() == packed || targetPacked.intValue() == -1)){
+				if(targetPacked != null){
 					la.getView((int) packed, convertView, lv);
 					convertView.setTag(AQuery.TAG_NUM, null);
 				}else{
-					AQUtility.debug("skip!");
+					//AQUtility.debug("skip!");
 				}
 					
 			}
@@ -306,6 +310,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 		if(bm != null) return false;
 		
 		AbsListView lv = (AbsListView) parent;
+		
 		
 		OnScrollListener sl = (OnScrollListener) parent.getTag(AQuery.TAG_SCROLL_LISTENER);
 		
@@ -390,13 +395,13 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 		
 		if((position >= from && position <= to)){
 			
-			AQUtility.debug("yes", position + ":" + from + "." + to);
+			//AQUtility.debug("yes", position + ":" + from + "." + to);
 			convertView.setTag(AQuery.TAG_NUM, position);
 			
 			return false;
 		}
 		
-		AQUtility.debug("no", position + ":" + from + "." + to);
+		//AQUtility.debug("no", position + ":" + from + "." + to);
 		convertView.setTag(AQuery.TAG_NUM, null);
 		return true;
 		
@@ -451,7 +456,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 			
 				int count = parent.getChildCount();
 				
-				AQUtility.debug("redrawing", count);
+				//AQUtility.debug("redrawing", count);
 				
 				int first = parent.getFirstVisiblePosition();
 				
@@ -463,9 +468,9 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 					Integer lastDrawn = (Integer) convertView.getTag(AQuery.TAG_NUM);
 					
 					if(lastDrawn != null && lastDrawn.intValue() == drawPos){
-						AQUtility.debug("skip", drawPos);
+						//AQUtility.debug("skip", drawPos);
 					}else{						
-						AQUtility.debug("redraw", drawPos);
+						//AQUtility.debug("redraw", drawPos);
 						adapter.getView(drawPos, convertView, parent);
 					}
 				}
@@ -516,6 +521,11 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 					aq.dismiss(pd);
 				}
 				
+			}else if(p instanceof Activity){
+				
+				Activity act = (Activity) p;;
+				act.setProgressBarIndeterminateVisibility(show);
+			
 			}
 		}
 		

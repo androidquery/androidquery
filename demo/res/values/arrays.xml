@@ -30,6 +30,10 @@
         <item>HTML/XML String</item>   
         <item>byte[]</item>  
         <item>XML Dom</item>  
+        <item>File</item>  
+        <item>File (Download)</item> 
+        <item>Web View (URL Cached)</item>
+        <item>InputStream</item> 
         <item>XML Pull Parser</item>  
         <item>JSON (Array)</item>
         <item>Custom Type (ex. Gson)</item>
@@ -40,6 +44,7 @@
         <item>Caching</item> 
         <item>Progress</item>
         <item>Progress Dialog</item> 
+        <item>Progress Activity</item> 
         <item>AjaxCallback</item>   
         <item>Request Headers</item>  
         <item>Cookies</item>  
@@ -57,6 +62,10 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_html</item>   
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_file:beta</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_file_custom:beta</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_web:beta</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_inputstream:beta</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xpp</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:beta</item>
@@ -67,6 +76,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialog</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_activity:new</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cookie</item>
@@ -93,6 +103,8 @@
         <item>Aspect Ratio (Dynamic)</item>          
         <item>Aspect Ratio (Fixed)</item>  
         
+        <item>Round Corner</item>  
+        
         <item>Image Zoom (WebView)</item>    
             
         <item>List Items</item>  
@@ -112,6 +124,7 @@
         <item>Custom Callback</item>        
         <item>File (Async)</item>
         <item>File Custom Callback</item>
+        
         <item>Duplicated URL</item>    
         
         <item>BitmapAjaxCallback (Advance)</item> 
@@ -146,9 +159,8 @@
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_ratio</item>
         <item>com.androidquery.test.image.ImageLoadingAspectRatioActivity:image_ratio_fixed</item>
-        
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_round</item>
         <item>com.androidquery.test.image.ImageZoomActivity:image_zoom</item>
-        
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
         <item>com.androidquery.test.image.ImageLoadingList2Activity:image_list2</item>
@@ -230,6 +242,10 @@
         <item>async_html</item>   
         <item>async_bytes</item>  
         <item>async_xml</item>
+        <item>async_file</item>
+        <item>async_file_custom</item>
+        <item>async_web</item>
+        <item>async_inputstream</item>
         <item>async_xpp</item>
         <item>async_json_array</item>
         <item>async_transformer</item>
@@ -241,6 +257,7 @@
         <item>async_cached</item>
         <item>async_progress</item>
         <item>async_progress_dialog</item>
+        <item>async_progress_activity</item>
         <item>async_advance</item>
         <item>async_header</item>
         <item>async_cookie</item>
@@ -263,6 +280,7 @@
         
         <item>image_ratio</item>
         <item>image_ratio_fixed</item>
+        <item>image_round</item>
         <item>image_zoom</item>
             
         <item>image_list</item>
@@ -330,6 +348,10 @@
         <item>Asynchronous HTTP Get HTML/XML</item>   
         <item>Asynchronous HTTP Get as Bytes Array</item>
         <item>Asynchronous HTTP Get XML Dom</item>   
+        <item>Asynchronous HTTP Get File Download</item>   
+        <item>Asynchronous HTTP Get File Path Download</item>  
+        <item>Asynchronous Load Html with WebView Caching</item>   
+        <item>Asynchronous HTTP Get Input Stream</item>   
         <item>Asynchronous HTTP Get XML Pull Parser</item>   
         <item>Asynchronous HTTP Get JSON Array</item>
         <item>Asynchronous HTTP Get Custom Type (GSON example)</item>
@@ -340,6 +362,7 @@
         <item>Asynchronous HTTP Get with Cache Control</item>
         <item>Show Requests Progress</item>
         <item>Show Progress Dialog</item>
+        <item>Show Activity Progress</item>
         <item>Using AjaxCallback Directly</item>
         <item>Setting HTTP Headers for Ajax Requests</item>
         <item>Setting HTTP Cookies for Ajax Requests</item>
@@ -364,6 +387,8 @@
         
         <item>Preserve Image Aspect Ratio Dynamically</item>
         <item>Predefined Image Aspect Ratio</item>
+        
+        <item>Round Corner Image</item>
         
         <item>Zoom enables image with WebView</item>
         

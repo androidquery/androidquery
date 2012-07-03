@@ -1,0 +1,18 @@
+	public void async_inputstream(){
+		
+		String url = "https://picasaweb.google.com/data/feed/base/featured?max-results=8";		
+		
+		aq.progress(R.id.progress).ajax(url, InputStream.class, new AjaxCallback<InputStream>(){
+			
+			public void callback(String url, InputStream is, AjaxStatus status) {
+				
+				if(is != null){
+					showResult("InputStream:" + is, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+		
+	}

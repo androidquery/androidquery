@@ -10,7 +10,9 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
+import android.view.Window;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
@@ -31,8 +33,12 @@ public class RunSourceActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
+
+		
 		super.onCreate(savedInstanceState);
 				
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
+		
 		aq = new AQuery(this);
 		
 		type = getIntent().getStringExtra("type");
@@ -191,7 +197,7 @@ public class RunSourceActivity extends Activity {
 			//AQUtility.debug(name, source);
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		return source;
