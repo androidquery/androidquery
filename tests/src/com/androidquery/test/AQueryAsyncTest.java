@@ -8,12 +8,20 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -765,7 +773,6 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	public void testAjaxPostMulti(){
 		
         String url = "http://www.androidquery.com/p/multipart";
-		//String url = "http://192.168.1.222/p/multipart";
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		
@@ -774,6 +781,53 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
 		params.put("data", data);
 		params.put("data2", data2);
+		
+        aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+            	AQUtility.debug(status.getCode(), status.getError());
+            	
+        		AQueryAsyncTest.this.result = jo;
+            }
+        });
+		
+        waitAsync();
+		
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals(1234, jo.optInt("data"));
+        assertEquals(2345, jo.optInt("data2"));
+	}
+	
+	public void testAjaxPostMultiFile() throws IOException{
+		
+        String url = "http://www.androidquery.com/p/multipart";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		File tempFile1 = File.createTempFile("pre1", "bin");
+		File tempFile2 = File.createTempFile("pre2", "bin");
+		
+		byte[] data1 = new byte[1234];
+		byte[] data2 = new byte[2345];
+		
+		AQUtility.write(tempFile1, data1);
+		AQUtility.write(tempFile2, data2);
+		
+		
+		//byte[] data2 = new byte[2345];
+		
+		//params.put("data", data);
+		//params.put("data2", data2);
+		
+		params.put("data", tempFile1);
+		params.put("data2", tempFile2);
 		
         aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
 
@@ -854,6 +908,32 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
 	}
 	
+	public void testAjaxProxy() throws ClientProtocolException, IOException{
+		
+		String url = "http://www.google.com";
+        
+        aq.ajax(url, String.class, new AjaxCallback<String>() {
+
+            @Override
+            public void callback(String url, String json, AjaxStatus status) {
+                
+            	done(url, json, status);
+            	
+            }
+        }.proxy("62.0.192.219", 80));
+		
+        waitAsync();
+        
+        assertNotNull(result);
+		
+        List<Header> headers = status.getHeaders();
+        assertTrue(headers.size() > 0);
+        
+        Header c = headers.get(0);
+        AQUtility.debug(c.getName(), c.getValue());
+        
+	}
+	
 	
 	public void testAjaxXmlPullParser(){
 		
@@ -897,4 +977,65 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	        
 		waitAsync();
 	}
+	
+	
+	public void testAjaxParseEncoding(){
+				
+		//String url = "http://www.kyotojp.com/limousine-big5.html";
+		String url = "http://big5.china.com.cn/";
+		//String url = "http://www.shouda8.com/shouda/tunshixingkong/14/2618.htm";
+		
+		aq.ajax(url, String.class, -1, new AjaxCallback<String>(){
+			
+			public void callback(String url, String html, AjaxStatus status) {
+				
+				AQUtility.debug("charset", html);
+				
+			}
+			
+		});
+	        
+		waitAsync();
+	}
+	
+	private String getCharset(String html){
+		
+		String pattern = "<(META|meta) [^>]*http-equiv[^>]*\"Content-Type\"[^>]*>";
+		
+		Pattern p = Pattern.compile(pattern);		
+		Matcher m = p.matcher(html);
+		
+		if(!m.find()) return null;
+		
+		String tag = m.group();
+		
+		if(tag == null) return null;
+		int i = tag.indexOf("charset");
+		if(i == -1) return null;
+		
+		String charset = tag.substring(i + 7).replaceAll("[^\\w-]", "");
+		
+		return charset;
+	}
+	
+	private String correctEncoding(byte[] data){
+		
+		String result = null;
+		
+		try{
+			result = new String(data, "utf-8");
+			
+			String charset = getCharset(result);
+			if(charset != null || !"utf-8".equalsIgnoreCase(charset)){		
+				result = new String(data, charset);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return result;
+		
+	}
+	
 }

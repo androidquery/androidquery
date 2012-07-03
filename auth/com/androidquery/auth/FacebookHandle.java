@@ -221,10 +221,10 @@ public class FacebookHandle extends AccountHandle{
 	
 	private void storeToken(String token, String permission){
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(act).edit();
-		editor.putString(FB_TOKEN, token).putString(FB_PERMISSION, permission).commit();	
+		editor.putString(FB_TOKEN, token).putString(FB_PERMISSION, permission);//.commit();	
+		AQUtility.apply(editor);
 	}
 	
-
 	private class FbWebViewClient extends WebViewClient implements OnCancelListener {
 		
 		private boolean checkDone(String url){

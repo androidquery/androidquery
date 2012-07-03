@@ -19,7 +19,8 @@ package com.androidquery.util;
 public interface Constants {
 
 
-	public static final String VERSION = "0.21.7";
+	public static final String VERSION = "0.22.10";
+	
 	public static final int LAYER_TYPE_SOFTWARE = 1;
 	public static final int LAYER_TYPE_HARDWARE = 2;
 	public static final int FLAG_HARDWARE_ACCELERATED = 0x01000000;
@@ -29,9 +30,13 @@ public interface Constants {
 	public static final int OVER_SCROLL_NEVER = 2;
 	public static final int INVISIBLE = -1;
 	public static final int GONE = -2;
+	public static final int PRESET = -3;
 	public static final int FADE_IN = -1;
 	public static final int FADE_IN_NETWORK = -2;
 	public static final int FADE_IN_FILE = -3;
+	
+	public static final int CACHE_DEFAULT = 0;
+	public static final int CACHE_PERSISTENT = 1;
 	
 	public static final int TAG_URL = 0x40FF0001;
 	public static final int TAG_SCROLL_LISTENER = 0x40FF0002;
@@ -46,6 +51,7 @@ public interface Constants {
 	public static final String AUTH_READER = "g.reader";
 	public static final String AUTH_PICASA = "g.lh2";
 	public static final String AUTH_SPREADSHEETS = "g.wise";
+	public static final String AUTH_DOC_LIST = "g.writely";
 	public static final String AUTH_YOUTUBE = "g.youtube";
 	public static final String AUTH_ANALYTICS = "g.analytics";
 	public static final String AUTH_BLOGGER = "g.blogger";

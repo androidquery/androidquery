@@ -18,7 +18,6 @@ package com.androidquery.callback;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +26,10 @@ import java.util.WeakHashMap;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.*;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -73,10 +73,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private int animation;
 	private Bitmap preset;
 	private float ratio;
+	private int round;
 	private boolean targetDim = true;
 	private float anchor = AQuery.ANCHOR_DYNAMIC;
 	private boolean invalid;
-	private Options reuse;
 	
 	
 	/**
@@ -200,43 +200,41 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	/**
-	 * Set the image decoding options for bitmap reuse to conserve memory. 
+	 * Set the round corner radius.
 	 * 
-	 * This feature is only available on API 12+. Nothing happens otherwise.
+	 * Note that the current implementation transform the image to a new one and will use more transient resources.
 	 *
-	 * @param reuse the options for decoding image
+	 * @param radius
 	 * @return self
 	 */
-	public BitmapAjaxCallback reuse(Options reuse){
-		if(AQuery.SDK_INT >= 12){		
-			this.reuse = reuse;
-		}
+	
+	
+	public BitmapAjaxCallback round(int radius){
+		this.round = radius;
 		return this;
 	}
 	
-	
+
 	private static Bitmap decode(String path, byte[] data, BitmapFactory.Options options){
 		
 		Bitmap result = null;
 		
+		
 		if(path != null){
+			
 			result = BitmapFactory.decodeFile(path, options);
+			
 		}else if(data != null){
+			
 			result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+			
+		}
+		
+		if(result == null && options != null && !options.inJustDecodeBounds){
+			AQUtility.debug("decode image failed", path);
 		}
 		
 		return result;
-	}
-	
-	private static void setField(Object object, String field, Object value){
-		
-		if(object == null || field == null || value == null) return;
-		try{
-			Field f = object.getClass().getField(field);
-			f.set(object, value);
-		}catch(Exception e){
-			AQUtility.report(e);
-		}
 	}
 	
 	
@@ -247,21 +245,14 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 * @param data if file path is null, provide the image data directly
 	 * @param target the target dimension
 	 * @param width use width as target, otherwise use the higher value of height or width
-	 * @param reuse the options for bitmap reuse
+	 * @param round corner radius
 	 * @return the resized image
 	 */
-	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width, Options reuse){
+	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width, int round){
     	
 		Options options = null;
 		
-		if(reuse != null){
-			
-			options = reuse;
-			//options.inMutable = true;
-			setField(options, "inMutable", true);
-			options.inSampleSize = 1;
-			
-		}else if(target > 0){
+		if(target > 0){
 	    	
     		Options info = new Options();
     		info.inJustDecodeBounds = true;
@@ -280,18 +271,14 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
         Bitmap bm = null;
         try{
         	bm = decode(path, data, options);
-        	if(reuse != null){
-        		//reuse.inBitmap = bm;
-        		
-        		AQUtility.debug("reused", bm.getWidth() + ":" + bm.getHeight());
-        		setField(reuse, "inBitmap", bm);
-        		
-        	}
 		}catch(OutOfMemoryError e){
 			clearCache();
 			AQUtility.report(e);
 		}
         
+		if(round > 0){
+			bm = getRoundedCornerBitmap(bm, round);
+		}
         
         return bm;
     	
@@ -317,9 +304,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
     }
 	
     private Bitmap bmGet(String path, byte[] data){    	
-    	return getResizedImage(path, data, targetWidth, targetDim, reuse);
+    	return getResizedImage(path, data, targetWidth, targetDim, round);
+    	
     }
-	
+   
     @Override
     protected File accessFile(File cacheDir, String url){		
     	
@@ -349,6 +337,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 				bm = getFallback();		
 			}else if(fallback == AQuery.GONE || fallback == AQuery.INVISIBLE){
 				bm = dummy;
+			}else if(fallback == AQuery.PRESET){
+				bm = preset;
 			}
 			
 			if(status.getCode() != 200){
@@ -360,6 +350,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return bm;
 	}
 	
+
 
 	
 	private Bitmap getFallback(){
@@ -387,13 +378,13 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	public static Bitmap getMemoryCached(Context context, int resId){
 		
 		String key = Integer.toString(resId);			
-		Bitmap bm = memGet(key, 0);
+		Bitmap bm = memGet(key, 0, 0);
 		
 		if(bm == null){
 			bm = BitmapFactory.decodeResource(context.getResources(), resId);
 			
 			if(bm != null){
-				memPut(key, 0, bm, false);
+				memPut(key, 0, 0, bm, false);
 			}
 		}
 		
@@ -547,7 +538,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	protected Bitmap memGet(String url){		
 		if(bm != null) return bm;
 		if(!memCache) return null;
-		return memGet(url, targetWidth);
+		return memGet(url, targetWidth, round);
 	}
 	
 	
@@ -559,12 +550,12 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 * @return the memory cached
 	 */
 	public static Bitmap getMemoryCached(String url, int targetWidth){
-		return memGet(url, targetWidth);
+		return memGet(url, targetWidth, 0);
 	}
 	
-	private static Bitmap memGet(String url, int targetWidth){
+	private static Bitmap memGet(String url, int targetWidth, int round){
 		
-		url = getKey(url, targetWidth);
+		url = getKey(url, targetWidth, round);
 		
 		Map<String, Bitmap> cache = getBCache();
 		Bitmap result = cache.get(url);
@@ -591,14 +582,20 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return result;
 	}
 	
-	private static String getKey(String url, int targetWidth){
-		if(targetWidth <= 0){
-			return url;
+	private static String getKey(String url, int targetWidth, int round){
+		
+		if(targetWidth > 0){
+			url += "#" + targetWidth;
 		}
-		return url + "#" + targetWidth;
+		
+		if(round > 0){
+			url += "#" + round;
+		}
+		
+		return url;
 	}
 	
-	private static void memPut(String url, int targetWidth, Bitmap bm, boolean invalid){
+	private static void memPut(String url, int targetWidth, int round, Bitmap bm, boolean invalid){
 		
 		if(bm == null) return;
 		
@@ -614,14 +611,14 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			cache = getBCache();
 		}
 		
-		cache.put(getKey(url, targetWidth), bm);
+		cache.put(getKey(url, targetWidth, round), bm);
 		
 	}
 	
 	
 	@Override
 	protected void memPut(String url, Bitmap bm){
-		memPut(url, targetWidth, bm, invalid);
+		memPut(url, targetWidth, round, bm, invalid);
 	}
 	
 	
@@ -670,31 +667,32 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 		if(isPreset){
-			iv.setImageDrawable(makeDrawable(iv, bm, ratio, anchor, null, null));
+			iv.setImageDrawable(makeDrawable(iv, bm, ratio, anchor));
 			return;
 		}
 		
 		if(status != null){
-			setBmAnimate(iv, bm, preset, fallback, animation, ratio, anchor, status.getSource(), getCacheFile(), reuse);
+			setBmAnimate(iv, bm, preset, fallback, animation, ratio, anchor, status.getSource());
 		}
 		
 	}
 
-	private static Drawable makeDrawable(ImageView iv, Bitmap bm, float ratio, float anchor, File file, Options reuse){
+	private static Drawable makeDrawable(ImageView iv, Bitmap bm, float ratio, float anchor){
 		
 		BitmapDrawable bd = null;
 		
 		if(ratio > 0){
-			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio, anchor, file, reuse);
+			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio, anchor);
 		}else{
 			bd = new BitmapDrawable(iv.getResources(), bm);
+			//bd = new RatioDrawable(iv.getResources(), bm);
 		}
 		
 		return bd;
 		
 	}
 	
-	private static void setBmAnimate(ImageView iv, Bitmap bm, Bitmap preset, int fallback, int animation, float ratio, float anchor, int source, File file, Options reuse){
+	private static void setBmAnimate(ImageView iv, Bitmap bm, Bitmap preset, int fallback, int animation, float ratio, float anchor, int source){
 		
 		bm = filter(iv, bm, fallback);
 		if(bm == null){
@@ -702,7 +700,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			return;
 		}
 		
-		Drawable d = makeDrawable(iv, bm, ratio, anchor, file, reuse);
+		Drawable d = makeDrawable(iv, bm, ratio, anchor);
 		Animation anim = null;
 		
 		if(fadeIn(animation, source)){	
@@ -712,7 +710,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 				anim.setDuration(FADE_DUR);
 			}else{
 				
-				Drawable pd = makeDrawable(iv, preset, ratio, anchor, null, null);
+				Drawable pd = makeDrawable(iv, preset, ratio, anchor);
 				Drawable[] ds = new Drawable[]{pd, d};
 				TransitionDrawable td = new TransitionDrawable(ds);
 				td.setCrossFadeEnabled(true);				
@@ -756,22 +754,22 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 */
 	
-	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, Object progress, AccountHandle ah){
+	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, Object progress, AccountHandle ah, int policy, int round){
 		
 		Bitmap bm = null;
 		
 		if(memCache){
-			bm = memGet(url, targetWidth);
+			bm = memGet(url, targetWidth, round);
 		}
 		
 		if(bm != null){
 			iv.setTag(AQuery.TAG_URL, url);
 			//if(progress != null) progress.setVisibility(View.GONE);		
 			Common.showProgress(progress, url, false);
-			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor, AjaxStatus.MEMORY, null, null);
+			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor, AjaxStatus.MEMORY);
 		}else{
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();			
-			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).anchor(anchor).progress(progress).auth(ah);
+			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).anchor(anchor).progress(progress).auth(ah).policy(policy).round(round);
 			if(act != null){
 				cb.async(act);
 			}else{
@@ -845,4 +843,25 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 
+    private static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+    	
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = pixels;
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+    }
 }

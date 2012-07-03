@@ -134,7 +134,7 @@ public class IntentListActivity extends ListActivity {
 			
 		}
 		
-		if(type == null && TestUtility.isTestDevice(this)){
+		if(type == null && (TestUtility.isTestDevice(this) || TestUtility.isEmulator())){
 			
 			list.add(makeActivity("com.androidquery.test.AdhocActivity", "Ad Hoc Debug", "", null));
 			list.add(makeActivity("com.androidquery.test.AdhocActivity2", "Ad Hoc Debug2", "", null));

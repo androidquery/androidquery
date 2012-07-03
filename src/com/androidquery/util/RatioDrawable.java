@@ -16,12 +16,10 @@
 
 package com.androidquery.util;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
@@ -30,15 +28,13 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.BitmapAjaxCallback;
 
 /**
  * AQuery internal use only.
  * 
  */
 
-public class RatioDrawable extends BitmapDrawable implements Runnable{
+public class RatioDrawable extends BitmapDrawable{
 
 	private float ratio;
 	private WeakReference<ImageView> ref;
@@ -46,26 +42,14 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 	private Matrix m;
 	private int w;
 	private float anchor;
-	private int version;
-	private boolean loading;
-	private File file;
-	private Options reuse;
 	
-	public RatioDrawable(Resources res, Bitmap bm, ImageView iv, float ratio, float anchor, File file, Options reuse){
+	public RatioDrawable(Resources res, Bitmap bm, ImageView iv, float ratio, float anchor){
 		
 		super(res, bm);
 		
 		this.ref = new WeakReference<ImageView>(iv);
 		this.ratio = ratio;
 		this.anchor = anchor;
-		
-		if(reuse != null){
-			//version = bm.getGenerationId();
-			version = getGen(bm);
-			AQUtility.debug("reuse init version", version);
-			this.reuse = reuse;
-			this.file = file;
-		}
 		
 		iv.setScaleType(ScaleType.MATRIX);
 		
@@ -75,13 +59,6 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 		adjust(iv, bm, false);
 		
 	}
-	
-	private static int getGen(Bitmap bm){
-		Integer result = (Integer) AQUtility.invokeHandler(bm, "getGenerationId", false, false, null);
-		if(result == null) return 0;
-		return result;
-	}
-	
 	
 	private int getWidth(ImageView iv){
 		
@@ -103,65 +80,26 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 	
 	public void draw(Canvas canvas){
 		
-		ImageView iv = ref.get();
+		ImageView iv = null;
+		
+		if(ref != null){
+			iv = ref.get();
+		}
 		
 		if(ratio == 0 || iv == null){
+			
 			super.draw(canvas);
 		
 		}else{
 			
 			Bitmap bm = getBitmap();
-			
-			if(file != null){
-				
-				int gen = getGen(bm);
-				if(gen != version){
-					
-					AQUtility.debug("reload", version + "->" + gen);
-					AQUtility.debug("reload", file.getName());
-					if(!loading){
-						loading = true;
-						AjaxCallback.execute(this);
-					}
-				}else{
-					draw(canvas, iv, bm);
-				}
-				
-			}else{
-				draw(canvas, iv, bm);
-			}
-			
-		
-			
+			draw(canvas, iv, bm);
 			
 		}
 		
 		
 	}
 	
-	@Override
-	public void run() {
-		
-		
-		try{
-			AQUtility.debug("reloading shared", version);
-			
-			Bitmap bm = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, 0, true, reuse);			
-			version = getGen(bm);
-			
-			AQUtility.debug("reloading done", version);
-			
-			ref.get().postInvalidate();
-			
-			AQUtility.debug("redrawing", ref.get());
-			
-		}catch(Throwable e){
-			AQUtility.debug(e);
-		}
-		
-		loading = false;
-		
-	}
 	
 	private void draw(Canvas canvas, ImageView iv, Bitmap bm){
 		
@@ -206,7 +144,6 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 			lp.height = th;
 			iv.setLayoutParams(lp);
 					
-			//AQUtility.debug("adjust height", ratio + ":" + vw +":"+ th);
 		}
 		
 		if(done) adjusted = true;	
@@ -254,15 +191,11 @@ public class RatioDrawable extends BitmapDrawable implements Runnable{
 				scale = (float) vw / (float) dw;	
 				float sy = getYOffset(dw, dh);
 				
-				//AQUtility.debug("sy", sy + ":" + ratio);
 				dy = (vh - dh * scale) * sy;
-				//AQUtility.debug("off", (vh - dh * scale));
 			}
 	        
 	        m.setScale(scale, scale);
 	        m.postTranslate(dx, dy);
-	        
-	        //AQUtility.debug("new mat", scale + ":" + dx + ":" + dy);
 	        
 	        w = dw;
     	}

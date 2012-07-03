@@ -1,0 +1,7 @@
+	public void async_progress_activity(){
+	    
+		//Remember to call this before setContentView(): requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";          
+		aq.progress(this).ajax(url, JSONObject.class, this, "jsonCb");  
+	}	

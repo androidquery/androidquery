@@ -17,6 +17,7 @@
 package com.androidquery.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences.Editor;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -43,6 +45,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+
+import com.androidquery.AQuery;
 
 /**
  * Utility methods. Warning: Methods might changed in future versions.
@@ -270,6 +274,16 @@ public class AQUtility {
 		getHandler().postDelayed(run, delay);
 	}
 	
+	public static void apply(Editor editor){
+		
+		if(AQuery.SDK_INT >= 9){
+			AQUtility.invokeHandler(editor, "apply", false, true, null, (Object[]) null);
+		}else{
+			editor.commit();
+		}
+		
+	}
+	
 	private static String getMD5Hex(String str){
 		byte[] data = getMD5(str.getBytes());
 		
@@ -313,12 +327,13 @@ public class AQUtility {
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	
     	try {
-			copy(is, baos);
-			close(is);
+			copy(is, baos);			
 			result = baos.toByteArray();
 		} catch (IOException e){
 			AQUtility.report(e);
 		}
+		
+		close(is);
     	
  	
     	return result;
@@ -332,6 +347,7 @@ public class AQUtility {
 	    		try{
 	    			file.createNewFile();
 	    		}catch(Exception e){
+	    			AQUtility.debug("file create fail", file);
 	    			AQUtility.report(e);
 	    		}
 	    	}
@@ -345,16 +361,15 @@ public class AQUtility {
     	
     }
     
-    public static void close(InputStream is){
+    public static void close(Closeable c){
     	try{
-    		if(is != null){
-    			is.close();
+    		if(c != null){
+    			c.close();
     		}
     	}catch(Exception e){   		
     	}
     }
-    
-
+   
 	
 	private static ScheduledExecutorService storeExe;
 	private static ScheduledExecutorService getFileStoreExecutor(){
@@ -377,13 +392,34 @@ public class AQUtility {
 	}
 	
 	private static File cacheDir;
+	private static File pcacheDir;
+	
+	public static File getCacheDir(Context context, int policy){
+		
+		if(policy == AQuery.CACHE_PERSISTENT){
+			
+			if(pcacheDir != null) return pcacheDir;
+			
+			File cd = getCacheDir(context);
+			pcacheDir = new File(cd, "persistent");
+			pcacheDir.mkdirs();
+			
+			return pcacheDir;
+		}else{
+			return getCacheDir(context);
+		}
+		
+	}
 	
 	public static File getCacheDir(Context context){			
+		
 		if(cacheDir == null){
 			cacheDir = new File(context.getCacheDir(), "aquery");
 			cacheDir.mkdirs();
-		}		
+		}	
+		
 		return cacheDir;
+		
 	}
 	
 	public static void setCacheDir(File dir){
@@ -405,11 +441,11 @@ public class AQUtility {
 		String hash = getMD5Hex(url);
 		return hash;
 	}
-	
+	/*
 	public static File getExistedCacheByUrl(Context context, String url){
 		return getExistedCacheByUrl(getCacheDir(context), url);
 	}
-	
+	*/
 	public static File getCacheFile(File dir, String url){
 		if(url == null) return null;
 		String name = getCacheFileName(url);
@@ -462,8 +498,6 @@ public class AQUtility {
 	
 	public static void cleanCacheAsync(Context context, long triggerSize, long targetSize){
 		
-		
-		
 		try{			
 			File cacheDir = getCacheDir(context);
 			
@@ -483,6 +517,7 @@ public class AQUtility {
 		try{
 		
 			File[] files = cacheDir.listFiles();
+			
 			if(files == null) return;
 			
 			Arrays.sort(files, new Common());
@@ -530,18 +565,20 @@ public class AQUtility {
 		for(int i = 0; i < files.length; i++){
 			
 			File f = files[i];
-						
-			total += f.length();
 			
-			if(total < maxSize){
-				//ok
-			}else{				
-				f.delete();
-				deletes++;
-				//Utility.debug("del:" + f.getAbsolutePath());
+			if(f.isFile()){
+			
+				total += f.length();
+				
+				if(total < maxSize){
+					//ok
+				}else{				
+					f.delete();
+					deletes++;
+					//AQUtility.debug("del", f.getAbsolutePath());
+				}
+				
 			}
-			
-			
 		}
 		
 		AQUtility.debug("deleted" , deletes);

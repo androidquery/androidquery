@@ -16,6 +16,8 @@
 
 package com.androidquery.callback;
 
+import java.io.Closeable;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -27,6 +29,8 @@ import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
+
+import com.androidquery.util.AQUtility;
 
 /**
  * AjaxStatus contains meta information of an AjaxCallback callback.
@@ -57,6 +61,7 @@ public class AjaxStatus {
 	private String message = "OK";
 	private String redirect;
 	private byte[] data;
+	private File file;
 	private Date time = new Date();
 	private boolean refresh;
 	private DefaultHttpClient client;
@@ -69,6 +74,7 @@ public class AjaxStatus {
 	private String error;
 	private HttpContext context;
 	private Header[] headers;
+	private Closeable close;
 	
 	public AjaxStatus(){		
 	}
@@ -140,9 +146,29 @@ public class AjaxStatus {
 		return this;
 	}
 	
+	protected AjaxStatus reset(){
+		this.duration = System.currentTimeMillis() - start;
+		this.done = false;
+		close();
+		return this;
+	}
+	
+	protected void closeLater(Closeable c){
+		this.close = c;
+	}
+	
+	protected void close(){
+		AQUtility.close(close);
+		close = null;
+	}
 	
 	protected AjaxStatus data(byte[] data){
 		this.data = data;
+		return this;
+	}
+	
+	protected AjaxStatus file(File file){
+		this.file = file;
 		return this;
 	}
 	
@@ -192,6 +218,10 @@ public class AjaxStatus {
 
 	protected byte[] getData() {
 		return data;
+	}
+	
+	protected File getFile() {
+		return file;
 	}
 	
 	/**
@@ -303,6 +333,17 @@ public class AjaxStatus {
 		
 	}
 	
-	
+	public String getHeader(String name){
+		
+		if(headers == null) return null;	
+		
+		for(int i = 0; i < headers.length; i++){
+			if(name.equalsIgnoreCase(headers[i].getName())){
+				return headers[i].getValue();
+			}
+		}
+		
+		return null;
+	}
 	
 }

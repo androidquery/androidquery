@@ -71,10 +71,20 @@ public class XmlActivity extends RunSourceActivity {
 	
 	public void xml_resource() throws SAXException{
 		
+		/*
 		InputStream is = getResources().openRawResource(R.raw.code);
 		
 		XmlDom xml = new XmlDom(is);		
 		String code1 = xml.tag("entry", "name", "snippet1").text();
+		
+		showTextResult(code1);		
+		showResult(xml, null);
+		*/
+		
+		InputStream is = getResources().openRawResource(R.raw.result);
+		
+		XmlDom xml = new XmlDom(is);		
+		String code1 = xml.attr("resultCode");
 		
 		showTextResult(code1);		
 		showResult(xml, null);

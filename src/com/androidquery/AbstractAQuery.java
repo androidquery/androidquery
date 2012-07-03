@@ -30,6 +30,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spanned;
@@ -93,6 +94,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected Object progress;
 	protected AccountHandle ah;
 	private Transformer trans;
+	private int policy = CACHE_DEFAULT;
 
 	protected T create(View view){
 		
@@ -245,8 +247,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T recycle(View root){
 		this.root = root;
 		this.view = root;
-		this.progress = null;
-		this.ah = null;
+		reset();
 		this.context = null;
 		return self();
 	}
@@ -273,10 +274,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int id){
+		/*
 		view = findView(id);	
-		progress = null;
-		ah = null;
+		reset();
 		return self();
+		*/
+		return id(findView(id));
 	}
 	
 	/**
@@ -287,8 +290,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T id(View view){
 		this.view = view;	
-		progress = null;
-		ah = null;
+		reset();
 		return self();
 	}
 	
@@ -299,10 +301,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int... path){
+		/*
 		view = findView(path);	
-		progress = null;
-		ah = null;		
+		reset();		
 		return self();
+		*/
+		return id(findView(path));
 	}
 	
 	/**
@@ -335,7 +339,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	
-	public T progress(View view){
+	public T progress(Object view){
 		progress = view;		
 		return self();
 	}
@@ -380,6 +384,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T transformer(Transformer transformer){
 		trans = transformer;
+		return self();
+	}	
+	
+	public T policy(int cachePolicy){
+		policy = cachePolicy;
 		return self();
 	}	
 	
@@ -496,6 +505,38 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		return self();
 	}
+	
+	
+	/**
+	 * Set the text typeface of a TextView.
+	 *
+	 * @param typeface typeface
+	 * @return self
+	 */
+	public T typeface(Typeface tf){
+		
+		if(view instanceof TextView){			
+			TextView tv = (TextView) view;
+			tv.setTypeface(tf);
+		}
+		return self();
+	}
+	
+	/**
+	 * Set the text size (in sp) of a TextView.
+	 *
+	 * @param size size
+	 * @return self
+	 */
+	public T textSize(float size){
+		
+		if(view instanceof TextView){			
+			TextView tv = (TextView) view;
+			tv.setTextSize(size);
+		}
+		return self();
+	}
+	
 	
 	/**
 	 * Set the adapter of an AdapterView.
@@ -677,14 +718,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @see testImage12
 	 * 
 	 */
-	
-	
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio){
+		return image(url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, 0);
+	}
+	
+	private T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio, int round){
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah);			
-			progress = null;
-			ah = null;
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round);			
+			reset();
 		}
 		
 		return self();
@@ -1693,35 +1735,47 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	
 	
-	protected <K> T invoke(AbstractAjaxCallback<?, K> callback){
+	protected <K> T invoke(AbstractAjaxCallback<?, K> cb){
 				
-		
+		/*
 		if(ah != null){
 			callback.auth(ah);
-			ah = null;
 		}
 		
 		if(progress != null){
 			callback.progress(progress);
-			progress = null;
 		}
 		
 		if(trans != null){
 			callback.transformer(trans);
-			trans = null;
 		}
+		
+		 */
+		
+		cb.auth(ah);
+		cb.progress(progress);
+		cb.transformer(trans);
+		cb.policy(policy);
 		
 		if(act != null){
-			callback.async(act);
+			cb.async(act);
 		}else{
-			callback.async(getContext());
+			cb.async(getContext());
 		}
 		
+		reset();
 		
 		return self();
 	}	
 	
-	
+	private void reset(){
+		
+		ah = null;
+		progress = null;
+		trans = null;
+		policy = CACHE_DEFAULT;
+		
+	}
 	
 	
 	/**
@@ -1908,9 +1962,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return File
 	 */
 	public File getCachedFile(String url){
-		
-		return AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(getContext()), url);
-		
+	
+		//return AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(getContext()), url);
+		File result = AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(getContext(), AQuery.CACHE_PERSISTENT), url);
+		if(result == null) result = AQUtility.getExistedCacheByUrl(AQUtility.getCacheDir(getContext(), AQuery.CACHE_DEFAULT), url);
+		return result;
 	}
 	
 	/**
@@ -1954,7 +2010,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		if(result == null){
 			File file = getCachedFile(url);
 			if(file != null){
-				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth, true, null);
+				result = BitmapAjaxCallback.getResizedImage(file.getAbsolutePath(), null, targetWidth, true, 0);
 			}
 		}
 		
@@ -2379,6 +2435,61 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	
-
+	public T expand(int position, boolean expand){
+		
+		if(view instanceof ExpandableListView){
+			
+			ExpandableListView elv = (ExpandableListView) view;
+			if(expand){
+				elv.expandGroup(position);
+			}else{
+				elv.collapseGroup(position);
+			}
+		}
+		
+		return self();
+	}
+	
+	public T expand(boolean expand){
+		
+		if(view instanceof ExpandableListView){
+			
+			ExpandableListView elv = (ExpandableListView) view;			
+			ExpandableListAdapter ela = elv.getExpandableListAdapter();
+			
+			if(ela != null){
+				
+				int count = ela.getGroupCount();
+				
+				for(int i = 0; i < count; i++){
+					if(expand){
+						elv.expandGroup(i);
+					}else{
+						elv.collapseGroup(i);
+					}
+				}
+				
+			}
+			
+				
+		}
+		
+		return self();
+	}
+	
+	public T download(String url, File target, AjaxCallback<File> cb){
+		
+		cb.url(url).type(File.class).targetFile(target);		
+		return ajax(cb);
+	
+	}
+	
+	public T download(String url, File target, Object handler, String callback){
+		
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.weakHandler(handler, callback);
+		return download(url, target, cb);
+	
+	}
 	
 }
