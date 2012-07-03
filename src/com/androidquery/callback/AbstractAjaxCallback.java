@@ -1610,8 +1610,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(obj == null) return;
 		
 		if(obj instanceof File){
+
 			File file = (File) obj;
 			writeData(dos, name, file.getName(), new FileInputStream(file));
+
 		}else if(obj instanceof byte[]){
 			writeData(dos, name, name, new ByteArrayInputStream((byte[]) obj));
 		}else{
