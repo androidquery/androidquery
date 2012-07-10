@@ -196,14 +196,18 @@ public class LocationAjaxCallback extends AbstractAjaxCallback<Location, Locatio
 		
 		AQUtility.debug("stop");
 		
-		if(gpsListener != null){
-			lm.removeUpdates(gpsListener);
-			gpsListener.cancel();
+		Listener gListener = gpsListener;
+		
+		if(gListener != null){
+			lm.removeUpdates(gListener);
+			gListener.cancel();
 		}
 		
-		if(networkListener != null){
-			lm.removeUpdates(networkListener);
-			networkListener.cancel();
+		Listener nListener = networkListener;
+		
+		if(nListener != null){
+			lm.removeUpdates(nListener);
+			nListener.cancel();
 		}
 		
 		gpsListener = null;
