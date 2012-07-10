@@ -875,6 +875,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	public T typeface(String typeface){
+		
+		if(view != null){
+			Context context = getContext();
+			((TextView) view).setTypeface(Typeface.createFromAsset(context.getAssets(), typeface));
+		}
+		return self();
+	}
+	
 	/**
 	 * Enable a view.
 	 *
