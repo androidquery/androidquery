@@ -1304,7 +1304,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
                
 		}
 		
-		if(GZIP && headers == null || !headers.containsKey("Accept-Encoding")){
+		if(GZIP && (headers == null || !headers.containsKey("Accept-Encoding"))){
 			hr.addHeader("Accept-Encoding", "gzip");
 		}
 			
