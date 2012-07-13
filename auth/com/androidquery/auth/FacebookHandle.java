@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
@@ -546,6 +547,7 @@ public class FacebookHandle extends AccountHandle{
                 	
                 	String description = data.getStringExtra("error_description");
                     AQUtility.debug("fb error", description);
+                    Log.e("fb error", description);
                 	
                 	failure();
                 }
