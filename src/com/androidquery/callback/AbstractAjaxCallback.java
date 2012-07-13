@@ -1341,8 +1341,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	
         	try{
         		HttpEntity entity = response.getEntity();
+        		
+        		/*
+        		Header encoding = entity.getContentEncoding();
+        		AQUtility.debug("error encoding", encoding);
+        		
         		byte[] s = AQUtility.toBytes(entity.getContent());
         		error = new String(s, "UTF-8");
+        		*/
+        		
+        		InputStream is = entity.getContent();
+        		
+        		if(isGZip(entity)){
+        			is = new GZIPInputStream(is);
+        		}
+        		
+        		byte[] s = AQUtility.toBytes(is);
+        		error = new String(s, "UTF-8");
+        		
         		AQUtility.debug("error", error);
         	}catch(Exception e){
         		AQUtility.debug(e);
@@ -1371,8 +1387,17 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        	os = new FileOutputStream(file);
 		        }
 		        
+		        /*
 		        Header encoding = entity.getContentEncoding();
+		        AQUtility.debug("response encoding", encoding);
 		        if(encoding != null && encoding.getValue().equalsIgnoreCase("gzip")) {
+		        	is = new GZIPInputStream(entity.getContent());
+		        	AQUtility.copy(is, os);
+		        }else{
+		        	entity.writeTo(os);
+		        }*/
+		        
+		        if(isGZip(entity)) {
 		        	is = new GZIPInputStream(entity.getContent());
 		        	AQUtility.copy(is, os);
 		        }else{
@@ -1394,20 +1419,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	        	AQUtility.close(os);
 	        }
 	        
-	        /*
-	        PredefinedBAOS baos = new PredefinedBAOS(size);
-	        
-	        Header encoding = entity.getContentEncoding();
-	        if(encoding != null && encoding.getValue().equalsIgnoreCase("gzip")) {
-	        	InputStream is = new GZIPInputStream(entity.getContent());
-	        	AQUtility.copy(is, baos);
-	        }else{
-	        	entity.writeTo(baos);
-	        }
-	        
-	        
-	        data = baos.toByteArray();
-	        */
         }
         
         AQUtility.debug("response", code);
@@ -1418,6 +1429,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         status.code(code).message(message).error(error).redirect(redirect).time(new Date()).data(data).file(file).client(client).context(context).headers(response.getAllHeaders());
 		
         
+	}
+	
+	private boolean isGZip(HttpEntity entity){
+		
+		Header encoding = entity.getContentEncoding();
+        return encoding != null && encoding.getValue().equalsIgnoreCase("gzip");
+		
 	}
 	
 	/**

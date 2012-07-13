@@ -424,6 +424,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNull(result);
         assertEquals(404, status.getCode());
 		
+        
 	}
 	
 	
@@ -1037,5 +1038,58 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		return result;
 		
 	}
+	
+	public void testAjaxGzip() {
+		
+		String url = "http://www.yahoo.com";
+        
+		AjaxCallback<String> cb = new AjaxCallback<String>(){
+			
+			@Override
+			public void callback(String url, String jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		cb.url(url).type(String.class);		
+        aq.ajax(cb);
+        
+        waitAsync();
+            
+        String html = (String) result;
+        
+        assertNotNull(result);
+        assertTrue(html.contains("<html"));
+    }
+	
+	
+	public void testAjaxGzipError() {
+		
+		String url = "http://www.thenorthface.com/invalid";
+        
+		AjaxCallback<String> cb = new AjaxCallback<String>(){
+			
+			@Override
+			public void callback(String url, String jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		cb.url(url).type(String.class);		
+        aq.ajax(cb);
+        
+        waitAsync();
+            
+        assertNull(result);
+        assertTrue(status.getCode() == 404);
+        
+        assertTrue(status.getError().contains("<html"));
+    }
 	
 }
