@@ -15,9 +15,9 @@
     </string-array>
     
     <string-array name="top_values">
-        <item>com.androidquery.test.IntentListActivity:async:updated</item>
+        <item>com.androidquery.test.IntentListActivity:async</item>
         <item>com.androidquery.test.IntentListActivity:image:updated</item>
-        <item>com.androidquery.test.IntentListActivity:auth:updated</item>
+        <item>com.androidquery.test.IntentListActivity:auth</item>
         <item>com.androidquery.test.IntentListActivity:location:preview</item>
         <item>com.androidquery.test.IntentListActivity:xml</item>
         <item>com.androidquery.test.IntentListActivity:service</item>
@@ -62,13 +62,13 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_html</item>   
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_bytes</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xml</item>
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_file:beta</item>
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_file_custom:beta</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_file</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_file_custom</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_web:beta</item>
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_inputstream:beta</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_inputstream</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_xpp</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_json_array</item>
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer:beta</item>
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_transformer</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_multipart</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post_entity</item> 
@@ -76,7 +76,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialog</item> 
-        <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_activity:new</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_activity</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cookie</item>
@@ -101,7 +101,8 @@
         <item>Animation (Custom)</item>
         
         <item>Aspect Ratio (Dynamic)</item>          
-        <item>Aspect Ratio (Fixed)</item>  
+        <item>Aspect Ratio (Fixed)</item>
+        <item>Aspect Ratio (Anchor)</item>  
         
         <item>Round Corner</item>  
         
@@ -159,7 +160,8 @@
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_ratio</item>
         <item>com.androidquery.test.image.ImageLoadingAspectRatioActivity:image_ratio_fixed</item>
-        <item>com.androidquery.test.image.ImageLoadingActivity:image_round</item>
+        <item>com.androidquery.test.image.ImageLoadingAspectRatioActivity:image_ratio_anchor:new</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_round:new</item>
         <item>com.androidquery.test.image.ImageZoomActivity:image_zoom</item>
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
@@ -169,8 +171,8 @@
         <item>com.androidquery.test.image.ImageLoadingListOptionsActivity:image_options</item>
         
         <item>com.androidquery.test.image.ImageLoadingGridActivity:image_grid</item>
-        <item>com.androidquery.test.image.ImageLoadingGalleryActivity:image_gallery:new</item>
-        <item>com.androidquery.test.image.ImageLoadingExpandableListActivity:image_elist:new</item>
+        <item>com.androidquery.test.image.ImageLoadingGalleryActivity:image_gallery</item>
+        <item>com.androidquery.test.image.ImageLoadingExpandableListActivity:image_elist</item>
         
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_chart</item>
@@ -219,12 +221,12 @@
     </string-array>
   
   	<string-array name="auth_values">
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook:beta</item>
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook_sso:beta</item> 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook</item>
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_facebook_sso</item> 
   		 
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter:beta</item>
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter_token:beta</item> 
-  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_basic:beta</item>
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter</item>
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter_token</item> 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_basic</item>
   		
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_pick_account</item>  
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_last_account</item>  
@@ -280,6 +282,7 @@
         
         <item>image_ratio</item>
         <item>image_ratio_fixed</item>
+        <item>image_ratio_anchor</item>
         <item>image_round</item>
         <item>image_zoom</item>
             
@@ -387,6 +390,7 @@
         
         <item>Preserve Image Aspect Ratio Dynamically</item>
         <item>Predefined Image Aspect Ratio</item>
+        <item>Predefined Image Aspect Ratio with Anchor</item>
         
         <item>Round Corner Image</item>
         

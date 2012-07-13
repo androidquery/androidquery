@@ -72,6 +72,7 @@ import com.androidquery.auth.AccountHandle;
 import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.callback.ImageOptions;
 import com.androidquery.callback.Transformer;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
@@ -726,6 +727,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		if(view instanceof ImageView){		
 			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round);			
+			reset();
+		}
+		
+		return self();
+	}
+	
+	public T image(String url, ImageOptions options){
+		
+		if(view instanceof ImageView){		
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, progress, ah, options);			
 			reset();
 		}
 		

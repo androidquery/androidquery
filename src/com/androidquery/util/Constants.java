@@ -19,7 +19,7 @@ package com.androidquery.util;
 public interface Constants {
 
 
-	public static final String VERSION = "0.22.10";
+	public static final String VERSION = "0.23.1";
 	
 	public static final int LAYER_TYPE_SOFTWARE = 1;
 	public static final int LAYER_TYPE_HARDWARE = 2;

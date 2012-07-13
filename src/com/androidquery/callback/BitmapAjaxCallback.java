@@ -754,6 +754,21 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 */
 	
+	public static void async(Activity act, Context context, ImageView iv, String url, Object progress, AccountHandle ah, ImageOptions options){
+	
+		async(act, context, iv, url, options.memCache, options.fileCache, options.targetWidth, options.fallback, options.preset, options.animation, options.ratio, options.anchor, progress, ah, options.policy, options.round);
+		
+	}
+	
+	
+	/**
+	 * AQuery internal use only. Please uses AQuery image() methods instead.
+	 * 
+	 * Optimize memory usage if mem hit and there's no custom callback.
+	 *
+	 *
+	 */
+	
 	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, Object progress, AccountHandle ah, int policy, int round){
 		
 		Bitmap bm = null;

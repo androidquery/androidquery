@@ -22,6 +22,7 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.callback.ImageOptions;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 import com.googlecode.charts4j.AxisLabels;
@@ -174,9 +175,11 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	public void image_round(){
 		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
-		aq.id(R.id.image);//.progress(R.id.progress).image(url);
 		
-		BitmapAjaxCallback.async(this, this, aq.getImageView(), url, true, true, 0, 0, null, 0, 0, 0, null, null, 0, 15);
+		ImageOptions options = new ImageOptions();
+		options.round = 15;
+		
+		aq.id(R.id.image).image(url, options);
 		
 	}
 	

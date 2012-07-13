@@ -1,0 +1,10 @@
+	public void image_round(){
+		
+		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+	
+		ImageOptions options = new ImageOptions();
+		options.round = 15;
+		
+		aq.id(R.id.image).image(url, options);
+		
+	}
