@@ -1336,14 +1336,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         String message = response.getStatusLine().getReasonPhrase();
         String error = null;
         
+        HttpEntity entity = response.getEntity();
+        InputStream is = null;
         
         if(code < 200 || code >= 300){     
         	
         	try{
-        		HttpEntity entity = response.getEntity();
-        		byte[] s = AQUtility.toBytes(entity.getContent());
-        		error = new String(s, "UTF-8");
+        		
+        		byte[] s = null;
+        		Header encoding = entity.getContentEncoding();
+		        if(encoding != null && encoding.getValue().equalsIgnoreCase("gzip")) {
+		        	is = new GZIPInputStream(entity.getContent());
+		        	s = AQUtility.toBytes(is);
+		        } else
+		        	s = AQUtility.toBytes(entity.getContent());
+
+		        error = new String(s, "UTF-8");
         		AQUtility.debug("error", error);
+        		
         	}catch(Exception e){
         		AQUtility.debug(e);
         	}
@@ -1351,8 +1361,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	
         }else{
         	
-        	HttpEntity entity = response.getEntity();	
-			
 			HttpHost currentHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
 	        redirect = currentHost.toURI() + currentReq.getURI();
@@ -1360,7 +1368,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	        int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
 	        
 	        OutputStream os = null;
-	        InputStream is = null;
 	        
 	        try{
 	        
