@@ -148,8 +148,13 @@ public class FacebookHandle extends AccountHandle{
 	}
 	
 	private void failure(){
+		failure("cancel");
+	}
+	
+	
+	private void failure(String message){
 		dismiss();
-		failure(act, AjaxStatus.AUTH_ERROR, "cancel");
+		failure(act, AjaxStatus.AUTH_ERROR, message);
 	}
 	
 	protected void auth() {
@@ -547,9 +552,8 @@ public class FacebookHandle extends AccountHandle{
                 	
                 	String description = data.getStringExtra("error_description");
                     AQUtility.debug("fb error", description);
-                    Log.e("fb error", description);
-                	
-                	failure();
+                    Log.e("fb error", description);       	
+                	failure(description);
                 }
             // No errors.
             }else{
