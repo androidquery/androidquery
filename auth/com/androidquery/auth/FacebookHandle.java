@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
@@ -147,8 +148,13 @@ public class FacebookHandle extends AccountHandle{
 	}
 	
 	private void failure(){
+		failure("cancel");
+	}
+	
+	
+	private void failure(String message){
 		dismiss();
-		failure(act, AjaxStatus.AUTH_ERROR, "cancel");
+		failure(act, AjaxStatus.AUTH_ERROR, message);
 	}
 	
 	protected void auth() {
@@ -546,8 +552,8 @@ public class FacebookHandle extends AccountHandle{
                 	
                 	String description = data.getStringExtra("error_description");
                     AQUtility.debug("fb error", description);
-                	
-                	failure();
+                    Log.e("fb error", description);       	
+                	failure(description);
                 }
             // No errors.
             }else{

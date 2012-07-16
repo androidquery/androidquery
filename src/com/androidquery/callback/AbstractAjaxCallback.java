@@ -1179,6 +1179,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	/**
 	 * Cancel ALL ajax tasks.
+	 * 
+	 * Warning: Do not call this method unless you are exiting an application.
+	 * 
 	 */
 	
 	public static void cancel(){
@@ -1249,6 +1252,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	private static SocketFactory ssf;
+	
+	/**
+	 * Set the secure socket factory.
+	 * 
+	 * Could be used to work around SSL certificate not truested issue.
+	 * 
+	 * http://stackoverflow.com/questions/1217141/self-signed-ssl-acceptance-android
+	 */
+	
 	public static void setSSF(SocketFactory sf){
 		ssf = sf;
 		client = null;
