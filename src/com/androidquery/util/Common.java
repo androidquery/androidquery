@@ -275,8 +275,6 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 			int first = lv.getFirstVisiblePosition();
 			int last = lv.getLastVisiblePosition();
 			
-			//AQUtility.debug(first, last);
-			
 			int count = last - first;
 			
 			ListAdapter la = lv.getAdapter();
@@ -288,9 +286,6 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 				View convertView = lv.getChildAt(i);
 				Number targetPacked = (Number) convertView.getTag(AQuery.TAG_NUM);
 				
-				//AQUtility.debug("checking packed", targetPacked);
-				
-				//if(targetPacked != null && (targetPacked.longValue() == packed || targetPacked.intValue() == -1)){
 				if(targetPacked != null){
 					la.getView((int) packed, convertView, lv);
 					convertView.setTag(AQuery.TAG_NUM, null);
@@ -306,8 +301,9 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 	
 	public static boolean shouldDelay(int groupPosition, int childPosition, View convertView, ViewGroup parent, String url){
 		
-		Bitmap bm = BitmapAjaxCallback.getMemoryCached(url, 0);
-		if(bm != null) return false;
+		if(url == null || BitmapAjaxCallback.isMemoryCached(url)){
+			return false;
+		}
 		
 		AbsListView lv = (AbsListView) parent;
 		
@@ -355,10 +351,8 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 	
 	private static boolean shouldDelayGallery(int position, View convertView, ViewGroup parent, String url){
 		
-		if(url == null) return false;
-		
-		boolean hit = BitmapAjaxCallback.getMemoryCached(url, 0) != null;
-		if(hit){
+	
+		if(url == null || BitmapAjaxCallback.isMemoryCached(url)){
 			return false;
 		}
 		

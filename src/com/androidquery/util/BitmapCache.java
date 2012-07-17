@@ -90,6 +90,7 @@ public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 	}
 	
 	private int pixels(Bitmap bm){
+		if(bm == null) return 0;
 		return bm.getWidth() * bm.getHeight();
 	}
 	

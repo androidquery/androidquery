@@ -375,6 +375,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return bm;
 	}
 	
+	
 	public static Bitmap getMemoryCached(Context context, int resId){
 		
 		String key = Integer.toString(resId);			
@@ -541,13 +542,22 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return memGet(url, targetWidth, round);
 	}
 	
+	/**
+	 * Check if the bitmap is memory cached.
+	 *
+	 * @param url the url
+	 * @return if the url is memcached
+	 */
+	public static boolean isMemoryCached(String url){
+		return getBCache().containsKey(url) || getSCache().containsKey(url) || getICache().containsKey(url);
+	}
 	
 	/**
 	 * Gets the memory cached bitmap.
 	 *
 	 * @param url the url
 	 * @param targetWidth the target width, 0 for non downsampling
-	 * @return the memory cached
+	 * @return the memory cached bitmap
 	 */
 	public static Bitmap getMemoryCached(String url, int targetWidth){
 		return memGet(url, targetWidth, 0);
@@ -578,7 +588,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 				
 			}
 		}
-
+		
 		return result;
 	}
 	
@@ -611,7 +621,17 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			cache = getBCache();
 		}
 		
-		cache.put(getKey(url, targetWidth, round), bm);
+		if(targetWidth > 0 || round > 0){
+			
+			String key = getKey(url, targetWidth, round);			
+			cache.put(key, bm);
+			cache.put(url, null);
+			
+		}else{
+			cache.put(url, bm);
+		}
+		
+		
 		
 	}
 	
@@ -685,7 +705,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio, anchor);
 		}else{
 			bd = new BitmapDrawable(iv.getResources(), bm);
-			//bd = new RatioDrawable(iv.getResources(), bm);
 		}
 		
 		return bd;
@@ -778,8 +797,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 		if(bm != null){
-			iv.setTag(AQuery.TAG_URL, url);
-			//if(progress != null) progress.setVisibility(View.GONE);		
+			iv.setTag(AQuery.TAG_URL, url);		
 			Common.showProgress(progress, url, false);
 			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor, AjaxStatus.MEMORY);
 		}else{
