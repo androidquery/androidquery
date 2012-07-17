@@ -625,7 +625,11 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			
 			String key = getKey(url, targetWidth, round);			
 			cache.put(key, bm);
-			cache.put(url, null);
+			
+			//to indicate that the variant of that url is cached by puting and empty value
+			if(!cache.containsKey(url)){
+				cache.put(url, null);
+			}
 			
 		}else{
 			cache.put(url, bm);
