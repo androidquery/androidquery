@@ -1590,14 +1590,38 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         String message = conn.getResponseMessage();
         
         byte[] data = null;
+        InputStream is = null;
+        String error = null;
         
         if(code < 200 || code >= 300){        	
-        	//throw new IOException();
+
+        	try{
+        		
+        		byte[] s = null;
+        		String encoding = conn.getContentEncoding();
+		        if(encoding != null && encoding.equalsIgnoreCase("gzip")) {
+		        	is = new GZIPInputStream(conn.getInputStream());
+		        	s = AQUtility.toBytes(is);
+		        } else
+		        	s = AQUtility.toBytes(conn.getInputStream());
+
+		        error = new String(s, "UTF-8");
+        		AQUtility.debug("error", error);
+        		
+        	}catch(Exception e){
+        		AQUtility.debug(e);
+        	}
+
         }else{
         	
-        	InputStream is = conn.getInputStream();
-    		data = AQUtility.toBytes(is);
-    		
+        	String encoding = conn.getContentEncoding();
+	        if(encoding != null && encoding.equalsIgnoreCase("gzip")) {
+	        	is = new GZIPInputStream(conn.getInputStream());
+	        } else 
+	        	is = conn.getInputStream();
+	        
+	        data = AQUtility.toBytes(is);
+	        
         }
         
         AQUtility.debug("response", code);
@@ -1606,7 +1630,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	AQUtility.debug(data.length, url);
         }
         
-        status.code(code).message(message).redirect(url).time(new Date()).data(data).client(null);
+        status.code(code).message(message).redirect(url).time(new Date()).data(data).error(error).client(null);
 			
 	
 	
