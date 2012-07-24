@@ -16,29 +16,14 @@
 
 package com.androidquery.callback;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
+import com.androidquery.AQuery;
+import com.androidquery.auth.AccountHandle;
+import com.androidquery.auth.GoogleHandle;
+import com.androidquery.util.AQUtility;
+import com.androidquery.util.Common;
+import com.androidquery.util.Constants;
+import com.androidquery.util.PredefinedBAOS;
+import com.androidquery.util.XmlDom;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -84,14 +69,29 @@ import android.net.Uri;
 import android.util.Xml;
 import android.view.View;
 
-import com.androidquery.AQuery;
-import com.androidquery.auth.AccountHandle;
-import com.androidquery.auth.GoogleHandle;
-import com.androidquery.util.AQUtility;
-import com.androidquery.util.Common;
-import com.androidquery.util.Constants;
-import com.androidquery.util.PredefinedBAOS;
-import com.androidquery.util.XmlDom;
+import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
 /**
  * The core class of ajax callback handler.
@@ -1324,8 +1324,23 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		HttpContext context = new BasicHttpContext(); 	
 		CookieStore cookieStore = new BasicCookieStore();
 		context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+
+                HttpResponse response;
+
+                if(hr.getURI().getAuthority().contains("_")) {
+                    URL urlObj = hr.getURI().toURL();
+                    HttpHost host;
+                    if(urlObj.getPort() == -1) {
+                        host = new HttpHost(urlObj.getHost(), 80, urlObj.getProtocol());
+                    } else {
+                        host = new HttpHost(urlObj.getHost(), urlObj.getPort(), urlObj.getProtocol());
+                    }
+                    response = client.execute(host, hr, context);
+                } else {
+                    response = client.execute(hr, context);
+                }
 		
-		HttpResponse response = client.execute(hr, context);
+
 		
         byte[] data = null;
         File file = getPreFile();
