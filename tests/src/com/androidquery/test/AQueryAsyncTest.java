@@ -853,6 +853,45 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertEquals(2345, jo.optInt("data2"));
 	}
 	
+	public void testAjaxPostMultiError(){
+		
+        String url = "http://www.androidquery.com/p/multipart2";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		byte[] data = new byte[1234];
+		byte[] data2 = new byte[2345];
+		
+		params.put("data", data);
+		params.put("data2", data2);
+		
+        aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+            	AQUtility.debug(status.getCode(), status.getError());
+            	
+        		AQueryAsyncTest.this.result = jo;
+        		AQueryAsyncTest.this.status = status;
+            }
+        });
+		
+        waitAsync();
+		
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug("error code", status.getCode());
+        
+        assertNull(jo);       
+        assertEquals(404, status.getCode());
+        
+        
+        String error = status.getError();
+        assertNotNull(error);
+        
+	}
+	
 	
 	public void testAjaxCookieGet(){
 		

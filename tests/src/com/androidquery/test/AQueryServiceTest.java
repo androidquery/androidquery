@@ -54,18 +54,24 @@ public class AQueryServiceTest extends AbstractTest<AQueryTestActivity> {
 	
 	public void testMarketSubmit() throws IOException{
 	
-		/*
+		
 		AQUtility.debug("start");
 		
-		String gurl = "http://192.168.1.222/test/test.htm";
+		String appId = "com.androidquery";
+		String locale = "en_US";
+		
+		//String gurl = "http://192.168.1.222/test/test.htm";
+		String gurl = "https://market.android.com/details?id=" + appId + "&hl=" + locale;
 		
 		byte[] data = IOUtility.openBytes(gurl);
 		
 		String html = new String(data, "UTF-8");
 		
-		//09-27 16:59:38.101: WARN/AQuery(21973): jo:{"update":1317113814152,"fetch":false,"app":"com.androidquery","icon":"https:\/\/g1.gstatic.com\/android\/market\/com.androidquery\/hi-256-0-32ae6f723f990caab754ae5dfd5e3718b72aa3d3","desc":null,"status":"1","locale":"zh-TW","name":"AndroidQuery代碼段","published":"九月 20, 2011","dialog":{"update":"更新","body":"版本:  0.13.2\n\n九月 20, 2011\n\n預覽版本0.13.2。","title":"更新公告","rate":"評論","skip":"跳過"},"recent":"預覽版本0.13.2。","version":"0.13.2"}
-
-		String url = "http://192.168.1.222/api/market?app=com.androidquery&locale=zh-TW&version=0.13.2&code=16";
+		//String url = "http://192.168.1.222/api/market?app=com.androidquery&locale=zh-TW&version=0.13.2&code=16";
+		
+		//String url = "https://androidquery.appspot.com/api/market?app=com.androidquery&locale=en_US&version=0.24.46&code=46&aq=0.23.1&force=true";
+		String url = "http://192.168.1.165/api/market?app=com.androidquery&locale=en_US&version=0.24.46&code=46&aq=0.23.1&force=true";
+		
 		
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();		
 		cb.url(url).type(JSONObject.class).handler(this, "jsonCb");
@@ -89,7 +95,7 @@ public class AQueryServiceTest extends AbstractTest<AQueryTestActivity> {
 		assertNotNull(pub);
 		assertNotNull(code);
 		
-		*/
+		
 	}
 	
 	public void jsonCb(String url, JSONObject jo, AjaxStatus status){

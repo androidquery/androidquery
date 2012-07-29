@@ -1614,13 +1614,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         
         byte[] data = null;
         
+        String encoding = conn.getContentEncoding();
+    	String error = null;
+        
         if(code < 200 || code >= 300){        	
-        	//throw new IOException();
+        	
+        	error = new String(toData(encoding, conn.getErrorStream()), "UTF-8");
+        
         }else{
         	
-        	InputStream is = conn.getInputStream();
-    		data = AQUtility.toBytes(is);
-    		
+        	//InputStream is = conn.getInputStream();
+    		//data = AQUtility.toBytes(is);
+    		data = toData(encoding, conn.getInputStream());
         }
         
         AQUtility.debug("response", code);
@@ -1629,11 +1634,23 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	AQUtility.debug(data.length, url);
         }
         
-        status.code(code).message(message).redirect(url).time(new Date()).data(data).client(null);
+        status.code(code).message(message).redirect(url).time(new Date()).data(data).error(error).client(null);
 			
 	
 	
 	}
+	
+	private byte[] toData(String encoding, InputStream is) throws IOException{
+		
+		boolean gzip = "gzip".equalsIgnoreCase(encoding);
+		
+		if(gzip){
+			is = new GZIPInputStream(is);
+		}
+		
+		return AQUtility.toBytes(is);
+	}
+	
 	
 	private static void writeObject(DataOutputStream dos, String name, Object obj) throws IOException{
 		
