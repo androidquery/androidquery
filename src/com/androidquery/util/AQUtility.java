@@ -98,6 +98,10 @@ public class AQUtility {
 		}
 	}
 	
+	public static void warn(Object msg, Object msg2){
+		Log.w("AQuery", msg + ":" + msg2);
+	}
+	
 	public static void debug(Object msg, Object msg2){
 		if(debug){
 			Log.w("AQuery", msg + ":" + msg2);
@@ -117,7 +121,8 @@ public class AQUtility {
 
 		try{
 
-			debug(e);
+			//debug(e);
+			warn("reporting", Log.getStackTraceString(e));
 			
 			if(eh != null){
 				eh.uncaughtException(Thread.currentThread(), e);

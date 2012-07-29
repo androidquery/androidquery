@@ -798,6 +798,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 */
 	public void async(Activity act){
 		
+		if(act.isFinishing()){
+			AQUtility.warn("warning", "Possible memory leak. Calling ajax with a terminated activity.");
+		}
+		
+		if(type == null){
+			AQUtility.warn("warning", "type() is not called with reponse type!");
+		}
+		
 		this.act = new WeakReference<Activity>(act);
 		async((Context) act);
 		

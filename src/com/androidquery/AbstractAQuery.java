@@ -1748,20 +1748,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	protected <K> T invoke(AbstractAjaxCallback<?, K> cb){
 				
-		/*
-		if(ah != null){
-			callback.auth(ah);
-		}
-		
-		if(progress != null){
-			callback.progress(progress);
-		}
-		
-		if(trans != null){
-			callback.transformer(trans);
-		}
-		
-		 */
 		
 		cb.auth(ah);
 		cb.progress(progress);
