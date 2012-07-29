@@ -196,6 +196,8 @@ public class AjaxStatus {
 	
 	/**
 	 * Gets the http response code.
+	 * 
+	 * Can be also be NETWORK_ERROR, AUTH_ERROR, or TRANSFORM_ERROR.
 	 *
 	 * @return code
 	 */
