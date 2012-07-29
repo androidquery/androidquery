@@ -157,7 +157,12 @@ public class AjaxStatus {
 		this.close = c;
 	}
 	
-	protected void close(){
+	/**
+	 * Close any opened inputstream associated with the response. Call this method when finish parsing the response of a synchronous call.
+	 * 
+	 */
+	
+	public void close(){
 		AQUtility.close(close);
 		close = null;
 	}

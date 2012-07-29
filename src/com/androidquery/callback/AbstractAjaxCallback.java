@@ -474,7 +474,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		filePut();
 		
-		status.close();
+		if(!blocked){
+			status.close();
+		}
 		
 		wake();
 		AQUtility.debugNotify();

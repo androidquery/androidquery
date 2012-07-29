@@ -2,6 +2,7 @@ package com.androidquery.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.xmlpull.v1.XmlPullParser;
 
 import com.androidquery.AQuery;
@@ -475,6 +477,36 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		String u = cb.getUrl();
         JSONObject jo = cb.getResult();
         AjaxStatus status = cb.getStatus();
+        
+        assertNotNull(jo);       
+        assertNotNull(jo.opt("responseData"));
+        checkStatus(status);
+    }
+	
+	public void testWaitBlockInputStream() {
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		AjaxCallback<InputStream> cb = new AjaxCallback<InputStream>();		
+		cb.url(url).type(InputStream.class);		
+        
+		aq.sync(cb);
+        
+		String u = cb.getUrl();
+		InputStream is = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        byte[] data = AQUtility.toBytes(is);
+        
+        JSONObject jo = null;
+		String str = null;
+    	try {    		
+    		str = new String(data, "UTF-8");
+			jo = (JSONObject) new JSONTokener(str).nextValue();
+		} catch (Exception e) {	  		
+			AQUtility.debug(e);
+			AQUtility.debug(str);
+		}
         
         assertNotNull(jo);       
         assertNotNull(jo.opt("responseData"));
