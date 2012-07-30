@@ -429,6 +429,28 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
 	}
 	
+	//http://beauharnois_bupa.tripod.com/chutessaint-louis-small.jpg
+	public void testUnderscoreDomain(){
+		
+		String url = "http://beauharnois_bupa.tripod.com/chutessaint-louis-small.jpg";
+        
+        aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
+
+            @Override
+            public void callback(String url, byte[] json, AjaxStatus status) {
+                
+            	done(url, json, status);
+            	
+            }
+        });
+		
+        waitAsync();
+        
+        assertNotNull(result);
+        //assertEquals(404, status.getCode());
+		
+        
+	}
 	
 	public void testNetworkError(){
 		
