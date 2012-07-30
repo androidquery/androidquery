@@ -1,14 +1,8 @@
 package com.androidquery.callback;
 
-import java.io.File;
-
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.widget.ImageView;
 
 import com.androidquery.AQuery;
-import com.androidquery.auth.AccountHandle;
 
 public class ImageOptions {
 
