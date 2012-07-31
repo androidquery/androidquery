@@ -453,6 +453,10 @@ public class AQUtility {
 	*/
 	public static File getCacheFile(File dir, String url){
 		if(url == null) return null;
+		if(url.startsWith(File.separator)){
+			return new File(url);
+		}
+		
 		String name = getCacheFileName(url);
 		File file = makeCacheFile(dir, name);
 		return file;

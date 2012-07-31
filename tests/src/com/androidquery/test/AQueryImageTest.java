@@ -424,5 +424,38 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
     }	
 
+	public void testImageFileUrl() {
+		
+		clearCache();
+		
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.url(ICON_URL).type(File.class);		
+		
+        aq.sync(cb);
+		
+        final File file = cb.getResult();
+        
+        assertNotNull(file);   
+		
+		
+		AQUtility.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				aq.id(R.id.image).image(file.getAbsolutePath());
+			}
+		});
+		
+		waitAsync(2000);
+		
+		assertLoaded(aq.getImageView(), true);
+		
+		Bitmap bm = aq.getCachedImage(file.getAbsolutePath());
+		
+		assertNotNull(bm);
+		
+		AQUtility.debug(bm.getWidth());
+		
+    }
 	
 }

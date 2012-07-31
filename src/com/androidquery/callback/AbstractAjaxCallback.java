@@ -926,8 +926,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private void backgroundWork(){
 	
-		
-		
 		if(!refresh){
 		
 			if(fileCache){	

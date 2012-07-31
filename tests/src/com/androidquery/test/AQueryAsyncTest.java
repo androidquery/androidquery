@@ -157,6 +157,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
     }
 	
+	
 	//Test: public <K> T ajax(String url, Class<K> type, Object handler, String callback)
 	public void testAjaxHandler() {
 		
@@ -1183,6 +1184,37 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertTrue(status.getCode() == 404);
         
         assertTrue(status.getError().contains("<html"));
+    }
+	
+	public void testAjaxFileUrl() {
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.url(url).type(File.class);		
+		
+        //aq.ajax(url, JSONObject.class, cb);
+        aq.sync(cb);
+		
+        File file = cb.getResult();
+        
+        assertNotNull(file);       
+        
+        AQUtility.debug(file.getAbsolutePath());
+        
+        String path = file.getAbsolutePath();
+        
+        AjaxCallback<String> cb2 = new AjaxCallback<String>();
+		cb2.url(path).fileCache(true).type(String.class);
+        
+		aq.sync(cb2);
+		
+		String html = cb2.getResult();
+		
+		AQUtility.debug(html);
+		
+		assertNotNull(html);
+		
     }
 	
 }
