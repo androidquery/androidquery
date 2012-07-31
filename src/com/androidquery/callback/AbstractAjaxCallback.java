@@ -77,12 +77,14 @@ import org.xmlpull.v1.XmlPullParser;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Xml;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.androidquery.AQuery;
 import com.androidquery.auth.AccountHandle;
@@ -1357,27 +1359,20 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         String message = response.getStatusLine().getReasonPhrase();
         String error = null;
         
+        HttpEntity entity = response.getEntity();
+        Header eheader = entity.getContentEncoding();
+        
+        String encoding = null;
+        if(eheader != null) encoding = eheader.getValue();
+        
         
         if(code < 200 || code >= 300){     
         	
         	try{
-        		HttpEntity entity = response.getEntity();
-        		
-        		/*
-        		Header encoding = entity.getContentEncoding();
-        		AQUtility.debug("error encoding", encoding);
-        		
-        		byte[] s = AQUtility.toBytes(entity.getContent());
-        		error = new String(s, "UTF-8");
-        		*/
         		
         		InputStream is = entity.getContent();
+        		byte[] s = toData(encoding, is);
         		
-        		if(isGZip(entity)){
-        			is = new GZIPInputStream(is);
-        		}
-        		
-        		byte[] s = AQUtility.toBytes(is);
         		error = new String(s, "UTF-8");
         		
         		AQUtility.debug("error", error);
@@ -1388,7 +1383,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	
         }else{
         	
-        	HttpEntity entity = response.getEntity();	
 			
 			HttpHost currentHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
@@ -1408,22 +1402,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        	os = new FileOutputStream(file);
 		        }
 		        
-		        /*
-		        Header encoding = entity.getContentEncoding();
-		        AQUtility.debug("response encoding", encoding);
-		        if(encoding != null && encoding.getValue().equalsIgnoreCase("gzip")) {
-		        	is = new GZIPInputStream(entity.getContent());
-		        	AQUtility.copy(is, os);
-		        }else{
-		        	entity.writeTo(os);
-		        }*/
+		        copy(entity.getContent(), os, encoding, (int) entity.getContentLength());
 		        
-		        if(isGZip(entity)) {
-		        	is = new GZIPInputStream(entity.getContent());
-		        	AQUtility.copy(is, os);
-		        }else{
-		        	entity.writeTo(os);
-		        }
 		        
 		        os.flush();
 		        
@@ -1452,12 +1432,29 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         
 	}
 	
-	private boolean isGZip(HttpEntity entity){
+	private void copy(InputStream is, OutputStream os, String encoding, int max) throws IOException{
 		
-		Header encoding = entity.getContentEncoding();
-        return encoding != null && encoding.getValue().equalsIgnoreCase("gzip");
+		if("gzip".equalsIgnoreCase(encoding)){
+			is = new GZIPInputStream(is);
+		}
+		
+		Object p = null;
+		
+		if(progress != null){
+			p = progress.get();
+		}
+		
+		if(p instanceof ProgressDialog){
+			AQUtility.copy(is, os, max, (ProgressDialog) p, null);
+		}else if(p instanceof ProgressBar){
+			AQUtility.copy(is, os, max, null, (ProgressBar) p);
+		}else{
+			AQUtility.copy(is, os);
+		}
+		
 		
 	}
+	
 	
 	/**
 	 * Set the authentication type of this request. This method requires API 5+.

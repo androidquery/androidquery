@@ -36,6 +36,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
 import android.os.Environment;
@@ -45,6 +46,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.widget.ProgressBar;
 
 import com.androidquery.AQuery;
 
@@ -316,13 +318,43 @@ public class AQUtility {
 	}
 	
     private static final int IO_BUFFER_SIZE = 1024;
-
     public static void copy(InputStream in, OutputStream out) throws IOException {
-        byte[] b = new byte[IO_BUFFER_SIZE];
+    	copy(in, out, 0, null, null);
+    }
+    
+    public static void copy(InputStream in, OutputStream out, int max, ProgressDialog dialog, ProgressBar bar) throws IOException {
+       
+    	if(max <= 0) max = 100;
+    	
+    	if(dialog != null){
+    		if(dialog.isIndeterminate()){
+    			dialog = null;
+    		}else{
+    			dialog.setMax(max);
+    			dialog.setProgress(0);
+    		}
+    	}
+    	
+    	if(bar != null){
+    		if(bar.isIndeterminate()){
+    			bar = null;
+    		}else{
+    			bar.setMax(max);
+    			bar.setProgress(0);
+    		}
+    	}
+    	
+    	byte[] b = new byte[IO_BUFFER_SIZE];
         int read;
-        while ((read = in.read(b)) != -1) {
+        while((read = in.read(b)) != -1){
             out.write(b, 0, read);
+            if(dialog != null) dialog.incrementProgressBy(read);        	
+            if(bar != null) bar.incrementProgressBy(read);
         }
+        
+        if(dialog != null) dialog.setProgress(max);
+        if(bar != null) bar.setProgress(max);
+        
     }
 
     public static byte[] toBytes(InputStream is){

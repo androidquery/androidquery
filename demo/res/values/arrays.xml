@@ -97,6 +97,7 @@
         
         <item>Preload</item>
         <item>Progress</item>
+        <item>Progress Dialog Bar</item>
         <item>Animation (Default Fade In)</item>
         <item>Animation (Custom)</item>
         
@@ -155,6 +156,7 @@
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_preload</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_progress</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_progress_dialogbar:beta</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_animation</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_animation2</item>
         
@@ -277,6 +279,7 @@
         
         <item>image_preload</item>
         <item>image_progress</item>
+        <item>image_progress_dialogbar</item>
         <item>image_animation</item>
         <item>image_animation2</item>
         
@@ -385,6 +388,7 @@
         
         <item>Preload a placement image before loading real image</item>
         <item>Show Loading Progress</item>
+        <item>Show Loading Progress Bar</item>
         <item>Async Image Load with Predefined Fade-In Animation</item>
         <item>Async Image Load with Custom Animation</item>
         
