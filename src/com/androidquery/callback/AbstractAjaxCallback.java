@@ -1351,7 +1351,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		HttpResponse response = client.execute(hr, context);
 		
         byte[] data = null;
-        File file = getPreFile();
+        
         
         String redirect = url;
         
@@ -1365,6 +1365,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         String encoding = null;
         if(eheader != null) encoding = eheader.getValue();
         
+        File file = null;
         
         if(code < 200 || code >= 300){     
         	
@@ -1394,6 +1395,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	        InputStream is = null;
 	        
 	        try{
+	        	file = getPreFile();
 	        
 		        if(file == null){
 		        	os = new PredefinedBAOS(size);

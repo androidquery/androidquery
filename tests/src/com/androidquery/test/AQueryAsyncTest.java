@@ -1,6 +1,7 @@
 package com.androidquery.test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -1216,5 +1217,68 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		assertNotNull(html);
 		
     }
+	
+	public void testFile404() {
+		
+		String url = "http://androidquery.appspot.com/test/fake";
+		
+		File old = aq.getCachedFile(url);
+		if(old != null){
+			old.delete();
+		}
+		
+		old = aq.getCachedFile(url);
+		assertNull(old);
+        
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.url(url).type(File.class);		
+		
+        //aq.ajax(url, JSONObject.class, cb);
+        aq.sync(cb);
+		
+        File file = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        assertNull(file);       
+        assertEquals(404, status.getCode());
+        
+		old = aq.getCachedFile(url);
+		assertNull(old);
+		
+    }
+	
+	
+	public void testFile404NotOverwritenOldFile() throws IOException {
+		
+		String url = "http://androidquery.appspot.com/test/fake";
+		
+		File old = AQUtility.getCacheFile(AQUtility.getCacheDir(getActivity()), url);
+		if(old != null){
+			old.createNewFile();
+			AQUtility.write(old, new byte[1234]);
+		}
+		
+		old = aq.getCachedFile(url);
+		assertNotNull(old);
+        assertEquals(1234, old.length());
+		
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.url(url).type(File.class);		
+		
+        aq.sync(cb);
+		
+        File file = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        assertNull(file);       
+        assertEquals(404, status.getCode());
+        
+		old = aq.getCachedFile(url);
+		assertNotNull(old);
+        assertEquals(1234, old.length());
+		
+    }
+	
+	
 	
 }
