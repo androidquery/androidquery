@@ -868,8 +868,13 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		
+		/*
 		File tempFile1 = File.createTempFile("pre1", "bin");
 		File tempFile2 = File.createTempFile("pre2", "bin");
+		*/
+		
+		File tempFile1 = AQUtility.getCacheFile(AQUtility.getCacheDir(getActivity()), "pre1");
+		File tempFile2 = AQUtility.getCacheFile(AQUtility.getCacheDir(getActivity()), "pre2");
 		
 		byte[] data1 = new byte[1234];
 		byte[] data2 = new byte[2345];

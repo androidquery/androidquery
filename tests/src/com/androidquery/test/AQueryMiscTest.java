@@ -69,6 +69,7 @@ public class AQueryMiscTest extends AbstractTest<AQueryTestActivity> {
 		
     }
 	
+	
 	public void testAdhoc(){
 		
 		String str = "eka_2322";
