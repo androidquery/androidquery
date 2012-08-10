@@ -37,6 +37,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Gallery;
 import android.widget.ListAdapter;
+import android.widget.ProgressBar;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.BitmapAjaxCallback;
@@ -491,14 +492,28 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 
 				View pv = (View) p;
 				
+				ProgressBar pbar = null;
+				
+				if(p instanceof ProgressBar){
+					pbar = (ProgressBar) p;
+				}
+				
 				if(show){
 					pv.setTag(AQuery.TAG_URL, url);
 					pv.setVisibility(View.VISIBLE);
+					if(pbar != null){
+						pbar.setProgress(0);	
+						pbar.setMax(100);
+					}
+					
 				}else{
 					Object tag = pv.getTag(AQuery.TAG_URL);
 					if(tag == null || tag.equals(url)){
-						pv.setTag(AQuery.TAG_URL, null);
-						pv.setVisibility(View.GONE);						
+						pv.setTag(AQuery.TAG_URL, null);	
+						
+						if(pbar != null && pbar.isIndeterminate()){
+							pv.setVisibility(View.GONE);						
+						}
 					}
 				}
 			}else if(p instanceof Dialog){

@@ -174,6 +174,37 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	public void async_progress_dialogbar(){
+		
+		ProgressDialog dialog = new ProgressDialog(this);
+		
+		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		
+        dialog.setIndeterminate(false);
+        dialog.setCancelable(true);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setTitle("Loading...");
+		
+		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		
+		File ext = Environment.getExternalStorageDirectory();
+		File target = new File(ext, "aquery/myfolder2/photo.jpg");		
+		
+		aq.progress(dialog).download(url, target, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+	}
+	
 	public void async_web(){
 
 		String MOBILE_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533";		
@@ -316,37 +347,6 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		public String id;
 		public String name;		
 	}
-	
-	/*
-	public void async_transformer(){
-		
-		String url = "http://www.androidquery.com/test/jsonarray.json";		
-		GsonTransformer t = new GsonTransformer(){
-			@Override
-			public <T> T transform(String url, Class<T> type, String encoding, byte[] data, AjaxStatus status) {
-				
-				Gson g = new Gson();
-				T result = g.fromJson(new String(data), new TypeToken<List<T>>(){}.getType());				
-				
-				return result;
-			}
-		};
-		
-        aq.transformer(t).progress(R.id.progress).ajax(url, List.class, new AjaxCallback<List>(){			
-			
-			public void callback(String url, List profiles, AjaxStatus status) {	
-				
-				
-				for(Profile profile: (List<Profile>) profiles){
-					AQUtility.debug(profile.id, profile.name);
-				}
-					
-				
-			}			
-		});
-        
-	}
-	*/
 	
 
 	public void async_post(){

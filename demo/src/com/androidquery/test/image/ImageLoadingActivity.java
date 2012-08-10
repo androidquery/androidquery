@@ -155,14 +155,20 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		 
 		aq.id(R.id.image).clear();
 		
-		//dialog.setMax(100);
-		//dialog.incrementProgressBy(10);
-		//dialog.setProgress(50);
-		
-		//dialog.show();
-		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
 		aq.id(R.id.image).progress(dialog).image(imageUrl, false, false);
+		
+		
+	}
+	
+	public void image_progress_bar(){
+		
+		aq.id(R.id.progress_bar).visible();
+		
+		aq.id(R.id.image).clear();
+		
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		aq.id(R.id.image).progress(R.id.progress_bar).image(imageUrl, false, false);
 		
 		
 	}

@@ -1634,8 +1634,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         
         }else{
         	
-        	//InputStream is = conn.getInputStream();
-    		//data = AQUtility.toBytes(is);
     		data = toData(encoding, conn.getInputStream());
         }
         

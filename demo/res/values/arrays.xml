@@ -15,7 +15,7 @@
     </string-array>
     
     <string-array name="top_values">
-        <item>com.androidquery.test.IntentListActivity:async</item>
+        <item>com.androidquery.test.IntentListActivity:async:updated</item>
         <item>com.androidquery.test.IntentListActivity:image:updated</item>
         <item>com.androidquery.test.IntentListActivity:auth</item>
         <item>com.androidquery.test.IntentListActivity:location:preview</item>
@@ -44,6 +44,7 @@
         <item>Caching</item> 
         <item>Progress</item>
         <item>Progress Dialog</item> 
+        <item>Progress Dialog Bar</item> 
         <item>Progress Activity</item> 
         <item>AjaxCallback</item>   
         <item>Request Headers</item>  
@@ -76,6 +77,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialog</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialogbar:beta</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_activity</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
@@ -97,6 +99,7 @@
         
         <item>Preload</item>
         <item>Progress</item>
+        <item>Progress Bar</item>
         <item>Progress Dialog Bar</item>
         <item>Animation (Default Fade In)</item>
         <item>Animation (Custom)</item>
@@ -156,6 +159,7 @@
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_preload</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_progress</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_progress_bar:beta</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_progress_dialogbar:beta</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_animation</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_animation2</item>
@@ -261,6 +265,7 @@
         <item>async_cached</item>
         <item>async_progress</item>
         <item>async_progress_dialog</item>
+        <item>async_progress_dialog_bar</item>
         <item>async_progress_activity</item>
         <item>async_advance</item>
         <item>async_header</item>
@@ -279,6 +284,7 @@
         
         <item>image_preload</item>
         <item>image_progress</item>
+        <item>image_progress_bar</item>
         <item>image_progress_dialogbar</item>
         <item>image_animation</item>
         <item>image_animation2</item>
@@ -368,6 +374,7 @@
         <item>Asynchronous HTTP Get with Cache Control</item>
         <item>Show Requests Progress</item>
         <item>Show Progress Dialog</item>
+        <item>Show Progress Dialog Bar</item>
         <item>Show Activity Progress</item>
         <item>Using AjaxCallback Directly</item>
         <item>Setting HTTP Headers for Ajax Requests</item>
@@ -389,6 +396,7 @@
         <item>Preload a placement image before loading real image</item>
         <item>Show Loading Progress</item>
         <item>Show Loading Progress Bar</item>
+        <item>Show Loading Progress Dialog Bar</item>
         <item>Async Image Load with Predefined Fade-In Animation</item>
         <item>Async Image Load with Custom Animation</item>
         

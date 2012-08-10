@@ -324,6 +324,7 @@ public class AQUtility {
     
     public static void copy(InputStream in, OutputStream out, int max, ProgressDialog dialog, ProgressBar bar) throws IOException {
        
+    	
     	if(max <= 0) max = 100;
     	
     	if(dialog != null){
@@ -336,6 +337,7 @@ public class AQUtility {
     	}
     	
     	if(bar != null){
+    		
     		if(bar.isIndeterminate()){
     			bar = null;
     		}else{
@@ -350,6 +352,7 @@ public class AQUtility {
             out.write(b, 0, read);
             if(dialog != null) dialog.incrementProgressBy(read);        	
             if(bar != null) bar.incrementProgressBy(read);
+            //AQUtility.debug("inc", read);
         }
         
         if(dialog != null) dialog.setProgress(max);
