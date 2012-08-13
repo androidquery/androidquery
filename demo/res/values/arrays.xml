@@ -46,6 +46,7 @@
         <item>Progress Dialog</item> 
         <item>Progress Dialog Bar</item> 
         <item>Progress Activity</item> 
+        <item>Progress Activity Bar</item> 
         <item>AjaxCallback</item>   
         <item>Request Headers</item>  
         <item>Cookies</item>  
@@ -79,6 +80,7 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialog</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_dialogbar:beta</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_activity</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress_activity_bar:beta</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_advance</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_header</item>  
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cookie</item>
@@ -267,6 +269,7 @@
         <item>async_progress_dialog</item>
         <item>async_progress_dialog_bar</item>
         <item>async_progress_activity</item>
+        <item>async_progress_activity_bar</item>
         <item>async_advance</item>
         <item>async_header</item>
         <item>async_cookie</item>
@@ -376,6 +379,7 @@
         <item>Show Progress Dialog</item>
         <item>Show Progress Dialog Bar</item>
         <item>Show Activity Progress</item>
+        <item>Show Activity Progress Bar</item>
         <item>Using AjaxCallback Directly</item>
         <item>Setting HTTP Headers for Ajax Requests</item>
         <item>Setting HTTP Cookies for Ajax Requests</item>

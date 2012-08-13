@@ -93,6 +93,7 @@ import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
 import com.androidquery.util.PredefinedBAOS;
+import com.androidquery.util.Progress;
 import com.androidquery.util.XmlDom;
 
 /**
@@ -1443,19 +1444,19 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			is = new GZIPInputStream(is);
 		}
 		
-		Object p = null;
+		Object o = null;
 		
 		if(progress != null){
-			p = progress.get();
+			o = progress.get();
 		}
 		
-		if(p instanceof ProgressDialog){
-			AQUtility.copy(is, os, max, (ProgressDialog) p, null);
-		}else if(p instanceof ProgressBar){
-			AQUtility.copy(is, os, max, null, (ProgressBar) p);
-		}else{
-			AQUtility.copy(is, os);
+		Progress p = null;
+		
+		if(o != null){
+			p = new Progress(o); 
 		}
+		
+		AQUtility.copy(is, os, max, p);
 		
 		
 	}

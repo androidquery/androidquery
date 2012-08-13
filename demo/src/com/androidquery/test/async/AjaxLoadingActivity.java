@@ -46,9 +46,15 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 	
-		super.onCreate(savedInstanceState);
-		
 		type = getIntent().getStringExtra("type");
+		
+		if("async_progress_activity".equals(type)){
+			requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
+		}else if("async_progress_activity_bar".equals(type)){
+			requestWindowFeature(Window.FEATURE_PROGRESS); 
+		}
+		
+		super.onCreate(savedInstanceState);
 			
 		if("async_multipart".equals(type)){
 			aq.id(R.id.go_run).gone();
@@ -481,10 +487,30 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	
 	public void async_progress_activity(){
 	    
-		//Remember this: requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
+		//Remember onCreate: requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
 		
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";          
         aq.progress(this).ajax(url, JSONObject.class, this, "jsonCb");  
+	}	
+	
+	public void async_progress_activity_bar(){
+	    
+		//Remember onCreate: requestWindowFeature(Window.FEATURE_PROGRESS); 
+		
+        String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";   
+        
+		aq.progress(this).ajax(url, File.class, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
 	}	
 	
 	public void async_advance(){

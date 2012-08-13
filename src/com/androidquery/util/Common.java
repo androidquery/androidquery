@@ -532,7 +532,11 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 				
 				Activity act = (Activity) p;;
 				act.setProgressBarIndeterminateVisibility(show);
+				act.setProgressBarVisibility(show);
 			
+				if(show){
+					act.setProgress(0);
+				}
 			}
 		}
 		

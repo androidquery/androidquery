@@ -319,11 +319,37 @@ public class AQUtility {
 	
     private static final int IO_BUFFER_SIZE = 1024;
     public static void copy(InputStream in, OutputStream out) throws IOException {
-    	copy(in, out, 0, null, null);
+    	//copy(in, out, 0, null, null);
+    	copy(in, out, 0, null);
     }
     
+    public static void copy(InputStream in, OutputStream out, int max, Progress progress) throws IOException {
+    	
+    	AQUtility.debug("content header", max);
+    	
+    	if(progress != null){
+    		progress.reset();
+    		progress.setBytes(max);
+    	}
+    	
+    	byte[] b = new byte[IO_BUFFER_SIZE];
+        int read;
+        while((read = in.read(b)) != -1){
+            out.write(b, 0, read);
+            if(progress != null){
+            	progress.increment(read);
+            }
+        }
+        
+        if(progress != null){
+        	progress.done();
+        }
+    	
+    }
+    /*
     public static void copy(InputStream in, OutputStream out, int max, ProgressDialog dialog, ProgressBar bar) throws IOException {
        
+    	AQUtility.debug("max", max);
     	
     	if(max <= 0) max = 100;
     	
@@ -359,7 +385,7 @@ public class AQUtility {
         if(bar != null) bar.setProgress(max);
         
     }
-
+*/
     public static byte[] toBytes(InputStream is){
     	
     	byte[] result = null;

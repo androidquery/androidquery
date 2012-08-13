@@ -136,7 +136,6 @@ public class ImageLoadingListOptionsActivity extends ImageLoadingListActivity {
 		
 		if(tbs.size() > 0){
 			tb = tbs.get(0).attr("url");
-			//tb = tbs.get(tbs.size() - 1).attr("url");
 		}
 		
 		tb = tb.replaceAll("https:", "http:");
