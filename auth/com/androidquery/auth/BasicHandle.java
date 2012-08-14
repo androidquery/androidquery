@@ -1,5 +1,7 @@
 package com.androidquery.auth;
 
+import java.net.HttpURLConnection;
+
 import org.apache.http.HttpRequest;
 
 import android.net.Uri;
@@ -52,6 +54,22 @@ public class BasicHandle extends AccountHandle{
 		String host = uri.getHost();
 		request.addHeader("Host", host);
 		request.addHeader("Authorization", auth);
+		
+	}
+	
+	@Override	
+	public void applyToken(AbstractAjaxCallback<?, ?> cb, HttpURLConnection conn){
+		
+		String cred = username + ":" + password;
+		byte[] data = cred.getBytes();
+		
+		String auth = "Basic " + new String(encode(data, 0, data.length));
+		
+		Uri uri = Uri.parse(cb.getUrl());
+		
+		String host = uri.getHost();
+		conn.setRequestProperty("Host", host);
+		conn.setRequestProperty("Authorization", auth);
 		
 	}
 	

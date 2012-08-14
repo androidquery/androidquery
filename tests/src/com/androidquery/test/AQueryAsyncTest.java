@@ -31,6 +31,7 @@ import org.json.JSONTokener;
 import org.xmlpull.v1.XmlPullParser;
 
 import com.androidquery.AQuery;
+import com.androidquery.auth.BasicHandle;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
@@ -862,6 +863,48 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertEquals(2345, jo.optInt("data2"));
 	}
 	
+	public void testAjaxPostMultiAuth(){
+		
+        String url = "http://www.androidquery.com/p/multipart";
+		
+        BasicHandle handle = new BasicHandle("username", "1234");
+        
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		byte[] data = new byte[1234];
+		byte[] data2 = new byte[2345];
+		
+		params.put("data", data);
+		params.put("data2", data2);
+		
+        aq.auth(handle).ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+            	AQUtility.debug(status.getCode(), status.getError());
+            	
+        		AQueryAsyncTest.this.result = jo;
+            }
+        });
+		
+        waitAsync();
+		
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals(1234, jo.optInt("data"));
+        assertEquals(2345, jo.optInt("data2"));
+        
+        JSONObject headers = jo.optJSONObject("headers");
+        
+        assertNotNull(headers.optString("Authorization"));
+	}
+	
+	
 	public void testAjaxPostMultiFile() throws IOException{
 		
         String url = "http://www.androidquery.com/p/multipart";
@@ -1284,6 +1327,32 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
     }
 	
+	public void testFileBatchDownloads(){
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+		
+		List<String> urls = new ArrayList<String>();
+		
+		for(int i = 0; i < 10; i++){
+			urls.add(url + "&test=" + i);
+		}
+		
+		for(String u: urls){
+			
+			AjaxCallback<File> cb = new AjaxCallback<File>();
+			cb.type(File.class).fileCache(true).url(u);
+			
+			aq.sync(cb);
+			
+			File result = cb.getResult();
+			
+			AQUtility.debug("cached", result.getAbsoluteFile());
+			
+		}
+		
+		
+	}
 	
+	//ajax(url, byte[].class, expire, null, null);
 	
 }

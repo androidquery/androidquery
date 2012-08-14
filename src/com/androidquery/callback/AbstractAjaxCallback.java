@@ -1610,10 +1610,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         		conn.setRequestProperty(name, headers.get(name));
         	}
         }
-			
+
 		String cookie = makeCookie();
 		if(cookie != null){
 			conn.setRequestProperty("Cookie", cookie);
+		}
+
+		if(ah != null){
+			ah.applyToken(this, conn);
 		}
 		
 		dos = new DataOutputStream(conn.getOutputStream());
