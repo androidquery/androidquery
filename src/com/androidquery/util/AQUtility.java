@@ -36,7 +36,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Application;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
 import android.os.Environment;
@@ -46,7 +45,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.widget.ProgressBar;
 
 import com.androidquery.AQuery;
 

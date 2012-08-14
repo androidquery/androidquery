@@ -1,21 +1,23 @@
 package com.androidquery.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.view.View;
 import android.widget.ProgressBar;
 
-public class Progress {
+import com.androidquery.AQuery;
+
+public class Progress implements Runnable{
 
 	private ProgressBar pb;
 	private ProgressDialog pd;
 	private Activity act;
+	private View view;
 	private boolean unknown;
 	private int bytes;
 	private int current;
+	private String url;
 	
 	public Progress(Object p){
 		
@@ -25,6 +27,8 @@ public class Progress {
 			pd = (ProgressDialog) p;
 		}else if(p instanceof Activity){
 			act = (Activity) p;
+		}else if(p instanceof View){
+			view = (View) p;
 		}
 		
 	}
@@ -112,47 +116,143 @@ public class Progress {
 		}
 		
 	}
+
+	@Override
+	public void run() {
+		dismiss(url);
+	}
 	
-	/*
-	     public static void copy(InputStream in, OutputStream out, int max, ProgressDialog dialog, ProgressBar bar) throws IOException {
-       
-    	AQUtility.debug("max", max);
-    	
-    	if(max <= 0) max = 100;
-    	
-    	if(dialog != null){
-    		if(dialog.isIndeterminate()){
-    			dialog = null;
-    		}else{
-    			dialog.setMax(max);
-    			dialog.setProgress(0);
-    		}
-    	}
-    	
-    	if(bar != null){
-    		
-    		if(bar.isIndeterminate()){
-    			bar = null;
-    		}else{
-    			bar.setMax(max);
-    			bar.setProgress(0);
-    		}
-    	}
-    	
-    	byte[] b = new byte[IO_BUFFER_SIZE];
-        int read;
-        while((read = in.read(b)) != -1){
-            out.write(b, 0, read);
-            if(dialog != null) dialog.incrementProgressBy(read);        	
-            if(bar != null) bar.incrementProgressBy(read);
-            //AQUtility.debug("inc", read);
-        }
-        
-        if(dialog != null) dialog.setProgress(max);
-        if(bar != null) bar.setProgress(max);
-        
-    }
-	 */
+	public void show(String url){
+		
+		reset();
+		
+		if(pd != null){
+			AQuery aq = new AQuery(pd.getContext());			
+			aq.show(pd);
+		}
+		
+		if(act != null){
+			act.setProgressBarIndeterminateVisibility(true);
+			act.setProgressBarVisibility(true);
+		}
+		
+		if(pb != null){
+			pb.setTag(AQuery.TAG_URL, url);
+			pb.setVisibility(View.VISIBLE);
+		}
+		
+		if(view != null){
+			view.setTag(AQuery.TAG_URL, url);
+			view.setVisibility(View.VISIBLE);
+		}
+		
+	}
+	
+	public void hide(String url){
+		
+		if(AQUtility.isUIThread()){
+			dismiss(url);
+		}else{
+			this.url = url;
+			AQUtility.post(this);
+		}
+		
+	}
+	
+	private void dismiss(String url){
+		
+		if(pd != null){
+			AQuery aq = new AQuery(pd.getContext());			
+			aq.dismiss(pd);
+		}
+		
+		if(act != null){
+			act.setProgressBarIndeterminateVisibility(false);
+			act.setProgressBarVisibility(false);
+		}
+		
+		if(pb != null){
+			pb.setTag(AQuery.TAG_URL, url);
+			pb.setVisibility(View.VISIBLE);
+		}
+		
+		View pv = pb;
+		if(pv == null){
+			pv = view;
+		}
+		
+		if(pv != null){
+			
+			Object tag = pv.getTag(AQuery.TAG_URL);
+			if(tag == null || tag.equals(url)){
+				pv.setTag(AQuery.TAG_URL, null);	
+				
+				if(pb != null && pb.isIndeterminate()){
+					pv.setVisibility(View.GONE);						
+				}
+			}
+		}
+		
+	}
+	
+	
+	private void showProgress(Object p, String url, boolean show){
+		
+		if(p != null){
+			
+			if(p instanceof View){				
+
+				View pv = (View) p;
+				
+				ProgressBar pbar = null;
+				
+				if(p instanceof ProgressBar){
+					pbar = (ProgressBar) p;
+				}
+				
+				if(show){
+					pv.setTag(AQuery.TAG_URL, url);
+					pv.setVisibility(View.VISIBLE);
+					if(pbar != null){
+						pbar.setProgress(0);	
+						pbar.setMax(100);
+					}
+					
+				}else{
+					Object tag = pv.getTag(AQuery.TAG_URL);
+					if(tag == null || tag.equals(url)){
+						pv.setTag(AQuery.TAG_URL, null);	
+						
+						if(pbar != null && pbar.isIndeterminate()){
+							pv.setVisibility(View.GONE);						
+						}
+					}
+				}
+			}else if(p instanceof Dialog){
+				
+				Dialog pd = (Dialog) p;
+				
+				AQuery aq = new AQuery(pd.getContext());
+				
+				if(show){
+					aq.show(pd);
+				}else{
+					aq.dismiss(pd);
+				}
+				
+			}else if(p instanceof Activity){
+				
+				Activity act = (Activity) p;;
+				act.setProgressBarIndeterminateVisibility(show);
+				act.setProgressBarVisibility(show);
+			
+				if(show){
+					act.setProgress(0);
+				}
+			}
+		}
+		
+	}
 	
 	
 }

@@ -77,14 +77,12 @@ import org.xmlpull.v1.XmlPullParser;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Xml;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import com.androidquery.AQuery;
 import com.androidquery.auth.AccountHandle;
@@ -562,12 +560,23 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	protected void showProgress(boolean show){
+	protected void showProgress(final boolean show){
 		
-		if(progress != null){
+		final Object p = progress == null ? null : progress.get();
+		
+		if(p != null){
 			
-			Common.showProgress(progress.get(), url, show);
-		
+			if(AQUtility.isUIThread()){			
+				Common.showProgress(p, url, show);
+			}else{
+				AQUtility.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						Common.showProgress(p, url, show);
+					}
+				});
+			}
 		}
 		
 	}
