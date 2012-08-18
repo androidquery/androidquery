@@ -1632,6 +1632,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		dos.flush();
 		dos.close();
 		
+		
+		
 		conn.connect();
 		
         int code = conn.getResponseCode();
@@ -1646,6 +1648,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	
         	error = new String(toData(encoding, conn.getErrorStream()), "UTF-8");
         
+        	AQUtility.debug("error", error);
         }else{
         	
     		data = toData(encoding, conn.getInputStream());

@@ -215,6 +215,7 @@
   		      
   		<item>Twitter</item>
   		<item>Twitter (Token Only)</item>
+  		<item>Twitter (Photo Status)</item>
   		
   		<item>Basic</item>
   		
@@ -234,6 +235,7 @@
   		 
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter</item>
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter_token</item> 
+  		<item>com.androidquery.test.async.AjaxAuthActivity:auth_twitter_upload:new</item> 
   		<item>com.androidquery.test.async.AjaxAuthActivity:auth_basic</item>
   		
         <item>com.androidquery.test.async.AjaxAuthActivity:auth_pick_account</item>  
@@ -334,7 +336,8 @@
         <item>auth_facebook_sso</item>
          
         <item>auth_twitter</item> 
-        <item>auth_twitter_token</item>  
+        <item>auth_twitter_token</item> 
+        <item>auth_twitter_upload</item>  
         <item>auth_basic</item>   
           
         <item>auth_pick_account</item>  
@@ -449,7 +452,8 @@
         
           
         <item>Twitter Auth - Get User Feed</item>   
-        <item>Twitter Auth - Token/Secret Only</item>   
+        <item>Twitter Auth - Token/Secret Only</item> 
+        <item>Twitter Auth - Photo Status Update</item>   
         <item>Basic Auth with username and password</item>    
        
            
