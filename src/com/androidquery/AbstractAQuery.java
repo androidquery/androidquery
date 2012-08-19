@@ -1783,7 +1783,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback handler
 	 * @return self
 	 * 
-	 * @see testAjax2
 	 */
 	
 	public <K> T ajax(String url, Class<K> type, AjaxCallback<K> callback){
@@ -1806,7 +1805,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback handler
 	 * @return self
 	 * 
-	 * @see testAjax6
+	 * 
 	 */
 	
 	public <K> T ajax(String url, Class<K> type, long expire, AjaxCallback<K> callback){
@@ -1830,7 +1829,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback method name
 	 * @return self
 	 * 
-	 * @see testAjax3
+	 * 
 	 */
 	
 	public <K> T ajax(String url, Class<K> type, Object handler, String callback){
@@ -1859,7 +1858,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback method name
 	 * @return self
 	 * 
-	 * @see testAjax7
+	 * 
 	 */
 	
 	public <K> T ajax(String url, Class<K> type, long expire, Object handler, String callback){
@@ -1881,7 +1880,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback method name
 	 * @return self
 	 * 
-	 * @see testAjax4
+	 * 
 	 */
 	
 	public <K> T ajax(String url, Map<String, ?> params, Class<K> type, AjaxCallback<K> callback){
@@ -1902,7 +1901,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback method name
 	 * @return self
 	 * 
-	 * @see testAjax5
+	 * 
 	 */
 	
 	public <K> T ajax(String url, Map<String, ?> params, Class<K> type, Object handler, String callback){
@@ -1914,6 +1913,55 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return ajax(url, params, type, cb);
 		
 	}
+	
+	/**
+	 * Ajax HTTP delete.
+	 *
+	 * @param url url
+	 * @param type data type
+	 * @param callback callback handler
+	 * @return self
+	 * 
+	 */
+	
+	public <K> T delete(String url, Class<K> type, AjaxCallback<K> callback){
+		
+		callback.url(url).type(type).method(AQuery.METHOD_DELETE);		
+		return ajax(callback);
+		
+	}
+	
+	/**
+	 * Ajax HTTP delete.
+	 *
+	 * The handler signature must be (String url, <K> object, AjaxStatus status)
+	 *
+	 * @param url url
+	 * @param type data type
+	 * @param handler the handler object with the callback method to be called
+	 * @param callback callback method name
+	 * @return self
+	 * 
+	 * 
+	 */
+	
+	public <K> T delete(String url, Class<K> type, Object handler, String callback){
+		
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.weakHandler(handler, callback);
+		
+		return delete(url, type, cb);
+		
+	}
+	
+	/**
+	 * Ajax call with that block until response is ready. This method cannot be called on UI thread.
+	 * 
+	 *
+	 * @param callback callback 
+	 * @return self
+	 * 
+	 */
 	
 	public <K> T sync(AjaxCallback<K> callback){
 		ajax(callback);

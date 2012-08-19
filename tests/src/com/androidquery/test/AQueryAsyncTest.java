@@ -1353,6 +1353,35 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
 	}
 	
-	//ajax(url, byte[].class, expire, null, null);
-	
+	public void testAjaxDelete() {
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+				
+        //aq.ajax(cb);
+        aq.delete(url, JSONObject.class, cb);
+		
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals("DELETE", jo.optString("method"));
+        
+        
+    }
 }

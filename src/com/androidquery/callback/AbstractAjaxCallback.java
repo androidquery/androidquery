@@ -48,6 +48,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -135,6 +136,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private long expire;
 	private String encoding = "UTF-8";
 	private WeakReference<Activity> act;
+	
+	private int method = Constants.METHOD_GET;
 	
 	private boolean uiCallback = true;
 	
@@ -255,6 +258,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	public K method(int method){
+		this.method = method;
+		return self();
+	}
 	
 	/**
 	 * Set the transformer that transform raw data to desired type.
@@ -1153,7 +1160,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			url = ah.getNetworkUrl(url);
 		}
 		
-		if(params == null){
+		if(Constants.METHOD_DELETE == method){
+			httpDelete(url, headers, status);
+		}else if(params == null){
 			httpGet(url, headers, status);	
 		}else{
 			if(isMultiPart(params)){
@@ -1235,6 +1244,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	private void httpDelete(String url, Map<String, String> headers, AjaxStatus status) throws IOException{
+		
+		AQUtility.debug("get", url);
+		url = patchUrl(url);
+		
+		HttpDelete del = new HttpDelete(url);
+		
+		httpDo(del, url, headers, status);
+		
+	}
 	
 	private void httpPost(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
 		

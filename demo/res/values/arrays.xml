@@ -40,6 +40,8 @@
         <item>Http POST</item> 
         <item>Http POST (Multipart)</item> 
         <item>Http POST (Custom Entity)</item> 
+        <item>Http DELETE</item>
+        <item>Http PUT</item>
         <item>Activity Method as Callback</item> 
         <item>Caching</item> 
         <item>Progress</item>
@@ -74,6 +76,8 @@
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_multipart</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_post_entity</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_delete:new</item> 
+        <item>com.androidquery.test.async.AjaxLoadingActivity:async_put:new</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_method_cb</item>
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_cached</item> 
         <item>com.androidquery.test.async.AjaxLoadingActivity:async_progress</item> 
@@ -264,6 +268,8 @@
         <item>async_post</item> 
         <item>async_multipart</item> 
         <item>async_post_entity</item> 
+        <item>async_delete</item> 
+        <item>async_put</item> 
         
         <item>async_method_cb</item>  
         <item>async_cached</item>
@@ -376,6 +382,8 @@
         <item>Asynchronous HTTP Post</item> 
         <item>Asynchronous HTTP Multipart Post (Image Upload)</item> 
         <item>Asynchronous HTTP Post with Custom HttpEntity</item> 
+        <item>Asynchronous HTTP DELETE</item>
+        <item>Asynchronous HTTP PUT</item>
         <item>Use Activity Method as Callback</item> 
         <item>Asynchronous HTTP Get with Cache Control</item>
         <item>Show Requests Progress</item>

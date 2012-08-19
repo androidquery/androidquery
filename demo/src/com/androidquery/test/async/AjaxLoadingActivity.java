@@ -440,6 +440,18 @@ public class AjaxLoadingActivity extends RunSourceActivity {
            
 	}	
 	
+	public void async_delete() {
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		aq.progress(R.id.progress).delete(url, JSONObject.class, this, "jsonCb");
+        
+    }
+	
+	public void async_put() {
+		
+	}
+	
 	public void async_cached(){
 	    
 		String url = "http://www.google.com";
