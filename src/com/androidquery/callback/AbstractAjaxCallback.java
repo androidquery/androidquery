@@ -1641,7 +1641,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		for(Map.Entry<String, Object> entry: params.entrySet()){
 			Object value = entry.getValue();
 			AQUtility.debug(entry.getKey(), value);
-			if(value instanceof File || value instanceof byte[]) return true;
+			if(value instanceof File || value instanceof byte[] || value instanceof InputStream) return true;
 		}
 		
 		return false;
@@ -1754,12 +1754,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 
 		}else if(obj instanceof byte[]){
 			writeData(dos, name, name, new ByteArrayInputStream((byte[]) obj));
+		}else if(obj instanceof InputStream){
+			writeData(dos, name, name, (InputStream) obj);
 		}else{
 			writeField(dos, name, obj.toString());
 		}
 		
 	}
-	
+
 	
 	private static void writeData(DataOutputStream dos, String name, String filename, InputStream is) throws IOException {
 		

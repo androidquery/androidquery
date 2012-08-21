@@ -1,5 +1,6 @@
 package com.androidquery.test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -911,11 +912,6 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		
-		/*
-		File tempFile1 = File.createTempFile("pre1", "bin");
-		File tempFile2 = File.createTempFile("pre2", "bin");
-		*/
-		
 		File tempFile1 = AQUtility.getCacheFile(AQUtility.getCacheDir(getActivity()), "pre1");
 		File tempFile2 = AQUtility.getCacheFile(AQUtility.getCacheDir(getActivity()), "pre2");
 		
@@ -925,14 +921,43 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		AQUtility.write(tempFile1, data1);
 		AQUtility.write(tempFile2, data2);
 		
-		
-		//byte[] data2 = new byte[2345];
-		
-		//params.put("data", data);
-		//params.put("data2", data2);
-		
 		params.put("data", tempFile1);
 		params.put("data2", tempFile2);
+		
+        aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+            	AQUtility.debug(status.getCode(), status.getError());
+            	
+        		AQueryAsyncTest.this.result = jo;
+            }
+        });
+		
+        waitAsync();
+		
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals(1234, jo.optInt("data"));
+        assertEquals(2345, jo.optInt("data2"));
+	}
+	
+	public void testAjaxPostMultiInputStream(){
+		
+        String url = "http://www.androidquery.com/p/multipart";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		byte[] data = new byte[1234];
+		byte[] data2 = new byte[2345];
+		
+		params.put("data", new ByteArrayInputStream(data));
+		params.put("data2", new ByteArrayInputStream(data2));
 		
         aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
 
