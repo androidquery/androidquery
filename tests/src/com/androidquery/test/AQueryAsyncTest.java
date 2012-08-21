@@ -1401,4 +1401,60 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNull(file);       
         assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
     }
+	
+	public void testAjaxAbortAfterNetwork() {
+		
+		String url = "http://shopsixapp.appspot.com/z/music/01.mp3";
+        
+		final AjaxCallback<File> cb = new AjaxCallback<File>(){
+			
+			@Override
+			public void callback(String url, File object, AjaxStatus status) {
+				
+				done(url, object, status);
+			}
+			
+		};
+		cb.url(url).type(File.class);		
+		
+		aq.ajax(cb);
+		
+		AQUtility.postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				cb.abort();
+			}
+		}, 1000);
+		
+		waitAsync();
+        
+        assertNull(result);      
+        assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
+    }
+	
+	public void testAjaxAbortBeforeNetwork() {
+		
+		String url = "http://shopsixapp.appspot.com/z/music/01.mp3";
+        
+		final AjaxCallback<File> cb = new AjaxCallback<File>(){
+			
+			@Override
+			public void callback(String url, File object, AjaxStatus status) {
+				
+				done(url, object, status);
+			}
+			
+		};
+		cb.url(url).type(File.class);		
+		
+		aq.ajax(cb);
+		cb.abort();
+		
+		waitAsync();
+        
+        assertNull(result);      
+        assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
+    }
+	
 }

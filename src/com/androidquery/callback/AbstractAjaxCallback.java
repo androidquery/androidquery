@@ -140,6 +140,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private WeakReference<Activity> act;
 	
 	private int method = Constants.METHOD_GET;
+	private HttpUriRequest request;
 	
 	private boolean uiCallback = true;
 	
@@ -152,6 +153,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		whandler = null;
 		handler = null;
 		progress = null;
+		request = null;
+		transformer = null;
+		ah = null;
+		act = null;
 	}
 	
 	/**
@@ -1246,7 +1251,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		url = patchUrl(url);
 		
 		HttpGet get = new HttpGet(url);
-		
+				
 		httpDo(get, url, headers, status);
 		
 	}
@@ -1394,6 +1399,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		HttpContext context = new BasicHttpContext(); 	
 		CookieStore cookieStore = new BasicCookieStore();
 		context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+		
+		request = hr;
+		
+		if(abort){
+			throw new IOException("Aborted");
+		}
 		
 		HttpResponse response = client.execute(hr, context);
 		
@@ -1598,6 +1609,26 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 */
 	public String getEncoding(){
 		return encoding;
+	}
+	
+	private boolean abort;
+	
+	/**
+	 * Abort the http request that will interrupt the network transfer. 
+	 * This method currently doesn't work with multi-part post. 
+	 *
+	 * If no network transfer is involved (eg. response is file cached), this method has no effect.
+	 * 
+	 */
+	
+	public void abort(){
+		
+		abort = true;
+		
+		if(request != null && !request.isAborted()){
+			request.abort();
+		}
+		
 	}
 	
 	private static final String lineEnd = "\r\n";
