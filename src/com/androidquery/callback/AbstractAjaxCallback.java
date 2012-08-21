@@ -66,6 +66,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
@@ -132,6 +133,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	protected boolean fileCache;
 	protected boolean memCache;
 	private boolean refresh;
+	private int timeout = 0;
 	
 	private long expire;
 	private String encoding = "UTF-8";
@@ -260,6 +262,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	public K method(int method){
 		this.method = method;
+		return self();
+	}
+	
+	public K timeout(int timeout){
+		this.timeout = timeout;
 		return self();
 	}
 	
@@ -1341,6 +1348,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(httpParams, registry);			
 			client = new DefaultHttpClient(cm, httpParams);
 			
+			
 		}
 		return client;
 	}
@@ -1374,7 +1382,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		DefaultHttpClient client = getClient();
 		
-		client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+		HttpParams hp = hr.getParams();
+		if(proxy != null) hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+		if(timeout > 0){
+			AQUtility.debug("timeout param", CoreConnectionPNames.CONNECTION_TIMEOUT);
+			hp.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
+			hp.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
+		}
+		//client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		
 		HttpContext context = new BasicHttpContext(); 	
 		CookieStore cookieStore = new BasicCookieStore();

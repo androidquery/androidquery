@@ -1052,6 +1052,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
 	}
 	
+	//http://www.proxynova.com/proxy-server-list/
 	public void testAjaxProxy() throws ClientProtocolException, IOException{
 		
 		String url = "http://www.google.com";
@@ -1064,7 +1065,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
             	done(url, json, status);
             	
             }
-        }.proxy("62.0.192.219", 80));
+        }.proxy("112.25.12.38", 80));
 		
         waitAsync();
         
@@ -1383,5 +1384,21 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertEquals("DELETE", jo.optString("method"));
         
         
+    }
+	
+	public void testAjaxTimeout() {
+		
+		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
+        
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.url(url).type(File.class).timeout(1);		
+		
+        aq.sync(cb);
+		
+        File file = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        assertNull(file);       
+        assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
     }
 }
