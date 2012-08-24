@@ -65,6 +65,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -1136,6 +1137,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public ProgressBar getProgressBar(){
 		return (ProgressBar) view;
+	}
+	
+	/**
+	 * Gets the current view as seek bar.
+	 *
+	 * @return SeekBar
+	 */
+	
+	public SeekBar getSeekBar(){
+		return (SeekBar) view;
 	}
 	
 	/**
