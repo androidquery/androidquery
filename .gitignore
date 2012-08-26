@@ -1,20 +1,18 @@
-# built application files
 *.apk
 *.ap_
 
-# files for the dex VM
 *.dex
 
-# Java class files
 *.class
 dist/*.jar
 
-# generated files
 bin/
 gen/
 
-# Local configuration file (sdk path, etc)
 local.properties
 
 proguard-dump.txt
 /assets
+
+.settings/
+.classpath
