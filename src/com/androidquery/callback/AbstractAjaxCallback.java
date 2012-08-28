@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -1168,6 +1169,7 @@ public abstract class AbstractAjaxCallback <T, K> implements Runnable {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void httpPost(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException {
 		
 		AQUtility.debug("post", url);
@@ -1186,7 +1188,11 @@ public abstract class AbstractAjaxCallback <T, K> implements Runnable {
 			for (Map.Entry<String, Object> e : params.entrySet()) {
 				value = e.getValue();
 				if (value != null) {
-					if (value instanceof Object[]) {
+					if (value instanceof Map<?, ?>) {
+						for (Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()) {
+							pairs.add(new BasicNameValuePair(e.getKey() + "[" + entry.getKey() + "]", entry.getValue().toString()));
+						}
+					} else if (value instanceof Object[]) {
 						for (Object v : (Object[]) value) {
 							pairs.add(new BasicNameValuePair(e.getKey(), v.toString()));
 						}
@@ -1492,6 +1498,7 @@ public abstract class AbstractAjaxCallback <T, K> implements Runnable {
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void httpMulti(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws IOException {
 		
 		AQUtility.debug("multipart", url);
@@ -1530,7 +1537,11 @@ public abstract class AbstractAjaxCallback <T, K> implements Runnable {
 		for (Map.Entry<String, Object> e : params.entrySet()) {
 			Object value = e.getValue();
 			if (value != null) {
-				if (value instanceof Object[]) {
+				if (value instanceof Map<?, ?>) {
+					for (Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()) {
+						writeObject(dos, e.getKey() + "[" + entry.getKey() + "]", entry.getValue().toString());
+					}
+				} else if (value instanceof Object[]) {
 					for (Object v : (Object[]) value) {
 						writeObject(dos, e.getKey(), v);
 					}
