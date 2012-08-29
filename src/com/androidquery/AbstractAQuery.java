@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.apache.http.HttpEntity;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -1941,6 +1943,15 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return ajax(callback);
 		
 	}
+	
+	public <K> T put(String url, String contentHeader, HttpEntity entity, Class<K> type, AjaxCallback<K> callback){
+		
+		callback.url(url).type(type).method(AQuery.METHOD_PUT).header("Content-Type", contentHeader).param(AQuery.POST_ENTITY, entity);		
+		return ajax(callback);
+		
+	}
+	
+	
 	
 	/**
 	 * Ajax HTTP delete.

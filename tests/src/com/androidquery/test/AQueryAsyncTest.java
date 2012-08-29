@@ -24,6 +24,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -1410,6 +1411,38 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         
     }
+	
+	
+	public void testAjaxPut() throws UnsupportedEncodingException{
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		StringEntity entity = new StringEntity(new JSONObject().toString());
+		
+        aq.put(url, "application/json", entity, JSONObject.class, cb);
+		
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals("PUT", jo.optString("method"));
+        
+	}
 	
 	public void testAjaxTimeout() {
 		

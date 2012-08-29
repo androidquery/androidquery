@@ -49,8 +49,11 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.params.ConnManagerParams;
@@ -1174,6 +1177,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		if(Constants.METHOD_DELETE == method){
 			httpDelete(url, headers, status);
+		}else if(Constants.METHOD_PUT == method){
+			httpPut(url, headers, params, status);
 		}else if(params == null){
 			httpGet(url, headers, status);	
 		}else{
@@ -1271,8 +1276,26 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		AQUtility.debug("post", url);
 		
+		HttpEntityEnclosingRequestBase req = new HttpPost(url);
 		
-		HttpPost post = new HttpPost(url);
+		httpEntity(url, req, headers, params, status);
+		
+	}
+	
+	private void httpPut(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
+		
+		AQUtility.debug("put", url);
+		
+		HttpEntityEnclosingRequestBase req = new HttpPut(url);
+		
+		httpEntity(url, req, headers, params, status);
+		
+	}
+	
+	
+	private void httpEntity(String url, HttpEntityEnclosingRequestBase req, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
+		
+		//HttpEntityEnclosingRequestBase req = new HttpPost(url);
 		
 		HttpEntity entity = null;
 		
@@ -1300,8 +1323,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			headers.put("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 		}
 		
-		post.setEntity(entity);
-		httpDo(post, url, headers, status);
+		req.setEntity(entity);
+		httpDo(req, url, headers, status);
 		
 		
 	}

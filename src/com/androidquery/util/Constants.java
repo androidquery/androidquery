@@ -19,7 +19,7 @@ package com.androidquery.util;
 public interface Constants {
 
 
-	public static final String VERSION = "0.23.11";
+	public static final String VERSION = "0.23.12";
 	
 	public static final int LAYER_TYPE_SOFTWARE = 1;
 	public static final int LAYER_TYPE_HARDWARE = 2;
@@ -41,7 +41,7 @@ public interface Constants {
 	public static final int METHOD_GET = 0;
 	public static final int METHOD_POST = 1;
 	public static final int METHOD_DELETE = 2;
-	//public static final int METHOD_PUT = 3;
+	public static final int METHOD_PUT = 3;
 	
 	public static final int TAG_URL = 0x40FF0001;
 	public static final int TAG_SCROLL_LISTENER = 0x40FF0002;
