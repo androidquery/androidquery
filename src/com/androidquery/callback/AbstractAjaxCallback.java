@@ -142,7 +142,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private String encoding = "UTF-8";
 	private WeakReference<Activity> act;
 	
-	private int method = Constants.METHOD_GET;
+	private int method = Constants.METHOD_DETECT;
 	private HttpUriRequest request;
 	
 	private boolean uiCallback = true;
@@ -1175,20 +1175,33 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			url = ah.getNetworkUrl(url);
 		}
 		
+		
 		if(Constants.METHOD_DELETE == method){
 			httpDelete(url, headers, status);
 		}else if(Constants.METHOD_PUT == method){
 			httpPut(url, headers, params, status);
-		}else if(params == null){
-			httpGet(url, headers, status);	
 		}else{
-			if(isMultiPart(params)){
-				httpMulti(url, headers, params, status);
+			
+			if(Constants.METHOD_POST == method && params == null){
+				params = new HashMap<String, Object>();
+			}
+			
+			if(params == null){
+				httpGet(url, headers, status);	
 			}else{
-				httpPost(url, headers, params, status);
+				if(isMultiPart(params)){
+					httpMulti(url, headers, params, status);
+				}else{
+					httpPost(url, headers, params, status);
+				}
+				
 			}
 			
 		}
+			
+			
+			
+			
 		
 	}
 	

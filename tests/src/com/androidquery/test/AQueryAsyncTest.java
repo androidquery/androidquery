@@ -203,7 +203,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNotNull(jo.opt("results"));
         
 	}
-	
+
 	public void testAjaxPostRaw() throws UnsupportedEncodingException{
 		
         String url = "http://search.twitter.com/search.json";
@@ -1443,6 +1443,39 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertEquals("PUT", jo.optString("method"));
         
 	}
+	
+	public void testAjaxPostWithEmptyParams() {
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		cb.url(url).type(JSONObject.class).method(AQuery.METHOD_POST);
+		
+		aq.ajax(cb);		
+        
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals("POST", jo.optString("method"));
+        
+        
+    }
+	
 	
 	public void testAjaxTimeout() {
 		
