@@ -44,6 +44,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
@@ -70,6 +71,7 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
@@ -1308,7 +1310,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private void httpEntity(String url, HttpEntityEnclosingRequestBase req, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
 		
-		//HttpEntityEnclosingRequestBase req = new HttpPost(url);
+		//This setting seems to improve post performance
+		//http://stackoverflow.com/questions/3046424/http-post-requests-using-httpclient-take-2-seconds-why
+		req.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 		
 		HttpEntity entity = null;
 		
@@ -1373,6 +1377,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			AQUtility.debug("creating http client");
 			
 			HttpParams httpParams = new BasicHttpParams();
+			
+			//httpParams.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+			
 			HttpConnectionParams.setConnectionTimeout(httpParams, NET_TIMEOUT);
 			HttpConnectionParams.setSoTimeout(httpParams, NET_TIMEOUT);
 			
@@ -1430,7 +1437,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			hp.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
 			hp.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
 		}
-		//client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		
 		HttpContext context = new BasicHttpContext(); 	
 		CookieStore cookieStore = new BasicCookieStore();

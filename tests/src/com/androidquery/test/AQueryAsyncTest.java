@@ -202,6 +202,8 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNotNull(jo);       
         assertNotNull(jo.opt("results"));
         
+        AQUtility.debug("duration", status.getDuration());
+        
 	}
 
 	public void testAjaxPostRaw() throws UnsupportedEncodingException{
@@ -1416,7 +1418,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	public void testAjaxPut() throws UnsupportedEncodingException{
 		
 		String url = "http://www.androidquery.com/p/doNothing";
-        
+		
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
 			
 			@Override
