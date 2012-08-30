@@ -275,6 +275,10 @@ public class AQUtility {
 		getHandler().post(run);
 	}
 	
+	public static void removePost(Runnable run){
+		getHandler().removeCallbacks(run);
+	}
+	
 	public static void postDelayed(Runnable run, long delay){
 		getHandler().postDelayed(run, delay);
 	}
