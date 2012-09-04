@@ -1273,6 +1273,25 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	
+	/**
+	 * Gets the selected item position if current view is an adapter view.
+	 *
+	 * Returns AdapterView.INVALID_POSITION if not valid.
+	 *
+	 * @return selected position
+	 */
+	public int getSelectedItemPosition(){
+		
+		int result = AdapterView.INVALID_POSITION;
+		
+		if(view instanceof AdapterView<?>){
+			result = ((AdapterView<?>) view).getSelectedItemPosition();
+		}
+		
+		return result;
+		
+	}
+	
 	
 	private static final Class<?>[] ON_CLICK_SIG = {View.class};
 	
@@ -2477,7 +2496,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 * 
 	 */
-	private static LayoutInflater inflater;
 	public View inflate(View convertView, int layoutId, ViewGroup root){
 		
 		if(convertView != null){
@@ -2487,15 +2505,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			}
 		}
 		
-		if(inflater == null){
+		LayoutInflater inflater = null;
+		
+		if(act != null){
+			inflater = act.getLayoutInflater();
+		}else{
 			inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
-			
 		
 		View view = inflater.inflate(layoutId, root, false);	
 		view.setTag(AQuery.TAG_LAYOUT, layoutId);
-		
-		//AQUtility.debug("infalted");
 		
 		return view;
 		

@@ -228,9 +228,23 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		if(path != null){
 			
+			if(options == null){
+				options = new Options();
+			}
+			
+			options.inInputShareable = true;
+			options.inPurgeable = true;
+			
+			AQUtility.debug("decoding file");
+			AQUtility.time("decode file");
+			
 			result = BitmapFactory.decodeFile(path, options);
 			
+			AQUtility.timeEnd("decode file", 0);
+			
 		}else if(data != null){
+			
+			AQUtility.debug("decoding byte[]");
 			
 			result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
 			
