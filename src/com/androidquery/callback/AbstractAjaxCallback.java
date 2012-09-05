@@ -1521,11 +1521,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        	os = new BufferedOutputStream(new FileOutputStream(file));
 		        }
 		        
-		        AQUtility.time("copy");
+		        //AQUtility.time("copy");
 		        
 		        copy(entity.getContent(), os, encoding, (int) entity.getContentLength());
 		        
-		        AQUtility.timeEnd("copy", 0);
+		        //AQUtility.timeEnd("copy", 0);
 		        
 		        
 		        os.flush();
