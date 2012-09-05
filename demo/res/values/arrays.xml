@@ -99,7 +99,7 @@
     
     <string-array name="image_names">
         
-        <item>Peformance Test</item>
+        <item>Peformance Stress Test</item>
         
         <item>Simple</item>
         <item>Cache Control</item>   

@@ -17,6 +17,9 @@
 package com.androidquery.callback;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashMap;
@@ -228,23 +231,11 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		if(path != null){
 			
-			if(options == null){
-				options = new Options();
-			}
-			
-			options.inInputShareable = true;
-			options.inPurgeable = true;
-			
-			AQUtility.debug("decoding file");
-			AQUtility.time("decode file");
-			
-			result = BitmapFactory.decodeFile(path, options);
-			
-			AQUtility.timeEnd("decode file", 0);
+			result = decodeFile(path, options);
 			
 		}else if(data != null){
 			
-			AQUtility.debug("decoding byte[]");
+			//AQUtility.debug("decoding byte[]");
 			
 			result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
 			
@@ -255,6 +246,43 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 		return result;
+	}
+	
+	private static Bitmap decodeFile(String path, BitmapFactory.Options options){
+		
+		Bitmap result = null;
+		
+		if(options == null){
+			options = new Options();
+		}
+		
+		options.inInputShareable = true;
+		options.inPurgeable = true;
+		
+		
+		
+		FileInputStream fis = null;
+		
+		try{
+		
+			fis = new FileInputStream(path);
+			
+			FileDescriptor fd = fis.getFD();
+			
+			//AQUtility.debug("decoding file");
+			//AQUtility.time("decode file");
+			
+			result = BitmapFactory.decodeFileDescriptor(fd, null, options);
+			
+			//AQUtility.timeEnd("decode file", 0);
+		}catch(IOException e){
+			AQUtility.report(e);
+		}finally{
+			AQUtility.close(fis);
+		}
+		
+		return result;
+		
 	}
 	
 	
@@ -349,7 +377,15 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	@Override
 	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
 		
-		Bitmap bm = bmGet(null, data);
+		String path = null;
+		
+		File file = status.getFile();
+		if(file != null){
+			path = file.getAbsolutePath();
+		}
+		
+		
+		Bitmap bm = bmGet(path, data);
 		
 		if(bm == null){
 			
@@ -873,7 +909,12 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-
+	@Override
+	protected boolean isStreamingContent(){
+		
+		return true;
+		
+	}
 	
 	private void addQueue(String url, ImageView iv){
 		

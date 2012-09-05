@@ -16,6 +16,7 @@
 
 package com.androidquery.callback;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -563,7 +564,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		try {			
 			byte[] data = null;
 		
-			if(needInputStream()){
+			if(isStreamingContent()){
 				status.file(file);
 			}else{
 				data = AQUtility.toBytes(new FileInputStream(file));
@@ -1082,13 +1083,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return AQUtility.getCacheFile(cacheDir, getCacheUrl());
 	}
 	
-	private boolean needInputStream(){
+	
+	protected boolean isStreamingContent(){
 		return File.class.equals(type) || XmlPullParser.class.equals(type) || InputStream.class.equals(type) || XmlDom.class.equals(type);
 	}
 	
 	private File getPreFile(){
 		
-		boolean pre = needInputStream();
+		boolean pre = isStreamingContent();
 		
 		File result = null;
 		
@@ -1516,7 +1518,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        	os = new PredefinedBAOS(size);
 		        }else{
 		        	file.createNewFile();
-		        	os = new FileOutputStream(file);
+		        	os = new BufferedOutputStream(new FileOutputStream(file));
 		        }
 		        
 		        AQUtility.time("copy");

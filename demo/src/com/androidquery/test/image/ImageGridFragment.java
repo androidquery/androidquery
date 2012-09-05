@@ -26,6 +26,7 @@ public class ImageGridFragment extends Fragment{
 	private AQuery aq2;
 	
 	private String topic;
+	private List<Photo> photos;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class ImageGridFragment extends Fragment{
     	super.onActivityCreated(savedInstanceState);
     	
     	topic = getArguments().getString("topic");
+    	
     }
     
     private boolean inited;
@@ -67,32 +69,17 @@ public class ImageGridFragment extends Fragment{
     private void ajaxPhotos(){
     	
 		String url = "https://picasaweb.google.com/data/feed/api/all?q=" + topic +"&max-results=100";
-    	aq.progress(makeDialog()).ajax(url, XmlDom.class, 0, this, "photosCb");
+    	aq.progress(R.id.progress).ajax(url, XmlDom.class, 0, this, "photosCb");
     }
     
-    private ProgressDialog makeDialog(){
-    	
-		ProgressDialog dialog = new ProgressDialog(getActivity());
-			
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(true);
-        dialog.setInverseBackgroundForced(false);
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.setTitle("Loading Picasa Photo Feed...");
-        
-        return dialog;
-    }
     
     public void photosCb(String url, XmlDom xml, AjaxStatus status){
     	
     	if(xml != null){
     		
-    		AQUtility.time("photosCb");
-    		
-    		List<Photo> photos = convertAll(xml);
+    		photos = convertAll(xml);
     		render(photos);
     		
-    		AQUtility.timeEnd("photosCb", 0);
     		
     	}
     	
@@ -125,7 +112,7 @@ public class ImageGridFragment extends Fragment{
 					
 				}else{
 					
-					aq.id(R.id.tb).image(tbUrl, false, true, 0, 0, null, AQuery.FADE_IN_NETWORK, 0);
+					aq.id(R.id.tb).image(tbUrl, true, true, 200, 0, null, 0, 0);
 				}
 				
 				return convertView;
