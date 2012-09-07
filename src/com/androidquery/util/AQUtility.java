@@ -47,6 +47,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 
 import com.androidquery.AQuery;
+import com.androidquery.callback.ProgressStrategy;
 
 /**
  * Utility methods. Warning: Methods might changed in future versions.
@@ -322,16 +323,16 @@ public class AQUtility {
     private static final int IO_BUFFER_SIZE = 1024;
     public static void copy(InputStream in, OutputStream out) throws IOException {
     	//copy(in, out, 0, null, null);
-    	copy(in, out, 0, null);
+    	copy(in, out, 0, null, null);
     }
     
-    public static void copy(InputStream in, OutputStream out, int max, Progress progress) throws IOException {
+    public static void copy(InputStream in, OutputStream out, int max, Object progress, ProgressStrategy pStrategy) throws IOException {
     	
     	AQUtility.debug("content header", max);
     	
     	if(progress != null){
-    		progress.reset();
-    		progress.setBytes(max);
+    		pStrategy.reset(progress);
+    		pStrategy.setBytes(progress, max);
     	}
     	
     	byte[] b = new byte[IO_BUFFER_SIZE];
@@ -339,12 +340,12 @@ public class AQUtility {
         while((read = in.read(b)) != -1){
             out.write(b, 0, read);
             if(progress != null){
-            	progress.increment(read);
+            	pStrategy.increment(progress, read);
             }
         }
         
         if(progress != null){
-        	progress.done();
+        	pStrategy.done(progress);
         }
     	
     }

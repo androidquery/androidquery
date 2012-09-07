@@ -83,21 +83,21 @@ import org.xmlpull.v1.XmlPullParser;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Xml;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.androidquery.AQuery;
 import com.androidquery.auth.AccountHandle;
 import com.androidquery.auth.GoogleHandle;
 import com.androidquery.util.AQUtility;
-import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
 import com.androidquery.util.PredefinedBAOS;
-import com.androidquery.util.Progress;
 import com.androidquery.util.XmlDom;
 
 /**
@@ -117,6 +117,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private Object handler;
 	private String callback;
 	private WeakReference<Object> progress;
+	private ProgressStrategy pStrategy;
 	
 	private String url;
 	private Map<String, Object> params;
@@ -451,7 +452,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @return self
 	 */
 	public K progress(View view){
-		return progress((Object) view);
+		return progress((Object) view, null);
 	}
 	
 	/**
@@ -461,12 +462,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @return self
 	 */
 	public K progress(Dialog dialog){
-		return progress((Object) dialog);
+		return progress((Object) dialog, null);
 	}
 	
 	public K progress(Object progress){
+		return progress(progress, null);
+	}
+	
+	public K progress(Object progress, ProgressStrategy customStrategy){
 		if(progress != null){
 			this.progress = new WeakReference<Object>(progress);
+			this.pStrategy = customStrategy;
+		}
+		if(progress != null && pStrategy == null) {
+			if(progress instanceof ProgressBar){
+				pStrategy = new ProgressBarStrategy();
+			}else if(progress instanceof ProgressDialog){
+				pStrategy = new ProgressDialogStrategy();
+			}else if(progress instanceof Activity){
+				pStrategy = new ActivityStrategy();
+			}else if(progress instanceof View){
+				pStrategy = new ViewStrategy();
+			}
 		}
 		return self();
 	}
@@ -590,13 +607,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(p != null){
 			
 			if(AQUtility.isUIThread()){			
-				Common.showProgress(p, url, show);
+				pStrategy.showProgress(p, url, show);
 			}else{
 				AQUtility.post(new Runnable() {
 					
 					@Override
 					public void run() {
-						Common.showProgress(p, url, show);
+						pStrategy.showProgress(p, url, show);
 					}
 				});
 			}
@@ -1567,13 +1584,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			o = progress.get();
 		}
 		
-		Progress p = null;
-		
-		if(o != null){
-			p = new Progress(o); 
-		}
-		
-		AQUtility.copy(is, os, max, p);
+		AQUtility.copy(is, os, max, o, pStrategy);
 		
 		
 	}
