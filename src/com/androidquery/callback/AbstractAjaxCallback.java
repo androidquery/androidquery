@@ -24,12 +24,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1206,28 +1204,23 @@ public abstract class AbstractAjaxCallback <T, K> implements Runnable {
 			key = parentKey + "[" + key + "]";
 		}
 		
-		try {
-			if (value instanceof Map<?, ?>) {
-				Map<String, Object> params = (Map<String, Object>) value;
-				Set<Entry<String, Object>> entries = params.entrySet();
-				for (Entry<String, Object> entry : entries) {
-					// recursive call
-					ps.addAll(getNameValuePairs(key, entry.getKey(), entry.getValue()));
-				}
-			} else if (value instanceof Object[]) {
-				for (Object entry : (Object[]) value) {
-					ps.addAll(getNameValuePairs(key, "", entry));
-				}
-			} else if (value instanceof List<?>) {
-				for (Object entry : (List<?>) value) {
-					ps.addAll(getNameValuePairs(key, "", entry));
-				}
-			} else {
-				ps.add(new BasicNameValuePair(key, URLEncoder.encode(value.toString(), "utf-8")));
+		if (value instanceof Map<?, ?>) {
+			Map<String, Object> params = (Map<String, Object>) value;
+			Set<Entry<String, Object>> entries = params.entrySet();
+			for (Entry<String, Object> entry : entries) {
+				// recursive call
+				ps.addAll(getNameValuePairs(key, entry.getKey(), entry.getValue()));
 			}
-			
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		} else if (value instanceof Object[]) {
+			for (Object entry : (Object[]) value) {
+				ps.addAll(getNameValuePairs(key, "", entry));
+			}
+		} else if (value instanceof List<?>) {
+			for (Object entry : (List<?>) value) {
+				ps.addAll(getNameValuePairs(key, "", entry));
+			}
+		} else {
+			ps.add(new BasicNameValuePair(key, value.toString()));
 		}
 		
 		return ps;
@@ -1590,28 +1583,23 @@ public abstract class AbstractAjaxCallback <T, K> implements Runnable {
 			key = parentKey + "[" + key + "]";
 		}
 		
-		try {
-			if (value instanceof Map<?, ?>) {
-				Map<String, Object> params = (Map<String, Object>) value;
-				Set<Entry<String, Object>> entries = params.entrySet();
-				for (Entry<String, Object> entry : entries) {
-					// recursive call
-					writeObjectRecursively(dos, key, entry.getKey(), entry.getValue());
-				}
-			} else if (value instanceof Object[]) {
-				for (Object entry : (Object[]) value) {
-					writeObjectRecursively(dos, key, "", entry);
-				}
-			} else if (value instanceof List<?>) {
-				for (Object entry : (List<?>) value) {
-					writeObjectRecursively(dos, key, "", entry);
-				}
-			} else {
-				writeObject(dos, key, URLEncoder.encode(value.toString(), "utf-8"));
+		if (value instanceof Map<?, ?>) {
+			Map<String, Object> params = (Map<String, Object>) value;
+			Set<Entry<String, Object>> entries = params.entrySet();
+			for (Entry<String, Object> entry : entries) {
+				// recursive call
+				writeObjectRecursively(dos, key, entry.getKey(), entry.getValue());
 			}
-			
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		} else if (value instanceof Object[]) {
+			for (Object entry : (Object[]) value) {
+				writeObjectRecursively(dos, key, "", entry);
+			}
+		} else if (value instanceof List<?>) {
+			for (Object entry : (List<?>) value) {
+				writeObjectRecursively(dos, key, "", entry);
+			}
+		} else {
+			writeObject(dos, key, value.toString());
 		}
 		
 		return ps;
