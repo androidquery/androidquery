@@ -1613,7 +1613,7 @@ public abstract class AbstractAjaxCallback <T, K> implements Runnable {
 				writeObjectRecursively(dos, key, "", entry);
 			}
 		} else {
-			writeObject(dos, key, value.toString());
+			writeObject(dos, key, value);
 		}
 		
 		return ps;
