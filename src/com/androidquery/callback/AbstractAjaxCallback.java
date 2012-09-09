@@ -1493,15 +1493,17 @@ public abstract class AbstractAjaxCallback <T, K> implements Runnable {
 	private static final String lineEnd = "\r\n";
 	private static final String twoHyphens = "--";
 	private static final String boundary = "*****";
-	
+
 	@SuppressWarnings("unchecked")
 	private static boolean isMultiPart(Map<String, Object> params) {
 		
 		for (Map.Entry<String, Object> entry : params.entrySet()) {
 			Object value = entry.getValue();
 			AQUtility.debug(entry.getKey(), value);
-			if (value instanceof Map<?, ?>) {
-				isMultiPart((Map<String, Object>) value);
+			if (value instanceof File || value instanceof byte[]) {
+				return true;
+			} else if (value instanceof Map<?, ?>) {
+				return isMultiPart((Map<String, Object>) value);
 			} else if (value instanceof Object[]) {
 				for (Object v : (Object[]) value) {
 					if (v instanceof File || v instanceof byte[])
@@ -1512,8 +1514,6 @@ public abstract class AbstractAjaxCallback <T, K> implements Runnable {
 					if (v instanceof File || v instanceof byte[])
 						return true;
 				}
-			} else if (value instanceof File || value instanceof byte[]) {
-					return true;
 			}
 		}
 		
