@@ -21,7 +21,6 @@ import java.util.Comparator;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -38,7 +37,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Gallery;
 import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.BitmapAjaxCallback;
@@ -275,8 +274,6 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 			int first = lv.getFirstVisiblePosition();
 			int last = lv.getLastVisiblePosition();
 			
-			//AQUtility.debug(first, last);
-			
 			int count = last - first;
 			
 			ListAdapter la = lv.getAdapter();
@@ -288,9 +285,6 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 				View convertView = lv.getChildAt(i);
 				Number targetPacked = (Number) convertView.getTag(AQuery.TAG_NUM);
 				
-				//AQUtility.debug("checking packed", targetPacked);
-				
-				//if(targetPacked != null && (targetPacked.longValue() == packed || targetPacked.intValue() == -1)){
 				if(targetPacked != null){
 					la.getView((int) packed, convertView, lv);
 					convertView.setTag(AQuery.TAG_NUM, null);
@@ -306,8 +300,9 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 	
 	public static boolean shouldDelay(int groupPosition, int childPosition, View convertView, ViewGroup parent, String url){
 		
-		Bitmap bm = BitmapAjaxCallback.getMemoryCached(url, 0);
-		if(bm != null) return false;
+		if(url == null || BitmapAjaxCallback.isMemoryCached(url)){
+			return false;
+		}
 		
 		AbsListView lv = (AbsListView) parent;
 		
@@ -355,10 +350,8 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 	
 	private static boolean shouldDelayGallery(int position, View convertView, ViewGroup parent, String url){
 		
-		if(url == null) return false;
-		
-		boolean hit = BitmapAjaxCallback.getMemoryCached(url, 0) != null;
-		if(hit){
+	
+		if(url == null || BitmapAjaxCallback.isMemoryCached(url)){
 			return false;
 		}
 		
@@ -499,14 +492,28 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 
 				View pv = (View) p;
 				
+				ProgressBar pbar = null;
+				
+				if(p instanceof ProgressBar){
+					pbar = (ProgressBar) p;
+				}
+				
 				if(show){
 					pv.setTag(AQuery.TAG_URL, url);
 					pv.setVisibility(View.VISIBLE);
+					if(pbar != null){
+						pbar.setProgress(0);	
+						pbar.setMax(100);
+					}
+					
 				}else{
 					Object tag = pv.getTag(AQuery.TAG_URL);
 					if(tag == null || tag.equals(url)){
-						pv.setTag(AQuery.TAG_URL, null);
-						pv.setVisibility(View.GONE);						
+						pv.setTag(AQuery.TAG_URL, null);	
+						
+						if(pbar != null && pbar.isIndeterminate()){
+							pv.setVisibility(View.GONE);						
+						}
 					}
 				}
 			}else if(p instanceof Dialog){
@@ -525,7 +532,11 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 				
 				Activity act = (Activity) p;;
 				act.setProgressBarIndeterminateVisibility(show);
+				act.setProgressBarVisibility(show);
 			
+				if(show){
+					act.setProgress(0);
+				}
 			}
 		}
 		

@@ -16,6 +16,7 @@
 
 package com.androidquery.callback;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -48,8 +49,11 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.params.ConnManagerParams;
@@ -65,6 +69,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
@@ -91,6 +97,7 @@ import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
 import com.androidquery.util.PredefinedBAOS;
+import com.androidquery.util.Progress;
 import com.androidquery.util.XmlDom;
 
 /**
@@ -130,10 +137,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	protected boolean fileCache;
 	protected boolean memCache;
 	private boolean refresh;
+	private int timeout = 0;
 	
 	private long expire;
 	private String encoding = "UTF-8";
 	private WeakReference<Activity> act;
+	
+	private int method = Constants.METHOD_DETECT;
+	private HttpUriRequest request;
 	
 	private boolean uiCallback = true;
 	
@@ -146,6 +157,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		whandler = null;
 		handler = null;
 		progress = null;
+		request = null;
+		transformer = null;
+		ah = null;
+		act = null;
 	}
 	
 	/**
@@ -254,6 +269,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	public K method(int method){
+		this.method = method;
+		return self();
+	}
+	
+	public K timeout(int timeout){
+		this.timeout = timeout;
+		return self();
+	}
 	
 	/**
 	 * Set the transformer that transform raw data to desired type.
@@ -474,7 +498,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		filePut();
 		
-		status.close();
+		if(!blocked){
+			status.close();
+		}
 		
 		wake();
 		AQUtility.debugNotify();
@@ -538,7 +564,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		try {			
 			byte[] data = null;
 		
-			if(needInputStream()){
+			if(isStreamingContent()){
 				status.file(file);
 			}else{
 				data = AQUtility.toBytes(new FileInputStream(file));
@@ -557,12 +583,23 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	protected void showProgress(boolean show){
+	protected void showProgress(final boolean show){
 		
-		if(progress != null){
+		final Object p = progress == null ? null : progress.get();
+		
+		if(p != null){
 			
-			Common.showProgress(progress.get(), url, show);
-		
+			if(AQUtility.isUIThread()){			
+				Common.showProgress(p, url, show);
+			}else{
+				AQUtility.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						Common.showProgress(p, url, show);
+					}
+				});
+			}
 		}
 		
 	}
@@ -628,6 +665,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				return (T) result;
 			}
 			
+			/*
 			if(type.equals(XmlDom.class)){
 				
 				XmlDom result = null;
@@ -640,7 +678,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				
 				return (T) result; 
 			}
-			
+			*/
 			
 			if(type.equals(byte[].class)){
 				return (T) data;
@@ -660,12 +698,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			if(type.equals(File.class)){
 				return (T) file;
 			}
+			
+			if(type.equals(XmlDom.class)){
+				
+				XmlDom result = null;
+				
+				try {    
+					FileInputStream fis = new FileInputStream(file);
+					result = new XmlDom(fis);
+					status.closeLater(fis);
+				} catch (Exception e) {	  		
+					AQUtility.report(e);
+					return null;
+				}
+				
+				return (T) result; 
+			}
 
 			if(type.equals(XmlPullParser.class)){	
 
 				XmlPullParser parser = Xml.newPullParser();
 				try{
-					//parser.setInput(new ByteArrayInputStream(data), encoding);
+					
 					FileInputStream fis = new FileInputStream(file);
 					parser.setInput(fis, encoding);
 					status.closeLater(fis);
@@ -796,6 +850,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 */
 	public void async(Activity act){
 		
+		if(act.isFinishing()){
+			AQUtility.warn("Warning", "Possible memory leak. Calling ajax with a terminated activity.");
+		}
+		
+		if(type == null){
+			AQUtility.warn("Warning", "type() is not called with response type.");
+			return;
+		}
+		
 		this.act = new WeakReference<Activity>(act);
 		async((Context) act);
 		
@@ -916,8 +979,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private void backgroundWork(){
 	
-		
-		
 		if(!refresh){
 		
 			if(fileCache){	
@@ -1022,13 +1083,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return AQUtility.getCacheFile(cacheDir, getCacheUrl());
 	}
 	
-	private boolean needInputStream(){
-		return File.class.equals(type) || XmlPullParser.class.equals(type) || InputStream.class.equals(type);
+	
+	protected boolean isStreamingContent(){
+		return File.class.equals(type) || XmlPullParser.class.equals(type) || InputStream.class.equals(type) || XmlDom.class.equals(type);
 	}
 	
 	private File getPreFile(){
 		
-		boolean pre = needInputStream();
+		boolean pre = isStreamingContent();
 		
 		File result = null;
 		
@@ -1039,12 +1101,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			}else if(fileCache){
 				result = getCacheFile();
 			}else{
-				result = AQUtility.getCacheFile(AQUtility.getTempDir(), url);
+				File dir = AQUtility.getTempDir();
+				if(dir == null) dir = cacheDir;
+				result = AQUtility.getCacheFile(dir, url);
 			}
 		}
 		
 		if(result != null && !result.exists()){
 			try{
+				
 				result.getParentFile().mkdirs();
 				result.createNewFile();
 			}catch(Exception e){
@@ -1129,16 +1194,33 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			url = ah.getNetworkUrl(url);
 		}
 		
-		if(params == null){
-			httpGet(url, headers, status);	
+		
+		if(Constants.METHOD_DELETE == method){
+			httpDelete(url, headers, status);
+		}else if(Constants.METHOD_PUT == method){
+			httpPut(url, headers, params, status);
 		}else{
-			if(isMultiPart(params)){
-				httpMulti(url, headers, params, status);
+			
+			if(Constants.METHOD_POST == method && params == null){
+				params = new HashMap<String, Object>();
+			}
+			
+			if(params == null){
+				httpGet(url, headers, status);	
 			}else{
-				httpPost(url, headers, params, status);
+				if(isMultiPart(params)){
+					httpMulti(url, headers, params, status);
+				}else{
+					httpPost(url, headers, params, status);
+				}
+				
 			}
 			
 		}
+			
+			
+			
+			
 		
 	}
 	
@@ -1179,6 +1261,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	/**
 	 * Cancel ALL ajax tasks.
+	 * 
+	 * Warning: Do not call this method unless you are exiting an application.
+	 * 
 	 */
 	
 	public static void cancel(){
@@ -1203,18 +1288,48 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		url = patchUrl(url);
 		
 		HttpGet get = new HttpGet(url);
-		
+				
 		httpDo(get, url, headers, status);
 		
 	}
 	
+	private void httpDelete(String url, Map<String, String> headers, AjaxStatus status) throws IOException{
+		
+		AQUtility.debug("get", url);
+		url = patchUrl(url);
+		
+		HttpDelete del = new HttpDelete(url);
+		
+		httpDo(del, url, headers, status);
+		
+	}
 	
 	private void httpPost(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
 		
 		AQUtility.debug("post", url);
 		
+		HttpEntityEnclosingRequestBase req = new HttpPost(url);
 		
-		HttpPost post = new HttpPost(url);
+		httpEntity(url, req, headers, params, status);
+		
+	}
+	
+	private void httpPut(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
+		
+		AQUtility.debug("put", url);
+		
+		HttpEntityEnclosingRequestBase req = new HttpPut(url);
+		
+		httpEntity(url, req, headers, params, status);
+		
+	}
+	
+	
+	private void httpEntity(String url, HttpEntityEnclosingRequestBase req, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
+		
+		//This setting seems to improve post performance
+		//http://stackoverflow.com/questions/3046424/http-post-requests-using-httpclient-take-2-seconds-why
+		req.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
 		
 		HttpEntity entity = null;
 		
@@ -1242,13 +1357,22 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			headers.put("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 		}
 		
-		post.setEntity(entity);
-		httpDo(post, url, headers, status);
+		req.setEntity(entity);
+		httpDo(req, url, headers, status);
 		
 		
 	}
 	
 	private static SocketFactory ssf;
+	
+	/**
+	 * Set the secure socket factory.
+	 * 
+	 * Could be used to work around SSL certificate not truested issue.
+	 * 
+	 * http://stackoverflow.com/questions/1217141/self-signed-ssl-acceptance-android
+	 */
+	
 	public static void setSSF(SocketFactory sf){
 		ssf = sf;
 		client = null;
@@ -1270,6 +1394,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			AQUtility.debug("creating http client");
 			
 			HttpParams httpParams = new BasicHttpParams();
+			
+			//httpParams.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+			
 			HttpConnectionParams.setConnectionTimeout(httpParams, NET_TIMEOUT);
 			HttpConnectionParams.setSoTimeout(httpParams, NET_TIMEOUT);
 			
@@ -1285,6 +1412,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 			ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(httpParams, registry);			
 			client = new DefaultHttpClient(cm, httpParams);
+			
 			
 		}
 		return client;
@@ -1304,7 +1432,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
                
 		}
 		
-		if(GZIP && headers == null || !headers.containsKey("Accept-Encoding")){
+		if(GZIP && (headers == null || !headers.containsKey("Accept-Encoding"))){
 			hr.addHeader("Accept-Encoding", "gzip");
 		}
 			
@@ -1319,16 +1447,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		DefaultHttpClient client = getClient();
 		
-		client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+		HttpParams hp = hr.getParams();
+		if(proxy != null) hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+		if(timeout > 0){
+			AQUtility.debug("timeout param", CoreConnectionPNames.CONNECTION_TIMEOUT);
+			hp.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
+			hp.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
+		}
 		
 		HttpContext context = new BasicHttpContext(); 	
 		CookieStore cookieStore = new BasicCookieStore();
 		context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 		
+		request = hr;
+		
+		if(abort){
+			throw new IOException("Aborted");
+		}
+		
 		HttpResponse response = client.execute(hr, context);
 		
         byte[] data = null;
-        File file = getPreFile();
+        
         
         String redirect = url;
         
@@ -1336,13 +1476,23 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         String message = response.getStatusLine().getReasonPhrase();
         String error = null;
         
+        HttpEntity entity = response.getEntity();
+        Header eheader = entity.getContentEncoding();
+        
+        String encoding = null;
+        if(eheader != null) encoding = eheader.getValue();
+        
+        File file = null;
         
         if(code < 200 || code >= 300){     
         	
         	try{
-        		HttpEntity entity = response.getEntity();
-        		byte[] s = AQUtility.toBytes(entity.getContent());
+        		
+        		InputStream is = entity.getContent();
+        		byte[] s = toData(encoding, is);
+        		
         		error = new String(s, "UTF-8");
+        		
         		AQUtility.debug("error", error);
         	}catch(Exception e){
         		AQUtility.debug(e);
@@ -1351,7 +1501,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	
         }else{
         	
-        	HttpEntity entity = response.getEntity();	
 			
 			HttpHost currentHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
@@ -1363,21 +1512,21 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	        InputStream is = null;
 	        
 	        try{
+	        	file = getPreFile();
 	        
 		        if(file == null){
 		        	os = new PredefinedBAOS(size);
 		        }else{
 		        	file.createNewFile();
-		        	os = new FileOutputStream(file);
+		        	os = new BufferedOutputStream(new FileOutputStream(file));
 		        }
 		        
-		        Header encoding = entity.getContentEncoding();
-		        if(encoding != null && encoding.getValue().equalsIgnoreCase("gzip")) {
-		        	is = new GZIPInputStream(entity.getContent());
-		        	AQUtility.copy(is, os);
-		        }else{
-		        	entity.writeTo(os);
-		        }
+		        //AQUtility.time("copy");
+		        
+		        copy(entity.getContent(), os, encoding, (int) entity.getContentLength());
+		        
+		        //AQUtility.timeEnd("copy", 0);
+		        
 		        
 		        os.flush();
 		        
@@ -1394,20 +1543,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	        	AQUtility.close(os);
 	        }
 	        
-	        /*
-	        PredefinedBAOS baos = new PredefinedBAOS(size);
-	        
-	        Header encoding = entity.getContentEncoding();
-	        if(encoding != null && encoding.getValue().equalsIgnoreCase("gzip")) {
-	        	InputStream is = new GZIPInputStream(entity.getContent());
-	        	AQUtility.copy(is, baos);
-	        }else{
-	        	entity.writeTo(baos);
-	        }
-	        
-	        
-	        data = baos.toByteArray();
-	        */
         }
         
         AQUtility.debug("response", code);
@@ -1419,6 +1554,30 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
         
 	}
+	
+	private void copy(InputStream is, OutputStream os, String encoding, int max) throws IOException{
+		
+		if("gzip".equalsIgnoreCase(encoding)){
+			is = new GZIPInputStream(is);
+		}
+		
+		Object o = null;
+		
+		if(progress != null){
+			o = progress.get();
+		}
+		
+		Progress p = null;
+		
+		if(o != null){
+			p = new Progress(o); 
+		}
+		
+		AQUtility.copy(is, os, max, p);
+		
+		
+	}
+	
 	
 	/**
 	 * Set the authentication type of this request. This method requires API 5+.
@@ -1515,6 +1674,26 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return encoding;
 	}
 	
+	private boolean abort;
+	
+	/**
+	 * Abort the http request that will interrupt the network transfer. 
+	 * This method currently doesn't work with multi-part post. 
+	 *
+	 * If no network transfer is involved (eg. response is file cached), this method has no effect.
+	 * 
+	 */
+	
+	public void abort(){
+		
+		abort = true;
+		
+		if(request != null && !request.isAborted()){
+			request.abort();
+		}
+		
+	}
+	
 	private static final String lineEnd = "\r\n";
 	private static final String twoHyphens = "--";
 	private static final String boundary = "*****";
@@ -1525,7 +1704,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		for(Map.Entry<String, Object> entry: params.entrySet()){
 			Object value = entry.getValue();
 			AQUtility.debug(entry.getKey(), value);
-			if(value instanceof File || value instanceof byte[]) return true;
+			if(value instanceof File || value instanceof byte[] || value instanceof InputStream) return true;
 		}
 		
 		return false;
@@ -1559,10 +1738,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         		conn.setRequestProperty(name, headers.get(name));
         	}
         }
-			
+
 		String cookie = makeCookie();
 		if(cookie != null){
 			conn.setRequestProperty("Cookie", cookie);
+		}
+
+		if(ah != null){
+			ah.applyToken(this, conn);
 		}
 		
 		dos = new DataOutputStream(conn.getOutputStream());
@@ -1577,6 +1760,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		dos.flush();
 		dos.close();
 		
+		
+		
 		conn.connect();
 		
         int code = conn.getResponseCode();
@@ -1584,13 +1769,17 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         
         byte[] data = null;
         
+        String encoding = conn.getContentEncoding();
+    	String error = null;
+        
         if(code < 200 || code >= 300){        	
-        	//throw new IOException();
+        	
+        	error = new String(toData(encoding, conn.getErrorStream()), "UTF-8");
+        
+        	AQUtility.debug("error", error);
         }else{
         	
-        	InputStream is = conn.getInputStream();
-    		data = AQUtility.toBytes(is);
-    		
+    		data = toData(encoding, conn.getInputStream());
         }
         
         AQUtility.debug("response", code);
@@ -1599,11 +1788,23 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         	AQUtility.debug(data.length, url);
         }
         
-        status.code(code).message(message).redirect(url).time(new Date()).data(data).client(null);
+        status.code(code).message(message).redirect(url).time(new Date()).data(data).error(error).client(null);
 			
 	
 	
 	}
+	
+	private byte[] toData(String encoding, InputStream is) throws IOException{
+		
+		boolean gzip = "gzip".equalsIgnoreCase(encoding);
+		
+		if(gzip){
+			is = new GZIPInputStream(is);
+		}
+		
+		return AQUtility.toBytes(is);
+	}
+	
 	
 	private static void writeObject(DataOutputStream dos, String name, Object obj) throws IOException{
 		
@@ -1616,12 +1817,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 
 		}else if(obj instanceof byte[]){
 			writeData(dos, name, name, new ByteArrayInputStream((byte[]) obj));
+		}else if(obj instanceof InputStream){
+			writeData(dos, name, name, (InputStream) obj);
 		}else{
 			writeField(dos, name, obj.toString());
 		}
 		
 	}
-	
+
 	
 	private static void writeData(DataOutputStream dos, String name, String filename, InputStream is) throws IOException {
 		
@@ -1674,6 +1877,5 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 }
-
 
 

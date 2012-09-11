@@ -73,6 +73,16 @@
 		/>
 	    
 	    
+	    <ProgressBar 
+			android:id="@+id/progress_bar"	
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_margin="5dip"
+			style="@android:style/Widget.ProgressBar.Horizontal"
+			android:layout_gravity="center_horizontal" 
+			android:visibility="gone"
+		/>
+	    
 		<ImageView
 			android:id="@+id/image"				
 			android:layout_width="wrap_content" 

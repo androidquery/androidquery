@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.apache.http.HttpEntity;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -65,6 +67,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -72,6 +75,7 @@ import com.androidquery.auth.AccountHandle;
 import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.callback.ImageOptions;
 import com.androidquery.callback.Transformer;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
@@ -732,6 +736,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	public T image(String url, ImageOptions options){
+		
+		if(view instanceof ImageView){		
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, progress, ah, options);			
+			reset();
+		}
+		
+		return self();
+	}
+	
 	
 	/**
 	 * Set the image of an ImageView with a custom callback.
@@ -1128,6 +1142,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * Gets the current view as seek bar.
+	 *
+	 * @return SeekBar
+	 */
+	
+	public SeekBar getSeekBar(){
+		return (SeekBar) view;
+	}
+	
+	/**
 	 * Gets the current view as a button.
 	 *
 	 * @return Button
@@ -1248,6 +1272,25 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 	}
 	
+	
+	/**
+	 * Gets the selected item position if current view is an adapter view.
+	 *
+	 * Returns AdapterView.INVALID_POSITION if not valid.
+	 *
+	 * @return selected position
+	 */
+	public int getSelectedItemPosition(){
+		
+		int result = AdapterView.INVALID_POSITION;
+		
+		if(view instanceof AdapterView<?>){
+			result = ((AdapterView<?>) view).getSelectedItemPosition();
+		}
+		
+		return result;
+		
+	}
 	
 	
 	private static final Class<?>[] ON_CLICK_SIG = {View.class};
@@ -1737,20 +1780,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	protected <K> T invoke(AbstractAjaxCallback<?, K> cb){
 				
-		/*
-		if(ah != null){
-			callback.auth(ah);
-		}
-		
-		if(progress != null){
-			callback.progress(progress);
-		}
-		
-		if(trans != null){
-			callback.transformer(trans);
-		}
-		
-		 */
 		
 		cb.auth(ah);
 		cb.progress(progress);
@@ -1786,7 +1815,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback handler
 	 * @return self
 	 * 
-	 * @see testAjax2
 	 */
 	
 	public <K> T ajax(String url, Class<K> type, AjaxCallback<K> callback){
@@ -1809,7 +1837,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback handler
 	 * @return self
 	 * 
-	 * @see testAjax6
+	 * 
 	 */
 	
 	public <K> T ajax(String url, Class<K> type, long expire, AjaxCallback<K> callback){
@@ -1833,7 +1861,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback method name
 	 * @return self
 	 * 
-	 * @see testAjax3
+	 * 
 	 */
 	
 	public <K> T ajax(String url, Class<K> type, Object handler, String callback){
@@ -1862,7 +1890,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback method name
 	 * @return self
 	 * 
-	 * @see testAjax7
+	 * 
 	 */
 	
 	public <K> T ajax(String url, Class<K> type, long expire, Object handler, String callback){
@@ -1884,7 +1912,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback method name
 	 * @return self
 	 * 
-	 * @see testAjax4
+	 * 
 	 */
 	
 	public <K> T ajax(String url, Map<String, ?> params, Class<K> type, AjaxCallback<K> callback){
@@ -1905,7 +1933,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @param callback callback method name
 	 * @return self
 	 * 
-	 * @see testAjax5
+	 * 
 	 */
 	
 	public <K> T ajax(String url, Map<String, ?> params, Class<K> type, Object handler, String callback){
@@ -1917,6 +1945,64 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return ajax(url, params, type, cb);
 		
 	}
+	
+	/**
+	 * Ajax HTTP delete.
+	 *
+	 * @param url url
+	 * @param type data type
+	 * @param callback callback handler
+	 * @return self
+	 * 
+	 */
+	
+	public <K> T delete(String url, Class<K> type, AjaxCallback<K> callback){
+		
+		callback.url(url).type(type).method(AQuery.METHOD_DELETE);		
+		return ajax(callback);
+		
+	}
+	
+	public <K> T put(String url, String contentHeader, HttpEntity entity, Class<K> type, AjaxCallback<K> callback){
+		
+		callback.url(url).type(type).method(AQuery.METHOD_PUT).header("Content-Type", contentHeader).param(AQuery.POST_ENTITY, entity);		
+		return ajax(callback);
+		
+	}
+	
+	
+	
+	/**
+	 * Ajax HTTP delete.
+	 *
+	 * The handler signature must be (String url, <K> object, AjaxStatus status)
+	 *
+	 * @param url url
+	 * @param type data type
+	 * @param handler the handler object with the callback method to be called
+	 * @param callback callback method name
+	 * @return self
+	 * 
+	 * 
+	 */
+	
+	public <K> T delete(String url, Class<K> type, Object handler, String callback){
+		
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.weakHandler(handler, callback);
+		
+		return delete(url, type, cb);
+		
+	}
+	
+	/**
+	 * Ajax call with that block until response is ready. This method cannot be called on UI thread.
+	 * 
+	 *
+	 * @param callback callback 
+	 * @return self
+	 * 
+	 */
 	
 	public <K> T sync(AjaxCallback<K> callback){
 		ajax(callback);
@@ -2410,7 +2496,6 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 * 
 	 */
-	private static LayoutInflater inflater;
 	public View inflate(View convertView, int layoutId, ViewGroup root){
 		
 		if(convertView != null){
@@ -2420,15 +2505,16 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			}
 		}
 		
-		if(inflater == null){
+		LayoutInflater inflater = null;
+		
+		if(act != null){
+			inflater = act.getLayoutInflater();
+		}else{
 			inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
-			
 		
 		View view = inflater.inflate(layoutId, root, false);	
 		view.setTag(AQuery.TAG_LAYOUT, layoutId);
-		
-		//AQUtility.debug("infalted");
 		
 		return view;
 		

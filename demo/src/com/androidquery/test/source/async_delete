@@ -1,0 +1,7 @@
+	public void async_delete() {
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		aq.progress(R.id.progress).delete(url, JSONObject.class, this, "jsonCb");
+        
+    }

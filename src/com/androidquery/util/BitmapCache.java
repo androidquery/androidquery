@@ -90,6 +90,7 @@ public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 	}
 	
 	private int pixels(Bitmap bm){
+		if(bm == null) return 0;
 		return bm.getWidth() * bm.getHeight();
 	}
 	
@@ -119,7 +120,17 @@ public class BitmapCache extends LinkedHashMap<String, Bitmap>{
 	public boolean removeEldestEntry(Map.Entry<String, Bitmap> eldest) {
         
 		if(pixels > maxTotalPixels || size() > maxCount){
+		
+			/*
+			if(pixels > maxTotalPixels){
+				AQUtility.debug("evict by max size");
+			}else{
+				AQUtility.debug("evict by count", maxCount);
+			}
+			*/
 			remove(eldest.getKey());
+		
+			
 		}
 		
 		shrink();

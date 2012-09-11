@@ -10,7 +10,6 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.view.View;
 import android.view.Window;
 
@@ -33,11 +32,13 @@ public class RunSourceActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
-
+		if(AQuery.SDK_INT >= 11){
+			//setTheme(0x0103006b);
+			//setTheme(0x0103006e);
+		}
 		
 		super.onCreate(savedInstanceState);
 				
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
 		
 		aq = new AQuery(this);
 		

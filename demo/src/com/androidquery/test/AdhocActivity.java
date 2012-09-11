@@ -1,13 +1,17 @@
 package com.androidquery.test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +28,7 @@ import com.androidquery.R;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.callback.ImageOptions;
 import com.androidquery.util.AQUtility;
 
 public class AdhocActivity extends Activity {
@@ -40,65 +45,85 @@ public class AdhocActivity extends Activity {
 		
 		aq = new AQuery(this);
 		
-		AjaxCallback.setReuseHttpClient(false);
-		//aq.id(R.id.text).text("point 1");
-		
-		try{
-			work();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		aq.id(R.id.button).clicked(this, "goClicked");
 	}
 	
 	
 	
 	private void work() throws IOException{
-		/*
-		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";   
 		
-		aq.id(new ImageView(this)).image(url, false, true, 200, 0, new BitmapAjaxCallback(){
-			
-			protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
-				AQUtility.debug(bm.getWidth());
-			}
-			
-		});
-		*/
 		
-        AQUtility.setDebug(true);
-        final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(true);
-        dialog.setInverseBackgroundForced(false);
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.setTitle("Sending...");
-
-        Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                        String url = "http://sssprog.ru";
-                        final int num = number;
-                        number++;
-
-                        Log.d("sss", "loading started " + num);
-
-                        aq.progress(dialog).ajax(url, String.class, new
-                        		
-                        	AjaxCallback<String>() {
-                            
-                        		@Override
-	                            public void callback(String url, String html, AjaxStatus status)
-                        		{
-	                                        Log.i("sss", "ajax loaded " + num + "   " + status.getCode() + "  " + url);
-	                                        Log.i("sss", "Res: " + html);
-	                                }
-	                        });
-	                }
-	        });
-	
 		
 	}
 	
+	public void goClicked(View view){
+		
+		AQUtility.debug("clicked");
+		
+		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
+		
+		aq.ajax(url, File.class, 0, new AjaxCallback<File>(){
+			
+			@Override
+			public void callback(String url, File object, AjaxStatus status){
+				
+				try{
+					photoCb(url, object, status);
+				}catch(Throwable e){
+					AQUtility.debug(e);
+					finish();
+				}
+			}
+			
+		}.uiCallback(false));
+		
+	}
+	
+	private Map<String, Bitmap> cache = new HashMap<String, Bitmap>();
+	
+	public void photoCb(String url, File file, AjaxStatus status) throws Exception{
+		
+		if(file == null) return;
+		
+		AQUtility.debug("file cb", file.length());
+		AQUtility.debug("ui", AQUtility.isUIThread());
+		
+		for(int i = 0; i < 50; i++){
+			
+			String tag = "image#" + (i + 1);
+			
+			AQUtility.time(tag);
+			Bitmap bm = decode(file);
+			
+			cache.put(i +"", bm);
+			
+			
+			AQUtility.timeEnd(tag, 0);
+			
+		}
+		
+	}
+	
+	private Bitmap decode(File file) throws Exception{
+		
+		BitmapFactory.Options options = new Options();
+		
+		options.inInputShareable = true;
+		options.inPurgeable = true;
+		
+		FileInputStream fis = new FileInputStream(file);
+		
+		//Bitmap result = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+		
+		Bitmap result = BitmapFactory.decodeFileDescriptor(fis.getFD(), null, options);
+		
+		AQUtility.debug("bm", result.getWidth() + "x" + result.getHeight());
+		
+		fis.close();
+		
+		return result;
+		
+	}
 	
 	
 	protected int getContainer(){

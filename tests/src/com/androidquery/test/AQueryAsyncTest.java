@@ -1,7 +1,10 @@
 package com.androidquery.test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,13 +24,16 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.xmlpull.v1.XmlPullParser;
 
 import com.androidquery.AQuery;
+import com.androidquery.auth.BasicHandle;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.util.AQUtility;
@@ -155,6 +161,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
     }
 	
+	
 	//Test: public <K> T ajax(String url, Class<K> type, Object handler, String callback)
 	public void testAjaxHandler() {
 		
@@ -195,8 +202,10 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNotNull(jo);       
         assertNotNull(jo.opt("results"));
         
+        AQUtility.debug("duration", status.getDuration());
+        
 	}
-	
+
 	public void testAjaxPostRaw() throws UnsupportedEncodingException{
 		
         String url = "http://search.twitter.com/search.json";
@@ -350,36 +359,31 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertEquals("http://jigsaw.w3.org/HTTP/300/Overview.html", status.getRedirect());
         
 	}
+	//mouVUQ
 	
 	
-	public void test307(){
+	public void test304(){
 		
-		String url = "http://jigsaw.w3.org/HTTP/300/307.html";
-        
-		AjaxCallback<String> cb = new AjaxCallback<String>(){
-			
-			@Override
-			public void callback(String url, String html, AjaxStatus status) {
-				
-				done(url, html, status);
-				
-			}
-			
-		};
+		String url = "http://192.168.1.165/p/doNothing?response=304";
 		
-		cb.url(url).type(String.class);		
-        aq.ajax(cb);
+        aq.ajax(url, File.class, new AjaxCallback<File>() {
+
+            @Override
+            public void callback(String url, File file, AjaxStatus status) {
+                
+            	done(url, file, status);
+            	
+            }
+        }.header("If-Modified-Since", "Sat, 15 May 2010 12:06:39 GMT"));
+		
+        //If-Modified-Since: Sat, 15 May 2010 12:06:39 GMT
         
         waitAsync();
         
-        String html = (String) result;
-        
-        assertNotNull(html);       
-        
-        assertEquals("http://jigsaw.w3.org/HTTP/300/Overview.html", status.getRedirect());
-        
-        
+        assertNull(result);
+        assertEquals(304, status.getCode());
 		
+        
 	}
 	
 	public void testTransformError(){
@@ -424,8 +428,31 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNull(result);
         assertEquals(404, status.getCode());
 		
+        
 	}
 	
+	//http://beauharnois_bupa.tripod.com/chutessaint-louis-small.jpg
+	public void testUnderscoreDomain(){
+		
+		String url = "http://beauharnois_bupa.tripod.com/chutessaint-louis-small.jpg";
+        
+        aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
+
+            @Override
+            public void callback(String url, byte[] json, AjaxStatus status) {
+                
+            	done(url, json, status);
+            	
+            }
+        });
+		
+        waitAsync();
+        
+        assertNotNull(result);
+        //assertEquals(404, status.getCode());
+		
+        
+	}
 	
 	public void testNetworkError(){
 		
@@ -474,6 +501,36 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		String u = cb.getUrl();
         JSONObject jo = cb.getResult();
         AjaxStatus status = cb.getStatus();
+        
+        assertNotNull(jo);       
+        assertNotNull(jo.opt("responseData"));
+        checkStatus(status);
+    }
+	
+	public void testWaitBlockInputStream() {
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		AjaxCallback<InputStream> cb = new AjaxCallback<InputStream>();		
+		cb.url(url).type(InputStream.class);		
+        
+		aq.sync(cb);
+        
+		String u = cb.getUrl();
+		InputStream is = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        byte[] data = AQUtility.toBytes(is);
+        
+        JSONObject jo = null;
+		String str = null;
+    	try {    		
+    		str = new String(data, "UTF-8");
+			jo = (JSONObject) new JSONTokener(str).nextValue();
+		} catch (Exception e) {	  		
+			AQUtility.debug(e);
+			AQUtility.debug(str);
+		}
         
         assertNotNull(jo);       
         assertNotNull(jo.opt("responseData"));
@@ -805,26 +862,62 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertEquals(2345, jo.optInt("data2"));
 	}
 	
+	public void testAjaxPostMultiAuth(){
+		
+        String url = "http://www.androidquery.com/p/multipart";
+		
+        BasicHandle handle = new BasicHandle("username", "1234");
+        
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		byte[] data = new byte[1234];
+		byte[] data2 = new byte[2345];
+		
+		params.put("data", data);
+		params.put("data2", data2);
+		
+        aq.auth(handle).ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+            	AQUtility.debug(status.getCode(), status.getError());
+            	
+        		AQueryAsyncTest.this.result = jo;
+            }
+        });
+		
+        waitAsync();
+		
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals(1234, jo.optInt("data"));
+        assertEquals(2345, jo.optInt("data2"));
+        
+        JSONObject headers = jo.optJSONObject("headers");
+        
+        assertNotNull(headers.optString("Authorization"));
+	}
+	
+	
 	public void testAjaxPostMultiFile() throws IOException{
 		
         String url = "http://www.androidquery.com/p/multipart";
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		
-		File tempFile1 = File.createTempFile("pre1", "bin");
-		File tempFile2 = File.createTempFile("pre2", "bin");
+		File tempFile1 = AQUtility.getCacheFile(AQUtility.getCacheDir(getActivity()), "pre1");
+		File tempFile2 = AQUtility.getCacheFile(AQUtility.getCacheDir(getActivity()), "pre2");
 		
 		byte[] data1 = new byte[1234];
 		byte[] data2 = new byte[2345];
 		
 		AQUtility.write(tempFile1, data1);
 		AQUtility.write(tempFile2, data2);
-		
-		
-		//byte[] data2 = new byte[2345];
-		
-		//params.put("data", data);
-		//params.put("data2", data2);
 		
 		params.put("data", tempFile1);
 		params.put("data2", tempFile2);
@@ -850,6 +943,80 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         assertEquals(1234, jo.optInt("data"));
         assertEquals(2345, jo.optInt("data2"));
+	}
+	
+	public void testAjaxPostMultiInputStream(){
+		
+        String url = "http://www.androidquery.com/p/multipart";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		byte[] data = new byte[1234];
+		byte[] data2 = new byte[2345];
+		
+		params.put("data", new ByteArrayInputStream(data));
+		params.put("data2", new ByteArrayInputStream(data2));
+		
+        aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+            	AQUtility.debug(status.getCode(), status.getError());
+            	
+        		AQueryAsyncTest.this.result = jo;
+            }
+        });
+		
+        waitAsync();
+		
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals(1234, jo.optInt("data"));
+        assertEquals(2345, jo.optInt("data2"));
+	}
+	
+	public void testAjaxPostMultiError(){
+		
+        String url = "http://www.androidquery.com/p/multipart2";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		byte[] data = new byte[1234];
+		byte[] data2 = new byte[2345];
+		
+		params.put("data", data);
+		params.put("data2", data2);
+		
+        aq.ajax(url, params, JSONObject.class, new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+            	AQUtility.debug(status.getCode(), status.getError());
+            	
+        		AQueryAsyncTest.this.result = jo;
+        		AQueryAsyncTest.this.status = status;
+            }
+        });
+		
+        waitAsync();
+		
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug("error code", status.getCode());
+        
+        assertNull(jo);       
+        assertEquals(404, status.getCode());
+        
+        
+        String error = status.getError();
+        assertNotNull(error);
+        
 	}
 	
 	
@@ -908,6 +1075,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
 	}
 	
+	//http://www.proxynova.com/proxy-server-list/
 	public void testAjaxProxy() throws ClientProtocolException, IOException{
 		
 		String url = "http://www.google.com";
@@ -920,7 +1088,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
             	done(url, json, status);
             	
             }
-        }.proxy("62.0.192.219", 80));
+        }.proxy("112.25.12.38", 80));
 		
         waitAsync();
         
@@ -1037,5 +1205,344 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		return result;
 		
 	}
+	
+	public void testAjaxGzip() {
+		
+		String url = "http://www.yahoo.com";
+        
+		AjaxCallback<String> cb = new AjaxCallback<String>(){
+			
+			@Override
+			public void callback(String url, String jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		cb.url(url).type(String.class);		
+        aq.ajax(cb);
+        
+        waitAsync();
+            
+        String html = (String) result;
+        
+        assertNotNull(result);
+        assertTrue(html.contains("<html"));
+    }
+	
+	
+	public void testAjaxGzipError() {
+		
+		String url = "http://www.thenorthface.com/invalid";
+        
+		AjaxCallback<String> cb = new AjaxCallback<String>(){
+			
+			@Override
+			public void callback(String url, String jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		cb.url(url).type(String.class);		
+        aq.ajax(cb);
+        
+        waitAsync();
+            
+        assertNull(result);
+        assertTrue(status.getCode() == 404);
+        
+        assertTrue(status.getError().contains("<html"));
+    }
+	
+	public void testAjaxFileUrl() {
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.url(url).type(File.class);		
+		
+        //aq.ajax(url, JSONObject.class, cb);
+        aq.sync(cb);
+		
+        File file = cb.getResult();
+        
+        assertNotNull(file);       
+        
+        AQUtility.debug(file.getAbsolutePath());
+        
+        String path = file.getAbsolutePath();
+        
+        AjaxCallback<String> cb2 = new AjaxCallback<String>();
+		cb2.url(path).fileCache(true).type(String.class);
+        
+		aq.sync(cb2);
+		
+		String html = cb2.getResult();
+		
+		AQUtility.debug(html);
+		
+		assertNotNull(html);
+		
+    }
+	
+	public void testFile404() {
+		
+		String url = "http://androidquery.appspot.com/test/fake";
+		
+		File old = aq.getCachedFile(url);
+		if(old != null){
+			old.delete();
+		}
+		
+		old = aq.getCachedFile(url);
+		assertNull(old);
+        
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.url(url).type(File.class);		
+		
+        //aq.ajax(url, JSONObject.class, cb);
+        aq.sync(cb);
+		
+        File file = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        assertNull(file);       
+        assertEquals(404, status.getCode());
+        
+		old = aq.getCachedFile(url);
+		assertNull(old);
+		
+    }
+	
+	
+	public void testFile404NotOverwritenOldFile() throws IOException {
+		
+		String url = "http://androidquery.appspot.com/test/fake";
+		
+		File old = AQUtility.getCacheFile(AQUtility.getCacheDir(getActivity()), url);
+		if(old != null){
+			old.createNewFile();
+			AQUtility.write(old, new byte[1234]);
+		}
+		
+		old = aq.getCachedFile(url);
+		assertNotNull(old);
+        assertEquals(1234, old.length());
+		
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.url(url).type(File.class);		
+		
+        aq.sync(cb);
+		
+        File file = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        assertNull(file);       
+        assertEquals(404, status.getCode());
+        
+		old = aq.getCachedFile(url);
+		assertNotNull(old);
+        assertEquals(1234, old.length());
+		
+    }
+	
+	public void testFileBatchDownloads(){
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+		
+		List<String> urls = new ArrayList<String>();
+		
+		for(int i = 0; i < 10; i++){
+			urls.add(url + "&test=" + i);
+		}
+		
+		for(String u: urls){
+			
+			AjaxCallback<File> cb = new AjaxCallback<File>();
+			cb.type(File.class).fileCache(true).url(u);
+			
+			aq.sync(cb);
+			
+			File result = cb.getResult();
+			
+			AQUtility.debug("cached", result.getAbsoluteFile());
+			
+		}
+		
+		
+	}
+	
+	public void testAjaxDelete() {
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+				
+        //aq.ajax(cb);
+        aq.delete(url, JSONObject.class, cb);
+		
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals("DELETE", jo.optString("method"));
+        
+        
+    }
+	
+	
+	public void testAjaxPut() throws UnsupportedEncodingException{
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		StringEntity entity = new StringEntity(new JSONObject().toString());
+		
+        aq.put(url, "application/json", entity, JSONObject.class, cb);
+		
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals("PUT", jo.optString("method"));
+        
+	}
+	
+	public void testAjaxPostWithEmptyParams() {
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		cb.url(url).type(JSONObject.class).method(AQuery.METHOD_POST);
+		
+		aq.ajax(cb);		
+        
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals("POST", jo.optString("method"));
+        
+        
+    }
+	
+	
+	public void testAjaxTimeout() {
+		
+		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
+        
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.url(url).type(File.class).timeout(1);		
+		
+        aq.sync(cb);
+		
+        File file = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        assertNull(file);       
+        assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
+    }
+	
+	public void testAjaxAbortAfterNetwork() {
+		
+		String url = "http://shopsixapp.appspot.com/z/music/01.mp3";
+        
+		final AjaxCallback<File> cb = new AjaxCallback<File>(){
+			
+			@Override
+			public void callback(String url, File object, AjaxStatus status) {
+				
+				done(url, object, status);
+			}
+			
+		};
+		cb.url(url).type(File.class);		
+		
+		aq.ajax(cb);
+		
+		AQUtility.postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				cb.abort();
+			}
+		}, 1000);
+		
+		waitAsync();
+        
+        assertNull(result);      
+        assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
+    }
+	
+	public void testAjaxAbortBeforeNetwork() {
+		
+		String url = "http://shopsixapp.appspot.com/z/music/01.mp3";
+        
+		final AjaxCallback<File> cb = new AjaxCallback<File>(){
+			
+			@Override
+			public void callback(String url, File object, AjaxStatus status) {
+				
+				done(url, object, status);
+			}
+			
+		};
+		cb.url(url).type(File.class);		
+		
+		aq.ajax(cb);
+		cb.abort();
+		
+		waitAsync();
+        
+        assertNull(result);      
+        assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
+    }
 	
 }

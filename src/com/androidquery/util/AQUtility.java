@@ -98,6 +98,10 @@ public class AQUtility {
 		}
 	}
 	
+	public static void warn(Object msg, Object msg2){
+		Log.w("AQuery", msg + ":" + msg2);
+	}
+	
 	public static void debug(Object msg, Object msg2){
 		if(debug){
 			Log.w("AQuery", msg + ":" + msg2);
@@ -117,7 +121,8 @@ public class AQUtility {
 
 		try{
 
-			debug(e);
+			//debug(e);
+			warn("reporting", Log.getStackTraceString(e));
 			
 			if(eh != null){
 				eh.uncaughtException(Thread.currentThread(), e);
@@ -270,6 +275,10 @@ public class AQUtility {
 		getHandler().post(run);
 	}
 	
+	public static void removePost(Runnable run){
+		getHandler().removeCallbacks(run);
+	}
+	
 	public static void postDelayed(Runnable run, long delay){
 		getHandler().postDelayed(run, delay);
 	}
@@ -311,15 +320,74 @@ public class AQUtility {
 	}
 	
     private static final int IO_BUFFER_SIZE = 1024;
-
     public static void copy(InputStream in, OutputStream out) throws IOException {
-        byte[] b = new byte[IO_BUFFER_SIZE];
-        int read;
-        while ((read = in.read(b)) != -1) {
-            out.write(b, 0, read);
-        }
+    	//copy(in, out, 0, null, null);
+    	copy(in, out, 0, null);
     }
-
+    
+    public static void copy(InputStream in, OutputStream out, int max, Progress progress) throws IOException {
+    	
+    	AQUtility.debug("content header", max);
+    	
+    	if(progress != null){
+    		progress.reset();
+    		progress.setBytes(max);
+    	}
+    	
+    	byte[] b = new byte[IO_BUFFER_SIZE];
+        int read;
+        while((read = in.read(b)) != -1){
+            out.write(b, 0, read);
+            if(progress != null){
+            	progress.increment(read);
+            }
+        }
+        
+        if(progress != null){
+        	progress.done();
+        }
+    	
+    }
+    /*
+    public static void copy(InputStream in, OutputStream out, int max, ProgressDialog dialog, ProgressBar bar) throws IOException {
+       
+    	AQUtility.debug("max", max);
+    	
+    	if(max <= 0) max = 100;
+    	
+    	if(dialog != null){
+    		if(dialog.isIndeterminate()){
+    			dialog = null;
+    		}else{
+    			dialog.setMax(max);
+    			dialog.setProgress(0);
+    		}
+    	}
+    	
+    	if(bar != null){
+    		
+    		if(bar.isIndeterminate()){
+    			bar = null;
+    		}else{
+    			bar.setMax(max);
+    			bar.setProgress(0);
+    		}
+    	}
+    	
+    	byte[] b = new byte[IO_BUFFER_SIZE];
+        int read;
+        while((read = in.read(b)) != -1){
+            out.write(b, 0, read);
+            if(dialog != null) dialog.incrementProgressBy(read);        	
+            if(bar != null) bar.incrementProgressBy(read);
+            //AQUtility.debug("inc", read);
+        }
+        
+        if(dialog != null) dialog.setProgress(max);
+        if(bar != null) bar.setProgress(max);
+        
+    }
+*/
     public static byte[] toBytes(InputStream is){
     	
     	byte[] result = null;
@@ -448,6 +516,10 @@ public class AQUtility {
 	*/
 	public static File getCacheFile(File dir, String url){
 		if(url == null) return null;
+		if(url.startsWith(File.separator)){
+			return new File(url);
+		}
+		
 		String name = getCacheFileName(url);
 		File file = makeCacheFile(dir, name);
 		return file;
@@ -539,7 +611,9 @@ public class AQUtility {
 		File ext = Environment.getExternalStorageDirectory();
 		File tempDir = new File(ext, "aquery/temp");		
 		tempDir.mkdirs();
-		if(!tempDir.exists()) return null;
+		if(!tempDir.exists()){
+		    return null;
+		}
 		return tempDir;
 	}
 	

@@ -46,9 +46,15 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 	
-		super.onCreate(savedInstanceState);
-		
 		type = getIntent().getStringExtra("type");
+		
+		if("async_progress_activity".equals(type)){
+			requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
+		}else if("async_progress_activity_bar".equals(type)){
+			requestWindowFeature(Window.FEATURE_PROGRESS); 
+		}
+		
+		super.onCreate(savedInstanceState);
 			
 		if("async_multipart".equals(type)){
 			aq.id(R.id.go_run).gone();
@@ -172,6 +178,37 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 			
 		});
 		
+	}
+	
+	public void async_progress_dialogbar(){
+		
+		ProgressDialog dialog = new ProgressDialog(this);
+		
+		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		
+        dialog.setIndeterminate(false);
+        dialog.setCancelable(true);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setTitle("Loading...");
+		
+		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		
+		File ext = Environment.getExternalStorageDirectory();
+		File target = new File(ext, "aquery/myfolder2/photo.jpg");		
+		
+		aq.progress(dialog).download(url, target, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
 	}
 	
 	public void async_web(){
@@ -317,37 +354,6 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 		public String name;		
 	}
 	
-	/*
-	public void async_transformer(){
-		
-		String url = "http://www.androidquery.com/test/jsonarray.json";		
-		GsonTransformer t = new GsonTransformer(){
-			@Override
-			public <T> T transform(String url, Class<T> type, String encoding, byte[] data, AjaxStatus status) {
-				
-				Gson g = new Gson();
-				T result = g.fromJson(new String(data), new TypeToken<List<T>>(){}.getType());				
-				
-				return result;
-			}
-		};
-		
-        aq.transformer(t).progress(R.id.progress).ajax(url, List.class, new AjaxCallback<List>(){			
-			
-			public void callback(String url, List profiles, AjaxStatus status) {	
-				
-				
-				for(Profile profile: (List<Profile>) profiles){
-					AQUtility.debug(profile.id, profile.name);
-				}
-					
-				
-			}			
-		});
-        
-	}
-	*/
-	
 
 	public void async_post(){
 		
@@ -434,6 +440,18 @@ public class AjaxLoadingActivity extends RunSourceActivity {
            
 	}	
 	
+	public void async_delete() {
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+        
+		aq.progress(R.id.progress).delete(url, JSONObject.class, this, "jsonCb");
+        
+    }
+	
+	public void async_put() {
+		
+	}
+	
 	public void async_cached(){
 	    
 		String url = "http://www.google.com";
@@ -481,10 +499,30 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	
 	public void async_progress_activity(){
 	    
-		//Remember this: requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
+		//Remember onCreate: requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
 		
         String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";          
         aq.progress(this).ajax(url, JSONObject.class, this, "jsonCb");  
+	}	
+	
+	public void async_progress_activity_bar(){
+	    
+		//Remember onCreate: requestWindowFeature(Window.FEATURE_PROGRESS); 
+		
+        String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";   
+        
+		aq.progress(this).ajax(url, File.class, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
 	}	
 	
 	public void async_advance(){

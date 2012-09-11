@@ -88,4 +88,38 @@ public class AQueryPerformanceTest extends AbstractTest<AQueryTestActivity> {
 		AQUtility.timeEnd("parallel", 0);
 	}
 	
+	
+	//Test: <K> T ajax(String url, Map<String, Object> params, Class<K> type, AjaxCallback<K> callback)
+	public void testAjaxPostDuration(){
+		
+        String url = "http://192.168.1.165/p/doNothing";
+		
+        long totalDur = 0;
+        
+        Map<String, String> params = new HashMap<String, String>();
+		params.put("q", "androidquery");
+		
+        AjaxCallback.setReuseHttpClient(false);
+		
+		for(int i = 0; i < 1000; i++){
+		
+			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+			cb.type(JSONObject.class).url(url).params(params);
+	        
+	        aq.sync(cb);
+			
+	        //JSONObject jo = (JSONObject) cb.getResult();
+	        AjaxStatus status = cb.getStatus();
+	        
+	        if(i > 0){
+	        	totalDur += status.getDuration();
+	        }
+		}
+		
+		AjaxCallback.setReuseHttpClient(true);
+        
+		AQUtility.debug("duration", totalDur);
+        
+	}
+	
 }

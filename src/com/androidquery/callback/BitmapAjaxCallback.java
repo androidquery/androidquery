@@ -17,6 +17,9 @@
 package com.androidquery.callback;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,10 +29,16 @@ import java.util.WeakHashMap;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -58,6 +67,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private static int SMALL_PIXELS = 50 * 50;
 	private static int BIG_PIXELS = 400 * 400;
 	private static int BIG_TPIXELS = 1000000;
+	
+	private static boolean DELAY_WRITE = false;
 	
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
@@ -222,9 +233,11 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		if(path != null){
 			
-			result = BitmapFactory.decodeFile(path, options);
+			result = decodeFile(path, options);
 			
 		}else if(data != null){
+			
+			//AQUtility.debug("decoding byte[]");
 			
 			result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
 			
@@ -235,6 +248,43 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 		return result;
+	}
+	
+	private static Bitmap decodeFile(String path, BitmapFactory.Options options){
+		
+		Bitmap result = null;
+		
+		if(options == null){
+			options = new Options();
+		}
+		
+		options.inInputShareable = true;
+		options.inPurgeable = true;
+		
+		
+		
+		FileInputStream fis = null;
+		
+		try{
+		
+			fis = new FileInputStream(path);
+			
+			FileDescriptor fd = fis.getFD();
+			
+			//AQUtility.debug("decoding file");
+			//AQUtility.time("decode file");
+			
+			result = BitmapFactory.decodeFileDescriptor(fd, null, options);
+			
+			//AQUtility.timeEnd("decode file", 0);
+		}catch(IOException e){
+			AQUtility.report(e);
+		}finally{
+			AQUtility.close(fis);
+		}
+		
+		return result;
+		
 	}
 	
 	
@@ -329,7 +379,15 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	@Override
 	public Bitmap transform(String url, byte[] data, AjaxStatus status) {
 		
-		Bitmap bm = bmGet(null, data);
+		String path = null;
+		
+		File file = status.getFile();
+		if(file != null){
+			path = file.getAbsolutePath();
+		}
+		
+		
+		Bitmap bm = bmGet(path, data);
 		
 		if(bm == null){
 			
@@ -374,6 +432,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		return bm;
 	}
+	
 	
 	public static Bitmap getMemoryCached(Context context, int resId){
 		
@@ -468,6 +527,20 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	/**
+	 * Sets the file cache write policy. If set to true, images load from network will be served quicker before caching to disk,
+	 * this however increase the chance of out of memory due to memory allocation.
+	 * 
+	 * Default is false.
+	 *
+	 * @param limit the new cache limit
+	 */
+	public static void setDelayWrite(boolean delay){
+		DELAY_WRITE = delay;
+	}
+	
+	
+	
+	/**
 	 * Sets the pixel limit per image. Image larger than limit will not be memcached.
 	 *
 	 * @param pixels the new pixel limit
@@ -541,13 +614,22 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return memGet(url, targetWidth, round);
 	}
 	
+	/**
+	 * Check if the bitmap is memory cached.
+	 *
+	 * @param url the url
+	 * @return if the url is memcached
+	 */
+	public static boolean isMemoryCached(String url){
+		return getBCache().containsKey(url) || getSCache().containsKey(url) || getICache().containsKey(url);
+	}
 	
 	/**
 	 * Gets the memory cached bitmap.
 	 *
 	 * @param url the url
 	 * @param targetWidth the target width, 0 for non downsampling
-	 * @return the memory cached
+	 * @return the memory cached bitmap
 	 */
 	public static Bitmap getMemoryCached(String url, int targetWidth){
 		return memGet(url, targetWidth, 0);
@@ -578,7 +660,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 				
 			}
 		}
-
+		
 		return result;
 	}
 	
@@ -611,7 +693,21 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			cache = getBCache();
 		}
 		
-		cache.put(getKey(url, targetWidth, round), bm);
+		if(targetWidth > 0 || round > 0){
+			
+			String key = getKey(url, targetWidth, round);			
+			cache.put(key, bm);
+			
+			//to indicate that the variant of that url is cached by puting and empty value
+			if(!cache.containsKey(url)){
+				cache.put(url, null);
+			}
+			
+		}else{
+			cache.put(url, bm);
+		}
+		
+		
 		
 	}
 	
@@ -685,7 +781,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			bd = new RatioDrawable(iv.getResources(), bm, iv, ratio, anchor);
 		}else{
 			bd = new BitmapDrawable(iv.getResources(), bm);
-			//bd = new RatioDrawable(iv.getResources(), bm);
 		}
 		
 		return bd;
@@ -754,6 +849,21 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 */
 	
+	public static void async(Activity act, Context context, ImageView iv, String url, Object progress, AccountHandle ah, ImageOptions options){
+	
+		async(act, context, iv, url, options.memCache, options.fileCache, options.targetWidth, options.fallback, options.preset, options.animation, options.ratio, options.anchor, progress, ah, options.policy, options.round);
+		
+	}
+	
+	
+	/**
+	 * AQuery internal use only. Please uses AQuery image() methods instead.
+	 * 
+	 * Optimize memory usage if mem hit and there's no custom callback.
+	 *
+	 *
+	 */
+	
 	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, Object progress, AccountHandle ah, int policy, int round){
 		
 		Bitmap bm = null;
@@ -763,8 +873,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}
 		
 		if(bm != null){
-			iv.setTag(AQuery.TAG_URL, url);
-			//if(progress != null) progress.setVisibility(View.GONE);		
+			iv.setTag(AQuery.TAG_URL, url);		
 			Common.showProgress(progress, url, false);
 			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor, AjaxStatus.MEMORY);
 		}else{
@@ -816,7 +925,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
-
+	@Override
+	protected boolean isStreamingContent(){
+		return !DELAY_WRITE;
+	}
 	
 	private void addQueue(String url, ImageView iv){
 		

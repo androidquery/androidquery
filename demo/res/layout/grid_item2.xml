@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dip"
+    android:layout_height="100dip" 
+    >
+    
+    <ImageView
+        android:id="@+id/tb"       
+        android:layout_width="100dip"       
+        android:layout_height="100dip"
+        android:background="#777777"
+        android:scaleType="centerCrop"
+        />
+
+</RelativeLayout>
