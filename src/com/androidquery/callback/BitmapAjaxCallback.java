@@ -68,6 +68,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private static int BIG_PIXELS = 400 * 400;
 	private static int BIG_TPIXELS = 1000000;
 	
+	private static boolean DELAY_WRITE = false;
+	
 	private static Map<String, Bitmap> smallCache;
 	private static Map<String, Bitmap> bigCache;
 	private static Map<String, Bitmap> invalidCache;
@@ -525,6 +527,20 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 	/**
+	 * Sets the file cache write policy. If set to true, images load from network will be served quicker before caching to disk,
+	 * this however increase the chance of out of memory due to memory allocation.
+	 * 
+	 * Default is false.
+	 *
+	 * @param limit the new cache limit
+	 */
+	public static void setDelayWrite(boolean delay){
+		DELAY_WRITE = delay;
+	}
+	
+	
+	
+	/**
 	 * Sets the pixel limit per image. Image larger than limit will not be memcached.
 	 *
 	 * @param pixels the new pixel limit
@@ -911,9 +927,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	@Override
 	protected boolean isStreamingContent(){
-		
-		return true;
-		
+		return !DELAY_WRITE;
 	}
 	
 	private void addQueue(String url, ImageView iv){
