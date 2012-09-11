@@ -359,36 +359,31 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertEquals("http://jigsaw.w3.org/HTTP/300/Overview.html", status.getRedirect());
         
 	}
+	//mouVUQ
 	
 	
-	public void test307(){
+	public void test304(){
 		
-		String url = "http://jigsaw.w3.org/HTTP/300/307.html";
-        
-		AjaxCallback<String> cb = new AjaxCallback<String>(){
-			
-			@Override
-			public void callback(String url, String html, AjaxStatus status) {
-				
-				done(url, html, status);
-				
-			}
-			
-		};
+		String url = "http://192.168.1.165/p/doNothing?response=304";
 		
-		cb.url(url).type(String.class);		
-        aq.ajax(cb);
+        aq.ajax(url, File.class, new AjaxCallback<File>() {
+
+            @Override
+            public void callback(String url, File file, AjaxStatus status) {
+                
+            	done(url, file, status);
+            	
+            }
+        }.header("If-Modified-Since", "Sat, 15 May 2010 12:06:39 GMT"));
+		
+        //If-Modified-Since: Sat, 15 May 2010 12:06:39 GMT
         
         waitAsync();
         
-        String html = (String) result;
-        
-        assertNotNull(html);       
-        
-        assertEquals("http://jigsaw.w3.org/HTTP/300/Overview.html", status.getRedirect());
-        
-        
+        assertNull(result);
+        assertEquals(304, status.getCode());
 		
+        
 	}
 	
 	public void testTransformError(){

@@ -1477,23 +1477,23 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         String error = null;
         
         HttpEntity entity = response.getEntity();
-        Header eheader = entity.getContentEncoding();
-        
-        String encoding = null;
-        if(eheader != null) encoding = eheader.getValue();
-        
+       
         File file = null;
         
         if(code < 200 || code >= 300){     
         	
         	try{
         		
-        		InputStream is = entity.getContent();
-        		byte[] s = toData(encoding, is);
+        		if(entity != null){
         		
-        		error = new String(s, "UTF-8");
-        		
-        		AQUtility.debug("error", error);
+	        		InputStream is = entity.getContent();
+	        		byte[] s = toData(getEncoding(entity), is);
+	        		
+	        		error = new String(s, "UTF-8");
+	        		
+	        		AQUtility.debug("error", error);
+	        		
+        		}
         	}catch(Exception e){
         		AQUtility.debug(e);
         	}
@@ -1523,7 +1523,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        
 		        //AQUtility.time("copy");
 		        
-		        copy(entity.getContent(), os, encoding, (int) entity.getContentLength());
+		        copy(entity.getContent(), os, getEncoding(entity), (int) entity.getContentLength());
 		        
 		        //AQUtility.timeEnd("copy", 0);
 		        
@@ -1553,6 +1553,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         status.code(code).message(message).error(error).redirect(redirect).time(new Date()).data(data).file(file).client(client).context(context).headers(response.getAllHeaders());
 		
         
+	}
+	
+	
+	private String getEncoding(HttpEntity entity){
+		
+		if(entity == null) return null;
+		
+        Header eheader = entity.getContentEncoding();
+        if(eheader == null) return null;
+        
+        return eheader.getValue();
+		
 	}
 	
 	private void copy(InputStream is, OutputStream os, String encoding, int max) throws IOException{
