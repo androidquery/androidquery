@@ -16,6 +16,7 @@
 
 package com.androidquery.callback;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -563,7 +564,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		try {			
 			byte[] data = null;
 		
-			if(needInputStream()){
+			if(isStreamingContent()){
 				status.file(file);
 			}else{
 				data = AQUtility.toBytes(new FileInputStream(file));
@@ -664,6 +665,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				return (T) result;
 			}
 			
+			/*
 			if(type.equals(XmlDom.class)){
 				
 				XmlDom result = null;
@@ -676,7 +678,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				
 				return (T) result; 
 			}
-			
+			*/
 			
 			if(type.equals(byte[].class)){
 				return (T) data;
@@ -696,12 +698,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			if(type.equals(File.class)){
 				return (T) file;
 			}
+			
+			if(type.equals(XmlDom.class)){
+				
+				XmlDom result = null;
+				
+				try {    
+					FileInputStream fis = new FileInputStream(file);
+					result = new XmlDom(fis);
+					status.closeLater(fis);
+				} catch (Exception e) {	  		
+					AQUtility.report(e);
+					return null;
+				}
+				
+				return (T) result; 
+			}
 
 			if(type.equals(XmlPullParser.class)){	
 
 				XmlPullParser parser = Xml.newPullParser();
 				try{
-					//parser.setInput(new ByteArrayInputStream(data), encoding);
+					
 					FileInputStream fis = new FileInputStream(file);
 					parser.setInput(fis, encoding);
 					status.closeLater(fis);
@@ -1065,13 +1083,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return AQUtility.getCacheFile(cacheDir, getCacheUrl());
 	}
 	
-	private boolean needInputStream(){
-		return File.class.equals(type) || XmlPullParser.class.equals(type) || InputStream.class.equals(type);
+	
+	protected boolean isStreamingContent(){
+		return File.class.equals(type) || XmlPullParser.class.equals(type) || InputStream.class.equals(type) || XmlDom.class.equals(type);
 	}
 	
 	private File getPreFile(){
 		
-		boolean pre = needInputStream();
+		boolean pre = isStreamingContent();
 		
 		File result = null;
 		
@@ -1499,10 +1518,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        	os = new PredefinedBAOS(size);
 		        }else{
 		        	file.createNewFile();
-		        	os = new FileOutputStream(file);
+		        	os = new BufferedOutputStream(new FileOutputStream(file));
 		        }
 		        
+		        //AQUtility.time("copy");
+		        
 		        copy(entity.getContent(), os, encoding, (int) entity.getContentLength());
+		        
+		        //AQUtility.timeEnd("copy", 0);
 		        
 		        
 		        os.flush();

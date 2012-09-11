@@ -98,6 +98,9 @@
     </string-array>
     
     <string-array name="image_names">
+        
+        <item>Performance Stress Test</item>
+        
         <item>Simple</item>
         <item>Cache Control</item>   
         <item>Down Sampling</item>   
@@ -158,6 +161,9 @@
     </string-array>
     
     <string-array name="image_values">
+        
+        <item>com.androidquery.test.image.ImageLoadingPageGridActivity:image_page_grid:beta</item>
+        
         <item>com.androidquery.test.image.ImageLoadingActivity:image_simple</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_cache</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_down</item>
