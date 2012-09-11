@@ -512,8 +512,9 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 						pv.setTag(AQuery.TAG_URL, null);	
 						
 						if(pbar != null && pbar.isIndeterminate()){
-							pv.setVisibility(View.GONE);						
+							pbar.setIndeterminate(false);
 						}
+						pv.setVisibility(View.GONE);
 					}
 				}
 			}else if(p instanceof Dialog){
