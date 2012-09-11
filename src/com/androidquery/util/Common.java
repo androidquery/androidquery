@@ -514,7 +514,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 						if(pbar != null && pbar.isIndeterminate()){
 							pbar.setIndeterminate(false);
 						}
-						pv.setVisibility(View.GONE);						
+						pv.setVisibility(View.GONE);
 					}
 				}
 			}else if(p instanceof Dialog){
