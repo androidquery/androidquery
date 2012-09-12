@@ -1,0 +1,16 @@
+	public void image_progress_dialogbar(){
+		
+		ProgressDialog dialog = new ProgressDialog(this);
+		
+		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setIndeterminate(false);
+        dialog.setCancelable(true);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setTitle("Loading...");
+		 
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		aq.id(R.id.image).progress(dialog).image(imageUrl, false, false);
+		
+		
+	}

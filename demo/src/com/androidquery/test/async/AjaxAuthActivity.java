@@ -1,7 +1,10 @@
 package com.androidquery.test.async;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,7 +35,10 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		super.onCreate(savedInstanceState);
 		
 		type = getIntent().getStringExtra("type");
-			
+	
+		if("auth_twitter_upload".equals(type)){
+			aq.cache(UPLOAD_IMAGE, 0);
+		}
 	}
 	
 	@Override
@@ -118,6 +124,52 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		String url = "http://twitter.com/statuses/mentions.json";
 		aq.auth(handle).progress(R.id.progress).ajax(url, JSONArray.class, this, "twitterCb");
 		
+		
+	}
+	
+	public void auth_twitter_update(){
+		
+		TwitterHandle handle = new TwitterHandle(this, CONSUMER_KEY, CONSUMER_SECRET);
+		
+		//1/statuses/update.format
+		//https://upload.twitter.com/1/statuses/update_with_media.format
+
+		String url = "http://twitter.com/statuses/update.json";
+		
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("status", "Testing 123");
+		
+		aq.auth(handle).progress(R.id.progress).ajax(url, params, JSONObject.class, this, "twitterCb2");
+		
+	}
+	
+	private String UPLOAD_IMAGE = "http://www.vikispot.com/z/images/vikispot/android-w.png"; 
+	public void auth_twitter_upload(){
+		
+		File file = aq.getCachedFile(UPLOAD_IMAGE);
+		
+		if(file == null){
+			aq.cache(UPLOAD_IMAGE, 0);
+			return;
+		}
+		
+		AQUtility.debug("upload file:" + file.length());
+		
+		TwitterHandle handle = new TwitterHandle(this, CONSUMER_KEY, CONSUMER_SECRET);
+		
+		String url = "https://upload.twitter.com/1/statuses/update_with_media.json";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("status", "Testing Status Update with AndroidQuery");
+		params.put("media[]", file);
+		
+		aq.auth(handle).progress(R.id.progress).ajax(url, params, JSONObject.class, this, "twitterCb2");
+		
+	}
+	
+	public void twitterCb2(String url, JSONObject jo, AjaxStatus status){
+		
+		showResult(jo, status);
 		
 	}
 	

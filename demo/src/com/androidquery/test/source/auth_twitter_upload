@@ -1,0 +1,13 @@
+	public void auth_twitter_upload(File file){
+		
+		TwitterHandle handle = new TwitterHandle(this, CONSUMER_KEY, CONSUMER_SECRET);
+		
+		String url = "https://upload.twitter.com/1/statuses/update_with_media.json";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("status", "Testing Status Update with AndroidQuery");
+		params.put("media[]", file);
+		
+		aq.auth(handle).progress(R.id.progress).ajax(url, params, JSONObject.class, this, "twitterCb");
+		
+	}

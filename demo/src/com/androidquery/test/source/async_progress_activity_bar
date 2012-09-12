@@ -1,0 +1,19 @@
+	public void async_progress_activity_bar(){
+	    
+		//Remember onCreate: requestWindowFeature(Window.FEATURE_PROGRESS); 
+		
+        String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";   
+        
+		aq.progress(this).ajax(url, File.class, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+	}	

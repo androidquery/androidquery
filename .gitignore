@@ -25,3 +25,9 @@ local.properties
 
 # config file
 CitySocial/res/raw/config.xml
+
+# Added by androidquery
+dist/*.jar
+
+proguard-dump.txt
+/assets

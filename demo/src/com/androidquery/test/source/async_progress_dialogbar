@@ -1,0 +1,30 @@
+	public void async_progress_dialogbar(){
+		
+		ProgressDialog dialog = new ProgressDialog(this);
+		
+		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		
+        dialog.setIndeterminate(false);
+        dialog.setCancelable(true);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setTitle("Loading...");
+		
+		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		
+		File ext = Environment.getExternalStorageDirectory();
+		File target = new File(ext, "aquery/myfolder2/photo.jpg");		
+		
+		aq.progress(dialog).download(url, target, new AjaxCallback<File>(){
+			
+			public void callback(String url, File file, AjaxStatus status) {
+				
+				if(file != null){
+					showResult("File:" + file.length() + ":" + file, status);
+				}else{
+					showResult("Failed", status);
+				}
+			}
+			
+		});
+	}

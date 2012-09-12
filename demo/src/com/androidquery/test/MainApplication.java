@@ -20,6 +20,7 @@
 package com.androidquery.test;
 
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
@@ -32,6 +33,7 @@ import com.androidquery.util.AQUtility;
 
 
 
+@SuppressLint("NewApi")
 public class MainApplication extends Application{
 
 	

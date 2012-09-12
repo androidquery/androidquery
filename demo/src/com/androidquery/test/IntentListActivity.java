@@ -37,8 +37,9 @@ public class IntentListActivity extends ListActivity {
 			AQUtility.setDebug(true);
 			AQUtility.setCacheDir(null);
 			BitmapAjaxCallback.setPixelLimit(600 * 600);
-			BitmapAjaxCallback.setCacheLimit(100);
-			BitmapAjaxCallback.setMaxPixelLimit(5000000);
+			BitmapAjaxCallback.setCacheLimit(200);
+			BitmapAjaxCallback.setIconCacheLimit(100);
+			BitmapAjaxCallback.setMaxPixelLimit(10000000);
 			init = true;
 			ErrorReporter.installReporter(getApplicationContext());
 		}

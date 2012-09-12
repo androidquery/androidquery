@@ -178,7 +178,7 @@ public class ImageLoadingGalleryActivity extends RunSourceActivity {
 				String tbUrl = photo.tb;
 			
 				if(!aq.shouldDelay(position, convertView, parent, tbUrl)){
-					aq.id(R.id.tb).image(tbUrl);
+					aq.id(R.id.tb).image(tbUrl, true, true, 100, 0);
 					aq.id(R.id.text).text(photo.title).gone();
 				}else{
 					aq.id(R.id.tb).clear();

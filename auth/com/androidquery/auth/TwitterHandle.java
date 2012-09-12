@@ -1,5 +1,9 @@
 package com.androidquery.auth;
 
+import java.net.HttpURLConnection;
+
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 
@@ -305,6 +309,22 @@ public class TwitterHandle extends AccountHandle{
 		
 		try{
 			consumer.sign(request);
+		}catch(Exception e){
+			AQUtility.report(e);
+		} 
+		
+	}
+	
+	@Override	
+	public void applyToken(AbstractAjaxCallback<?, ?> cb, HttpURLConnection conn){
+		
+		AQUtility.debug("apply token multipart", cb.getUrl());
+		
+		OAuthConsumer oac = new DefaultOAuthConsumer(consumer.getConsumerKey(), consumer.getConsumerSecret());
+		oac.setTokenWithSecret(consumer.getToken(), consumer.getTokenSecret());
+		
+		try{
+			oac.sign(conn);
 		}catch(Exception e){
 			AQUtility.report(e);
 		} 

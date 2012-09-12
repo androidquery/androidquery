@@ -22,6 +22,7 @@ import com.androidquery.AQuery;
 import com.androidquery.R;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.androidquery.callback.ImageOptions;
 import com.androidquery.test.RunSourceActivity;
 import com.androidquery.util.AQUtility;
 import com.googlecode.charts4j.AxisLabels;
@@ -129,24 +130,47 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 	}
 	
+	
 	public void image_progress(){
-		
-		ProgressDialog dialog = new ProgressDialog(this);
-		
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(true);
-        dialog.setInverseBackgroundForced(false);
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.setTitle("Sending...");
 		
 		aq.id(R.id.image).clear();
 		
 		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
 		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, false, false);
 		
-		//imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";				
-		//aq.id(R.id.image).progress(dialog).image(imageUrl, true, true);
 		
+	}
+	
+	public void image_progress_dialogbar(){
+		
+		ProgressDialog dialog = new ProgressDialog(this);
+		
+		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		
+        dialog.setIndeterminate(false);
+        dialog.setCancelable(true);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setTitle("Loading...");
+		 
+		aq.id(R.id.image).clear();
+		
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		aq.id(R.id.image).progress(dialog).image(imageUrl, false, false);
+		
+		
+	}
+	
+	public void image_progress_bar(){
+		
+		aq.id(R.id.progress_bar).visible();
+		
+		aq.id(R.id.image).clear();
+		
+		String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
+		aq.id(R.id.image).progress(R.id.progress_bar).image(imageUrl, false, false);
+		
+		//aq.id(R.id.image).progress(R.id.progress_box).image(imageUrl, false, false);
 	}
 
 	public void image_animation(){
@@ -174,9 +198,11 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	public void image_round(){
 		
 		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
-		aq.id(R.id.image);//.progress(R.id.progress).image(url);
 		
-		BitmapAjaxCallback.async(this, this, aq.getImageView(), url, true, true, 0, 0, null, 0, 0, 0, null, null, 0, 15);
+		ImageOptions options = new ImageOptions();
+		options.round = 15;
+		
+		aq.id(R.id.image).image(url, options);
 		
 	}
 	

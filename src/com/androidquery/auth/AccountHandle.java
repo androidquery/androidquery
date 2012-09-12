@@ -16,6 +16,7 @@
 
 package com.androidquery.auth;
 
+import java.net.HttpURLConnection;
 import java.util.LinkedHashSet;
 
 import org.apache.http.HttpRequest;
@@ -79,6 +80,9 @@ public abstract class AccountHandle {
 	public abstract boolean reauth(AbstractAjaxCallback<?, ?> cb);
 	
 	public void applyToken(AbstractAjaxCallback<?, ?> cb, HttpRequest request){		
+	}
+	
+	public void applyToken(AbstractAjaxCallback<?, ?> cb, HttpURLConnection conn){
 	}
 	
 	public String getNetworkUrl(String url){
