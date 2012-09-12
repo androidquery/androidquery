@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -1339,16 +1341,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			entity = (HttpEntity) value;			
 		}else{
 			
-			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-			
-			for(Map.Entry<String, Object> e: params.entrySet()){
-				value = e.getValue();
-				if(value != null){
-					pairs.add(new BasicNameValuePair(e.getKey(), value.toString()));				
-				}
-			}
-			
-			entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+			entity = new UrlEncodedFormEntity(getNameValuePairs(null, null, params), "UTF-8");
 			
 		}
 		
@@ -1361,6 +1354,37 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		httpDo(req, url, headers, status);
 		
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	private ArrayList<NameValuePair> getNameValuePairs(String parentKey, String key, Object value) {
+		ArrayList<NameValuePair> ps = new ArrayList<NameValuePair>();
+		
+		// setup recursive key
+		if (key != null && parentKey != null) {
+			key = parentKey + "[" + key + "]";
+		}
+		
+		if (value instanceof Map<?, ?>) {
+			Map<String, Object> params = (Map<String, Object>) value;
+			Set<Entry<String, Object>> entries = params.entrySet();
+			for (Entry<String, Object> entry : entries) {
+				// recursive call
+				ps.addAll(getNameValuePairs(key, entry.getKey(), entry.getValue()));
+			}
+		} else if (value instanceof Object[]) {
+			for (Object entry : (Object[]) value) {
+				ps.addAll(getNameValuePairs(key, "", entry));
+			}
+		} else if (value instanceof List<?>) {
+			for (Object entry : (List<?>) value) {
+				ps.addAll(getNameValuePairs(key, "", entry));
+			}
+		} else {
+			ps.add(new BasicNameValuePair(key, value.toString()));
+		}
+		
+		return ps;
 	}
 	
 	private static SocketFactory ssf;
@@ -1698,13 +1722,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private static final String twoHyphens = "--";
 	private static final String boundary = "*****";
 	
-	
-	private static boolean isMultiPart(Map<String, Object> params){
+
+	@SuppressWarnings("unchecked")
+	private static boolean isMultiPart(Map<String, Object> params) {
 		
-		for(Map.Entry<String, Object> entry: params.entrySet()){
+		for (Map.Entry<String, Object> entry : params.entrySet()) {
 			Object value = entry.getValue();
 			AQUtility.debug(entry.getKey(), value);
-			if(value instanceof File || value instanceof byte[] || value instanceof InputStream) return true;
+			if (value instanceof File || value instanceof byte[] || value instanceof InputStream) {
+				return true;
+			} else if (value instanceof Map<?, ?>) {
+				return isMultiPart((Map<String, Object>) value);
+			} else if (value instanceof Object[]) {
+				for (Object v : (Object[]) value) {
+					if (v instanceof File || v instanceof byte[] || value instanceof InputStream)
+						return true;
+				}
+			} else if (value instanceof List<?>) {
+				for (Object v : (List<?>) value) {
+					if (v instanceof File || v instanceof byte[] || value instanceof InputStream)
+						return true;
+				}
+			}
 		}
 		
 		return false;
@@ -1750,11 +1789,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		dos = new DataOutputStream(conn.getOutputStream());
 
-		for(Map.Entry<String, Object> entry: params.entrySet()){
-			
-			writeObject(dos, entry.getKey(), entry.getValue());
-			
-		}
+		writeObjectRecursively(dos, null, null, params);
 		
 		dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 		dos.flush();
@@ -1805,6 +1840,37 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return AQUtility.toBytes(is);
 	}
 	
+
+	@SuppressWarnings("unchecked")
+	private ArrayList<NameValuePair> writeObjectRecursively(DataOutputStream dos, String parentKey, String key, Object value) throws IOException {
+		ArrayList<NameValuePair> ps = new ArrayList<NameValuePair>();
+		
+		// setup recursive key
+		if (key != null && parentKey != null) {
+			key = parentKey + "[" + key + "]";
+		}
+		
+		if (value instanceof Map<?, ?>) {
+			Map<String, Object> params = (Map<String, Object>) value;
+			Set<Entry<String, Object>> entries = params.entrySet();
+			for (Entry<String, Object> entry : entries) {
+				// recursive call
+				writeObjectRecursively(dos, key, entry.getKey(), entry.getValue());
+			}
+		} else if (value instanceof Object[]) {
+			for (Object entry : (Object[]) value) {
+				writeObjectRecursively(dos, key, "", entry);
+			}
+		} else if (value instanceof List<?>) {
+			for (Object entry : (List<?>) value) {
+				writeObjectRecursively(dos, key, "", entry);
+			}
+		} else {
+			writeObject(dos, key, value);
+		}
+		
+		return ps;
+	}
 	
 	private static void writeObject(DataOutputStream dos, String name, Object obj) throws IOException{
 		
