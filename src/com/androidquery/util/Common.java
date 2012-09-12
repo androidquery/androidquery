@@ -511,7 +511,7 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 					if(tag == null || tag.equals(url)){
 						pv.setTag(AQuery.TAG_URL, null);	
 						
-						if(pbar != null && pbar.isIndeterminate()){
+						if(pbar == null || pbar.isIndeterminate()){
 							pv.setVisibility(View.GONE);						
 						}
 					}
