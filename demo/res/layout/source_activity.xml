@@ -64,6 +64,8 @@
 	        android:visibility="gone"
 	   	/>
 	    
+		
+		
 	    <ProgressBar 
 			android:id="@+id/progress"	
 			android:layout_width="wrap_content" 
@@ -73,15 +75,25 @@
 		/>
 	    
 	    
-	    <ProgressBar 
-			android:id="@+id/progress_bar"	
+	    
+		<LinearLayout 
+	        android:id="@+id/progress_box"	
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
-			android:layout_margin="5dip"
-			style="@android:style/Widget.ProgressBar.Horizontal"
 			android:layout_gravity="center_horizontal" 
-			android:visibility="gone"
-		/>
+	        >
+			
+		    <ProgressBar 
+				android:id="@+id/progress_bar"	
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				style="@android:style/Widget.ProgressBar.Horizontal"
+				android:layout_gravity="center_horizontal" 
+				android:visibility="gone"
+			/>
+	    
+	    </LinearLayout>
 	    
 		<ImageView
 			android:id="@+id/image"				
