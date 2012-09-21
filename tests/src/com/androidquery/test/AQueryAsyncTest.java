@@ -1545,4 +1545,30 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
     }
 	
+	
+	public void testAjaxEmptyString() {
+		
+		String url = "http://www.androidquery.com/p/doNothing?response=200";
+        
+		AjaxCallback<String> cb = new AjaxCallback<String>(){
+			
+			@Override
+			public void callback(String url, String str, AjaxStatus status) {
+				
+				done(url, str, status);
+				
+			}
+			
+		};
+		
+			
+        aq.ajax(url, String.class, cb);
+        
+        waitAsync();
+        
+        assertNotNull(result);       
+        assertTrue("".equals(result));
+        
+    }
+	
 }
