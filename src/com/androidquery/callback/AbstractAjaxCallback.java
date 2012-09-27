@@ -1450,7 +1450,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		HttpParams hp = hr.getParams();
 		if(proxy != null) hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		if(timeout > 0){
-			AQUtility.debug("timeout param", CoreConnectionPNames.CONNECTION_TIMEOUT);
 			hp.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
 			hp.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
 		}
@@ -1482,11 +1481,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         
         if(code < 200 || code >= 300){     
         	
+        	InputStream is = null;
+        	
         	try{
         		
         		if(entity != null){
         		
-	        		InputStream is = entity.getContent();
+	        		is = entity.getContent();
 	        		byte[] s = toData(getEncoding(entity), is);
 	        		
 	        		error = new String(s, "UTF-8");
@@ -1496,6 +1497,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         		}
         	}catch(Exception e){
         		AQUtility.debug(e);
+        	}finally{
+        		AQUtility.close(is);
         	}
         	
         	
