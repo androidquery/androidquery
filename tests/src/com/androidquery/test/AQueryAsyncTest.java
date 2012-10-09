@@ -1426,7 +1426,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		};
 		
 		StringEntity entity = new StringEntity(new JSONObject().toString());
-		
+	
         aq.put(url, "application/json", entity, JSONObject.class, cb);
 		
         waitAsync();
@@ -1438,6 +1438,46 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNotNull(jo);       
         
         assertEquals("PUT", jo.optString("method"));
+        
+	}
+	
+	
+	public void testAjaxPutNamedValues() throws UnsupportedEncodingException{
+		
+		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		pairs.add(new BasicNameValuePair("count", "5"));
+
+		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+		entity.setContentType("application/x-www-form-urlencoded;charset=UTF-8");
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		
+        aq.put(url, "application/x-www-form-urlencoded;charset=UTF-8", entity, JSONObject.class, cb);
+		
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        JSONObject params = jo.optJSONObject("params");
+        assertEquals("5", params.optString("count"));
+        
+        //assertEquals("PUT", jo.optString("method"));
         
 	}
 	
