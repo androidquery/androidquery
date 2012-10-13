@@ -494,6 +494,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				}
 			}
 		
+		}else{
+			skip(url, result, status);
 		}
 		
 		filePut();
@@ -556,6 +558,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @param status the status
 	 */
 	public void callback(String url, T object, AjaxStatus status){
+		
+	}
+	
+	protected void skip(String url, T object, AjaxStatus status){
 		
 	}
 	

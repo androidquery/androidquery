@@ -484,6 +484,12 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
+	@Override
+	protected void skip(String url, Bitmap bm, AjaxStatus status){
+		queueMap.remove(url);
+	}
+	
+	
 	private void checkCb(BitmapAjaxCallback cb, String url, ImageView v, Bitmap bm, AjaxStatus status){
 		
 		if(v == null || cb == null) return;
