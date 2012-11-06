@@ -1482,6 +1482,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				AQUtility.debug("proxy failed, retrying without proxy");
 				hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
 				response = client.execute(hr, context);
+			}else{
+				throw e;
 			}
 		}
 		
