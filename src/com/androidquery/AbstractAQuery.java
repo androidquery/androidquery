@@ -188,6 +188,23 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return result;
 	}
 	
+	private View findView(String tag){
+		
+		//((ViewGroup)findViewById(android.R.id.content)).getChildAt(0)
+		View result = null;
+		if(root != null){
+			result = root.findViewWithTag(tag);
+		}else if(act != null){
+			//result = act.findViewById(id);
+			View top = ((ViewGroup) act.findViewById(android.R.id.content)).getChildAt(0);
+			if(top != null){
+				result = top.findViewWithTag(tag);
+			}
+		}
+		return result;
+		
+	}
+	
 	private View findView(int... path){
 		
 		View result = findView(path[0]);
@@ -278,11 +295,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int id){
-		/*
-		view = findView(id);	
-		reset();
-		return self();
-		*/
+		
 		return id(findView(id));
 	}
 	
@@ -298,6 +311,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	public T id(String tag){
+		return id(findView(tag));
+	}
+	
 	/**
 	 * Find the first view with first id, under that view, find again with 2nd id, etc...
 	 *
@@ -305,11 +322,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int... path){
-		/*
-		view = findView(path);	
-		reset();		
-		return self();
-		*/
+		
 		return id(findView(path));
 	}
 	
