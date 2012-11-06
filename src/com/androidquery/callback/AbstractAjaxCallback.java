@@ -56,6 +56,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.params.ConnRoutePNames;
@@ -1470,7 +1471,20 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			throw new IOException("Aborted");
 		}
 		
-		HttpResponse response = client.execute(hr, context);
+		HttpResponse response = null;
+		
+		try{
+			response = client.execute(hr, context);
+		}catch(HttpHostConnectException e){
+			
+			//if proxy is used, automatically retry without proxy
+			if(proxy != null){
+				AQUtility.debug("proxy failed, retrying without proxy");
+				hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
+				response = client.execute(hr, context);
+			}
+		}
+		
 		
         byte[] data = null;
         
