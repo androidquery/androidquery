@@ -364,7 +364,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	
 	public void test304(){
 		
-		String url = "http://192.168.1.165/p/doNothing?response=304";
+		String url = "http://www.androidquery.com/p/doNothing?response=304";
 		
         aq.ajax(url, File.class, new AjaxCallback<File>() {
 
