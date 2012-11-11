@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -99,6 +100,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected AccountHandle ah;
 	private Transformer trans;
 	private int policy = CACHE_DEFAULT;
+	private HttpHost proxy;
 
 	protected T create(View view){
 		
@@ -406,6 +408,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public T policy(int cachePolicy){
 		policy = cachePolicy;
+		return self();
+	}	
+	
+	public T proxy(String host, int port){
+		proxy = new HttpHost(host, port);
 		return self();
 	}	
 	
@@ -1799,6 +1806,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		cb.transformer(trans);
 		cb.policy(policy);
 		
+		if(proxy != null){
+			cb.proxy(proxy.getHostName(), proxy.getPort());
+		}
+		
 		if(act != null){
 			cb.async(act);
 		}else{
@@ -1816,6 +1827,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		progress = null;
 		trans = null;
 		policy = CACHE_DEFAULT;
+		proxy = null;
 		
 	}
 	
