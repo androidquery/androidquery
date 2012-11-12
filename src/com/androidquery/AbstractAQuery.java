@@ -749,7 +749,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	private T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio, int round){
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round);			
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round, proxy);			
 			reset();
 		}
 		
@@ -759,7 +759,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T image(String url, ImageOptions options){
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, progress, ah, options);			
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, progress, ah, options, proxy);			
 			reset();
 		}
 		
@@ -1821,7 +1821,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}	
 	
-	private void reset(){
+	protected void reset(){
 		
 		ah = null;
 		progress = null;

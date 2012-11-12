@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.apache.http.HttpHost;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -855,9 +857,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 */
 	
-	public static void async(Activity act, Context context, ImageView iv, String url, Object progress, AccountHandle ah, ImageOptions options){
+	public static void async(Activity act, Context context, ImageView iv, String url, Object progress, AccountHandle ah, ImageOptions options, HttpHost proxy){
 	
-		async(act, context, iv, url, options.memCache, options.fileCache, options.targetWidth, options.fallback, options.preset, options.animation, options.ratio, options.anchor, progress, ah, options.policy, options.round);
+		async(act, context, iv, url, options.memCache, options.fileCache, options.targetWidth, options.fallback, options.preset, options.animation, options.ratio, options.anchor, progress, ah, options.policy, options.round, proxy);
 		
 	}
 	
@@ -870,7 +872,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 *
 	 */
 	
-	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, Object progress, AccountHandle ah, int policy, int round){
+	public static void async(Activity act, Context context, ImageView iv, String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animation, float ratio, float anchor, Object progress, AccountHandle ah, int policy, int round, HttpHost proxy){
 		
 		Bitmap bm = null;
 		
@@ -885,6 +887,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		}else{
 			BitmapAjaxCallback cb = new BitmapAjaxCallback();			
 			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache).targetWidth(targetWidth).fallback(fallbackId).preset(preset).animation(animation).ratio(ratio).anchor(anchor).progress(progress).auth(ah).policy(policy).round(round);
+			if(proxy != null){
+				cb.proxy(proxy.getHostName(), proxy.getPort());
+			}
 			if(act != null){
 				cb.async(act);
 			}else{
