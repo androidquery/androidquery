@@ -669,6 +669,9 @@ public class AQUtility {
 	}
 	
 	public static Context getContext(){
+		if(context == null){
+			AQUtility.warn("warn", "getContext with null");
+		}
 		return context;
 	}
 }
