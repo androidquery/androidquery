@@ -1611,4 +1611,38 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
     }
 	
+	
+	public void testAjaxNetworkUrlCallback() {
+		
+		String url = "http://dummy.com/1234";
+		String networkUrl = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		}.networkUrl(networkUrl);
+		
+			
+        aq.ajax(url, JSONObject.class, 1000, cb);
+        
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        assertNotNull(jo);       
+        assertNotNull(jo.opt("responseData"));
+        
+        waitSec(2000);
+        
+        File file = aq.getCachedFile(url);
+        assertNotNull(file);
+        
+        
+    }
 }

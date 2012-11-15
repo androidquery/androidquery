@@ -120,6 +120,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private WeakReference<Object> progress;
 	
 	private String url;
+	private String networkUrl;
 	private Map<String, Object> params;
 	private Map<String, String> headers;
 	private Map<String, String> cookies;
@@ -255,6 +256,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.url = url;
 		return self();
 	}
+	
+	public K networkUrl(String url){
+		this.networkUrl = url;
+		return self();
+	}
+	
 	
 	/**
 	 * Set the desired ajax response type. Type parameter is required otherwise the ajax callback will not occur.
@@ -1011,6 +1018,21 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return url;
 	}
 	
+	private String getNetworkUrl(String url){
+		
+		String result = url;
+		
+		if(networkUrl != null){
+			result = networkUrl;
+		}
+		
+		if(ah != null){
+			result = ah.getNetworkUrl(result);
+		}
+		
+		return result;
+	}
+	
 	private void fileWork(){
 		
 		File file = accessFile(cacheDir, getCacheUrl());
@@ -1197,9 +1219,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			params = extractParams(uri);
 		}
 		
-		if(ah != null){
-			url = ah.getNetworkUrl(url);
-		}
+		url = getNetworkUrl(url);
 		
 		
 		if(Constants.METHOD_DELETE == method){
