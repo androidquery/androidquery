@@ -275,6 +275,18 @@ public class AQUtility {
 		getHandler().post(run);
 	}
 	
+	public static void post(final Object handler, final String method, final Class<?>[] sig, final Object... params){
+		post(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				AQUtility.invokeHandler(handler, method, false, true, sig, params);
+				
+			}
+		});
+	}
+	
 	public static void removePost(Runnable run){
 		getHandler().removeCallbacks(run);
 	}
