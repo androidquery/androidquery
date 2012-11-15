@@ -348,46 +348,7 @@ public class AQUtility {
         }
     	
     }
-    /*
-    public static void copy(InputStream in, OutputStream out, int max, ProgressDialog dialog, ProgressBar bar) throws IOException {
-       
-    	AQUtility.debug("max", max);
-    	
-    	if(max <= 0) max = 100;
-    	
-    	if(dialog != null){
-    		if(dialog.isIndeterminate()){
-    			dialog = null;
-    		}else{
-    			dialog.setMax(max);
-    			dialog.setProgress(0);
-    		}
-    	}
-    	
-    	if(bar != null){
-    		
-    		if(bar.isIndeterminate()){
-    			bar = null;
-    		}else{
-    			bar.setMax(max);
-    			bar.setProgress(0);
-    		}
-    	}
-    	
-    	byte[] b = new byte[IO_BUFFER_SIZE];
-        int read;
-        while((read = in.read(b)) != -1){
-            out.write(b, 0, read);
-            if(dialog != null) dialog.incrementProgressBy(read);        	
-            if(bar != null) bar.incrementProgressBy(read);
-            //AQUtility.debug("inc", read);
-        }
-        
-        if(dialog != null) dialog.setProgress(max);
-        if(bar != null) bar.setProgress(max);
-        
-    }
-*/
+    
     public static byte[] toBytes(InputStream is){
     	
     	byte[] result = null;
@@ -671,6 +632,7 @@ public class AQUtility {
 	public static Context getContext(){
 		if(context == null){
 			AQUtility.warn("warn", "getContext with null");
+			AQUtility.debug(new IllegalStateException());
 		}
 		return context;
 	}

@@ -89,7 +89,7 @@ public class AjaxStatus {
 		return this;
 	}
 	
-	protected AjaxStatus code(int code){
+	public AjaxStatus code(int code){
 		this.code = code;
 		return this;
 	}
@@ -99,7 +99,7 @@ public class AjaxStatus {
 		return this;
 	}
 	
-	protected AjaxStatus message(String message){
+	public AjaxStatus message(String message){
 		this.message = message;
 		return this;
 	}
@@ -139,7 +139,7 @@ public class AjaxStatus {
 		return this;
 	}
 	
-	protected AjaxStatus done(){
+	public AjaxStatus done(){
 		this.duration = System.currentTimeMillis() - start;
 		this.done = true;
 		this.reauth = false;
