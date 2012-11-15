@@ -757,9 +757,13 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	public T image(String url, ImageOptions options){
+		return image(url, options, null);
+	}
+	
+	protected T image(String url, ImageOptions options, String networkUrl){
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, progress, ah, options, proxy, null);			
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, progress, ah, options, proxy, networkUrl);			
 			reset();
 		}
 		
