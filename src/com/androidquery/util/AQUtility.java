@@ -31,6 +31,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -275,8 +276,32 @@ public class AQUtility {
 		getHandler().post(run);
 	}
 	
+	public static void post(Object handler, String method){
+		post(handler, method, new Class[0]);
+	}
+	
+	
 	public static void post(final Object handler, final String method, final Class<?>[] sig, final Object... params){
 		post(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				AQUtility.invokeHandler(handler, method, false, true, sig, params);
+				
+			}
+		});
+	}
+	
+	public static void postAsync(Object handler, String method){
+		postAsync(handler, method, new Class[0]);
+	}
+	
+	public static void postAsync(final Object handler, final String method, final Class<?>[] sig, final Object... params){
+		
+		ExecutorService exe = getFileStoreExecutor();
+			
+		exe.execute(new Runnable() {
 			
 			@Override
 			public void run() {
