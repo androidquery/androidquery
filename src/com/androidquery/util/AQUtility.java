@@ -31,6 +31,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -275,6 +276,42 @@ public class AQUtility {
 		getHandler().post(run);
 	}
 	
+	public static void post(Object handler, String method){
+		post(handler, method, new Class[0]);
+	}
+	
+	
+	public static void post(final Object handler, final String method, final Class<?>[] sig, final Object... params){
+		post(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				AQUtility.invokeHandler(handler, method, false, true, sig, params);
+				
+			}
+		});
+	}
+	
+	public static void postAsync(Object handler, String method){
+		postAsync(handler, method, new Class[0]);
+	}
+	
+	public static void postAsync(final Object handler, final String method, final Class<?>[] sig, final Object... params){
+		
+		ExecutorService exe = getFileStoreExecutor();
+			
+		exe.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				AQUtility.invokeHandler(handler, method, false, true, sig, params);
+				
+			}
+		});
+	}
+	
 	public static void removePost(Runnable run){
 		getHandler().removeCallbacks(run);
 	}
@@ -319,7 +356,7 @@ public class AQUtility {
 
 	}
 	
-    private static final int IO_BUFFER_SIZE = 1024;
+    private static final int IO_BUFFER_SIZE = 1024 * 4;
     public static void copy(InputStream in, OutputStream out) throws IOException {
     	//copy(in, out, 0, null, null);
     	copy(in, out, 0, null);
@@ -348,46 +385,7 @@ public class AQUtility {
         }
     	
     }
-    /*
-    public static void copy(InputStream in, OutputStream out, int max, ProgressDialog dialog, ProgressBar bar) throws IOException {
-       
-    	AQUtility.debug("max", max);
-    	
-    	if(max <= 0) max = 100;
-    	
-    	if(dialog != null){
-    		if(dialog.isIndeterminate()){
-    			dialog = null;
-    		}else{
-    			dialog.setMax(max);
-    			dialog.setProgress(0);
-    		}
-    	}
-    	
-    	if(bar != null){
-    		
-    		if(bar.isIndeterminate()){
-    			bar = null;
-    		}else{
-    			bar.setMax(max);
-    			bar.setProgress(0);
-    		}
-    	}
-    	
-    	byte[] b = new byte[IO_BUFFER_SIZE];
-        int read;
-        while((read = in.read(b)) != -1){
-            out.write(b, 0, read);
-            if(dialog != null) dialog.incrementProgressBy(read);        	
-            if(bar != null) bar.incrementProgressBy(read);
-            //AQUtility.debug("inc", read);
-        }
-        
-        if(dialog != null) dialog.setProgress(max);
-        if(bar != null) bar.setProgress(max);
-        
-    }
-*/
+    
     public static byte[] toBytes(InputStream is){
     	
     	byte[] result = null;
@@ -669,6 +667,10 @@ public class AQUtility {
 	}
 	
 	public static Context getContext(){
+		if(context == null){
+			AQUtility.warn("warn", "getContext with null");
+			AQUtility.debug(new IllegalStateException());
+		}
 		return context;
 	}
 }

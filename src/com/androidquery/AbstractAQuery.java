@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -99,6 +100,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected AccountHandle ah;
 	private Transformer trans;
 	private int policy = CACHE_DEFAULT;
+	private HttpHost proxy;
 
 	protected T create(View view){
 		
@@ -186,6 +188,23 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			result = act.findViewById(id);
 		}
 		return result;
+	}
+	
+	private View findView(String tag){
+		
+		//((ViewGroup)findViewById(android.R.id.content)).getChildAt(0)
+		View result = null;
+		if(root != null){
+			result = root.findViewWithTag(tag);
+		}else if(act != null){
+			//result = act.findViewById(id);
+			View top = ((ViewGroup) act.findViewById(android.R.id.content)).getChildAt(0);
+			if(top != null){
+				result = top.findViewWithTag(tag);
+			}
+		}
+		return result;
+		
 	}
 	
 	private View findView(int... path){
@@ -278,11 +297,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int id){
-		/*
-		view = findView(id);	
-		reset();
-		return self();
-		*/
+		
 		return id(findView(id));
 	}
 	
@@ -298,6 +313,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	public T id(String tag){
+		return id(findView(tag));
+	}
+	
 	/**
 	 * Find the first view with first id, under that view, find again with 2nd id, etc...
 	 *
@@ -305,11 +324,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T id(int... path){
-		/*
-		view = findView(path);	
-		reset();		
-		return self();
-		*/
+		
 		return id(findView(path));
 	}
 	
@@ -393,6 +408,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	public T policy(int cachePolicy){
 		policy = cachePolicy;
+		return self();
+	}	
+	
+	public T proxy(String host, int port){
+		proxy = new HttpHost(host, port);
 		return self();
 	}	
 	
@@ -723,13 +743,13 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * 
 	 */
 	public T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio){
-		return image(url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, 0);
+		return image(url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, 0, null);
 	}
 	
-	private T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio, int round){
+	protected T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio, int round, String networkUrl){
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round);			
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round, proxy, networkUrl);			
 			reset();
 		}
 		
@@ -737,9 +757,13 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	public T image(String url, ImageOptions options){
+		return image(url, options, null);
+	}
+	
+	protected T image(String url, ImageOptions options, String networkUrl){
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, progress, ah, options);			
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, progress, ah, options, proxy, networkUrl);			
 			reset();
 		}
 		
@@ -1786,6 +1810,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		cb.transformer(trans);
 		cb.policy(policy);
 		
+		if(proxy != null){
+			cb.proxy(proxy.getHostName(), proxy.getPort());
+		}
+		
 		if(act != null){
 			cb.async(act);
 		}else{
@@ -1797,12 +1825,13 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}	
 	
-	private void reset(){
+	protected void reset(){
 		
 		ah = null;
 		progress = null;
 		trans = null;
 		policy = CACHE_DEFAULT;
+		proxy = null;
 		
 	}
 	

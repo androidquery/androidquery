@@ -56,6 +56,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.params.ConnRoutePNames;
@@ -119,6 +120,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private WeakReference<Object> progress;
 	
 	private String url;
+	private String networkUrl;
 	private Map<String, Object> params;
 	private Map<String, String> headers;
 	private Map<String, String> cookies;
@@ -254,6 +256,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.url = url;
 		return self();
 	}
+	
+	public K networkUrl(String url){
+		this.networkUrl = url;
+		return self();
+	}
+	
 	
 	/**
 	 * Set the desired ajax response type. Type parameter is required otherwise the ajax callback will not occur.
@@ -494,6 +502,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				}
 			}
 		
+		}else{
+			skip(url, result, status);
 		}
 		
 		filePut();
@@ -556,6 +566,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @param status the status
 	 */
 	public void callback(String url, T object, AjaxStatus status){
+		
+	}
+	
+	protected void skip(String url, T object, AjaxStatus status){
 		
 	}
 	
@@ -1004,6 +1018,21 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return url;
 	}
 	
+	private String getNetworkUrl(String url){
+		
+		String result = url;
+		
+		if(networkUrl != null){
+			result = networkUrl;
+		}
+		
+		if(ah != null){
+			result = ah.getNetworkUrl(result);
+		}
+		
+		return result;
+	}
+	
 	private void fileWork(){
 		
 		File file = accessFile(cacheDir, getCacheUrl());
@@ -1190,9 +1219,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			params = extractParams(uri);
 		}
 		
-		if(ah != null){
-			url = ah.getNetworkUrl(url);
-		}
+		url = getNetworkUrl(url);
 		
 		
 		if(Constants.METHOD_DELETE == method){
@@ -1450,7 +1477,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		HttpParams hp = hr.getParams();
 		if(proxy != null) hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		if(timeout > 0){
-			AQUtility.debug("timeout param", CoreConnectionPNames.CONNECTION_TIMEOUT);
 			hp.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
 			hp.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
 		}
@@ -1465,7 +1491,22 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			throw new IOException("Aborted");
 		}
 		
-		HttpResponse response = client.execute(hr, context);
+		HttpResponse response = null;
+		
+		try{
+			response = client.execute(hr, context);
+		}catch(HttpHostConnectException e){
+			
+			//if proxy is used, automatically retry without proxy
+			if(proxy != null){
+				AQUtility.debug("proxy failed, retrying without proxy");
+				hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
+				response = client.execute(hr, context);
+			}else{
+				throw e;
+			}
+		}
+		
 		
         byte[] data = null;
         
@@ -1477,25 +1518,29 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         String error = null;
         
         HttpEntity entity = response.getEntity();
-        Header eheader = entity.getContentEncoding();
-        
-        String encoding = null;
-        if(eheader != null) encoding = eheader.getValue();
-        
+       
         File file = null;
         
         if(code < 200 || code >= 300){     
         	
+        	InputStream is = null;
+        	
         	try{
         		
-        		InputStream is = entity.getContent();
-        		byte[] s = toData(encoding, is);
+        		if(entity != null){
         		
-        		error = new String(s, "UTF-8");
-        		
-        		AQUtility.debug("error", error);
+	        		is = entity.getContent();
+	        		byte[] s = toData(getEncoding(entity), is);
+	        		
+	        		error = new String(s, "UTF-8");
+	        		
+	        		AQUtility.debug("error", error);
+	        		
+        		}
         	}catch(Exception e){
         		AQUtility.debug(e);
+        	}finally{
+        		AQUtility.close(is);
         	}
         	
         	
@@ -1523,7 +1568,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        
 		        //AQUtility.time("copy");
 		        
-		        copy(entity.getContent(), os, encoding, (int) entity.getContentLength());
+		        copy(entity.getContent(), os, getEncoding(entity), (int) entity.getContentLength());
 		        
 		        //AQUtility.timeEnd("copy", 0);
 		        
@@ -1553,6 +1598,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         status.code(code).message(message).error(error).redirect(redirect).time(new Date()).data(data).file(file).client(client).context(context).headers(response.getAllHeaders());
 		
         
+	}
+	
+	
+	private String getEncoding(HttpEntity entity){
+		
+		if(entity == null) return null;
+		
+        Header eheader = entity.getContentEncoding();
+        if(eheader == null) return null;
+        
+        return eheader.getValue();
+		
 	}
 	
 	private void copy(InputStream is, OutputStream os, String encoding, int max) throws IOException{

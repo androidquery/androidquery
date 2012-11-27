@@ -364,7 +364,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	
 	public void test304(){
 		
-		String url = "http://192.168.1.165/p/doNothing?response=304";
+		String url = "http://www.androidquery.com/p/doNothing?response=304";
 		
         aq.ajax(url, File.class, new AjaxCallback<File>() {
 
@@ -1426,7 +1426,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		};
 		
 		StringEntity entity = new StringEntity(new JSONObject().toString());
-		
+	
         aq.put(url, "application/json", entity, JSONObject.class, cb);
 		
         waitAsync();
@@ -1438,6 +1438,46 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNotNull(jo);       
         
         assertEquals("PUT", jo.optString("method"));
+        
+	}
+	
+	
+	public void testAjaxPutNamedValues() throws UnsupportedEncodingException{
+		
+		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		pairs.add(new BasicNameValuePair("count", "5"));
+
+		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+		entity.setContentType("application/x-www-form-urlencoded;charset=UTF-8");
+		
+		String url = "http://www.androidquery.com/p/doNothing";
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		};
+		
+		
+        aq.put(url, "application/x-www-form-urlencoded;charset=UTF-8", entity, JSONObject.class, cb);
+		
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        JSONObject params = jo.optJSONObject("params");
+        assertEquals("5", params.optString("count"));
+        
+        //assertEquals("PUT", jo.optString("method"));
         
 	}
 	
@@ -1545,4 +1585,64 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
     }
 	
+	
+	public void testAjaxEmptyString() {
+		
+		String url = "http://www.androidquery.com/p/doNothing?response=200";
+        
+		AjaxCallback<String> cb = new AjaxCallback<String>(){
+			
+			@Override
+			public void callback(String url, String str, AjaxStatus status) {
+				
+				done(url, str, status);
+				
+			}
+			
+		};
+		
+			
+        aq.ajax(url, String.class, cb);
+        
+        waitAsync();
+        
+        assertNotNull(result);       
+        assertTrue("".equals(result));
+        
+    }
+	
+	
+	public void testAjaxNetworkUrlCallback() {
+		
+		String url = "http://dummy.com/1234";
+		String networkUrl = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+			
+			@Override
+			public void callback(String url, JSONObject jo, AjaxStatus status) {
+				
+				done(url, jo, status);
+				
+			}
+			
+		}.networkUrl(networkUrl);
+		
+			
+        aq.ajax(url, JSONObject.class, 1000, cb);
+        
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        assertNotNull(jo);       
+        assertNotNull(jo.opt("responseData"));
+        
+        waitSec(2000);
+        
+        File file = aq.getCachedFile(url);
+        assertNotNull(file);
+        
+        
+    }
 }
