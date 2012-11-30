@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1445,6 +1446,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return client;
 	}
 	
+	//helper method to support underscore subdomain
+	private HttpResponse execute(HttpUriRequest hr, DefaultHttpClient client, HttpContext context) throws ClientProtocolException, IOException{
+		
+		HttpResponse response = null;
+
+		if(hr.getURI().getAuthority().contains("_")) {
+            URL urlObj = hr.getURI().toURL();
+            HttpHost host;
+            if(urlObj.getPort() == -1) {
+                host = new HttpHost(urlObj.getHost(), 80, urlObj.getProtocol());
+            } else {
+                host = new HttpHost(urlObj.getHost(), urlObj.getPort(), urlObj.getProtocol());
+            }
+            response = client.execute(host, hr, context);
+        } else {
+            response = client.execute(hr, context);
+        }
+		
+		
+		return response;
+	}
+	
 	
 	private void httpDo(HttpUriRequest hr, String url, Map<String, String> headers, AjaxStatus status) throws ClientProtocolException, IOException{
 		
@@ -1494,14 +1517,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		HttpResponse response = null;
 		
 		try{
-			response = client.execute(hr, context);
+			//response = client.execute(hr, context);
+			response = execute(hr, client, context);
 		}catch(HttpHostConnectException e){
 			
 			//if proxy is used, automatically retry without proxy
 			if(proxy != null){
 				AQUtility.debug("proxy failed, retrying without proxy");
 				hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
-				response = client.execute(hr, context);
+				//response = client.execute(hr, context);
+				response = execute(hr, client, context);
 			}else{
 				throw e;
 			}
