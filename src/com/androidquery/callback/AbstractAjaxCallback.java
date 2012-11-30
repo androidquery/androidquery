@@ -1566,11 +1566,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        	os = new BufferedOutputStream(new FileOutputStream(file));
 		        }
 		        
-		        //AQUtility.time("copy");
+		        is = entity.getContent();
+				if("gzip".equalsIgnoreCase(getEncoding(entity))){
+					is = new GZIPInputStream(is);
+				}
 		        
-		        copy(entity.getContent(), os, getEncoding(entity), (int) entity.getContentLength());
-		        
-		        //AQUtility.timeEnd("copy", 0);
+		        copy(is, os, (int) entity.getContentLength());
 		        
 		        
 		        os.flush();
@@ -1612,6 +1613,29 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	private void copy(InputStream is, OutputStream os, int max) throws IOException{
+		
+
+		
+		Object o = null;
+		
+		if(progress != null){
+			o = progress.get();
+		}
+		
+		Progress p = null;
+		
+		if(o != null){
+			p = new Progress(o); 
+		}
+		
+		AQUtility.copy(is, os, max, p);
+		
+		
+	}
+	
+	
+	/*
 	private void copy(InputStream is, OutputStream os, String encoding, int max) throws IOException{
 		
 		if("gzip".equalsIgnoreCase(encoding)){
@@ -1634,7 +1658,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		
 	}
-	
+	*/
 	
 	/**
 	 * Set the authentication type of this request. This method requires API 5+.
@@ -1888,6 +1912,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		dos.writeBytes(twoHyphens + boundary + lineEnd);
 		dos.writeBytes("Content-Disposition: form-data; name=\""+name+"\";"
 				+ " filename=\"" + filename + "\"" + lineEnd);
+		
+		
+		//added to specify type
+		dos.writeBytes("Content-Type: application/octet-stream");
+		dos.writeBytes(lineEnd);
+		dos.writeBytes("Content-Transfer-Encoding: binary");
+		dos.writeBytes(lineEnd);
+		
 		dos.writeBytes(lineEnd);
 
 		AQUtility.copy(is, dos);
