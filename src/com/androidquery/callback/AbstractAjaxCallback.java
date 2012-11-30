@@ -1888,6 +1888,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		dos.writeBytes(twoHyphens + boundary + lineEnd);
 		dos.writeBytes("Content-Disposition: form-data; name=\""+name+"\";"
 				+ " filename=\"" + filename + "\"" + lineEnd);
+		dos.writeBytes("Content-Type: application/octet-stream" + lineEnd);
+		dos.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
 		dos.writeBytes(lineEnd);
 
 		AQUtility.copy(is, dos);
