@@ -2338,13 +2338,19 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 					file = new File(temp, filename);
 					file.createNewFile();
 					
-				    FileChannel ic = new FileInputStream(cached).getChannel();
-				    FileChannel oc = new FileOutputStream(file).getChannel();
+					FileInputStream fis = new FileInputStream(cached);
+					FileOutputStream fos = new FileOutputStream(file);
+					
+				    FileChannel ic = fis.getChannel();
+				    FileChannel oc = fos.getChannel();
+				    
 				    try{
 				    	ic.transferTo(0, ic.size(), oc);
 				    }finally{
-				        if(ic != null) ic.close();
-				        if(oc != null) oc.close();
+				    	AQUtility.close(fis);
+				    	AQUtility.close(fos);
+				    	AQUtility.close(ic);
+				    	AQUtility.close(oc);
 				    }
 					
 				}
@@ -2445,6 +2451,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	//weak hash map that holds the dialogs so they will never memory leaked
 	private static WeakHashMap<Dialog, Void> dialogs = new WeakHashMap<Dialog, Void>();
 	
+	/**
+	 * Show a dialog. Method dismiss() or dismissAll() should be called later.
+	 * 
+	 * @return self
+	 * 
+	 */
 	public T show(Dialog dialog){
 		
 		try{
@@ -2458,6 +2470,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	/**
+	 * Dismiss a dialog previously shown with show().
+	 * 
+	 * @return self
+	 * 
+	 */
 	public T dismiss(Dialog dialog){
 		
 		try{
