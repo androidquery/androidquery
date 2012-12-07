@@ -2636,12 +2636,34 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	
+	/**
+	 * Download a file asynchronously.
+	 * 
+	 * @param url url
+	 * @param target the file to be saved
+	 * @param cb callback to be called when done
+	 * @return self
+	 * 
+	 */
+	
 	public T download(String url, File target, AjaxCallback<File> cb){
 		
 		cb.url(url).type(File.class).targetFile(target);		
 		return ajax(cb);
 	
 	}
+	
+	/**
+	 * Download a file asynchronously.
+	 * 
+	 * @param url url
+	 * @param target the file to be saved
+	 * @param handler the callback handler
+	 * @param callback the callback method
+	 * @return self
+	 * 
+	 */
 	
 	public T download(String url, File target, Object handler, String callback){
 		
