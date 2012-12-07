@@ -31,7 +31,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -393,13 +392,10 @@ public class AQUtility {
 	
     private static final int IO_BUFFER_SIZE = 1024 * 4;
     public static void copy(InputStream in, OutputStream out) throws IOException {
-    	//copy(in, out, 0, null, null);
     	copy(in, out, 0, null);
     }
     
     public static void copy(InputStream in, OutputStream out, int max, Progress progress) throws IOException {
-    	
-    	AQUtility.debug("content header", max);
     	
     	if(progress != null){
     		progress.reset();
@@ -542,11 +538,7 @@ public class AQUtility {
 		String hash = getMD5Hex(url);
 		return hash;
 	}
-	/*
-	public static File getExistedCacheByUrl(Context context, String url){
-		return getExistedCacheByUrl(getCacheDir(context), url);
-	}
-	*/
+	
 	public static File getCacheFile(File dir, String url){
 		if(url == null) return null;
 		if(url.startsWith(File.separator)){

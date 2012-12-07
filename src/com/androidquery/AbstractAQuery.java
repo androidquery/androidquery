@@ -313,6 +313,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}
 	
+	
+	/**
+	 * Points the current operating view to the specified view with tag.
+	 *
+	 * @param tag
+	 * @return self
+	 */
+	
 	public T id(String tag){
 		return id(findView(tag));
 	}
@@ -411,6 +419,12 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return self();
 	}	
 	
+	/**
+	 * Apply the proxy info to next ajax request. 
+	 *
+	 * @param transformer transformer
+	 * @return self
+	 */
 	public T proxy(String host, int port){
 		proxy = new HttpHost(host, port);
 		return self();
@@ -1833,6 +1847,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		policy = CACHE_DEFAULT;
 		proxy = null;
 		
+		
 	}
 	
 	
@@ -1992,6 +2007,17 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 	}
 	
+	/**
+	 * Ajax HTTP put.
+	 *
+	 * @param url url
+	 * @param contentHeader Content-Type header
+	 * @param type reponse type
+	 * @param callback callback
+	 * @return self
+	 * 
+	 */
+	
 	public <K> T put(String url, String contentHeader, HttpEntity entity, Class<K> type, AjaxCallback<K> callback){
 		
 		callback.url(url).type(type).method(AQuery.METHOD_PUT).header("Content-Type", contentHeader).param(AQuery.POST_ENTITY, entity);		
@@ -2148,7 +2174,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * @deprecated  As of release 0.21.3, replaced by shouldDelay(int position, View convertView, ViewGroup parent, String url)
 	 * 
-	 * This method is less efficicent and promote file check which could hold up the UI thread.
+	 * This method is less efficient and promote file check which could hold up the UI thread.
 	 * 
 	 * {@link #shouldDelay(int position, View convertView, ViewGroup parent, String url)}
 	 */
@@ -2161,7 +2187,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * @deprecated  As of release 0.21.3, replaced by shouldDelay(int position, View convertView, ViewGroup parent, String url)
 	 * 
-	 * This method is less efficicent and promote file check which could hold up the UI thread.
+	 * This method is less efficient and promote file check which could hold up the UI thread.
 	 * 
 	 * {@link #shouldDelay(int position, View convertView, ViewGroup parent, String url)}
 	 */
