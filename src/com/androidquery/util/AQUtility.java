@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -293,15 +294,49 @@ public class AQUtility {
 		});
 	}
 	
+	public static void postAsync(final Runnable run){
+		
+		AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>(){
+			
+			@Override
+			protected String doInBackground(Void... params) {
+				
+				try{
+					run.run();
+				}catch(Exception e){
+					AQUtility.report(e);
+				}
+				
+				
+				return null;
+			}
+			
+		};
+		
+		task.execute();
+		
+	}
+	
+	
 	public static void postAsync(Object handler, String method){
 		postAsync(handler, method, new Class[0]);
 	}
 	
 	public static void postAsync(final Object handler, final String method, final Class<?>[] sig, final Object... params){
-		
+		/*
 		ExecutorService exe = getFileStoreExecutor();
 			
 		exe.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				AQUtility.invokeHandler(handler, method, false, true, sig, params);
+				
+			}
+		});
+		*/
+		postAsync(new Runnable() {
 			
 			@Override
 			public void run() {
