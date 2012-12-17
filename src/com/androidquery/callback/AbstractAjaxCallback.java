@@ -779,13 +779,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	private String parseCharset(String tag){
+		
 		if(tag == null) return null;
 		int i = tag.indexOf("charset");
 		if(i == -1) return null;
 		
-		String charset = tag.substring(i + 7).replaceAll("[^\\w-]", "");
+		int e = tag.indexOf(";", i) ;
+		if(e == -1) e = tag.length();
+		
+		String charset = tag.substring(i + 7, e).replaceAll("[^\\w-]", "");
 		return charset;
 	}
+	
 	
 	private String correctEncoding(byte[] data, String target, AjaxStatus status){
 		
