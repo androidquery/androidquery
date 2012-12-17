@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -1277,6 +1278,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 		
 		fetchExe.execute(job);
+	}
+	
+	/**
+	 * Return the number of active ajax threads. Note that this doesn't necessarily correspond to active network connections.
+	 * Ajax threads might be reading a cached url from file system or transforming the response after a network transfer. 
+	 * 
+	 */
+	
+	public static int getActiveCount(){
+		
+		int result = 0;
+		
+		if(fetchExe instanceof ThreadPoolExecutor){
+			result = ((ThreadPoolExecutor) fetchExe).getActiveCount();
+		}
+		
+		return result;
+		
 	}
 	
 	/**

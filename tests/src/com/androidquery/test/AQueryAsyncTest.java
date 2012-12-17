@@ -1645,4 +1645,31 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         
     }
+	
+	
+	public void testAjaxActiveCount() {
+		
+		assertEquals(0, AjaxCallback.getActiveCount());
+        
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+        aq.ajax(url, JSONObject.class, this, "jsonCb");
+        
+        
+        int count = AjaxCallback.getActiveCount();
+        AQUtility.debug("active count", count);
+        
+        assertEquals(1, AjaxCallback.getActiveCount());
+        
+        waitAsync();
+        
+        assertEquals(0, AjaxCallback.getActiveCount());
+        
+        JSONObject jo = (JSONObject) result;
+        
+        assertNotNull(jo);       
+        assertNotNull(jo.opt("responseData"));
+        
+    }
 }
