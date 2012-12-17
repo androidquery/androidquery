@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1445,6 +1446,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return client;
 	}
 	
+	//helper method to support underscore subdomain
+	private HttpResponse execute(HttpUriRequest hr, DefaultHttpClient client, HttpContext context) throws ClientProtocolException, IOException{
+		
+		HttpResponse response = null;
+
+		if(hr.getURI().getAuthority().contains("_")) {
+            URL urlObj = hr.getURI().toURL();
+            HttpHost host;
+            if(urlObj.getPort() == -1) {
+                host = new HttpHost(urlObj.getHost(), 80, urlObj.getProtocol());
+            } else {
+                host = new HttpHost(urlObj.getHost(), urlObj.getPort(), urlObj.getProtocol());
+            }
+            response = client.execute(host, hr, context);
+        } else {
+            response = client.execute(hr, context);
+        }
+		
+		
+		return response;
+	}
+	
 	
 	private void httpDo(HttpUriRequest hr, String url, Map<String, String> headers, AjaxStatus status) throws ClientProtocolException, IOException{
 		
@@ -1494,14 +1517,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		HttpResponse response = null;
 		
 		try{
-			response = client.execute(hr, context);
+			//response = client.execute(hr, context);
+			response = execute(hr, client, context);
 		}catch(HttpHostConnectException e){
 			
 			//if proxy is used, automatically retry without proxy
 			if(proxy != null){
 				AQUtility.debug("proxy failed, retrying without proxy");
 				hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
-				response = client.execute(hr, context);
+				//response = client.execute(hr, context);
+				response = execute(hr, client, context);
 			}else{
 				throw e;
 			}
@@ -1566,11 +1591,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        	os = new BufferedOutputStream(new FileOutputStream(file));
 		        }
 		        
-		        //AQUtility.time("copy");
+		        is = entity.getContent();
+				if("gzip".equalsIgnoreCase(getEncoding(entity))){
+					is = new GZIPInputStream(is);
+				}
 		        
-		        copy(entity.getContent(), os, getEncoding(entity), (int) entity.getContentLength());
-		        
-		        //AQUtility.timeEnd("copy", 0);
+		        copy(is, os, (int) entity.getContentLength());
 		        
 		        
 		        os.flush();
@@ -1612,6 +1638,29 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	private void copy(InputStream is, OutputStream os, int max) throws IOException{
+		
+
+		
+		Object o = null;
+		
+		if(progress != null){
+			o = progress.get();
+		}
+		
+		Progress p = null;
+		
+		if(o != null){
+			p = new Progress(o); 
+		}
+		
+		AQUtility.copy(is, os, max, p);
+		
+		
+	}
+	
+	
+	/*
 	private void copy(InputStream is, OutputStream os, String encoding, int max) throws IOException{
 		
 		if("gzip".equalsIgnoreCase(encoding)){
@@ -1634,7 +1683,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		
 	}
-	
+	*/
 	
 	/**
 	 * Set the authentication type of this request. This method requires API 5+.
@@ -1888,6 +1937,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		dos.writeBytes(twoHyphens + boundary + lineEnd);
 		dos.writeBytes("Content-Disposition: form-data; name=\""+name+"\";"
 				+ " filename=\"" + filename + "\"" + lineEnd);
+		
+		
+		//added to specify type
+		dos.writeBytes("Content-Type: application/octet-stream");
+		dos.writeBytes(lineEnd);
+		dos.writeBytes("Content-Transfer-Encoding: binary");
+		dos.writeBytes(lineEnd);
+		
 		dos.writeBytes(lineEnd);
 
 		AQUtility.copy(is, dos);
