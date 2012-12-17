@@ -997,12 +997,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 * @return self
 	 */
 	public T gone(){
-		
+		/*
 		if(view != null && view.getVisibility() != View.GONE){
 			view.setVisibility(View.GONE);
 		}
 		
 		return self();
+		*/
+		return visibility(View.GONE);
 	}
 	
 	/**
@@ -1012,11 +1014,14 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T invisible(){
 		
+		/*
 		if(view != null && view.getVisibility() != View.INVISIBLE){
 			view.setVisibility(View.INVISIBLE);
 		}
 		
 		return self();
+		*/
+		return visibility(View.INVISIBLE);
 	}
 	
 	/**
@@ -1026,8 +1031,25 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	 */
 	public T visible(){
 		
+		/*
 		if(view != null && view.getVisibility() != View.VISIBLE){
 			view.setVisibility(View.VISIBLE);
+		}
+		
+		return self();
+		*/
+		return visibility(View.VISIBLE);
+	}
+	
+	/**
+	 * Set view visibility, such as View.VISIBLE.
+	 *
+	 * @return self
+	 */
+	public T visibility(int visibility){
+		
+		if(view != null && view.getVisibility() != visibility){
+			view.setVisibility(visibility);
 		}
 		
 		return self();
