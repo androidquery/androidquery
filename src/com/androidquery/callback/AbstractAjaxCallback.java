@@ -1138,6 +1138,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				result = getCacheFile();
 			}else{
 				File dir = AQUtility.getTempDir();
+				
 				if(dir == null) dir = cacheDir;
 				result = AQUtility.getCacheFile(dir, url);
 			}

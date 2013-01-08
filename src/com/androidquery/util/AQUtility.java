@@ -636,7 +636,7 @@ public class AQUtility {
 		File ext = Environment.getExternalStorageDirectory();
 		File tempDir = new File(ext, "aquery/temp");		
 		tempDir.mkdirs();
-		if(!tempDir.exists()){
+		if(!tempDir.exists() || !tempDir.canWrite()){
 		    return null;
 		}
 		return tempDir;

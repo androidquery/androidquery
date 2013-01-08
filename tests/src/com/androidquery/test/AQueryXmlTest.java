@@ -190,7 +190,7 @@ public class AQueryXmlTest extends AbstractTest<AQueryTestActivity> {
 	
 	public void testMalformXml(){
 		
-		String url = "http://www.bbc.co.uk/nepali/index.xml";
+		String url = "http://fotbollskanalen.apps.tv4.se/news/topnews";
 		
 		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>(){
 			@Override
