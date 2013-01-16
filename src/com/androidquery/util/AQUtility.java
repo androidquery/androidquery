@@ -322,19 +322,7 @@ public class AQUtility {
 	}
 	
 	public static void postAsync(final Object handler, final String method, final Class<?>[] sig, final Object... params){
-		/*
-		ExecutorService exe = getFileStoreExecutor();
-			
-		exe.execute(new Runnable() {
-			
-			@Override
-			public void run() {
-				
-				AQUtility.invokeHandler(handler, method, false, true, sig, params);
-				
-			}
-		});
-		*/
+		
 		postAsync(new Runnable() {
 			
 			@Override

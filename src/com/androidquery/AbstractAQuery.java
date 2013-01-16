@@ -2106,7 +2106,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	
 	/**
-	 * Stop all ajax activities. Should be called when current activity is to be destroy.
+	 * Stop all ajax activities. Should only be called when app exits.
 	 *
 	 * 
 	 * @return self
