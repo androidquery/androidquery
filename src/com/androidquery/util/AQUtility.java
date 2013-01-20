@@ -607,14 +607,28 @@ public class AQUtility {
 		}
 	}
 	
+	private static File tempDir;
+	
 	public static File getTempDir(){
-		File ext = Environment.getExternalStorageDirectory();
-		File tempDir = new File(ext, "aquery/temp");		
-		tempDir.mkdirs();
-		if(!tempDir.exists()){
-		    return null;
+		
+		if(tempDir == null){
+			File ext = Environment.getExternalStorageDirectory();
+			tempDir = new File(ext, "aquery/temp");		
+			tempDir.mkdirs();
+			if(!tempDir.exists()){
+			    return null;
+			}
 		}
+		
 		return tempDir;
+		
+	}
+	
+	public static void setTempDir(File dir){
+		tempDir = dir;
+		if(tempDir != null){
+			tempDir.mkdirs();
+		}
 	}
 	
 	private static boolean testCleanNeeded(File[] files, long triggerSize){
