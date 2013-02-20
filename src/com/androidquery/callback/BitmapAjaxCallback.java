@@ -38,12 +38,14 @@ import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.Matrix;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.media.ExifInterface;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -90,6 +92,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private boolean targetDim = true;
 	private float anchor = AQuery.ANCHOR_DYNAMIC;
 	private boolean invalid;
+	private boolean rotate;
 	
 	
 	/**
@@ -191,6 +194,17 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return this;
 	}
 	
+	/**
+	 * Set auto rotate to respect image Exif orientation.
+	 *
+	 * @param rotate rotate
+	 * @return self
+	 */
+	public BitmapAjaxCallback rotate(boolean rotate){
+		this.rotate = rotate;
+		return this;
+	}
+	
 	
 	/**
 	 * Set the image aspect ratio anchor.
@@ -228,18 +242,16 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	}
 	
 
-	private static Bitmap decode(String path, byte[] data, BitmapFactory.Options options){
+	private static Bitmap decode(String path, byte[] data, BitmapFactory.Options options, boolean rotate){
 		
 		Bitmap result = null;
 		
 		
 		if(path != null){
 			
-			result = decodeFile(path, options);
+			result = decodeFile(path, options, rotate);
 			
 		}else if(data != null){
-			
-			//AQUtility.debug("decoding byte[]");
 			
 			result = BitmapFactory.decodeByteArray(data, 0, data.length, options);
 			
@@ -252,7 +264,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		return result;
 	}
 	
-	private static Bitmap decodeFile(String path, BitmapFactory.Options options){
+	private static Bitmap decodeFile(String path, BitmapFactory.Options options, boolean rotate){
 		
 		Bitmap result = null;
 		
@@ -263,22 +275,18 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		options.inInputShareable = true;
 		options.inPurgeable = true;
 		
-		
-		
 		FileInputStream fis = null;
 		
 		try{
 		
 			fis = new FileInputStream(path);
-			
 			FileDescriptor fd = fis.getFD();
-			
-			//AQUtility.debug("decoding file");
-			//AQUtility.time("decode file");
-			
 			result = BitmapFactory.decodeFileDescriptor(fd, null, options);
+
+			if(result != null && rotate){
+				result = rotate(path, result);
+			}
 			
-			//AQUtility.timeEnd("decode file", 0);
 		}catch(IOException e){
 			AQUtility.report(e);
 		}finally{
@@ -289,6 +297,73 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
+	private static Bitmap rotate(String path, Bitmap bm){
+		
+		Bitmap result = bm;
+		
+		int ori = ExifInterface.ORIENTATION_NORMAL;
+		
+		try{
+			ExifInterface ei = new ExifInterface(path);
+			ori = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+		}catch(Exception e){
+			//simply fallback to normal orientation
+			AQUtility.debug(e);
+		}
+		
+		if(ori > 0){
+			
+			Matrix matrix = getRotateMatrix(ori);		
+			result = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+			
+			AQUtility.debug("before", bm.getWidth() + ":" + bm.getHeight());
+			AQUtility.debug("after", result.getWidth() + ":" + result.getHeight());
+			
+			bm.recycle();
+		}
+		
+		
+		return result;
+	}
+	
+	private static Matrix getRotateMatrix(int ori){
+		
+		Matrix matrix = new Matrix();
+        switch (ori) {
+	        case 2:
+	            matrix.setScale(-1, 1);
+	            break;
+	        case 3:
+	            matrix.setRotate(180);
+	            break;
+	        case 4:
+	            matrix.setRotate(180);
+	            matrix.postScale(-1, 1);
+	            break;
+	        case 5:
+	            matrix.setRotate(90);
+	            matrix.postScale(-1, 1);
+	            break;
+	        case 6:
+	            matrix.setRotate(90);
+	            break;
+	        case 7:
+	            matrix.setRotate(-90);
+	            matrix.postScale(-1, 1);
+	            break;
+	        case 8:
+	            matrix.setRotate(-90);
+	            break;
+	        
+        }
+        
+        return matrix;
+		
+	}
+	
+	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width, int round){
+		return getResizedImage(path, data, target, width, round, false);
+	}
 	
 	/**
 	 * Utility method for downsampling images.
@@ -298,9 +373,10 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 * @param target the target dimension
 	 * @param width use width as target, otherwise use the higher value of height or width
 	 * @param round corner radius
+	 * @param rotate auto rotate with exif data
 	 * @return the resized image
 	 */
-	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width, int round){
+	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width, int round, boolean rotate){
     	
 		Options options = null;
 		
@@ -309,7 +385,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
     		Options info = new Options();
     		info.inJustDecodeBounds = true;
 	        
-	    	decode(path, data, info);
+	    	decode(path, data, info, rotate);
 	        
 	        int dim = info.outWidth;
 	        if(!width) dim = Math.max(dim, info.outHeight);
@@ -322,7 +398,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
         
         Bitmap bm = null;
         try{
-        	bm = decode(path, data, options);
+        	bm = decode(path, data, options, rotate);
 		}catch(OutOfMemoryError e){
 			clearCache();
 			AQUtility.report(e);
@@ -356,7 +432,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
     }
 	
     private Bitmap bmGet(String path, byte[] data){    	
-    	return getResizedImage(path, data, targetWidth, targetDim, round);
+    	return getResizedImage(path, data, targetWidth, targetDim, round, rotate);
     	
     }
    

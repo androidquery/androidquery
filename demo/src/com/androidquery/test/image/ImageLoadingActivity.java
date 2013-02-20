@@ -11,7 +11,10 @@ import java.io.IOException;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PorterDuff;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +23,7 @@ import android.widget.ImageView;
 
 import com.androidquery.AQuery;
 import com.androidquery.R;
+import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.callback.ImageOptions;
@@ -455,20 +459,16 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 	}
 	
-	/*
-	private static String patchUrl(String url){	
+	public void image_auto_rotate(){
 		
-		String result = url;
+		String imageUrl = "http://res.dbkon.co.kr/resource/201302091360376386575001.jpg";            
 		
-		if(url.indexOf('%') == -1){
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.url(imageUrl).targetWidth(300).rotate(true);
 		
-			Uri uri = Uri.parse(url);			
-			result = uri.getScheme() + "://" + uri.getAuthority() + uri.getPath() + "?" + Uri.encode(uri.getQuery(), "&=");			
-			String fragment = uri.getFragment();
-			if(fragment != null) result += "#" + fragment;
-		}
+		aq.id(R.id.image).image(cb);
 		
-		return result;
 	}
-	*/
+	
+	
 }

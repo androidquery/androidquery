@@ -52,7 +52,13 @@ public class AdhocActivity extends Activity {
 	
 	private void work() throws IOException{
 		
+		String url = "";
 		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		
+		cb.url(url).ratio(AQuery.RATIO_PRESERVE).expire(3600*1000);
+		
+		aq.id(R.id.image).image(cb);
 		
 	}
 	

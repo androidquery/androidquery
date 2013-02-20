@@ -17,6 +17,7 @@ import com.androidquery.util.AQUtility;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
 import android.view.View;
@@ -503,6 +504,25 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		File file;
 		
+		
+	}
+	
+	public void testAutoRotate() throws IOException{
+		
+		
+		String imageUrl = "http://res.dbkon.co.kr/resource/201302091360376386575001.jpg";            
+		
+		BitmapAjaxCallback cb = new BitmapAjaxCallback();
+		cb.url(imageUrl).targetWidth(300).rotate(true);
+		
+		aq.id(R.id.image).image(cb);
+		
+		cb.block();
+		
+		Bitmap bm = cb.getResult();
+		AjaxStatus status = cb.getStatus();
+		
+		assertNotNull(bm);
 		
 	}
 	

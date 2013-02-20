@@ -119,7 +119,8 @@
         
         <item>Round Corner</item>  
         
-        <item>Image Zoom (WebView)</item>    
+        <item>Image Zoom (WebView)</item>   
+        <item>Auto Rotate</item> 
             
         <item>List Items</item>  
         <item>List Items (Aspect Ratio)</item>               
@@ -181,6 +182,8 @@
         <item>com.androidquery.test.image.ImageLoadingAspectRatioActivity:image_ratio_anchor:new</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_round:new</item>
         <item>com.androidquery.test.image.ImageZoomActivity:image_zoom</item>
+        
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_auto_rotate:new</item>
         
         <item>com.androidquery.test.image.ImageLoadingListActivity:image_list</item>
         <item>com.androidquery.test.image.ImageLoadingList2Activity:image_list2</item>
@@ -311,6 +314,7 @@
         <item>image_ratio_anchor</item>
         <item>image_round</item>
         <item>image_zoom</item>
+        <item>image_auto_rotate</item>
             
         <item>image_list</item>
         <item>image_list2</item>
@@ -428,6 +432,8 @@
         <item>Round Corner Image</item>
         
         <item>Zoom enables image with WebView</item>
+        
+        <item>Auto rotate images taken with camera</item>
         
         <item>Loading Image in List View Items</item>   
         <item>Loading Image in List View with Aspect Ratio</item> 
