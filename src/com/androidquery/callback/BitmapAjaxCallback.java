@@ -299,6 +299,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	
 	private static Bitmap rotate(String path, Bitmap bm){
 		
+		if(bm == null) return null;
+		
 		Bitmap result = bm;
 		
 		int ori = ExifInterface.ORIENTATION_NORMAL;
@@ -319,7 +321,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			AQUtility.debug("before", bm.getWidth() + ":" + bm.getHeight());
 			AQUtility.debug("after", result.getWidth() + ":" + result.getHeight());
 			
-			bm.recycle();
+			if(bm != result){
+				bm.recycle();
+			}
 		}
 		
 		

@@ -463,6 +463,8 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		String imageUrl = "http://res.dbkon.co.kr/resource/201302091360376386575001.jpg";            
 		
+		//imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		
 		BitmapAjaxCallback cb = new BitmapAjaxCallback();
 		cb.url(imageUrl).targetWidth(300).rotate(true);
 		
