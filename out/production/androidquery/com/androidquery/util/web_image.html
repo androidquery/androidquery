@@ -1,0 +1,82 @@
+<html>
+
+<meta name="viewport" content="initial-scale=1, minimum-scale=1, user-scalable=1">
+
+<body style="background:@color;margin:0px;padding:0px;">
+  
+	<script>
+	
+	var ratio = 10;
+	var draw;
+	
+	function now(){
+		var d = new Date();
+		return d.getTime();
+	}
+	
+	function change(){
+		resize(false);
+	}
+	
+	function resize(force){
+		
+	 	var w = window.innerWidth;
+	 	var h = window.innerHeight;
+		
+	 	if(w == 0 || h == 0) return;
+	 	
+	 	var r = w / h; 
+	 	
+		var diff = Math.abs((ratio - r) / r); 
+	 	
+		var n = now();
+		if(diff > 0.1){
+			draw = n + 300; 
+		}
+		
+		//console.log("diff:" + diff);
+		//console.log("time:" + n + ":" + draw)
+		
+	 	if(force || n < draw){
+		
+	 		ratio = r;
+	 		
+	 		var landscape = w > h;
+		 	
+			var box = document.getElementById("box");		
+		 	box.style.width = w;
+		 	box.style.height = h;
+			
+			var img = document.getElementById("img");	
+			
+			if(!landscape){
+		 		img.style.width = w;
+		 		img.style.height = '';
+			}else{
+				img.style.width = '';
+				img.style.height = h;
+			}
+			
+			//console.log("resize:" + w + ":" + h);
+		}
+	}
+	
+	</script>  
+  
+  	<div id="box" style="vertical-align:middle;text-align:center;display:table-cell;">
+ 		  
+		<img id="img" src="@src" style="display:none;" onload="resize(true);this.style.display='inline';"/>
+
+	</div>
+  
+  	<script>		
+ 		resize(true);
+ 		window.onresize = change;
+  	</script>
+
+	
+</body>
+
+
+
+</html>
