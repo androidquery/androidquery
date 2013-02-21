@@ -92,6 +92,13 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		aq.id(R.id.image).progress(R.id.progress).image(url);
 		
 	}
+
+    public void image_exif(){
+
+        String url = "https://dl.dropbox.com/u/3491432/aQueryCola.JPG";
+        aq.id(R.id.image).progress(R.id.progress).image(url);
+
+    }
 	
 	public void image_cache(){
 		
