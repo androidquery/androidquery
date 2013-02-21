@@ -105,6 +105,7 @@
         <item>Cache Control</item>   
         <item>Down Sampling</item>   
         <item>Fallback</item>
+        <item>Exif</item>
         
         <item>Preload</item>
         <item>Progress</item>
@@ -168,6 +169,7 @@
         <item>com.androidquery.test.image.ImageLoadingActivity:image_cache</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_down</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_fallback</item>
+        <item>com.androidquery.test.image.ImageLoadingActivity:image_exif:beta</item>
         
         <item>com.androidquery.test.image.ImageLoadingActivity:image_preload</item>
         <item>com.androidquery.test.image.ImageLoadingActivity:image_progress</item>
@@ -298,6 +300,7 @@
         <item>image_cache</item>
         <item>image_down</item>
         <item>image_fallback</item>
+        <item>image_exif</item>
         
         <item>image_preload</item>
         <item>image_progress</item>
@@ -413,6 +416,7 @@
         <item>Async Image Load with Cache Control</item>
         <item>Async Image Load with Down-sampling (1024 -> 256)</item>
         <item>Async Image Load with Fallback Image</item>
+        <item>Async Image Load with EXIF Metadata</item>
         
         <item>Preload a placement image before loading real image</item>
         <item>Show Loading Progress</item>
