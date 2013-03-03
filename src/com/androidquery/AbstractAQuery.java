@@ -58,7 +58,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -943,23 +943,23 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
-	 * Set checked state of a compound button.
+	 * Set checked state of a checkable.
 	 *
 	 * @param checked state
 	 * @return self
 	 */
 	public T checked(boolean checked){
 		
-		if(view instanceof CompoundButton){
-			CompoundButton cb = (CompoundButton) view;
-			cb.setChecked(checked);
+		if(view instanceof Checkable){
+			Checkable c = (Checkable) view;
+			c.setChecked(checked);
 		}
 		
 		return self();
 	}
 	
 	/**
-	 * Get checked state of a compound button.
+	 * Get checked state of a checkable.
 	 *
 	 * @return checked
 	 */
@@ -967,9 +967,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		boolean checked = false;
 		
-		if(view instanceof CompoundButton){
-			CompoundButton cb = (CompoundButton) view;
-			checked = cb.isChecked();
+		if(view instanceof Checkable){
+			Checkable c = (Checkable) view;
+			checked = c.isChecked();
 		}
 		
 		return checked;
