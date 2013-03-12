@@ -112,7 +112,7 @@ public class ImageGridFragment extends Fragment{
 					
 				}else{
 					
-					aq.id(R.id.tb).image(tbUrl, true, true, 200, 0, null, 0, 0);
+					aq.id(R.id.tb).image(tbUrl, true, true, 200, R.drawable.image_missing, null, 0, 0);
 				}
 				
 				return convertView;

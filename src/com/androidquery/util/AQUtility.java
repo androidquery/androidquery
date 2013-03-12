@@ -38,10 +38,12 @@ import java.util.concurrent.TimeUnit;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -674,6 +676,14 @@ public class AQUtility {
 	public static int dip2pixel(Context context, float n){
 		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, n, context.getResources().getDisplayMetrics());
 		return value;
+	}
+	
+	public static float pixel2dip(Context context, float n){
+	    Resources resources = context.getResources();
+	    DisplayMetrics metrics = resources.getDisplayMetrics();
+	    float dp = n / (metrics.densityDpi / 160f);
+	    return dp;
+
 	}
 	
 	private static Context context;
