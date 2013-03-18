@@ -205,6 +205,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		ImageOptions options = new ImageOptions();
 		options.round = 15;
+		options.fallback = R.drawable.image_missing;
 		
 		aq.id(R.id.image).image(url, options);
 		

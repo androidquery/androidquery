@@ -382,6 +382,8 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 */
 	public static Bitmap getResizedImage(String path, byte[] data, int target, boolean width, int round, boolean rotate){
     	
+		if(path == null && data == null) return null;
+		
 		Options options = null;
 		
 		if(target > 0){
@@ -467,7 +469,6 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		if(file != null){
 			path = file.getAbsolutePath();
 		}
-		
 		
 		Bitmap bm = bmGet(path, data);
 		
