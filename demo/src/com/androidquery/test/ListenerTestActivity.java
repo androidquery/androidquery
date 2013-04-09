@@ -79,7 +79,7 @@ public class ListenerTestActivity extends Activity {
 	public void asyncPost(){
 		
 		//String url = "http://www.google.com/uds/GnewsSearch";
-		String url = "http://www.vikispot.com/api/likes";
+		String url = "http://www.androidquery.com/api/likes";
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("spotId", "1677246");
@@ -94,7 +94,7 @@ public class ListenerTestActivity extends Activity {
 		
 		//fetch a remote resource in raw bytes
 		
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		
 		/*
 		aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
@@ -118,7 +118,7 @@ public class ListenerTestActivity extends Activity {
 		
 		//fetch a image over the network
 		
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		
 		aq.ajax(url, Bitmap.class, new AjaxCallback<Bitmap>() {
 
@@ -266,11 +266,11 @@ public class ListenerTestActivity extends Activity {
 		
 
 		/*
-		aq.id(R.id.image1).image("http://www.vikispot.com/z/images/vikispot/android-w.png");
+		aq.id(R.id.image1).image("http://www.androidquery.com/z/images/vikispot/android-w.png");
 		
 		boolean memCache = false;
 		boolean fileCache = true;
-		aq.id(R.id.image1).image("http://www.vikispot.com/z/images/vikispot/android-w.png", memCache, fileCache);
+		aq.id(R.id.image1).image("http://www.androidquery.com/z/images/vikispot/android-w.png", memCache, fileCache);
 		*/
 		
 		/*
@@ -294,7 +294,7 @@ public class ListenerTestActivity extends Activity {
 		};
 		*/
 		
-		//String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		//String imageUrl = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		//String imageUrl = "http://lh6.ggpht.com/hgQVg7upCNxcSqJ9T2XabDm9d6IsRjI2lXDKJ03vHSlg5nXDV-2Actla3H8kCVCKdAu5-8-xDAXpxl_9";
 		//String imageUrl = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";		
 		String imageUrl = "http://a.b.com/invalid.jpg";		

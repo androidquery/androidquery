@@ -1,6 +1,6 @@
 	public void image_nocache(){
 		
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		
 		//force a network refetch without any caching
 		aq.id(R.id.image).image(url, false, false);

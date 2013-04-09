@@ -112,7 +112,7 @@ public class AjaxLoadingActivity extends RunSourceActivity {
 	
 	public void async_bytes(){
 	    
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 
 		aq.progress(R.id.progress).ajax(url, byte[].class, new AjaxCallback<byte[]>() {
 

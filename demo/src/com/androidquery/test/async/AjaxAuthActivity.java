@@ -143,7 +143,7 @@ public class AjaxAuthActivity extends RunSourceActivity {
 		
 	}
 	
-	private String UPLOAD_IMAGE = "http://www.vikispot.com/z/images/vikispot/android-w.png"; 
+	private String UPLOAD_IMAGE = "http://www.androidquery.com/z/images/vikispot/android-w.png"; 
 	public void auth_twitter_upload(){
 		
 		File file = aq.getCachedFile(UPLOAD_IMAGE);

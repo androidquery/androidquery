@@ -1,6 +1,6 @@
 	public void image_custom(){
 		
-		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String imageUrl = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		final int tint = 0x77AA0000;
 
 		aq.id(R.id.image).image(imageUrl, true, true, 0, 0, new BitmapAjaxCallback(){

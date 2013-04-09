@@ -72,7 +72,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 			aq.id(R.id.go_run).gone();
 			image_button();
 		}else if("image_send".equals(type)){
-			aq.cache("http://www.vikispot.com/z/images/vikispot/android-w.png", 0);
+			aq.cache("http://www.androidquery.com/z/images/vikispot/android-w.png", 0);
 		}
 			
 			
@@ -92,7 +92,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_simple(){
 		
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		aq.id(R.id.image).progress(R.id.progress).image(url);
 		
 	}
@@ -102,7 +102,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		boolean memCache = false;
 		boolean fileCache = true;
 
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		aq.id(R.id.image).progress(R.id.progress).image(url, memCache, fileCache);
 	}
 	
@@ -117,7 +117,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_fallback(){
 		
-		String imageUrl = "http://www.vikispot.com/z/images/vikispot/xyz.png";
+		String imageUrl = "http://www.androidquery.com/z/images/vikispot/xyz.png";
 		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 0, R.drawable.image_missing);
 		
 	}
@@ -179,7 +179,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 
 	public void image_animation(){
 	
-		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";					
+		String imageUrl = "http://www.androidquery.com/z/images/vikispot/android-w.png";					
 		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 0, 0, null, AQuery.FADE_IN);
 		
 	}
@@ -187,7 +187,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_animation2(){
 		
-		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";		
+		String imageUrl = "http://www.androidquery.com/z/images/vikispot/android-w.png";		
 		aq.id(R.id.image).progress(R.id.progress).image(imageUrl, true, true, 0, 0, null, R.anim.slide_in_left);
 		
 	}
@@ -201,7 +201,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_round(){
 		
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		
 		ImageOptions options = new ImageOptions();
 		options.round = 15;
@@ -224,7 +224,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_custom(){
 		
-		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String imageUrl = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		final int tint = 0x77AA0000;
 
 		aq.id(R.id.image).progress(R.id.progress).visible().image(imageUrl, true, true, 0, 0, new BitmapAjaxCallback(){
@@ -270,7 +270,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_dup(){
 		
-		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String imageUrl = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		aq.id(R.id.image).image(imageUrl, false, false);
 
 		//no network fetch for 2nd request, image will be shown when first request is completed
@@ -300,7 +300,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_access_file(){
 		
-		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String imageUrl = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		File file = aq.getCachedFile(imageUrl);
 		
 		if(file != null){
@@ -311,7 +311,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_access_memory(){
 		
-		String imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";			
+		String imageUrl = "http://www.androidquery.com/z/images/vikispot/android-w.png";			
 		Bitmap bm = aq.getCachedImage(imageUrl);
 		
 		if(bm != null){
@@ -337,7 +337,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_nocache(){
 		
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		
 		//force a network refetch without any caching
 		aq.id(R.id.image).image(url, false, false);
@@ -368,7 +368,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		AQUtility.debug("cache dir exist", cacheDir.exists());
 		
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		aq.cache(url, 0);
 		
 		File file = AQUtility.getCacheFile(AQUtility.getCacheDir(this, AQuery.CACHE_DEFAULT), url);
@@ -380,7 +380,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 	
 	public void image_send(){
 		
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";		
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";		
 		File file = aq.makeSharedFile(url, "android.png");
 		
 		if(file != null){		
@@ -464,7 +464,7 @@ public class ImageLoadingActivity extends RunSourceActivity {
 		
 		String imageUrl = "http://res.dbkon.co.kr/resource/201302091360376386575001.jpg";            
 		
-		//imageUrl = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		//imageUrl = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 		
 		BitmapAjaxCallback cb = new BitmapAjaxCallback();
 		cb.url(imageUrl).targetWidth(300).rotate(true);

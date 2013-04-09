@@ -1,6 +1,6 @@
 	public void asyncBytes(){
 	    
-		String url = "http://www.vikispot.com/z/images/vikispot/android-w.png";
+		String url = "http://www.androidquery.com/z/images/vikispot/android-w.png";
 
 		aq.ajax(url, byte[].class, new AjaxCallback<byte[]>() {
 
