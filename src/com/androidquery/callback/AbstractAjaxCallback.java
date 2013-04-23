@@ -150,6 +150,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private HttpUriRequest request;
 	
 	private boolean uiCallback = true;
+	private int retry = 0;
 	
 	@SuppressWarnings("unchecked")
 	private K self(){
@@ -285,6 +286,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	public K timeout(int timeout){
 		this.timeout = timeout;
+		return self();
+	}
+	
+	public K retry(int retry){
+		this.retry = retry;
 		return self();
 	}
 	
@@ -1079,7 +1085,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		try{
 			
-			network();
+			network(retry + 1);
 			
 			if(ah != null && ah.expired(this, status) && !reauth){
 				AQUtility.debug("reauth needed", status.getMessage());	
@@ -1212,6 +1218,31 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return params;
 	}
 	
+	//added retry logic
+	private void network(int attempts) throws IOException{
+		
+		if(attempts <= 1){
+			network();
+			return;
+		}
+				
+		for(int i = 0; i < attempts; i++){
+		
+			try{
+				network();
+				return;
+			}catch(IOException e){
+				if(i == attempts - 1){
+					throw e;
+				}
+			}
+			
+			
+			
+		}
+		
+		
+	}
 	
 	private void network() throws IOException{
 		

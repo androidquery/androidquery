@@ -1673,4 +1673,42 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertNotNull(jo.opt("responseData"));
         
     }
+	
+	public void testRetryFailed() {
+		
+		String url = "http://www.androidquery.com/p/retry?wait=5000";
+	
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.weakHandler(this, "jsonCb").timeout(1000);
+		
+		aq.ajax(url, JSONObject.class, cb);
+        
+        waitAsync();
+       
+        JSONObject jo = (JSONObject) result;
+        
+        assertNull(jo);
+        assertEquals(-101, status.getCode());
+        
+        
+	}
+	
+	public void testRetryOk() {
+		
+		String url = "http://www.androidquery.com/p/retry?wait=3000";
+	
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.retry(1).weakHandler(this, "jsonCb").timeout(1000);
+		
+		aq.ajax(url, JSONObject.class, cb);
+        
+        waitAsync();
+       
+        JSONObject jo = (JSONObject) result;
+        
+        assertNotNull(jo);
+        assertEquals(200, status.getCode());
+        
+        
+	}
 }
