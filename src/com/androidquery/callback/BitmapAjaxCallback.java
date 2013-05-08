@@ -582,12 +582,12 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			if(v instanceof ImageView){
 				cb.callback(url, (ImageView) v, bm, status);
 			}else{
-				setBitmap(url, v, bm, false);
+				cb.setBitmap(url, v, bm, false);
 			}
 			
 		}
 		
-		showProgress(false);
+		cb.showProgress(false);
 	}
 	
 	protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status){
