@@ -3,5 +3,5 @@
 		boolean memCache = false;
 		boolean fileCache = true;
 
-		aq.id(R.id.image).image("http://www.vikispot.com/z/images/vikispot/android-w.png", memCache, fileCache);
+		aq.id(R.id.image).image("http://www.androidquery.com/z/images/vikispot/android-w.png", memCache, fileCache);
 	}

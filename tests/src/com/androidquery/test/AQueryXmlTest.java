@@ -31,6 +31,24 @@ public class AQueryXmlTest extends AbstractTest<AQueryTestActivity> {
 
 	private XmlDom xml;
 	
+	private String url;
+	private Object result;
+	private AjaxStatus status;
+	
+	public void done(String url, Object result, AjaxStatus status){
+		
+		this.url = url;
+		this.result = result;
+		this.status = status;
+
+		log("done", result);
+		
+		assertTrue(AQUtility.isUIThread());
+		
+		done();
+		
+	}
+	
 	public AQueryXmlTest() throws SAXException {		
 		super(AQueryTestActivity.class);
 		
@@ -167,6 +185,31 @@ public class AQueryXmlTest extends AbstractTest<AQueryTestActivity> {
 		assertTrue(text2.length() > 20);
 		
 		AQUtility.debug("script", text2);
+		
+	}
+	
+	public void testMalformXml(){
+		
+		String url = "http://fotbollskanalen.apps.tv4.se/news/topnews";
+		
+		AjaxCallback<XmlDom> cb = new AjaxCallback<XmlDom>(){
+			@Override
+			public void callback(String url, XmlDom object, AjaxStatus status) {
+				done(url, object, status);
+			}
+		};
+		cb.url(url).type(XmlDom.class);
+			
+        aq.ajax(cb);
+        
+        waitAsync();
+        
+        XmlDom xml = (XmlDom) result;
+       
+        assertNotNull(xml);
+        
+        AQUtility.debug(xml);
+        
 		
 	}
 	

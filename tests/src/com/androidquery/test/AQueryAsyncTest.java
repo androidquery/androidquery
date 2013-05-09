@@ -79,6 +79,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
 		done();
 		
+		
 	}
 	
 	private void checkStatus(AjaxStatus status){
@@ -1645,4 +1646,69 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         
     }
+	
+	
+	public void testAjaxActiveCount() {
+		
+		assertEquals(0, AjaxCallback.getActiveCount());
+        
+		
+		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+        aq.ajax(url, JSONObject.class, this, "jsonCb");
+        
+        
+        int count = AjaxCallback.getActiveCount();
+        AQUtility.debug("active count", count);
+        
+        assertEquals(1, AjaxCallback.getActiveCount());
+        
+        waitAsync();
+        
+        assertEquals(0, AjaxCallback.getActiveCount());
+        
+        JSONObject jo = (JSONObject) result;
+        
+        assertNotNull(jo);       
+        assertNotNull(jo.opt("responseData"));
+        
+    }
+	
+	public void testRetryFailed() {
+		
+		String url = "http://www.androidquery.com/p/retry?wait=5000";
+	
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.weakHandler(this, "jsonCb").timeout(1000);
+		
+		aq.ajax(url, JSONObject.class, cb);
+        
+        waitAsync();
+       
+        JSONObject jo = (JSONObject) result;
+        
+        assertNull(jo);
+        assertEquals(-101, status.getCode());
+        
+        
+	}
+	
+	public void testRetryOk() {
+		
+		String url = "http://www.androidquery.com/p/retry?wait=3000";
+	
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.retry(1).weakHandler(this, "jsonCb").timeout(1000);
+		
+		aq.ajax(url, JSONObject.class, cb);
+        
+        waitAsync();
+       
+        JSONObject jo = (JSONObject) result;
+        
+        assertNotNull(jo);
+        assertEquals(200, status.getCode());
+        
+        
+	}
 }

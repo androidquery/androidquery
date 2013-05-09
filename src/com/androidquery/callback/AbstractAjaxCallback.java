@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -149,6 +150,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private HttpUriRequest request;
 	
 	private boolean uiCallback = true;
+	private int retry = 0;
 	
 	@SuppressWarnings("unchecked")
 	private K self(){
@@ -284,6 +286,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	public K timeout(int timeout){
 		this.timeout = timeout;
+		return self();
+	}
+	
+	public K retry(int retry){
+		this.retry = retry;
 		return self();
 	}
 	
@@ -778,13 +785,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	private String parseCharset(String tag){
+		
 		if(tag == null) return null;
 		int i = tag.indexOf("charset");
 		if(i == -1) return null;
 		
-		String charset = tag.substring(i + 7).replaceAll("[^\\w-]", "");
+		int e = tag.indexOf(";", i) ;
+		if(e == -1) e = tag.length();
+		
+		String charset = tag.substring(i + 7, e).replaceAll("[^\\w-]", "");
 		return charset;
 	}
+	
 	
 	private String correctEncoding(byte[] data, String target, AjaxStatus status){
 		
@@ -1073,7 +1085,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		try{
 			
-			network();
+			network(retry + 1);
 			
 			if(ah != null && ah.expired(this, status) && !reauth){
 				AQUtility.debug("reauth needed", status.getMessage());	
@@ -1131,6 +1143,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				result = getCacheFile();
 			}else{
 				File dir = AQUtility.getTempDir();
+				
 				if(dir == null) dir = cacheDir;
 				result = AQUtility.getCacheFile(dir, url);
 			}
@@ -1205,6 +1218,31 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return params;
 	}
 	
+	//added retry logic
+	private void network(int attempts) throws IOException{
+		
+		if(attempts <= 1){
+			network();
+			return;
+		}
+				
+		for(int i = 0; i < attempts; i++){
+		
+			try{
+				network();
+				return;
+			}catch(IOException e){
+				if(i == attempts - 1){
+					throw e;
+				}
+			}
+			
+			
+			
+		}
+		
+		
+	}
 	
 	private void network() throws IOException{
 		
@@ -1271,6 +1309,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 		
 		fetchExe.execute(job);
+	}
+	
+	/**
+	 * Return the number of active ajax threads. Note that this doesn't necessarily correspond to active network connections.
+	 * Ajax threads might be reading a cached url from file system or transforming the response after a network transfer. 
+	 * 
+	 */
+	
+	public static int getActiveCount(){
+		
+		int result = 0;
+		
+		if(fetchExe instanceof ThreadPoolExecutor){
+			result = ((ThreadPoolExecutor) fetchExe).getActiveCount();
+		}
+		
+		return result;
+		
 	}
 	
 	/**
@@ -1445,6 +1501,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return client;
 	}
 	
+	//helper method to support underscore subdomain
+	private HttpResponse execute(HttpUriRequest hr, DefaultHttpClient client, HttpContext context) throws ClientProtocolException, IOException{
+		
+		HttpResponse response = null;
+
+		if(hr.getURI().getAuthority().contains("_")) {
+            URL urlObj = hr.getURI().toURL();
+            HttpHost host;
+            if(urlObj.getPort() == -1) {
+                host = new HttpHost(urlObj.getHost(), 80, urlObj.getProtocol());
+            } else {
+                host = new HttpHost(urlObj.getHost(), urlObj.getPort(), urlObj.getProtocol());
+            }
+            response = client.execute(host, hr, context);
+        } else {
+            response = client.execute(hr, context);
+        }
+		
+		
+		return response;
+	}
+	
 	
 	private void httpDo(HttpUriRequest hr, String url, Map<String, String> headers, AjaxStatus status) throws ClientProtocolException, IOException{
 		
@@ -1494,14 +1572,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		HttpResponse response = null;
 		
 		try{
-			response = client.execute(hr, context);
+			//response = client.execute(hr, context);
+			response = execute(hr, client, context);
 		}catch(HttpHostConnectException e){
 			
 			//if proxy is used, automatically retry without proxy
 			if(proxy != null){
 				AQUtility.debug("proxy failed, retrying without proxy");
 				hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
-				response = client.execute(hr, context);
+				//response = client.execute(hr, context);
+				response = execute(hr, client, context);
 			}else{
 				throw e;
 			}
@@ -1566,11 +1646,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        	os = new BufferedOutputStream(new FileOutputStream(file));
 		        }
 		        
-		        //AQUtility.time("copy");
+		        is = entity.getContent();
+				if("gzip".equalsIgnoreCase(getEncoding(entity))){
+					is = new GZIPInputStream(is);
+				}
 		        
-		        copy(entity.getContent(), os, getEncoding(entity), (int) entity.getContentLength());
-		        
-		        //AQUtility.timeEnd("copy", 0);
+		        copy(is, os, (int) entity.getContentLength());
 		        
 		        
 		        os.flush();
@@ -1612,6 +1693,29 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	private void copy(InputStream is, OutputStream os, int max) throws IOException{
+		
+
+		
+		Object o = null;
+		
+		if(progress != null){
+			o = progress.get();
+		}
+		
+		Progress p = null;
+		
+		if(o != null){
+			p = new Progress(o); 
+		}
+		
+		AQUtility.copy(is, os, max, p);
+		
+		
+	}
+	
+	
+	/*
 	private void copy(InputStream is, OutputStream os, String encoding, int max) throws IOException{
 		
 		if("gzip".equalsIgnoreCase(encoding)){
@@ -1634,7 +1738,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		
 	}
-	
+	*/
 	
 	/**
 	 * Set the authentication type of this request. This method requires API 5+.
@@ -1888,6 +1992,14 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		dos.writeBytes(twoHyphens + boundary + lineEnd);
 		dos.writeBytes("Content-Disposition: form-data; name=\""+name+"\";"
 				+ " filename=\"" + filename + "\"" + lineEnd);
+		
+		
+		//added to specify type
+		dos.writeBytes("Content-Type: application/octet-stream");
+		dos.writeBytes(lineEnd);
+		dos.writeBytes("Content-Transfer-Encoding: binary");
+		dos.writeBytes(lineEnd);
+		
 		dos.writeBytes(lineEnd);
 
 		AQUtility.copy(is, dos);
