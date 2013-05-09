@@ -9,7 +9,7 @@
 
     <groupId>com.googlecode.android-query</groupId>
     <artifactId>android-query</artifactId>
-    <version>0.25.9</version>
+    <version>0.25.10-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>android-query</name>
@@ -28,7 +28,7 @@
         <connection>scm:git:git@github.com:brk3/androidquery.git</connection>
         <developerConnection>scm:git:git@github.com:brk3/androidquery.git</developerConnection>
         <url>git@github.com:brk3/androidquery.git</url>
-      <tag>android-query-0.25.9</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <developers>
