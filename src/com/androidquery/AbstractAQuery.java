@@ -99,7 +99,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected Object progress;
 	protected AccountHandle ah;
 	private Transformer trans;
-	private int policy = CACHE_DEFAULT;
+	private Integer policy;
 	private HttpHost proxy;
 
 	protected T create(View view){
@@ -1842,11 +1842,21 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	protected <K> T invoke(AbstractAjaxCallback<?, K> cb){
 				
+		if(ah != null){
+			cb.auth(ah);
+		}
 		
-		cb.auth(ah);
-		cb.progress(progress);
-		cb.transformer(trans);
-		cb.policy(policy);
+		if(progress != null){
+			cb.progress(progress);
+		}
+		
+		if(trans != null){
+			cb.transformer(trans);
+		}
+		
+		if(policy != null){
+			cb.policy(policy);
+		}
 		
 		if(proxy != null){
 			cb.proxy(proxy.getHostName(), proxy.getPort());
