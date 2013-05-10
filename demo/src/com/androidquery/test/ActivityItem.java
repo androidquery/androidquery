@@ -7,8 +7,9 @@ public class ActivityItem {
 	private String type;
 	private String meta;
 	
+	//this function is not perfect a link like "httpshkdh://www.google.com" can be considered as link !!! try the correction below
 	public boolean isLink(){
-		return type.startsWith("http");
+		return type.startsWith("http://") || type.startsWith("https://");
 	}
 	
 	
