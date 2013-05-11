@@ -101,6 +101,33 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	private Transformer trans;
 	private Integer policy;
 	private HttpHost proxy;
+	
+	private LoadListener listener;
+
+	public interface LoadListener {
+		/**
+		 * Use Handler handle view change </br>
+		 * <h1>Example: </h1>
+		 * private Handler handler = new Handler(){</br>
+		 * 			 public void handleMessage(Message msg) { </br>
+		 *           super.handleMessage(msg);</br>
+		 *            tv.setText("" + msg.obj); </br>
+		 *           }</br>
+		 *           };</br>
+		 *           String imageurl ="http://jpp2.imghb.com/pic/pic/52/60/24/1396053752602447_a602x602.jpg";</br>
+		 *           aq.id(R.id.imageView1).progress(R.id.progressBar1).load(new LoadListener() {</br>
+		 * 				 public void onLoadProgress(int current, float max) { </br>
+		 *          	 float present = (float) (max - current)/ max; </br>
+		 *         		 Message msg = new Message();</br>
+		 *         		 msg.obj = String.format("%.2f%%", (present *  100)); </br>
+		 *         		 handler.sendMessage(msg); </br>
+		 *           	} </br>
+		 *           }).image(imageurl, false, false);</br>
+		 * @param current
+		 * @param max
+		 */
+		public void onLoadProgress(int current, float max);
+	}
 
 	protected T create(View view){
 		
@@ -2706,5 +2733,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return download(url, target, cb);
 	
 	}
+	
+	public T load(LoadListener listener) {
+		this.listener = listener;
+		return self();
+	}
+	
 	
 }
