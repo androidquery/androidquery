@@ -102,7 +102,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	private Integer policy;
 	private HttpHost proxy;
 	
-	private LoadListener listener;
+	private LoadListener loadListener;
 
 	public interface LoadListener {
 		/**
@@ -790,7 +790,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio, int round, String networkUrl){
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round, proxy, networkUrl);			
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round, proxy, loadListener, networkUrl);			
 			reset();
 		}
 		
@@ -1907,7 +1907,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		trans = null;
 		policy = CACHE_DEFAULT;
 		proxy = null;
-		
+		loadListener = null;
 		
 	}
 	
@@ -2735,7 +2735,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	public T load(LoadListener listener) {
-		this.listener = listener;
+		this.loadListener = listener;
 		return self();
 	}
 	
