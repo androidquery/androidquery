@@ -50,6 +50,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 
 import com.androidquery.AQuery;
+import com.androidquery.AbstractAQuery.LoadListener;
 
 /**
  * Utility methods. Warning: Methods might changed in future versions.

@@ -93,6 +93,7 @@ import android.util.Xml;
 import android.view.View;
 
 import com.androidquery.AQuery;
+import com.androidquery.AbstractAQuery.LoadListener;
 import com.androidquery.auth.AccountHandle;
 import com.androidquery.auth.GoogleHandle;
 import com.androidquery.util.AQUtility;
@@ -466,8 +467,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @param li
 	 * @return
 	 */
-	public K load(LoadListener li){
-		loadListener = li;
+	public K load(LoadListener loadlistener){
+		loadListener = loadlistener;
 		return self();
 	}
 	

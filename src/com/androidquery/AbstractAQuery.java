@@ -1889,6 +1889,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			cb.proxy(proxy.getHostName(), proxy.getPort());
 		}
 		
+		if(loadListener != null){
+			cb.load(loadListener);
+		}
+		
 		if(act != null){
 			cb.async(act);
 		}else{
