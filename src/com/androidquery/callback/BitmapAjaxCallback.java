@@ -944,6 +944,37 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 	}
 	
+	public static void async(Activity act, Context context, ImageView iv, String url, Object progress, AccountHandle ah, ImageOptions options, HttpHost proxy, String networkUrl,LoadListener loadListener){
+		
+		Bitmap bm = null;
+
+		if (memCache) {
+			bm = memGet(url, targetWidth, round);
+		}
+
+		if (bm != null) {
+			iv.setTag(AQuery.TAG_URL, url);
+			Common.showProgress(progress, url, false);
+			setBmAnimate(iv, bm, preset, fallbackId, animation, ratio, anchor,
+					AjaxStatus.MEMORY);
+		} else {
+			BitmapAjaxCallback cb = new BitmapAjaxCallback();
+			cb.url(url).imageView(iv).memCache(memCache).fileCache(fileCache)
+					.targetWidth(targetWidth).fallback(fallbackId)
+					.preset(preset).animation(animation).ratio(ratio)
+					.anchor(anchor).progress(progress).auth(ah).policy(policy)
+					.round(round).load(loadListener).networkUrl(networkUrl);
+			if (proxy != null) {
+				cb.proxy(proxy.getHostName(), proxy.getPort());
+			}
+			if (act != null) {
+				cb.async(act);
+			} else {
+				cb.async(context);
+			}
+		}
+		
+	}
 	
 	/**
 	 * AQuery internal use only. Please uses AQuery image() methods instead.
