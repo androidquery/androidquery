@@ -152,6 +152,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private boolean uiCallback = true;
 	private int retry = 0;
 	
+	private  LoadListener loadListener;
+	
 	@SuppressWarnings("unchecked")
 	private K self(){
 		return (K) this;
@@ -165,6 +167,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		transformer = null;
 		ah = null;
 		act = null;
+		loadListener = null;
 	}
 	
 	/**
@@ -456,6 +459,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	@SuppressWarnings("unchecked")
 	public K params(Map<String, ?> params){
 		this.params = (Map<String, Object>) params;
+		return self();
+	}
+	
+	/**Set the loadlistener can listen downloading percent
+	 * @param li
+	 * @return
+	 */
+	public K load(LoadListener li){
+		loadListener = li;
 		return self();
 	}
 	
@@ -1709,7 +1721,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			p = new Progress(o); 
 		}
 		
-		AQUtility.copy(is, os, max, p);
+		AQUtility.copy(is, os, max, p, loadListener);
 		
 		
 	}
