@@ -99,7 +99,8 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected Object progress;
 	protected AccountHandle ah;
 	private Transformer trans;
-	private Integer policy;
+	private int policy = Constants.CACHE_DEFAULT;
+	//private Integer policy = null;
 	private HttpHost proxy;
 
 	protected T create(View view){
@@ -1854,9 +1855,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			cb.transformer(trans);
 		}
 		
-		if(policy != null){
+		//if(policy != null){
 			cb.policy(policy);
-		}
+		//}
 		
 		if(proxy != null){
 			cb.proxy(proxy.getHostName(), proxy.getPort());
