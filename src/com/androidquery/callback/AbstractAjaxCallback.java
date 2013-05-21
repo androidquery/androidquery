@@ -1553,6 +1553,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return response;
 	}
 	
+	private boolean resume;
+	public K resume(boolean resume){
+		this.resume = resume;
+		return self();
+	}
 	
 	private void httpDo(HttpUriRequest hr, String url, Map<String, String> headers, AjaxStatus status) throws ClientProtocolException, IOException{
 		
@@ -1574,6 +1579,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		String cookie = makeCookie();
 		if(cookie != null){
 			hr.addHeader("Cookie", cookie);
+		}
+		
+		if(resume && targetFile != null){
+			long len = targetFile.length();
+			if (len > 0){
+				hr.addHeader("Range", "bytes=" + len);
+			}
 		}
 		
 		if(ah != null){
@@ -1672,8 +1684,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        if(file == null){
 		        	os = new PredefinedBAOS(size);
 		        }else{
-		        	file.createNewFile();
-		        	os = new BufferedOutputStream(new FileOutputStream(file));
+		        	if(!resume || !file.exists()) file.createNewFile();
+		        	os = new BufferedOutputStream(new FileOutputStream(file, true));
 		        }
 		        
 		        is = entity.getContent();
@@ -1695,7 +1707,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        }
 
 	        }catch(IOException e){
-		        if (file != null) {
+		        if (file != null && !resume) {
 			        AQUtility.close(os);
 			        os = null;
 			        file.delete();
