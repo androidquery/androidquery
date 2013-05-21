@@ -165,6 +165,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		transformer = null;
 		ah = null;
 		act = null;
+
 		callback = null;
 		targetFile = null;
 		cacheDir = null;
@@ -173,10 +174,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		params = null;
 		proxy = null;
 		networkUrl = null;
-		url = null;
-		result = null;
-		type = null;
-		status = null;
 
 		abort = false;
 		blocked = false;
@@ -1213,7 +1210,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 					
 				}else if(status.getFile() != null && status.getSource() == AjaxStatus.NETWORK && status.getInvalid()){
 					File file = status.getFile();
-					if (file != null && file.exists()) {
+					if (file.exists()) {
 						file.delete();
 					}
 				}
