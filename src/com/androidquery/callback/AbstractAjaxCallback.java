@@ -165,6 +165,34 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		transformer = null;
 		ah = null;
 		act = null;
+		callback = null;
+		targetFile = null;
+		cacheDir = null;
+		cookies = null;
+		headers = null;
+		params = null;
+		proxy = null;
+		networkUrl = null;
+		url = null;
+		result = null;
+		type = null;
+		status = null;
+
+		abort = false;
+		blocked = false;
+		completed = false;
+		fileCache = false;
+		memCache = false;
+		reauth = false;
+		refresh = false;
+
+		method = Constants.METHOD_DETECT;
+		policy = Constants.CACHE_DEFAULT;
+		lastStatus = 200;
+		expire = 0;
+		retry = 0;
+		timeout = 0;
+		uiCallback = true;
 	}
 	
 	/**
@@ -1183,6 +1211,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 						}
 					}
 					
+				}else if(status.getFile() != null && status.getSource() == AjaxStatus.NETWORK && status.getInvalid()){
+					File file = status.getFile();
+					if (file != null && file.exists()) {
+						file.delete();
+					}
 				}
 			}catch(Exception e){
 				AQUtility.debug(e);
@@ -1663,7 +1696,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        		file = null;
 		        	}
 		        }
-	        
+
+	        }catch(IOException e){
+		        if (file != null) {
+			        AQUtility.close(os);
+			        os = null;
+			        file.delete();
+		        }
+		        throw e;
+
 	        }finally{
 	        	AQUtility.close(is);
 	        	AQUtility.close(os);
