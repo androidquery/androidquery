@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="libs/gson-2.0.jar"/>
 	<classpathentry kind="lib" path="libs/signpost-commonshttp4-1.2.1.1.jar"/>
 	<classpathentry kind="lib" path="libs/signpost-core-1.2.1.1.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

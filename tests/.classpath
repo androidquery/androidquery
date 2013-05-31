@@ -8,5 +8,6 @@
 	<classpathentry kind="src" path="aquery"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="libs/gson-2.0.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
