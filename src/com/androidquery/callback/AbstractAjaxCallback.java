@@ -165,6 +165,31 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		transformer = null;
 		ah = null;
 		act = null;
+
+		callback = null;
+		targetFile = null;
+		cacheDir = null;
+		cookies = null;
+		headers = null;
+		params = null;
+		proxy = null;
+		networkUrl = null;
+
+		abort = false;
+		blocked = false;
+		completed = false;
+		fileCache = false;
+		memCache = false;
+		reauth = false;
+		refresh = false;
+
+		method = Constants.METHOD_DETECT;
+		policy = Constants.CACHE_DEFAULT;
+		lastStatus = 200;
+		expire = 0;
+		retry = 0;
+		timeout = 0;
+		uiCallback = true;
 	}
 	
 	/**
@@ -1183,6 +1208,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 						}
 					}
 					
+				}else if(status.getFile() != null && status.getSource() == AjaxStatus.NETWORK && status.getInvalid()){
+					File file = status.getFile();
+					if (file.exists()) {
+						file.delete();
+					}
 				}
 			}catch(Exception e){
 				AQUtility.debug(e);
@@ -1523,6 +1553,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return response;
 	}
 	
+	private boolean resume;
+	public K resume(boolean resume){
+		this.resume = resume;
+		return self();
+	}
 	
 	private void httpDo(HttpUriRequest hr, String url, Map<String, String> headers, AjaxStatus status) throws ClientProtocolException, IOException{
 		
@@ -1544,6 +1579,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		String cookie = makeCookie();
 		if(cookie != null){
 			hr.addHeader("Cookie", cookie);
+		}
+		
+		if(resume && targetFile != null){
+			long len = targetFile.length();
+			if (len > 0){
+				hr.addHeader("Range", "bytes=" + len + "-");
+			}
 		}
 		
 		if(ah != null){
@@ -1642,8 +1684,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        if(file == null){
 		        	os = new PredefinedBAOS(size);
 		        }else{
-		        	file.createNewFile();
-		        	os = new BufferedOutputStream(new FileOutputStream(file));
+		        	if(!resume || !file.exists()) file.createNewFile();
+		        	os = new BufferedOutputStream(new FileOutputStream(file, true));
 		        }
 		        
 		        is = entity.getContent();
@@ -1663,7 +1705,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        		file = null;
 		        	}
 		        }
-	        
+
+	        }catch(IOException e){
+		        if (file != null && !resume) {
+			        AQUtility.close(os);
+			        os = null;
+			        file.delete();
+		        }
+		        throw e;
+
 	        }finally{
 	        	AQUtility.close(is);
 	        	AQUtility.close(os);
