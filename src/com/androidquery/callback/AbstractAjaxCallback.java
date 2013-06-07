@@ -1584,7 +1584,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(resume && targetFile != null){
 			long len = targetFile.length();
 			if (len > 0){
-				hr.addHeader("Range", "bytes=" + len);
+				hr.addHeader("Range", "bytes=" + len + "-");
 			}
 		}
 		
