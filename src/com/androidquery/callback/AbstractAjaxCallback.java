@@ -93,6 +93,7 @@ import android.util.Xml;
 import android.view.View;
 
 import com.androidquery.AQuery;
+import com.androidquery.AbstractAQuery.LoadListener;
 import com.androidquery.auth.AccountHandle;
 import com.androidquery.auth.GoogleHandle;
 import com.androidquery.util.AQUtility;
@@ -152,6 +153,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private boolean uiCallback = true;
 	private int retry = 0;
 	
+	private  LoadListener loadListener;
+	
 	@SuppressWarnings("unchecked")
 	private K self(){
 		return (K) this;
@@ -165,6 +168,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		transformer = null;
 		ah = null;
 		act = null;
+		loadListener = null;
 	}
 	
 	/**
@@ -456,6 +460,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	@SuppressWarnings("unchecked")
 	public K params(Map<String, ?> params){
 		this.params = (Map<String, Object>) params;
+		return self();
+	}
+	
+	/**Set the loadlistener can listen downloading percent
+	 * @param li
+	 * @return
+	 */
+	public K load(LoadListener loadlistener){
+		loadListener = loadlistener;
 		return self();
 	}
 	
@@ -1709,7 +1722,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			p = new Progress(o); 
 		}
 		
-		AQUtility.copy(is, os, max, p);
+		AQUtility.copy(is, os, max, p, loadListener);
 		
 		
 	}

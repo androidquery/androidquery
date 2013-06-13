@@ -50,6 +50,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 
 import com.androidquery.AQuery;
+import com.androidquery.AbstractAQuery.LoadListener;
 
 /**
  * Utility methods. Warning: Methods might changed in future versions.
@@ -390,6 +391,10 @@ public class AQUtility {
     }
     
     public static void copy(InputStream in, OutputStream out, int max, Progress progress) throws IOException {
+	copy(in, out, max, progress, null);    	
+    }
+    
+     public static void copy(InputStream in, OutputStream out, int max, Progress progress, LoadListener loadListener) throws IOException {
     	
     	if(progress != null){
     		progress.reset();
@@ -398,7 +403,12 @@ public class AQUtility {
     	
     	byte[] b = new byte[IO_BUFFER_SIZE];
         int read;
+        int count = max;
         while((read = in.read(b)) != -1){
+            if(loadListener != null){
+        	count = count - read;
+            	loadListener.onLoadProgress(count, max);
+            }
             out.write(b, 0, read);
             if(progress != null){
             	progress.increment(read);

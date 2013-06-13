@@ -102,6 +102,33 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	private int policy = Constants.CACHE_DEFAULT;
 	//private Integer policy = null;
 	private HttpHost proxy;
+	
+	private LoadListener loadListener;
+
+	public interface LoadListener {
+		/**
+		 * Use Handler handle view change </br>
+		 * <h1>Example: </h1>
+		 * private Handler handler = new Handler(){</br>
+		 * 			 public void handleMessage(Message msg) { </br>
+		 *           super.handleMessage(msg);</br>
+		 *            tv.setText("" + msg.obj); </br>
+		 *           }</br>
+		 *           };</br>
+		 *           String imageurl ="http://jpp2.imghb.com/pic/pic/52/60/24/1396053752602447_a602x602.jpg";</br>
+		 *           aq.id(R.id.imageView1).progress(R.id.progressBar1).load(new LoadListener() {</br>
+		 * 				 public void onLoadProgress(int current, float max) { </br>
+		 *          	 float present = (float) (max - current)/ max; </br>
+		 *         		 Message msg = new Message();</br>
+		 *         		 msg.obj = String.format("%.2f%%", (present *  100)); </br>
+		 *         		 handler.sendMessage(msg); </br>
+		 *           	} </br>
+		 *           }).image(imageurl, false, false);</br>
+		 * @param current
+		 * @param max
+		 */
+		public void onLoadProgress(int current, float max);
+	}
 
 	protected T create(View view){
 		
@@ -764,7 +791,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	protected T image(String url, boolean memCache, boolean fileCache, int targetWidth, int fallbackId, Bitmap preset, int animId, float ratio, int round, String networkUrl){
 		
 		if(view instanceof ImageView){		
-			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round, proxy, networkUrl);			
+			BitmapAjaxCallback.async(act, getContext(), (ImageView) view, url, memCache, fileCache, targetWidth, fallbackId, preset, animId, ratio, AQuery.ANCHOR_DYNAMIC, progress, ah, policy, round, proxy, loadListener, networkUrl);			
 			reset();
 		}
 		
@@ -1863,6 +1890,10 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 			cb.proxy(proxy.getHostName(), proxy.getPort());
 		}
 		
+		if(loadListener != null){
+			cb.load(loadListener);
+		}
+		
 		if(act != null){
 			cb.async(act);
 		}else{
@@ -1881,7 +1912,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		trans = null;
 		policy = CACHE_DEFAULT;
 		proxy = null;
-		
+		loadListener = null;
 		
 	}
 	
@@ -2707,5 +2738,11 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return download(url, target, cb);
 	
 	}
+	
+	public T load(LoadListener listener) {
+		this.loadListener = listener;
+		return self();
+	}
+	
 	
 }
