@@ -182,7 +182,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	//Test: <K> T ajax(String url, Map<String, Object> params, Class<K> type, AjaxCallback<K> callback)
 	public void testAjaxPost(){
 		
-        String url = "http://search.twitter.com/search.json";
+        String url = "http://www.androidquery.com/p/doNothing";
 		
         Map<String, String> params = new HashMap<String, String>();
 		params.put("q", "androidquery");
@@ -201,15 +201,16 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
         JSONObject jo = (JSONObject) result;
         assertNotNull(jo);       
-        assertNotNull(jo.opt("results"));
+        assertNotNull(jo.opt("params"));
         
-        AQUtility.debug("duration", status.getDuration());
+        assertEquals("POST", jo.optString("method"));
+        
         
 	}
 
 	public void testAjaxPostRaw() throws UnsupportedEncodingException{
 		
-        String url = "http://search.twitter.com/search.json";
+        String url = "http://www.androidquery.com/p/doNothing";
 		
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
 		pairs.add(new BasicNameValuePair("q", "androidquery"));				
@@ -232,14 +233,16 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
         JSONObject jo = (JSONObject) result;
         assertNotNull(jo);       
-        assertNotNull(jo.opt("results"));
+        assertNotNull(jo.opt("params"));
+        
+        assertEquals("POST", jo.optString("method"));
         
 	}
 	
 	//Test: public <K> T ajax(String url, Map<String, Object> params, Class<K> type, Object handler, String callback)
 	public void testAjaxPostHandler(){
 		
-        String url = "http://search.twitter.com/search.json";
+        String url = "http://www.androidquery.com/p/doNothing";
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("q", "androidquery");
@@ -250,7 +253,9 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 		
         JSONObject jo = (JSONObject) result;
         assertNotNull(jo);       
-        assertNotNull(jo.opt("results"));
+        assertNotNull(jo.opt("params"));
+        
+        assertEquals("POST", jo.optString("method"));
         
 	}
 	
