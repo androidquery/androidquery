@@ -24,6 +24,8 @@ public class TestUtility {
 	
 	public static void flurryStart(Context context){
 		
+	    if(true) return;
+	    
 		if(!isTestDevice(context)){
 			FlurryAgent.onStartSession(context, "D29A1QDKNZEIYFJBKXNR");
 		}
@@ -31,6 +33,8 @@ public class TestUtility {
 	
 	public static void flurryEvent(Context context, String name){
 		
+	    if(true) return;
+	    
 		if(!isTestDevice(context)){
 			try{
 				FlurryAgent.onEvent(name, null);
@@ -41,6 +45,9 @@ public class TestUtility {
 	}
 	
 	public static void flurryStop(Context context){
+	    
+	    if(true) return;
+	    
 		if(!isTestDevice(context)){
 			FlurryAgent.onEndSession(context);
 		}

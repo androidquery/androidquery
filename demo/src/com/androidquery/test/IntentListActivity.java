@@ -57,8 +57,11 @@ public class IntentListActivity extends ListActivity {
 			forward();
 		}
 
+		AQUtility.debug("on create");
+		
 		
 		if(isTaskRoot()){			
+		    AQUtility.debug("task root start version check");
 			MarketService ms = new MarketService(this);
 			ms.level(MarketService.MINOR).checkVersion();
 		}

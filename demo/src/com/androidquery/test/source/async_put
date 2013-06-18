@@ -1,0 +1,24 @@
+    public void async_put() throws JSONException, UnsupportedEncodingException {
+        
+        String url = "http://www.androidquery.com/p/doNothing";
+        
+        JSONObject input = new JSONObject();
+        input.put("param1", "value1");
+        input.put("param2", "value2");
+        
+        StringEntity entity = new StringEntity(input.toString(), "UTF-8");
+        
+        aq.progress(R.id.progress).put(url, "application/json", entity, JSONObject.class, new AjaxCallback<JSONObject>(){
+            
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status){
+                
+                showResult(jo);
+                
+            }
+            
+        });
+        
+        
+        
+    }
