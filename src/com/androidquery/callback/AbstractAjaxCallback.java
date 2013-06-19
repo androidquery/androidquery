@@ -122,9 +122,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private String url;
 	private String networkUrl;
-	private Map<String, Object> params;
-	private Map<String, String> headers;
-	private Map<String, String> cookies;
+	protected Map<String, Object> params;
+	protected Map<String, String> headers;
+	protected Map<String, String> cookies;
 	
 	private Transformer transformer;
 	
@@ -133,7 +133,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private int policy = Constants.CACHE_DEFAULT;
 	private File cacheDir;
 	private File targetFile;
-	private AccountHandle ah;
+	protected AccountHandle ah;
 	
 	protected AjaxStatus status;
 	
