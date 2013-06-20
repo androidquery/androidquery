@@ -388,6 +388,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	/**
+     * Set the header fields for the http request.
+     *
+     * @param headers the header
+     * @return self
+     */
+    
+    public K headers(Map<String, String> headers){
+        this.headers = (Map<String, String>) headers;
+        return self();
+    }
+	
+	/**
 	 * Set the cookies for the http request.
 	 *
 	 * @param name the name
@@ -401,6 +413,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		cookies.put(name, value);
 		return self();
 	}	
+	
+    /**
+     * Set cookies for the http request.
+     *
+     * @param cookies the cookies
+     * @return self
+     */
+    
+    public K cookies(Map<String, String> cookies){
+        this.cookies = (Map<String, String>) cookies;
+        return self();
+    }	
 	
 	/**
 	 * Set the encoding used to parse the response.
