@@ -530,9 +530,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
-	 * Set the text color of a TextView.
+	 * Set the text color of a TextView. Note that it's not a color resource id.
 	 *
-	 * @param color the color
+	 * @param color color code in ARGB
 	 * @return self
 	 */
 	public T textColor(int color){
@@ -543,6 +543,17 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		return self();
 	}
+	
+	/**
+     * Set the text color of a TextView from  a color resource id.
+     *
+     * @param color color resource id
+     * @return self
+     */
+    public T textColorId(int id){
+        
+        return textColor(getContext().getResources().getColor(id));
+    }
 	
 	
 	/**
