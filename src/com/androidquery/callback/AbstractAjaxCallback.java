@@ -113,6 +113,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private static int NETWORK_POOL = 4;
 	private static boolean GZIP = true;
 	private static boolean REUSE_CLIENT = true;
+	private static boolean SIMULATE_ERROR = false;
 	
 	private Class<T> type;
 	private Reference<Object> whandler;
@@ -193,6 +194,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	public static void setGZip(boolean gzip){
 		GZIP = gzip;
 	}
+	
+	/**
+     * Set to true to simulate network error.
+     *
+     * @param error
+     */
+	public static void setSimulateError(boolean error){
+	    SIMULATE_ERROR = error;
+    }
 	
 	/**
 	 * Sets the default static transformer. This transformer should be stateless.
@@ -1592,6 +1602,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(abort){
 			throw new IOException("Aborted");
 		}
+		
+		if(SIMULATE_ERROR){
+            throw new IOException("Simulated Error");
+        }
 		
 		HttpResponse response = null;
 		

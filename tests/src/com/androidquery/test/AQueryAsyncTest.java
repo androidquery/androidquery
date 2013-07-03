@@ -1716,4 +1716,34 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         
 	}
+	
+	public void testAjaxSimulateError() {
+        
+	    AjaxCallback.setSimulateError(true);
+	    
+        String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+        
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+            
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                
+                done(url, jo, status);
+                
+            }
+            
+        };
+        
+            
+        aq.ajax(url, JSONObject.class, cb);
+        
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        assertNull(jo);       
+        assertNotNull(status);
+        assertEquals(AjaxStatus.NETWORK_ERROR, status.getCode());
+        
+    }
 }
