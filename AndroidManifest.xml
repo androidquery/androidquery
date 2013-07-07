@@ -4,4 +4,5 @@
 	<uses-sdk android:minSdkVersion="4" />
 	
 	<application/>
+
 </manifest>

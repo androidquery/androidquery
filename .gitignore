@@ -7,7 +7,6 @@
 
 # Java class files
 *.class
-dist/*.jar
 
 # generated files
 bin/
@@ -15,6 +14,20 @@ gen/
 
 # Local configuration file (sdk path, etc)
 local.properties
+
+# Eclipse project files
+.classpath
+.project
+.settings/
+
+# Mac OS
+.DS_Store
+
+# config file
+CitySocial/res/raw/config.xml
+
+# Added by androidquery
+dist/*.jar
 
 proguard-dump.txt
 /assets
