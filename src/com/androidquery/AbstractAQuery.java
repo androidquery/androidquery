@@ -1091,7 +1091,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Set view background color.
 	 *
-	 * @param color
+	 * @param color color code in ARGB
 	 * @return self
 	 */
 	public T backgroundColor(int color){
@@ -1102,6 +1102,21 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		return self();
 	}
+	
+	/**
+     * Set view background color.
+     *
+     * @param color color code in resource id
+     * @return self
+     */
+    public T backgroundColorId(int colorId){
+        
+        if(view != null){       
+            view.setBackgroundColor(getContext().getResources().getColor(colorId));     
+        }
+        
+        return self();
+    }
 	
 	/**
 	 * Notify a ListView that the data of it's adapter is changed.
