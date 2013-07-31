@@ -1430,13 +1430,8 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	            
 	        };
 	        
-	        StringEntity entity = new StringEntity(new JSONObject().toString());
-	    
-	        cb.url(url).type(JSONObject.class).header("Content-Type", "application/json").param(AQuery.POST_ENTITY, entity);
+	        aq.post(url, new JSONObject(), JSONObject.class, cb);
 	        
-	        aq.ajax(cb);
-	        
-	        //aq.put(url, "application/json", entity, JSONObject.class, cb);
 	        
 	        waitAsync();
 	        

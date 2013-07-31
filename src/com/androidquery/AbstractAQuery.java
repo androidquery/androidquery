@@ -19,6 +19,7 @@ package com.androidquery;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
@@ -27,6 +28,8 @@ import java.util.WeakHashMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.entity.StringEntity;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -2084,6 +2087,39 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		return ajax(callback);
 		
 	}
+	
+	public <K> T post(String url, String contentHeader, HttpEntity entity, Class<K> type, AjaxCallback<K> callback){
+        
+        callback.url(url).type(type).method(AQuery.METHOD_POST).header("Content-Type", contentHeader).param(AQuery.POST_ENTITY, entity);     
+        return ajax(callback);
+        
+    }
+	
+	public <K> T post(String url, JSONObject jo, Class<K> type, AjaxCallback<K> callback){
+	    
+	    try{
+	    
+    	    StringEntity entity = new StringEntity(jo.toString(), "UTF-8");
+    	    return post(url, "application/json", entity, type, callback);
+	    }catch(UnsupportedEncodingException e){
+	        throw new IllegalArgumentException(e);
+	    }
+	    
+	    
+	}
+	
+	public <K> T put(String url, JSONObject jo, Class<K> type, AjaxCallback<K> callback){
+        
+        try{
+        
+            StringEntity entity = new StringEntity(jo.toString(), "UTF-8");
+            return put(url, "application/json", entity, type, callback);
+        }catch(UnsupportedEncodingException e){
+            throw new IllegalArgumentException(e);
+        }
+        
+        
+    }
 	
 	
 	
