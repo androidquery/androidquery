@@ -1415,6 +1415,41 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
     }
 	
+	   public void testAjaxPostJson() throws UnsupportedEncodingException{
+	        
+	        String url = "http://www.androidquery.com/p/doNothing";
+	        
+	        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+	            
+	            @Override
+	            public void callback(String url, JSONObject jo, AjaxStatus status) {
+	                
+	                done(url, jo, status);
+	                
+	            }
+	            
+	        };
+	        
+	        StringEntity entity = new StringEntity(new JSONObject().toString());
+	    
+	        cb.url(url).type(JSONObject.class).header("Content-Type", "application/json").param(AQuery.POST_ENTITY, entity);
+	        
+	        aq.ajax(cb);
+	        
+	        //aq.put(url, "application/json", entity, JSONObject.class, cb);
+	        
+	        waitAsync();
+	        
+	        JSONObject jo = (JSONObject) result;
+	        
+	        AQUtility.debug(jo);
+	        
+	        assertNotNull(jo);       
+	        
+	        assertEquals("POST", jo.optString("method"));
+	        
+	    }
+	
 	
 	public void testAjaxPut() throws UnsupportedEncodingException{
 		
