@@ -1134,6 +1134,17 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 										
 			data = status.getData();
 			
+		}catch(IOException e){
+		
+		    //work around for IOException when 401 is returned
+		    //reference: http://stackoverflow.com/questions/11735636/how-to-get-401-response-without-handling-it-using-try-catch-in-android
+		    String message = e.getMessage();
+		    if(message != null && message.contains("No authentication challenges found")){
+		        status.code(401).message(message);
+		    }else{
+		        status.code(AjaxStatus.NETWORK_ERROR).message("network error");
+		    }
+		
 		}catch(Exception e){
 			AQUtility.debug(e);
 			status.code(AjaxStatus.NETWORK_ERROR).message("network error");
@@ -1963,7 +1974,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		conn.connect();
 		
+		
         int code = conn.getResponseCode();
+        
         String message = conn.getResponseMessage();
         
         byte[] data = null;
