@@ -56,6 +56,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.conn.params.ConnManagerParams;
@@ -142,6 +143,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	protected boolean memCache;
 	private boolean refresh;
 	private int timeout = 0;
+	private boolean redirect = true;
 	
 	private long expire;
 	private String encoding = "UTF-8";
@@ -298,6 +300,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		this.timeout = timeout;
 		return self();
 	}
+	
+	/**
+     * Set if http requests should follow redirect. Default is true.
+     * 
+     * @param redirect follow redirect
+     * @return self
+     */
+	
+	public K redirect(boolean redirect){
+        this.redirect = redirect;
+        return self();
+    }
 	
 	public K retry(int retry){
 		this.retry = retry;
@@ -1602,6 +1616,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(timeout > 0){
 			hp.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
 			hp.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
+		}
+		
+		if(!redirect){
+		    hp.setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
 		}
 		
 		HttpContext context = new BasicHttpContext(); 	
