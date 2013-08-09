@@ -1600,14 +1600,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			hr.addHeader("Accept-Encoding", "gzip");
 		}
 			
+		if(ah != null){
+            ah.applyToken(this, hr);
+        }
+		
 		String cookie = makeCookie();
 		if(cookie != null){
 			hr.addHeader("Cookie", cookie);
 		}
 		
-		if(ah != null){
-			ah.applyToken(this, hr);
-		}
+		
 		
 		DefaultHttpClient client = getClient();
 		
