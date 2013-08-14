@@ -989,8 +989,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	public void failure(int code, String message){
 		
 		if(status != null){
-			status.code(code).message(message);
-			callback();
+			status.code(code).message(message).done();
+			
+			if(uiCallback){
+                AQUtility.post(this);
+            }else{
+                afterWork();
+            }
+			
+			//callback();
 		}
 		
 	}
