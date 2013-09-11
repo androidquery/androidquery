@@ -470,6 +470,28 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return self();
 	}
 	
+	public K proxy(String host, int port, String user, String password){
+	    
+	    proxy(host, port);
+	    
+	    String authHeader = makeAuthHeader(user, password);	    
+	    return header("Proxy-Authorization", authHeader);
+	    
+	    
+	}
+	
+	private static String makeAuthHeader(String username, String password){
+        
+        String cred = username + ":" + password;
+        byte[] data = cred.getBytes();
+        
+        String auth = "Basic " + new String(AQUtility.encode64(data, 0, data.length));
+        
+        return auth;
+        
+    }
+	
+	
 	public K targetFile(File file){
 		this.targetFile = file;
 		return self();

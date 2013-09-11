@@ -1085,7 +1085,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	public void testAjaxProxy() throws ClientProtocolException, IOException{
 		
 		String url = "http://www.google.com";
-        
+		
         aq.ajax(url, String.class, new AjaxCallback<String>() {
 
             @Override
@@ -1108,6 +1108,30 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
 	}
 	
+    public void testAjaxProxyBasicCredential() throws ClientProtocolException, IOException{
+        
+        String url = "http://www.google.com";
+        String host = "192.168.1.6";
+        int port = 8081;
+        String user = "Peter";
+        String password = "orange99";
+        
+        aq.ajax(url, String.class, new AjaxCallback<String>() {
+
+            @Override
+            public void callback(String url, String json, AjaxStatus status) {
+                
+                done(url, json, status);
+                
+            }
+        }.proxy(host, port, user, password));
+        
+        waitAsync();
+        
+        assertNotNull(result);
+        
+        
+    }	
 	
 	public void testAjaxXmlPullParser(){
 		
@@ -1776,4 +1800,8 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertEquals(AjaxStatus.NETWORK_ERROR, status.getCode());
         
     }
+	
+	
+	
+	
 }
