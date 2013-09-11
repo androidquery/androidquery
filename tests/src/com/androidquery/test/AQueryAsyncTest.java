@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -34,8 +36,10 @@ import org.xmlpull.v1.XmlPullParser;
 
 import com.androidquery.AQuery;
 import com.androidquery.auth.BasicHandle;
+import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.androidquery.callback.ProxyHandle;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
 import com.google.gson.Gson;
@@ -1132,6 +1136,40 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         
     }	
+    
+    public void testAjaxProxyStaticBasicCredential() throws ClientProtocolException, IOException{
+        
+        String url = "http://www.google.com";
+        String host = "192.168.1.6";
+        int port = 8081;
+        String user = "Peter";
+        String password = "orange99";
+        
+        //AjaxCallback.setProxy(host, port, user, password);
+        
+        
+        
+        ProxyHandle handle = new BasicProxyHandle(host, port, user, password);
+        
+        AjaxCallback.setProxyHandle(handle);
+        
+        
+        aq.ajax(url, String.class, new AjaxCallback<String>() {
+
+            @Override
+            public void callback(String url, String json, AjaxStatus status) {
+                
+                done(url, json, status);
+                
+            }
+        });
+        
+        waitAsync();
+        
+        assertNotNull(result);
+        
+        
+    }   
 	
 	public void testAjaxXmlPullParser(){
 		

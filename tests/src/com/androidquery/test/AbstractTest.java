@@ -28,6 +28,8 @@ public abstract class AbstractTest<T extends Activity> extends ActivityInstrumen
         super.setUp();
         aq = new AQuery(getActivity());
         AjaxCallback.setSimulateError(false);
+        //AjaxCallback.setProxy(null, 0, null, null);
+        AjaxCallback.setProxyHandle(null);
         AQUtility.debug("new act", getActivity() + ":" + getActivity().isFinishing());
     }
 	

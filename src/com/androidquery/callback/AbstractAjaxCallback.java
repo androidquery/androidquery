@@ -474,9 +474,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    
 	    proxy(host, port);
 	    
-	    String authHeader = makeAuthHeader(user, password);	    
-	    return header("Proxy-Authorization", authHeader);
+	    String authHeader = makeAuthHeader(user, password);	  
 	    
+	    AQUtility.debug("proxy auth", authHeader);
+	    
+	    return header("Proxy-Authorization", authHeader);
 	    
 	}
 	
@@ -1349,9 +1351,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		
 		if(Constants.METHOD_DELETE == method){
-			httpDelete(url, headers, status);
+			httpDelete(url, status);
 		}else if(Constants.METHOD_PUT == method){
-			httpPut(url, headers, params, status);
+			httpPut(url, params, status);
 		}else{
 			
 			if(Constants.METHOD_POST == method && params == null){
@@ -1359,12 +1361,12 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			}
 			
 			if(params == null){
-				httpGet(url, headers, status);	
+				httpGet(url, status);	
 			}else{
 				if(isMultiPart(params)){
-					httpMulti(url, headers, params, status);
+					httpMulti(url, params, status);
 				}else{
-					httpPost(url, headers, params, status);
+					httpPost(url, params, status);
 				}
 				
 			}
@@ -1453,50 +1455,50 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return url;
 	}
 	
-	private void httpGet(String url, Map<String, String> headers, AjaxStatus status) throws IOException{
+	private void httpGet(String url, AjaxStatus status) throws IOException{
 		
 		AQUtility.debug("get", url);
 		url = patchUrl(url);
 		
 		HttpGet get = new HttpGet(url);
 				
-		httpDo(get, url, headers, status);
+		httpDo(get, url, status);
 		
 	}
 	
-	private void httpDelete(String url, Map<String, String> headers, AjaxStatus status) throws IOException{
+	private void httpDelete(String url, AjaxStatus status) throws IOException{
 		
 		AQUtility.debug("get", url);
 		url = patchUrl(url);
 		
 		HttpDelete del = new HttpDelete(url);
 		
-		httpDo(del, url, headers, status);
+		httpDo(del, url, status);
 		
 	}
 	
-	private void httpPost(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
+	private void httpPost(String url, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
 		
 		AQUtility.debug("post", url);
 		
 		HttpEntityEnclosingRequestBase req = new HttpPost(url);
 		
-		httpEntity(url, req, headers, params, status);
+		httpEntity(url, req, params, status);
 		
 	}
 	
-	private void httpPut(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
+	private void httpPut(String url, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
 		
 		AQUtility.debug("put", url);
 		
 		HttpEntityEnclosingRequestBase req = new HttpPut(url);
 		
-		httpEntity(url, req, headers, params, status);
+		httpEntity(url, req, params, status);
 		
 	}
 	
 	
-	private void httpEntity(String url, HttpEntityEnclosingRequestBase req, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
+	private void httpEntity(String url, HttpEntityEnclosingRequestBase req, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
 		
 		//This setting seems to improve post performance
 		//http://stackoverflow.com/questions/3046424/http-post-requests-using-httpclient-take-2-seconds-why
@@ -1529,7 +1531,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 		
 		req.setEntity(entity);
-		httpDo(req, url, headers, status);
+		httpDo(req, url, status);
 		
 		
 	}
@@ -1555,7 +1557,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		client = null;
 		
 	}
+	/*
+	private static HttpHost phost;
+	private static String pheader;
 	
+	
+	public static void setProxy(String host, int port, String user, String password){
+	    
+	    if(host == null || host.isEmpty()) phost = null;
+	    else phost = new HttpHost(host, port);
+	    
+	    //String authHeader = makeAuthHeader(user, password);      
+        //return header("Proxy-Authorization", authHeader);
+	    
+	    if(user == null || user.isEmpty()) pheader = null;
+	    else pheader = makeAuthHeader(user, password);
+	    
+	}
+	*/
 	
 	private static DefaultHttpClient client;
 	private static DefaultHttpClient getClient(){
@@ -1611,9 +1630,20 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return response;
 	}
 	
+	private static ProxyHandle proxyHandle;
 	
-	private void httpDo(HttpUriRequest hr, String url, Map<String, String> headers, AjaxStatus status) throws ClientProtocolException, IOException{
+	public static void setProxyHandle(ProxyHandle handle){
+	    proxyHandle = handle;
+	}
+	
+	
+	private void httpDo(HttpUriRequest hr, String url, AjaxStatus status) throws ClientProtocolException, IOException{
 		
+	    
+	    if(proxyHandle != null){
+	        proxyHandle.applyToken(this, hr);
+	    }
+	    
 		if(AGENT != null){
 			hr.addHeader("User-Agent", AGENT);
         }
@@ -1643,7 +1673,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		DefaultHttpClient client = getClient();
 		
 		HttpParams hp = hr.getParams();
+		
+		/*
+		//apply global proxy setting
+		if(phost != null){
+		    proxy = phost;
+		    hr.addHeader("Proxy-Authorization", pheader);
+		}
+		*/
+		
 		if(proxy != null) hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+		
+		
 		if(timeout > 0){
 			hp.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
 			hp.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout);
@@ -1969,7 +2010,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return false;
 	}
 	
-	private void httpMulti(String url, Map<String, String> headers, Map<String, Object> params, AjaxStatus status) throws IOException {
+	private void httpMulti(String url, Map<String, Object> params, AjaxStatus status) throws IOException {
 
 		AQUtility.debug("multipart", url);
 		
