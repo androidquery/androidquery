@@ -1639,9 +1639,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	private void httpDo(HttpUriRequest hr, String url, AjaxStatus status) throws ClientProtocolException, IOException{
 		
+	    DefaultHttpClient client = getClient();
 	    
 	    if(proxyHandle != null){
-	        proxyHandle.applyToken(this, hr);
+	        proxyHandle.applyToken(this, hr, client);
 	    }
 	    
 		if(AGENT != null){
@@ -1670,7 +1671,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		
 		
-		DefaultHttpClient client = getClient();
+		
 		
 		HttpParams hp = hr.getParams();
 		

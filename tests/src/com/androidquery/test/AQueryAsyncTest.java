@@ -1115,10 +1115,14 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
     public void testAjaxProxyBasicCredential() throws ClientProtocolException, IOException{
         
         String url = "http://www.google.com";
-        String host = "192.168.1.6";
+        String host = "192.168.111.56";
         int port = 8081;
         String user = "Peter";
         String password = "orange99";
+        
+        //host = "192.168.111.20";
+        //user = "user1";
+        //password = "Orange99";
         
         aq.ajax(url, String.class, new AjaxCallback<String>() {
 
@@ -1151,6 +1155,40 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         ProxyHandle handle = new BasicProxyHandle(host, port, user, password);
         
+        AjaxCallback.setProxyHandle(handle);
+        
+        
+        aq.ajax(url, String.class, new AjaxCallback<String>() {
+
+            @Override
+            public void callback(String url, String json, AjaxStatus status) {
+                
+                done(url, json, status);
+                
+            }
+        });
+        
+        waitAsync();
+        
+        assertNotNull(result);
+        
+        
+    }   
+    
+    public void testAjaxProxyStaticNTLMCredential() throws ClientProtocolException, IOException{
+        
+        String url = "http://www.google.com";
+        
+        String proxyHost = "192.168.111.20";
+        String domain = "AIGENSTEST.com";
+        String user = "user3";
+        String password = "Orange99";
+        int port = 8081;
+        
+        //ProxyHandle handle = new BasicProxyHandle(host, port, user, password);
+        
+        ProxyHandle handle = new NTLMProxyHandle(proxyHost, port, domain, user, password);
+     
         AjaxCallback.setProxyHandle(handle);
         
         

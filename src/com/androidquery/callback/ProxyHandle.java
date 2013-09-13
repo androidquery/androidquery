@@ -20,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.util.LinkedHashSet;
 
 import org.apache.http.HttpRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
 
@@ -29,7 +30,7 @@ import com.androidquery.callback.AjaxStatus;
 public abstract class ProxyHandle {
 
 	
-	public abstract void applyToken(AbstractAjaxCallback<?, ?> cb, HttpRequest request);
+	public abstract void applyToken(AbstractAjaxCallback<?, ?> cb, HttpRequest request, DefaultHttpClient client);
 	
 	public abstract void applyToken(AbstractAjaxCallback<?, ?> cb, HttpURLConnection conn);
 	
