@@ -485,7 +485,17 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			if(status.getCode() != 200){
 				invalid = true;
 			}
+			
+						
+			//invalidating the file if it's not an image, could be caused by proxy returning 200 with html data
+			if(status.getSource() == AjaxStatus.NETWORK && file != null){
+			    AQUtility.debug("invalid bm from net");
+			    file.delete();
+			}
+			
 		}
+		    
+		
 		
 		
 		return bm;

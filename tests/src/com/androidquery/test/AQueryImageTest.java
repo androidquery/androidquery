@@ -526,4 +526,31 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 	}
 	
+	public void testMalformedImage() {
+        
+        clearCache();
+        
+        final String badUrl = "http://www.google.com?test=hello";
+        
+        AQUtility.post(new Runnable() {
+            
+            @Override
+            public void run() {
+                aq.id(R.id.image).image(badUrl);
+            }
+        });
+        
+        waitAsync(2000);
+        
+        //assertLoaded(aq.getImageView(), true);
+        
+        Bitmap bm = aq.getCachedImage(badUrl);
+        
+        assertNull(bm);
+        
+        File file = aq.getCachedFile(badUrl);
+        assertNull(file);
+        
+    }
+	
 }
