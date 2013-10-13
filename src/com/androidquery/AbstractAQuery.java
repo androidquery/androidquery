@@ -280,7 +280,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	
 	@SuppressWarnings("unchecked")
-	private T self(){
+	protected T self(){
 		return (T) this;
 	}
 
