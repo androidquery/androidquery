@@ -1647,7 +1647,10 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    
 		if(AGENT != null){
 			hr.addHeader("User-Agent", AGENT);
+        }else if(AGENT == null && GZIP){
+            hr.addHeader("User-Agent", "gzip");
         }
+	
 		
 		if(headers != null){
         	for(String name: headers.keySet()){
@@ -1656,7 +1659,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
                
 		}
 		
-		if(GZIP && (headers == null || !headers.containsKey("Accept-Encoding"))){
+		if(GZIP && (headers == null || !headers.containsKey("Accept-Encoding"))){		   
 			hr.addHeader("Accept-Encoding", "gzip");
 		}
 			
@@ -1787,11 +1790,18 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        }
 		        
 		        is = entity.getContent();
-				if("gzip".equalsIgnoreCase(getEncoding(entity))){
+		        
+		        boolean gzip = "gzip".equalsIgnoreCase(getEncoding(entity));
+		        
+				if(gzip){
 					is = new GZIPInputStream(is);
 				}
 		        
-		        copy(is, os, (int) entity.getContentLength());
+				int contentLength = (int) entity.getContentLength();
+				
+				//AQUtility.debug("gzip response", entity.getContentEncoding());
+				
+		        copy(is, os, contentLength);
 		        
 		        
 		        os.flush();

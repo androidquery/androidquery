@@ -1112,6 +1112,40 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
 	}
 	
+	public void testAjaxProxyGzip() throws ClientProtocolException, IOException{
+        
+	    //BasicProxyHandle handle = new BasicProxyHandle("192.168.0.105", 3128, null, null);
+	    
+	    //AjaxCallback.setProxyHandle(handle);
+	    
+        String url = "http://androidquery.appspot.com/p/doNothing";
+        
+        AjaxCallback<byte[]> cb = new AjaxCallback<byte[]>() {
+
+            @Override
+            public void callback(String url, byte[] data, AjaxStatus status) {
+                
+                AQUtility.debug("callback size", data.length);
+                
+                done(url, data, status);
+                
+            }
+        };
+        
+        cb.proxy("192.168.0.105", 3128);
+        
+        aq.ajax(url, byte[].class, cb);
+        
+        waitAsync();
+        
+        assertNotNull(result);
+        
+        assertEquals("gzip", status.getHeader("Content-Encoding"));
+        
+        String str = new String((byte[]) result);
+        AQUtility.debug(str);
+    }
+	
     public void testAjaxProxyBasicCredential() throws ClientProtocolException, IOException{
         
         String url = "http://www.google.com";
@@ -1336,6 +1370,8 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         assertNotNull(result);
         assertTrue(html.contains("<html"));
+        
+        assertEquals("gzip", status.getHeader("Content-Encoding"));
     }
 	
 	
@@ -1515,7 +1551,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
     }
 	
-	   public void testAjaxPostJson() throws UnsupportedEncodingException{
+	   public void testAjaxPostJson() throws UnsupportedEncodingException, JSONException{
 	        
 	        String url = "http://www.androidquery.com/p/doNothing";
 	        
@@ -1530,7 +1566,10 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	            
 	        };
 	        
-	        aq.post(url, new JSONObject(), JSONObject.class, cb);
+	        JSONObject input = new JSONObject();
+	        input.putOpt("hello", "world");
+	        
+	        aq.post(url, input, JSONObject.class, cb);
 	        
 	        
 	        waitAsync();
