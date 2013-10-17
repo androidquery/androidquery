@@ -1134,6 +1134,8 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         cb.proxy("192.168.0.105", 3128);
         
+        //cb.header("User-Agent", "AppleDailyiPAD/1.0 CFNetwork/672.0.2 Darwin/14.0.0");
+        
         aq.ajax(url, byte[].class, cb);
         
         waitAsync();
@@ -1360,6 +1362,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 			}
 			
 		};
+		
 		
 		cb.url(url).type(String.class);		
         aq.ajax(cb);
@@ -1917,6 +1920,57 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
     }
 	
 	
-	
+	public void testAjaxTransformErrorWontCache() {
+        
+        String url = "http://www.google.com";
+        
+        AjaxCallback<String> cb = new AjaxCallback<String>(){
+            
+            @Override
+            public void callback(String url, String str, AjaxStatus status) {
+                
+               
+           
+            }
+            
+        };
+        
+        aq.ajax(url, String.class, 0, cb);
+        
+        waitAsync(2000);
+        
+        assertNotNull(aq.getCachedFile(url));
+        
+        
+        AjaxCallback<JSONObject> cb2 = new AjaxCallback<JSONObject>(){
+            
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                
+                done(url, jo, status);
+                
+            }
+            
+        };
+        
+            
+        aq.ajax(url, JSONObject.class, 0, cb2);
+        
+        waitAsync(2000);
+        
+        assertEquals(AjaxStatus.TRANSFORM_ERROR, status.getCode());
+        
+        JSONObject jo = (JSONObject) result;
+        
+        assertNull(jo);       
+        
+        File file = aq.getCachedFile(url);
+        
+        AQUtility.debug("check file", file);
+        
+        assertNull(file);
+        
+        
+    }
 	
 }

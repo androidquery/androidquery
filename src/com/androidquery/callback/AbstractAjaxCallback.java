@@ -585,6 +585,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			skip(url, result, status);
 		}
 		
+		
 		filePut();
 		
 		if(!blocked){
@@ -758,20 +759,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				return (T) result;
 			}
 			
-			/*
-			if(type.equals(XmlDom.class)){
-				
-				XmlDom result = null;
-				
-				try {    
-					result = new XmlDom(data);
-				} catch (Exception e) {	  		
-					AQUtility.debug(e);
-				}
-				
-				return (T) result; 
-			}
-			*/
 			
 			if(type.equals(byte[].class)){
 				return (T) data;
@@ -1255,7 +1242,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	
 	private void filePut(){
-			
+		
 		if(result != null && fileCache){
 			
 			byte[] data = status.getData();
@@ -1265,7 +1252,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				
 					File file = getCacheFile();
 					if(!status.getInvalid()){	
-						//AQUtility.debug("write", url);
 						filePut(url, result, file, data);
 					}else{
 						if(file.exists()){
@@ -1279,6 +1265,15 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			}
 			
 			status.data(null);
+		}else if(status.getCode() == AjaxStatus.TRANSFORM_ERROR){
+		    
+		    File file = getCacheFile();
+		    
+		    if(file.exists()){
+                file.delete();
+                AQUtility.debug("invalidated cache due to transform error");
+		    }
+		    
 		}
 	}
 	
