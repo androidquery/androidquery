@@ -1098,7 +1098,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
             	done(url, json, status);
             	
             }
-        }.proxy("112.25.12.38", 80));
+        }.proxy("192.168.0.105", 3128));
 		
         waitAsync();
         
@@ -1924,6 +1924,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         String url = "http://www.google.com";
         
+        /*
         AjaxCallback<String> cb = new AjaxCallback<String>(){
             
             @Override
@@ -1940,7 +1941,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         waitAsync(2000);
         
         assertNotNull(aq.getCachedFile(url));
-        
+        */
         
         AjaxCallback<JSONObject> cb2 = new AjaxCallback<JSONObject>(){
             
@@ -1972,5 +1973,87 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
         
     }
+	
+	public void testAjaxPostMultiWithProxy(){
+        
+        String url = "http://www.androidquery.com/p/multipart";
+        
+        Map<String, Object> params = new HashMap<String, Object>();
+        
+        byte[] data = new byte[1234];
+        byte[] data2 = new byte[2345];
+        
+        params.put("data", data);
+        params.put("data2", data2);
+        
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+                AQUtility.debug(status.getCode(), status.getError());
+                
+                AQueryAsyncTest.this.result = jo;
+            }
+        };
+        
+        cb.proxy("192.168.0.102", 3128);
+        
+        aq.ajax(url, params, JSONObject.class, cb);
+        
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals(1234, jo.optInt("data"));
+        assertEquals(2345, jo.optInt("data2"));
+    }
+	
+	public void testAjaxPostMultiWithProxyHandle(){
+        
+	    BasicProxyHandle handle = new BasicProxyHandle("192.168.0.102", 3128, null, null);
+        AjaxCallback.setProxyHandle(handle);
+	    
+	    
+        String url = "http://www.androidquery.com/p/multipart";
+        
+        Map<String, Object> params = new HashMap<String, Object>();
+        
+        byte[] data = new byte[1234];
+        byte[] data2 = new byte[2345];
+        
+        params.put("data", data);
+        params.put("data2", data2);
+        
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+
+            @Override
+            public void callback(String url, JSONObject jo, AjaxStatus status) {
+                   
+                AQUtility.debug(status.getCode(), status.getError());
+                
+                AQueryAsyncTest.this.result = jo;
+            }
+        };
+        
+        
+        aq.ajax(url, params, JSONObject.class, cb);
+        
+        waitAsync();
+        
+        JSONObject jo = (JSONObject) result;
+        
+        AQUtility.debug(jo);
+        
+        assertNotNull(jo);       
+        
+        assertEquals(1234, jo.optInt("data"));
+        assertEquals(2345, jo.optInt("data2"));
+    }
+
 	
 }

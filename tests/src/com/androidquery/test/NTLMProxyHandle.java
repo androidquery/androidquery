@@ -1,11 +1,15 @@
 package com.androidquery.test;
 
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.impl.client.DefaultHttpClient;
+
+import android.net.Uri;
+import android.text.TextUtils;
 
 import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.ProxyHandle;
@@ -30,24 +34,51 @@ public class NTLMProxyHandle extends ProxyHandle{
     
     
     @Override
-    public void applyToken(AbstractAjaxCallback<?, ?> cb, HttpRequest request, DefaultHttpClient client) {
+    public void applyProxy(AbstractAjaxCallback<?, ?> cb, HttpRequest request, DefaultHttpClient client) {
        
-        AQUtility.debug("ntlm token");
         
-        client.getAuthSchemes().register("ntlm", new NTLMSchemeFactory());        
-        client.getCredentialsProvider().setCredentials(new AuthScope(host, port), new NTCredentials(user, password, host, domain));
         
-        cb.proxy(host, port);
+        if(!isIntranet(cb.getUrl())){
+            
+          
+            if(!TextUtils.isEmpty(host) && !TextUtils.isEmpty(user)){
+                
+                AQUtility.debug("ntlm token");
+                
+                client.getAuthSchemes().register("ntlm", new NTLMSchemeFactory());        
+                client.getCredentialsProvider().setCredentials(new AuthScope(host, port), new NTCredentials(user, password, host, domain));
+              
+                cb.proxy(host, port);
+            }
+            
+            
+        }
+        
+        
         
     }
+
+
+    private boolean isIntranet(String url){
+        
+        if(url == null) return false;
+        
+        Uri uri = Uri.parse(url);
+        
+        String host = uri.getHost();
+        
+        AQUtility.debug("host", host);
+        return Character.isDigit(host.charAt(0));
+        
+    }
+
+
 
     @Override
-    public void applyToken(AbstractAjaxCallback<?, ?> cb, HttpURLConnection conn) {
+    public Proxy makeProxy(AbstractAjaxCallback<?, ?> cb) {
         // TODO Auto-generated method stub
-        
+        return null;
     }
-
-    
     
     
 }

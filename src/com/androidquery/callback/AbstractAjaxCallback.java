@@ -28,6 +28,8 @@ import java.io.OutputStream;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1637,7 +1639,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    DefaultHttpClient client = getClient();
 	    
 	    if(proxyHandle != null){
-	        proxyHandle.applyToken(this, hr, client);
+	        proxyHandle.applyProxy(this, hr, client);
 	    }
 	    
 		if(AGENT != null){
@@ -1669,17 +1671,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		
 		
-		
-		
 		HttpParams hp = hr.getParams();
 		
-		/*
-		//apply global proxy setting
-		if(phost != null){
-		    proxy = phost;
-		    hr.addHeader("Proxy-Authorization", pheader);
-		}
-		*/
 		
 		if(proxy != null) hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		
@@ -2023,10 +2016,23 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		HttpURLConnection conn = null;
 		DataOutputStream dos = null;
 		
-		
 		URL u = new URL(url);
-		conn = (HttpURLConnection) u.openConnection();
-
+		
+		Proxy py = null;
+		
+		if(proxy != null){
+		    AQUtility.debug("proxy", proxy);
+		    py = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxy.getHostName(), proxy.getPort()));
+		}else if(proxyHandle != null){
+		    py = proxyHandle.makeProxy(this);
+		}
+		
+		if(py == null){
+		    conn = (HttpURLConnection) u.openConnection();
+		}else{
+		    conn = (HttpURLConnection) u.openConnection(py);
+		}
+		
 		conn.setInstanceFollowRedirects(false);
 		
 		conn.setConnectTimeout(NET_TIMEOUT * 4);
@@ -2053,6 +2059,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(ah != null){
 			ah.applyToken(this, conn);
 		}
+		
 		
 		dos = new DataOutputStream(conn.getOutputStream());
 

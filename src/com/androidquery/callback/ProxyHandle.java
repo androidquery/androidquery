@@ -17,6 +17,7 @@
 package com.androidquery.callback;
 
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.util.LinkedHashSet;
 
 import org.apache.http.HttpRequest;
@@ -30,9 +31,9 @@ import com.androidquery.callback.AjaxStatus;
 public abstract class ProxyHandle {
 
 	
-	public abstract void applyToken(AbstractAjaxCallback<?, ?> cb, HttpRequest request, DefaultHttpClient client);
+	public abstract void applyProxy(AbstractAjaxCallback<?, ?> cb, HttpRequest request, DefaultHttpClient client);
 	
-	public abstract void applyToken(AbstractAjaxCallback<?, ?> cb, HttpURLConnection conn);
+	public abstract Proxy makeProxy(AbstractAjaxCallback<?, ?> cb);
 	
 	
 	
