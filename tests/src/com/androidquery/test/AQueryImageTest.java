@@ -301,6 +301,38 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
     }	
 	
+	public void testImageByCallbackAsync() {
+		
+		clearCache();
+		
+		
+		AQUtility.post(new Runnable() {
+			
+			@Override
+			public void run() {
+							
+				//aq.id(R.id.image).image(ICON_URL, true, true, 0, 0, null, AQuery.FADE_IN);
+				BitmapAjaxCallback cb = new BitmapAjaxCallback();
+				cb.url(ICON_URL);
+				
+				//aq.id(R.id.image).image(cb);
+				ImageView iv = aq.id(R.id.image).getImageView();
+				cb.imageView(iv).async(getActivity());
+				
+			}
+		});
+		
+		
+		waitAsync(2000);
+		
+		assertLoaded(aq.getImageView(), true);
+		
+		
+		Bitmap bm = aq.getCachedImage(ICON_URL);		
+		assertNotNull(bm);
+		
+    }	
+	
 	public void testImageByCallback2() {
 		
 		clearCache();
