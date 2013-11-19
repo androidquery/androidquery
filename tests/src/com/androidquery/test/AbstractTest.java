@@ -30,6 +30,7 @@ public abstract class AbstractTest<T extends Activity> extends ActivityInstrumen
         AjaxCallback.setSimulateError(false);
         //AjaxCallback.setProxy(null, 0, null, null);
         AjaxCallback.setProxyHandle(null);
+        AQUtility.TEST_IO_EXCEPTION = false;
         AQUtility.debug("new act", getActivity() + ":" + getActivity().isFinishing());
     }
 	

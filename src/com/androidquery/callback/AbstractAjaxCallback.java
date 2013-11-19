@@ -1170,6 +1170,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			
 		}catch(IOException e){
 		
+		    AQUtility.debug("IOException");
+		    
 		    //work around for IOException when 401 is returned
 		    //reference: http://stackoverflow.com/questions/11735636/how-to-get-401-response-without-handling-it-using-try-catch-in-android
 		    String message = e.getMessage();
@@ -1731,6 +1733,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
         HttpEntity entity = response.getEntity();
        
         File file = null;
+        File tempFile = null;
         
         if(code < 200 || code >= 300){     
         	
@@ -1773,8 +1776,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		        if(file == null){
 		        	os = new PredefinedBAOS(size);
 		        }else{
-		        	file.createNewFile();
-		        	os = new BufferedOutputStream(new FileOutputStream(file));
+		        	//file.createNewFile();
+		        	tempFile = makeTempFile(file);
+		            os = new BufferedOutputStream(new FileOutputStream(tempFile));
 		        }
 		        
 		        is = entity.getContent();
@@ -1789,10 +1793,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				
 				//AQUtility.debug("gzip response", entity.getContentEncoding());
 				
-		        copy(is, os, contentLength);
+		        copy(is, os, contentLength, tempFile, file);
 		        
-		        
-		        os.flush();
+		        //os.flush();
 		        
 		        if(file == null){
 		        	data = ((PredefinedBAOS) os).toByteArray();
@@ -1831,6 +1834,50 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
+	private void copy(InputStream is, OutputStream os, int max, File tempFile, File destFile) throws IOException{
+	    
+	    //if no file operation is involved
+	    if(destFile == null){
+	        copy(is, os, max);
+	        return;
+	    }
+	    
+	    try{
+	    
+	        copy(is, os, max);
+	        is.close();
+	        os.close();
+	        
+	        //copy success, rename file to destination
+	        //AQUtility.time("rename");
+	        tempFile.renameTo(destFile);
+	        //AQUtility.timeEnd("rename", 0);
+	    }catch(IOException e){
+	        
+	        AQUtility.debug("copy failed, deleting files");
+	        
+	        //copy is a failure, delete everything
+	        tempFile.delete();
+	        destFile.delete();
+	        
+	        AQUtility.close(is);
+	        AQUtility.close(os);
+	        
+	        throw e;
+	    }
+	    
+	    
+	}
+	
+	private File makeTempFile(File file) throws IOException{
+	    
+	    File temp = new File(file.getAbsolutePath() + ".tmp");
+	    temp.createNewFile();
+	    
+	    return temp;
+	    
+	}
+	
 	private void copy(InputStream is, OutputStream os, int max) throws IOException{
 		
 
@@ -1852,31 +1899,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	
-	/*
-	private void copy(InputStream is, OutputStream os, String encoding, int max) throws IOException{
-		
-		if("gzip".equalsIgnoreCase(encoding)){
-			is = new GZIPInputStream(is);
-		}
-		
-		Object o = null;
-		
-		if(progress != null){
-			o = progress.get();
-		}
-		
-		Progress p = null;
-		
-		if(o != null){
-			p = new Progress(o); 
-		}
-		
-		AQUtility.copy(is, os, max, p);
-		
-		
-	}
-	*/
 	
 	/**
 	 * Set the authentication type of this request. This method requires API 5+.

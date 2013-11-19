@@ -389,6 +389,8 @@ public class AQUtility {
     	copy(in, out, 0, null);
     }
     
+    public static boolean TEST_IO_EXCEPTION = false;
+    
     public static void copy(InputStream in, OutputStream out, int max, Progress progress) throws IOException {
     	
     	if(progress != null){
@@ -398,8 +400,18 @@ public class AQUtility {
     	
     	byte[] b = new byte[IO_BUFFER_SIZE];
         int read;
+        int count = 0;
+        
         while((read = in.read(b)) != -1){
             out.write(b, 0, read);
+            
+            count++;
+            
+            if(TEST_IO_EXCEPTION && count > 2){
+                AQUtility.debug("simulating internet error");
+                throw new IOException();
+            }
+            
             if(progress != null){
             	progress.increment(read);
             }
@@ -547,7 +559,7 @@ public class AQUtility {
 	public static File getExistedCacheByUrl(File dir, String url){
 		
 		File file = getCacheFile(dir, url);
-		if(file == null || !file.exists()){
+		if(file == null || !file.exists() || file.length() == 0){
 			return null;
 		}
 		return file;

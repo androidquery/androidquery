@@ -39,6 +39,7 @@ import com.androidquery.auth.BasicHandle;
 import com.androidquery.callback.AbstractAjaxCallback;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.callback.ProxyHandle;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.XmlDom;
@@ -54,6 +55,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
 import android.util.Pair;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -266,7 +268,16 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
 	//Test: public <K> T ajax(String url, Class<K> type, long expire, AjaxCallback<K> callback)
 	public void testAjaxCache() {
 		
-		String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+	    AQUtility.cleanCache(AQUtility.getCacheDir(getActivity()), 0, 0);
+        
+	    String url = "http://www.google.com/uds/GnewsSearch?q=Obama&v=1.0";
+	    
+        File file = aq.getCachedFile(url);
+        
+        assertNull(file);
+	    
+	    
+		
         
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
 			
@@ -2012,6 +2023,7 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertEquals(1234, jo.optInt("data"));
         assertEquals(2345, jo.optInt("data2"));
     }
+
 	
 	public void testAjaxPostMultiWithProxyHandle(){
         
@@ -2054,6 +2066,52 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertEquals(1234, jo.optInt("data"));
         assertEquals(2345, jo.optInt("data2"));
     }
+
+	   
+    public void testIOError(){
+        
+        AQUtility.cleanCache(AQUtility.getCacheDir(getActivity()), 0, 0);
+        
+        String LAND_URL = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
+        File file = aq.getCachedFile(LAND_URL);
+        
+        assertNull(file);
+        
+        AQUtility.TEST_IO_EXCEPTION = true;
+        
+        AjaxCallback<File> cb = new AjaxCallback<File>(){
+            
+            @Override
+            public void callback(String url, File file, AjaxStatus status) {
+                
+                done(url, file, status);
+                
+            }
+            
+        };
+        
+        cb.fileCache(true);
+        
+        aq.ajax(LAND_URL, File.class, 0, cb);
+        
+        waitAsync();
+        
+        file = (File) result;
+        
+        
+        assertNull(result);
+        
+        File file2 = aq.getCachedFile(LAND_URL);
+        
+        if(file2 != null){
+            AQUtility.debug("file length", file2.length());
+        }
+        
+        assertNull(file2);
+        
+        
+    }
+    
 
 	
 }

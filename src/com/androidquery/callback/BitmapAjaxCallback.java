@@ -287,6 +287,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 				result = rotate(path, result);
 			}
 			
+			
 		}catch(IOException e){
 			AQUtility.report(e);
 		}finally{
