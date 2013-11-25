@@ -69,8 +69,8 @@ public class AQueryServiceTest extends AbstractTest<AQueryTestActivity> {
 		
 		//String url = "http://192.168.1.222/api/market?app=com.androidquery&locale=zh-TW&version=0.13.2&code=16";
 		
-		//String url = "https://androidquery.appspot.com/api/market?app=com.androidquery&locale=en_US&version=0.24.46&code=46&aq=0.23.1&force=true";
-		String url = "http://192.168.1.165/api/market?app=com.androidquery&locale=en_US&version=0.24.46&code=46&aq=0.23.1&force=true";
+		String url = "https://androidquery.appspot.com/api/market?app=com.androidquery&locale=en_US&version=0.24.46&code=46&aq=0.23.1&force=true";
+		//String url = "http://192.168.1.165/api/market?app=com.androidquery&locale=en_US&version=0.24.46&code=46&aq=0.23.1&force=true";
 		
 		
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();		

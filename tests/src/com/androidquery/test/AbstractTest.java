@@ -3,6 +3,7 @@ package com.androidquery.test;
 import java.io.File;
 
 import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 
@@ -26,6 +27,10 @@ public abstract class AbstractTest<T extends Activity> extends ActivityInstrumen
 	protected void setUp() throws Exception {
         super.setUp();
         aq = new AQuery(getActivity());
+        AjaxCallback.setSimulateError(false);
+        //AjaxCallback.setProxy(null, 0, null, null);
+        AjaxCallback.setProxyHandle(null);
+        AQUtility.TEST_IO_EXCEPTION = false;
         AQUtility.debug("new act", getActivity() + ":" + getActivity().isFinishing());
     }
 	

@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -448,8 +449,33 @@ public class AjaxLoadingActivity extends RunSourceActivity {
         
     }
 	
-	public void async_put() {
+	public void async_put() throws JSONException, UnsupportedEncodingException {
 		
+	    String url = "http://www.androidquery.com/p/doNothing";
+        
+	    JSONObject input = new JSONObject();
+	    input.put("param1", "value1");
+	    input.put("param2", "value2");
+	    
+	    StringEntity entity = new StringEntity(input.toString(), "UTF-8");
+	    
+	    aq.progress(R.id.progress).put(url, "application/json", entity, JSONObject.class, new AjaxCallback<JSONObject>(){
+	        
+	        @Override
+	        public void callback(String url, JSONObject jo, AjaxStatus status){
+	            
+	            showResult(jo);
+	            
+	        }
+	        
+	    });
+	    
+        
+	    
+	}
+	
+	public void putCb(String url, JSONObject jo, AjaxStatus status){
+	    
 	}
 	
 	public void async_cached(){

@@ -518,6 +518,7 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
     }	
 	
+	/*
 	public void testIfModified() {
 		
 		String url = ICON_URL;
@@ -538,6 +539,7 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		
 		
 	}
+	*/
 	
 	public void testAutoRotate() throws IOException{
 		
@@ -557,5 +559,82 @@ public class AQueryImageTest extends AbstractTest<AQueryTestActivity> {
 		assertNotNull(bm);
 		
 	}
+	
+	public void testMalformedImage() {
+        
+        clearCache();
+        
+        final String badUrl = "http://www.google.com?test=hello";
+        
+        AQUtility.post(new Runnable() {
+            
+            @Override
+            public void run() {
+                aq.id(R.id.image).image(badUrl);
+            }
+        });
+        
+        waitAsync(2000);
+        
+        //assertLoaded(aq.getImageView(), true);
+        
+        Bitmap bm = aq.getCachedImage(badUrl);
+        
+        assertNull(bm);
+        
+        File file = aq.getCachedFile(badUrl);
+        assertNull(file);
+        
+    }
+	
+	private Bitmap bmResult;
+	
+	public void testImageIOError() {
+        
+        clearCache();
+        
+        AQUtility.cleanCache(AQUtility.getCacheDir(getActivity()), 0, 0);
+             
+        File file = aq.getCachedFile(LAND_URL);
+        
+        assertNull(file);
+        
+        AQUtility.TEST_IO_EXCEPTION = true;
+        
+        AQUtility.post(new Runnable() {
+            
+            @Override
+            public void run() {
+                            
+                BitmapAjaxCallback cb = new BitmapAjaxCallback(){
+                
+                    protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
+                    
+                        AQUtility.debug("bm", bm);
+                        
+                        //iv.setImageBitmap(bm);
+                        bmResult = bm;
+                    }
+                    
+                };
+                
+                aq.id(R.id.image).image(LAND_URL, true, true, 0, 0, cb);
+            }
+        });
+        
+        
+        waitAsync(2000);
+        
+        assertNull(bmResult);
+        
+        File file2 = aq.getCachedFile(LAND_URL);
+        
+        if(file2 != null){
+            AQUtility.debug("file length", file2.length());
+        }
+        
+        assertNull(file2);
+        
+    }   
 	
 }

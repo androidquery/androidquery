@@ -159,18 +159,18 @@ public class GoogleHandle extends AccountHandle implements DialogInterface.OnCli
 		@Override
 		protected Bundle doInBackground(String... params) {
 	
-			AccountManagerFuture<Bundle> future = am.getAuthToken(acc, type, null, act, null, null);
-			
 			Bundle bundle = null;
 			
 			try {
+			    AccountManagerFuture<Bundle> future = am.getAuthToken(acc, type, null, act, null, null);
 				bundle = future.getResult();
 			} catch (OperationCanceledException e) {
 			} catch (AuthenticatorException e) {
 				AQUtility.debug(e);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				AQUtility.debug(e);
 			}
+			
 			
 			return bundle;
 		}
