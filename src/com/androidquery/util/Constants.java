@@ -49,6 +49,11 @@ public interface Constants {
 	public static final int TAG_SCROLL_LISTENER = 0x40FF0002;
 	public static final int TAG_LAYOUT = 0x40FF0003;
 	public static final int TAG_NUM = 0x40FF0004;
+	public static final int TAG_1 = 0x40FF0005;
+	public static final int TAG_2 = 0x40FF0006;
+	public static final int TAG_3 = 0x40FF0007;
+	public static final int TAG_4 = 0x40FF0008;
+	public static final int TAG_5 = 0x40FF0009;
 	
 	public static final float RATIO_PRESERVE = Float.MAX_VALUE;
 	public static final float ANCHOR_DYNAMIC = Float.MAX_VALUE;
