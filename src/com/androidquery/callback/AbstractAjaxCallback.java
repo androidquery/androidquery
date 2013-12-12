@@ -145,6 +145,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private long expire;
 	private String encoding = "UTF-8";
 	private WeakReference<Activity> act;
+	private WeakReference<Context> ctx;
 	
 	private int method = Constants.METHOD_DETECT;
 	private HttpUriRequest request;
@@ -165,6 +166,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		transformer = null;
 		ah = null;
 		act = null;
+		ctx = null;
 	}
 	
 	/**
@@ -884,10 +886,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			AQUtility.warn("Warning", "type() is not called with response type.");
 			return;
 		}
-		
 		this.act = new WeakReference<Activity>(act);
 		async((Context) act);
-		
 	}
 	
 	
@@ -898,7 +898,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 * @param context the context
 	 */
 	public void async(Context context){
-		
+        this.ctx = new WeakReference<Context>(context);
 		if(status == null){
 			status = new AjaxStatus();
 			status.redirect(url).refresh(refresh);
@@ -949,7 +949,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	
 	
 	private void work(Context context){
-		
 		T object = memGet(url);
 			
 		if(object != null){		
@@ -985,7 +984,6 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				AQUtility.debug(e);
 				status.code(AjaxStatus.NETWORK_ERROR).done();
 			}
-			
 			if(!status.getReauth()){
 				//if doesn't need to reauth
 				if(uiCallback){
@@ -1015,6 +1013,11 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		if(result == null){
 			datastoreWork();			
 		}
+
+		if(result == null){
+		    assetsWork();
+		}
+
 		
 		if(result == null){
 			networkWork();
@@ -1072,6 +1075,24 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		}
 	}
 	
+    private static final String PREFIX_ASSETS = "assets://";
+
+    private void assetsWork(){
+        if (url.startsWith(PREFIX_ASSETS) == false){
+            return;
+        }
+        try {
+            String u = url.substring(PREFIX_ASSETS.length());
+            InputStream is = ctx.get().getAssets().open(u);
+            status.data(AQUtility.toBytes(is)).source(AjaxStatus.ASSETS)
+                .code(200).done();
+            result = transform(url, status.getData(), status);
+        } catch (IOException e) {
+            AQUtility.debug(e);
+            status.code(AjaxStatus.ASSETS_ERROR).message(e.getMessage());
+        }
+    }
+
 	private boolean reauth;
 	private void networkWork(){
 		
