@@ -1635,6 +1635,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	    proxyHandle = handle;
 	}
 	
+	private static CookieStore _cookieStore;
+	
+	public static CookieStore getCookieStore() {
+		if (_cookieStore == null) _cookieStore = new BasicCookieStore();
+		return _cookieStore;
+	}
+	
 	
 	private void httpDo(HttpUriRequest hr, String url, AjaxStatus status) throws ClientProtocolException, IOException{
 		
@@ -1671,13 +1678,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			hr.addHeader("Cookie", cookie);
 		}
 		
-		
-		
 		HttpParams hp = hr.getParams();
 		
-		
 		if(proxy != null) hp.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-		
 		
 		if(timeout > 0){
 			hp.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout);
@@ -1688,9 +1691,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		    hp.setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
 		}
 		
-		HttpContext context = new BasicHttpContext(); 	
-		CookieStore cookieStore = new BasicCookieStore();
-		context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+		HttpContext context = new BasicHttpContext();
+		context.setAttribute(ClientContext.COOKIE_STORE, getCookieStore());
 		
 		request = hr;
 		
