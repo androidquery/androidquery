@@ -1764,52 +1764,56 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			HttpHost currentHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
 	        redirect = currentHost.toURI() + currentReq.getURI();
-			
-	        int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
+		
+		int size = 0;
+		
+		if (entity != null)  //entity could be NULL if code = 204, for example (which means "no content")
+		{
+			size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
 	        
-	        OutputStream os = null;
-	        InputStream is = null;
-	        
-	        try{
-	        	file = getPreFile();
-	        
-		        if(file == null){
-		        	os = new PredefinedBAOS(size);
-		        }else{
-		        	//file.createNewFile();
-		        	tempFile = makeTempFile(file);
-		            os = new BufferedOutputStream(new FileOutputStream(tempFile));
+		        OutputStream os = null;
+		        InputStream is = null;
+		        
+		        try{
+		        	file = getPreFile();
+		        
+			        if(file == null){
+			        	os = new PredefinedBAOS(size);
+			        }else{
+			        	//file.createNewFile();
+			        	tempFile = makeTempFile(file);
+			            os = new BufferedOutputStream(new FileOutputStream(tempFile));
+			        }
+			        
+			        is = entity.getContent();
+			        
+			        boolean gzip = "gzip".equalsIgnoreCase(getEncoding(entity));
+			        
+					if(gzip){
+						is = new GZIPInputStream(is);
+					}
+			        
+					int contentLength = (int) entity.getContentLength();
+					
+					//AQUtility.debug("gzip response", entity.getContentEncoding());
+					
+			        copy(is, os, contentLength, tempFile, file);
+			        
+			        //os.flush();
+			        
+			        if(file == null){
+			        	data = ((PredefinedBAOS) os).toByteArray();
+			        }else{
+			        	if(!file.exists() || file.length() == 0){
+			        		file = null;
+			        	}
+			        }
+		        
+		        }finally{
+		        	AQUtility.close(is);
+		        	AQUtility.close(os);
 		        }
-		        
-		        is = entity.getContent();
-		        
-		        boolean gzip = "gzip".equalsIgnoreCase(getEncoding(entity));
-		        
-				if(gzip){
-					is = new GZIPInputStream(is);
-				}
-		        
-				int contentLength = (int) entity.getContentLength();
-				
-				//AQUtility.debug("gzip response", entity.getContentEncoding());
-				
-		        copy(is, os, contentLength, tempFile, file);
-		        
-		        //os.flush();
-		        
-		        if(file == null){
-		        	data = ((PredefinedBAOS) os).toByteArray();
-		        }else{
-		        	if(!file.exists() || file.length() == 0){
-		        		file = null;
-		        	}
-		        }
-	        
-	        }finally{
-	        	AQUtility.close(is);
-	        	AQUtility.close(os);
-	        }
-	        
+		}
         }
         
         AQUtility.debug("response", code);
