@@ -17,9 +17,6 @@
 package com.androidquery.callback;
 
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,9 +33,9 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.Matrix;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -274,27 +271,13 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 		
 		options.inInputShareable = true;
 		options.inPurgeable = true;
-		
-		FileInputStream fis = null;
-		
-		try{
-		
-			fis = new FileInputStream(path);
-			FileDescriptor fd = fis.getFD();
-			result = BitmapFactory.decodeFileDescriptor(fd, null, options);
 
-			if(result != null && rotate){
-				result = rotate(path, result);
-			}
-			
-		}catch(IOException e){
-			AQUtility.report(e);
-		}finally{
-			AQUtility.close(fis);
+		result = BitmapFactory.decodeFile(path, options);
+		if(result != null && rotate){
+			result = rotate(path, result);
 		}
-		
+
 		return result;
-		
 	}
 	
 	private static Bitmap rotate(String path, Bitmap bm){
