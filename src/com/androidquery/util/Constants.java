@@ -20,7 +20,7 @@ public interface Constants {
 
 
 
-	public static final String VERSION = "0.26.7";
+	public static final String VERSION = "0.26.8";
 	
 	public static final int LAYER_TYPE_SOFTWARE = 1;
 	public static final int LAYER_TYPE_HARDWARE = 2;
