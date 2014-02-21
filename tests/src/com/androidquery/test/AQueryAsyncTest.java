@@ -1726,8 +1726,10 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         
 		url = "http://deelay.me/10000/" + url;
 		
+		AjaxCallback.setTimeout(5000);
+		
 		AjaxCallback<File> cb = new AjaxCallback<File>();
-		cb.url(url).type(File.class).timeout(5000);		
+		cb.url(url).type(File.class);		
 		
 		long start = System.currentTimeMillis();
 		
