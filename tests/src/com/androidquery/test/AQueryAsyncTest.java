@@ -1719,6 +1719,37 @@ public class AQueryAsyncTest extends AbstractTest<AQueryTestActivity> {
         assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
     }
 	
+	public void testAjaxTimeoutFiveSeconds() {
+		
+		
+		String url = "http://farm6.static.flickr.com/5035/5802797131_a729dac808_b.jpg";
+        
+		url = "http://deelay.me/10000/" + url;
+		
+		AjaxCallback.setTimeout(5000);
+		
+		AjaxCallback<File> cb = new AjaxCallback<File>();
+		cb.url(url).type(File.class);		
+		
+		long start = System.currentTimeMillis();
+		
+        aq.sync(cb);
+		
+        File file = cb.getResult();
+        AjaxStatus status = cb.getStatus();
+        
+        long end = System.currentTimeMillis();
+        
+        long diff = end - start;
+        
+        AQUtility.debug("timeout", diff);
+        
+        assertTrue(diff < 10000);
+        
+        assertNull(file);       
+        assertTrue(status.getCode() == AjaxStatus.NETWORK_ERROR);
+    }
+	
 	public void testAjaxAbortAfterNetwork() {
 		
 		String url = "http://shopsixapp.appspot.com/z/music/01.mp3";

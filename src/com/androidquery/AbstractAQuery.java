@@ -57,6 +57,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -1474,6 +1475,42 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 			AdapterView<?> alv = (AdapterView<?>) view;
 			alv.setOnItemClickListener(listener);
+			
+		
+		}
+		
+		return self();
+		
+	}	
+	
+	/**
+	 * Register a callback method for when an item is long clicked in the ListView. Method must have signature of method(AdapterView<?> parent, View v, int pos, long id).
+	 *
+	 * @param handler The handler that has the public callback method.
+	 * @param method The method name of the callback.
+	 * @return self
+	 */
+	public T itemLongClicked(Object handler, String method){
+		
+		Common common = new Common().forward(handler, method, true, ON_ITEM_SIG);
+		return itemLongClicked(common);
+		
+	}
+	
+	
+	/**
+	 * Register a callback method for when an item is long clicked in the ListView.
+	 *
+	 * @param listener The callback method.
+	 * @return self
+	 */
+	public T itemLongClicked(OnItemLongClickListener listener){
+		
+		if(view instanceof AdapterView){
+		
+			AdapterView<?> alv = (AdapterView<?>) view;
+			alv.setOnItemLongClickListener(listener);
+			
 		
 		}
 		

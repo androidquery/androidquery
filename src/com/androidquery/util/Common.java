@@ -32,6 +32,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -47,7 +48,7 @@ import com.androidquery.callback.BitmapAjaxCallback;
  * 
  */
 
-public class Common implements Comparator<File>, Runnable, OnClickListener, OnLongClickListener, OnItemClickListener, OnScrollListener, OnItemSelectedListener, TextWatcher{
+public class Common implements Comparator<File>, Runnable, OnClickListener, OnLongClickListener, OnItemClickListener, OnItemLongClickListener, OnScrollListener, OnItemSelectedListener, TextWatcher{
 
 	private Object handler;
 	private String method;
@@ -157,6 +158,12 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 	@Override
 	public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
 		invoke(parent, v, pos, id);
+	}
+	
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View v, int pos, long id) {
+		Boolean result = (Boolean) invoke(parent, v, pos, id);
+		return result;
 	}
 	
 	
@@ -541,6 +548,9 @@ public class Common implements Comparator<File>, Runnable, OnClickListener, OnLo
 		}
 		
 	}
+
+
+
 
 
 
