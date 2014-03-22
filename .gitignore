@@ -20,5 +20,8 @@ proguard-dump.txt
 /assets
 /target
 
+# Gradle And AndroidStudio
 .idea/
 androidquery.iml
+.gradle/
+build/
