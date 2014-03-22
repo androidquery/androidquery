@@ -19,3 +19,6 @@ local.properties
 proguard-dump.txt
 /assets
 /target
+
+.idea/
+androidquery.iml
