@@ -107,19 +107,20 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	//private Integer policy = null;
 	private HttpHost proxy;
 
+	@SuppressWarnings("unchecked")
 	protected T create(View view){
 		
-		T result = null;
+		AbstractAQuery<?> result = null;
 		
 		try{
 			Constructor<T> c = getConstructor();
-			result = (T) c.newInstance(view);
+			result = c.newInstance(view);
 			result.act = act;
 		}catch(Exception e){
 			//should never happen
 			e.printStackTrace();
 		}
-		return result;
+		return (T) result;
 		
 	}
 	
