@@ -428,7 +428,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Apply the proxy info to next ajax request. 
 	 *
-	 * @param transformer transformer
+	 * @param host host
+     * @param port port
+     *
 	 * @return self
 	 */
 	public T proxy(String host, int port){
@@ -450,7 +452,19 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		}
 		return self();
 	}
-	
+
+    /**
+     * Set the alpha of ImageView
+     *
+     * @param alpha the alpha number
+     * @return self
+     */
+    public T alphaOfImg(int alpha) {
+        if (view instanceof ImageView) {
+            ((ImageView)view).setImageAlpha(alpha);
+        }
+        return self();
+    }
 	
 	/**
 	 * Set the text of a TextView.
@@ -553,7 +567,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
      * Set the text color of a TextView from  a color resource id.
      *
-     * @param color color resource id
+     * @param id color resource id
      * @return self
      */
     public T textColorId(int id){
@@ -565,7 +579,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	/**
 	 * Set the text typeface of a TextView.
 	 *
-	 * @param typeface typeface
+	 * @param tf typeface
 	 * @return self
 	 */
 	public T typeface(Typeface tf){
@@ -1416,6 +1430,21 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		
 		return self();
 	}
+
+    /**
+     * Register a callback method for when the view is touched.
+     *
+     * @param listener The callback method.
+     * @return self
+     */
+    public T touched(View.OnTouchListener listener){
+
+        if(view != null){
+            view.setOnTouchListener(listener);
+        }
+
+        return self();
+    }
 	
 	/**
 	 * Register a callback method for when the view is long clicked. Method must have signature of method(View view).
