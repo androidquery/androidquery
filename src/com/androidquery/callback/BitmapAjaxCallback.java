@@ -491,6 +491,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 			
 			if(status.getCode() != 200){
 				invalid = true;
+				bm = preset;//if network was error,we hope show preset bitmap always
 			}
 			
 						
@@ -862,13 +863,7 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	private static final int FADE_DUR = 300;
 	
 	private void setBitmap(String url, ImageView iv, Bitmap bm, boolean isPreset){
-		
-		if(bm == null){
-			iv.setImageDrawable(null);
-			return;
-		}
-		
-		if(isPreset){
+		if(isPreset||bm == null){//if result bitmap was null,we hope show preset bitmap always
 			iv.setImageDrawable(makeDrawable(iv, bm, ratio, anchor));
 			return;
 		}
