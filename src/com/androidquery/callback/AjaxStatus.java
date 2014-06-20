@@ -51,11 +51,14 @@ public class AjaxStatus {
 	
 	/** Source DEVICE. */
 	public static final int DEVICE = 5;
-	
+
+	/** Source ASSET. */
+	public static final int ASSETS = 6;
+
 	public static final int NETWORK_ERROR = -101;
 	public static final int AUTH_ERROR = -102;
 	public static final int TRANSFORM_ERROR = -103;
-	
+	public static final int ASSETS_ERROR = -104;	
 	
 	private int code = 200;
 	private String message = "OK";
