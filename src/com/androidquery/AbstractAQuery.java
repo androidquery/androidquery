@@ -863,6 +863,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	
 	/**
 	 * Set the image of an ImageView from a file with a custom callback.
+	 * Auto rotate is enabled.
 	 *
 	 * @param file The image file.
 	 * @param memCache Use memory cache.
@@ -875,7 +876,7 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	public T image(File file, boolean memCache, int targetWidth, BitmapAjaxCallback callback){
 		
 		if(callback == null) callback = new BitmapAjaxCallback();		
-		callback.file(file);	
+		callback.file(file).rotate(true);
 		
 		String url = null;
 		if(file != null) url = file.getAbsolutePath();
