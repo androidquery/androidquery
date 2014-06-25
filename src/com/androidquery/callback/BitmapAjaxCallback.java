@@ -135,6 +135,9 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
 	 */
 	public BitmapAjaxCallback file(File imageFile){
 		this.imageFile = imageFile;
+		if(imageFile != null){
+			url(imageFile.getAbsolutePath());
+		}
 		return this;
 	}
 	
