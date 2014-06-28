@@ -2159,8 +2159,44 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
         
         
     }
-	
-	
+
+    /**
+     * Ajax HTTP patch.
+     *
+     * The handler signature must be (String url, <K> object, AjaxStatus status)
+     *
+     * @param url url
+     * @param contentHeader Content header
+     * @param entity entity
+     * @param type reponse type
+     * @param callback callback method name
+     * @return self
+     */
+    public <K> T patch(String url, String contentHeader, HttpEntity entity, Class<K> type, AjaxCallback<K> callback) {
+        callback.url(url).type(type).method(AQuery.METHOD_PATCH).header("Content-Type", contentHeader).param(AQuery.POST_ENTITY, entity);
+        return ajax(callback);
+    }
+
+    /**
+     * Ajax HTTP patch.
+     *
+     * The handler signature must be (String url, <K> object, AjaxStatus status)
+     *
+     * @param url url
+     * @param jo JSON object
+     * @param type reponse type
+     * @param callback callback method name
+     * @return self
+     */
+    public <K> T patch(String url, JSONObject jo, Class<K> type, AjaxCallback<K> callback) {
+        try {
+            StringEntity entity = new StringEntity(jo.toString(), "UTF-8");
+            return patch(url, "application/json", entity, type, callback);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
 	
 	/**
 	 * Ajax HTTP delete.

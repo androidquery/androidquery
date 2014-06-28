@@ -101,6 +101,7 @@ import com.androidquery.auth.GoogleHandle;
 import com.androidquery.util.AQUtility;
 import com.androidquery.util.Common;
 import com.androidquery.util.Constants;
+import com.androidquery.util.HttpPatch;
 import com.androidquery.util.PredefinedBAOS;
 import com.androidquery.util.Progress;
 import com.androidquery.util.XmlDom;
@@ -1364,7 +1365,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			}else{
 				if(isMultiPart(params)){
 					httpMulti(url, params, status);
-				}else{
+				}else if (Constants.METHOD_PATCH == method){
+                    httpPatch(url, params, status);
+                } else {
 					httpPost(url, params, status);
 				}
 				
@@ -1495,8 +1498,17 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		httpEntity(url, req, params, status);
 		
 	}
-	
-	
+
+    private void httpPatch(String url, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
+
+        AQUtility.debug("patch", url);
+
+        HttpEntityEnclosingRequestBase req = new HttpPatch(url);
+
+        httpEntity(url, req, params, status);
+
+    }
+
 	private void httpEntity(String url, HttpEntityEnclosingRequestBase req, Map<String, Object> params, AjaxStatus status) throws ClientProtocolException, IOException{
 		
 		//This setting seems to improve post performance
