@@ -44,7 +44,8 @@ public interface Constants {
 	public static final int METHOD_DELETE = 2;
 	public static final int METHOD_PUT = 3;
 	public static final int METHOD_DETECT = 4;
-	
+    public static final int METHOD_PATCH = 5;
+
 	public static final int TAG_URL = 0x40FF0001;
 	public static final int TAG_SCROLL_LISTENER = 0x40FF0002;
 	public static final int TAG_LAYOUT = 0x40FF0003;
