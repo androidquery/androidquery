@@ -450,13 +450,13 @@ public class BitmapAjaxCallback extends AbstractAjaxCallback<Bitmap, BitmapAjaxC
     }
    
     @Override
-    protected File accessFile(File cacheDir, String url){		
+    protected File accessFile(File cacheDir, String url, boolean onlyFresh){		
     	
     	if(imageFile != null && imageFile.exists()){
     		return imageFile;
     	}
     	
-		return super.accessFile(cacheDir, url);
+		return super.accessFile(cacheDir, url, onlyFresh);
 	}
     
     
