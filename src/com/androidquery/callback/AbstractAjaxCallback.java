@@ -148,6 +148,7 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	private boolean redirect = true;
 	
 	private long expire;
+	private long fresh;
 	private String encoding = "UTF-8";
 	private WeakReference<Activity> act;
 	
@@ -395,6 +396,22 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	 */
 	public K expire(long expire){
 		this.expire = expire;
+		this.fresh = expire;
+		return self();
+	}
+	
+	/**
+	 * The expire and fresh duation for filecache. 
+	 * If a cached copy will be served if a cached file exists within current time minus fresh duration.
+	 * But, with network error case and if a cached copy will be served if a cached file exists within current time minus expire duration
+	 *
+	 * @param expire the expire
+	 * @param fresh the fresh
+	 * @return self
+	 */
+	public K expire(long expire, long fresh){
+		this.expire = expire;
+		this.fresh = fresh;
 		return self();
 	}
 	
@@ -911,15 +928,17 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 	}
 	
-	protected File accessFile(File cacheDir, String url){	
+	protected File accessFile(File cacheDir, String url, boolean onlyFresh){	
 		
 		if(expire < 0) return null;
+		
+		long limit = onlyFresh ? fresh : expire;
 		
 		File file = AQUtility.getExistedCacheByUrl(cacheDir, url);
 		
 		if(file != null && expire != 0){
 			long diff = System.currentTimeMillis() - file.lastModified();	
-			if(diff > expire){
+			if(diff > limit){
 				return null;
 			}
 		}
@@ -1072,11 +1091,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 	}
 	
 	private void backgroundWork(){
-	
 		if(!refresh){
-		
 			if(fileCache){	
-				fileWork();			
+				fileWork(true);			
 			}
 		}
 		
@@ -1088,7 +1105,16 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			networkWork();
 		}
 		
-		
+		if(result == null && !refresh && fileCache){
+			AjaxStatus prevStatus = status;
+			status = new AjaxStatus();
+			
+			fileWork(false);
+			
+			if (result == null){
+				status = prevStatus;
+			}
+		}
 	}
 	
 	private String getCacheUrl(){
@@ -1113,9 +1139,9 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		return result;
 	}
 	
-	private void fileWork(){
+	private void fileWork(boolean freshOnly){
 		
-		File file = accessFile(cacheDir, getCacheUrl());
+		File file = accessFile(cacheDir, getCacheUrl(), freshOnly);
 		
 		//if file exist
 		if(file != null){
