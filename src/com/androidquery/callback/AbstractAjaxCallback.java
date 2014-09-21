@@ -1765,25 +1765,26 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(ExecutionContext.HTTP_REQUEST);
 	        redirect = currentHost.toURI() + currentReq.getURI();
 			
-	        int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
+	        if(entity!=null){
+			int size = Math.max(32, Math.min(1024 * 64, (int) entity.getContentLength()));
 	        
-	        OutputStream os = null;
-	        InputStream is = null;
+		        OutputStream os = null;
+		        InputStream is = null;
 	        
-	        try{
-	        	file = getPreFile();
+		        try{
+				file = getPreFile();
 	        
-		        if(file == null){
-		        	os = new PredefinedBAOS(size);
-		        }else{
-		        	//file.createNewFile();
-		        	tempFile = makeTempFile(file);
-		            os = new BufferedOutputStream(new FileOutputStream(tempFile));
-		        }
+			        if(file == null){
+					os = new PredefinedBAOS(size);
+			        }else{
+					//file.createNewFile();
+					tempFile = makeTempFile(file);
+					os = new BufferedOutputStream(new FileOutputStream(tempFile));
+				}
 		        
-		        is = entity.getContent();
+			        is = entity.getContent();
 		        
-		        boolean gzip = "gzip".equalsIgnoreCase(getEncoding(entity));
+			        boolean gzip = "gzip".equalsIgnoreCase(getEncoding(entity));
 		        
 				if(gzip){
 					is = new GZIPInputStream(is);
@@ -1793,23 +1794,23 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 				
 				//AQUtility.debug("gzip response", entity.getContentEncoding());
 				
-		        copy(is, os, contentLength, tempFile, file);
+			        copy(is, os, contentLength, tempFile, file);
 		        
-		        //os.flush();
+			        //os.flush();
 		        
-		        if(file == null){
-		        	data = ((PredefinedBAOS) os).toByteArray();
-		        }else{
-		        	if(!file.exists() || file.length() == 0){
-		        		file = null;
-		        	}
-		        }
+				if(file == null){
+					data = ((PredefinedBAOS) os).toByteArray();
+				}else{
+					if(!file.exists() || file.length() == 0){
+						file = null;
+					}
+				}
 	        
-	        }finally{
-	        	AQUtility.close(is);
-	        	AQUtility.close(os);
-	        }
-	        
+			}finally{
+				AQUtility.close(is);
+				AQUtility.close(os);
+			}
+		}
         }
         
         AQUtility.debug("response", code);
