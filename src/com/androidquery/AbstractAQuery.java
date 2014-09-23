@@ -2094,6 +2094,29 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 	}
 	
 	/**
+	 * Ajax call with PUT method.
+	 *
+	 * The handler signature must be (String url, <K> object, AjaxStatus status)
+	 *
+	 * @param url url
+	 * @param params 
+	 * @param type data type
+	 * @param callback callback method name
+	 * @return self
+	 * 
+	 * 
+	 */
+	
+	public <K> T put(String url, Map<String, ?> params, Class<K> type, Object handler, String callback){
+		
+		AjaxCallback<K> cb = new AjaxCallback<K>();
+		cb.type(type).weakHandler(handler, callback).method(METHOD_PUT);
+		
+		return ajax(url, params, type, cb);
+		
+	}
+	
+	/**
 	 * Ajax HTTP delete.
 	 *
 	 * @param url url
