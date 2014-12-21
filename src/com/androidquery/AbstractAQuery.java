@@ -75,6 +75,7 @@ import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.CheckedTextView;
 
 import com.androidquery.auth.AccountHandle;
 import com.androidquery.callback.AbstractAjaxCallback;
@@ -970,6 +971,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		if(view instanceof CompoundButton){
 			CompoundButton cb = (CompoundButton) view;
 			cb.setChecked(checked);
+                } else if(view instanceof CheckedTextView){
+			CheckedTextView ctv = (CheckedTextView) view;
+			ctv.setChecked(checked);
 		}
 		
 		return self();
@@ -987,6 +991,9 @@ public abstract class AbstractAQuery<T extends AbstractAQuery<T>> implements Con
 		if(view instanceof CompoundButton){
 			CompoundButton cb = (CompoundButton) view;
 			checked = cb.isChecked();
+		} else if(view instanceof CheckedTextView){
+			CheckedTextView ctv = (CheckedTextView) view;
+			checked = ctv.isChecked();
 		}
 		
 		return checked;
