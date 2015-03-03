@@ -110,7 +110,7 @@ import com.androidquery.util.XmlDom;
  *
  */
 public abstract class AbstractAjaxCallback<T, K> implements Runnable{
-	
+    protected CookieStore getCookieStore() { return new BasicCookieStore();};
 	private static int NET_TIMEOUT = 30000;
 	private static String AGENT = null;
 	private static int NETWORK_POOL = 4;
@@ -1688,9 +1688,8 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		    hp.setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
 		}
 		
-		HttpContext context = new BasicHttpContext(); 	
-		CookieStore cookieStore = new BasicCookieStore();
-		context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+		HttpContext context = new BasicHttpContext();
+        context.setAttribute(ClientContext.COOKIE_STORE, getCookieStore());
 		
 		request = hr;
 		
