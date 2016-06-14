@@ -2026,6 +2026,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 			Object value = entry.getValue();
 			AQUtility.debug(entry.getKey(), value);
 			if(value instanceof File || value instanceof byte[] || value instanceof InputStream) return true;
+			
+                        if(value instanceof List){
+				List<Object>  inList = ((List)value);
+				for (Object objin:inList) {
+					if(objin instanceof File || objin instanceof byte[] || objin instanceof InputStream) return true;
+				}
+			}
 		}
 		
 		return false;
@@ -2147,6 +2154,13 @@ public abstract class AbstractAjaxCallback<T, K> implements Runnable{
 		
 		if(obj == null) return;
 		
+                if(obj instanceof List){
+		   List<Object>  inList = ((List)obj);
+			for (Object objin:inList) {
+				writeObject(dos,name,objin);
+			}
+		}
+   
 		if(obj instanceof File){
 
 			File file = (File) obj;
